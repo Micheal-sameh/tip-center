@@ -39,7 +39,8 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/create', [UserController::class, 'create'])->name('users.create');
             Route::get('/{id}/show', [UserController::class, 'show'])->name('users.show');
             Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-            Route::put('/', [UserController::class, 'update'])->name('users.update');
+            Route::post('/', [UserController::class, 'store'])->name('users.store');
+            Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'delete'])->name('users.delete');
         });
 
