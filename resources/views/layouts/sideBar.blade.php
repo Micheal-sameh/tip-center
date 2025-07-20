@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
+@php
+    $logo = App\Models\Setting::where('name', 'logo')->first();
+    $faviconUrl = $logo?->getFirstMediaUrl('app_logo');
+@endphp
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +14,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="{{ $faviconUrl }}" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -179,10 +185,8 @@
         <div class="row content-wrapper">
             <!-- Sidebar -->
             <div id="sidebar">
-                @php
-                    $logo = App\Models\Setting::where('name', 'logo')->first();
-                @endphp
-                <img src="{{ $logo?->getFirstMediaUrl('app_logo') }}" alt="Logo" class="img-fluid mb-3">
+
+                <img src="{{ $faviconUrl }}" alt="Logo" class="img-fluid mb-3 pt-3">
                 <ul class="nav flex-column">
                     @auth
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"

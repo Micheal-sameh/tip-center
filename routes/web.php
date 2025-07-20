@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +34,15 @@ Route::group(['middleware' => ['setlocale']], function () {
     });
 
     Route::middleware(['auth'])->group(function () {
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('users.index');
+            Route::get('/create', [UserController::class, 'create'])->name('users.create');
+            Route::get('/{id}/show', [UserController::class, 'show'])->name('users.show');
+            Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+            Route::put('/', [UserController::class, 'update'])->name('users.update');
+            Route::delete('/{id}', [UserController::class, 'delete'])->name('users.delete');
+        });
+
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingController::class, 'index'])->name('settings.index');
             Route::put('/', [SettingController::class, 'update'])->name('settings.update');
