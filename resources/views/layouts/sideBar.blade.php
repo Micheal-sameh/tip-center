@@ -189,35 +189,35 @@
                                 href="{{ url('/') }}"> {{ __('messages.home') }} </a></li>
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;" href="{{ route('users.profile') }}">{{__('messages.profile')}} </a></li> --}}
                         {{-- @can('users_list') --}}
-                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;" href="{{ route('users.index') }}"> {{__('messages.users')}}</a></li>
+                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;" href="{{ route('users.index') }}"> {{__('messages.users')}}</a></li> --}}
                         {{-- @endcan --}}
                         {{-- @can('competitions_list') --}}
-                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('competitions.index') }}">{{ __('messages.competitions') }}</a></li>
+                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('competitions.index') }}">{{ __('messages.competitions') }}</a></li> --}}
                         {{-- @endcan --}}
                         {{-- @can('reservations_list') --}}
-                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('quizzes.index') }}">{{ __('messages.quizzes') }}</a></li>
+                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('quizzes.index') }}">{{ __('messages.quizzes') }}</a></li> --}}
                         {{-- @endcan --}}
                         {{-- @can('workDays_list') --}}
-                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('questions.index') }}">{{ __('messages.questions') }}</a></li>
+                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('questions.index') }}">{{ __('messages.questions') }}</a></li> --}}
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('settings.index') }}">{{ __('messages.settings') }}</a></li>
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
-                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('groups.index') }}">{{ __('messages.groups') }}</a></li>
+                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('groups.index') }}">{{ __('messages.groups') }}</a></li> --}}
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
-                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('rewards.index') }}">{{ __('messages.rewards') }}</a></li>
+                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('rewards.index') }}">{{ __('messages.rewards') }}</a></li> --}}
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
-                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('orders.index') }}">{{ __('messages.orders') }}</a></li>
+                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('orders.index') }}">{{ __('messages.orders') }}</a></li> --}}
                         {{-- @endcan --}}
                     @endauth
                     @auth

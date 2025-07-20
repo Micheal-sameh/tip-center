@@ -21,7 +21,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $request->session()->regenerate();
 
-            return redirect()->intended(route('competitions.index'))->with('success', 'Welcome back, Admin!');
+            return redirect()->intended(route('settings.index'))->with('success', 'Welcome back, Admin!');
         }
 
         return redirect()->back()

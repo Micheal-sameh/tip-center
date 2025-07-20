@@ -9,7 +9,7 @@ class loginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'membership_code' => 'required|exists:users,membership_code',
+            'email' => 'required|exists:users,email',
             'password' => 'required',
             'remember_me' => 'boolean',
         ];
