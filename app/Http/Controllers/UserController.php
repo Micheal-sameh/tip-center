@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTOs\UserDTO;
 use App\Http\Requests\UserCreateRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Services\UserService;
 use Spatie\Permission\Models\Role;
 
@@ -34,7 +35,7 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'student')->get();
 
         return view('users.create', compact('roles'));
     }
@@ -52,9 +53,20 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = $this->userService->show($id);
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'student')->get();
 
         return view('users.edit', compact('user', 'roles'));
+    }
+
+    public function update(UserUpdateRequest $request, $id)
+    {
+        $input = new UserDTO(...$request->only(
+            'email', 'role_id', 'birth_date', 'phone'
+        ));
+
+        $this->userService->update($input, $id);
+
+        return to_route('users.show', $id);
     }
 
     public function delete($id)

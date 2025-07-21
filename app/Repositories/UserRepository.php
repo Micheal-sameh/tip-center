@@ -70,8 +70,12 @@ class UserRepository extends BaseRepository
             'phone' => $input->phone ?? $user->phone,
             'status' => $input->status ?? $user->status,
         ]);
-        $role = Role::find($input->role_id);
-        $user->assigntoRole($role);
+        $currentRole = $user->roles->first();
+        if ($currentRole->id != $input->role_id) {
+            $user->removeRole($currentRole);
+            $role = Role::find($input->role_id);
+            $user->assignRole($role);
+        }
 
         return $user;
     }
