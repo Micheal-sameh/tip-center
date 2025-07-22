@@ -18,4 +18,14 @@ class Professor extends Model
         'birth_date',
         'status',
     ];
+
+    public function professorStages()
+    {
+        return $this->belongsToMany(ProfessorStage::class, 'professor_stages', 'professor_id', 'stage');
+    }
+
+    public function stages()
+    {
+        return $this->hasMany(ProfessorStage::class);
+    }
 }

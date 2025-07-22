@@ -54,6 +54,8 @@ class ProfessorRepository extends BaseRepository
             'status' => UserStatus::ACTIVE,
             'birth_date' => $input->birth_date,
         ]);
+
+        $professor->professorStages()->sync($input->stages);
         DB::commit();
 
         return $professor;

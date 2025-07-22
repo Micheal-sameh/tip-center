@@ -2,16 +2,16 @@
 
 @section('content')
 <div class="container" style="width: 90%;">
-    @can('users_create')
+    @can('professors_create')
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4>{{ __('trans.users') }}</h4>
-            <a href="{{ route('users.create') }}" class="btn btn-primary">
-                {{ __('trans.create_user') }}
+            <h4>{{ __('trans.professors') }}</h4>
+            <a href="{{ route('professors.create') }}" class="btn btn-primary">
+                {{ __('trans.create_professor') }}
             </a>
         </div>
     @endcan
 
-    <!-- Users Table -->
+    <!-- This is where the partial gets included -->
     <div id="users-table">
         @include('professors.partial.table-users', ['professors' => $professors])
     </div>

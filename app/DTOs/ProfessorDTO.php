@@ -13,6 +13,8 @@ class ProfessorDTO extends DTO
     public ?string $school;
     public ?string $subject;
     public ?string $birth_date;
+    public ?array $stages;
+
 
     public function __construct(
         string $name = parent::STRING,
@@ -21,6 +23,7 @@ class ProfessorDTO extends DTO
         string $school = parent::STRING,
         string $subject = parent::STRING,
         string $birth_date = parent::STRING,
+        array $stages = parent::ARRAY,
     ) {
         parent::__construct(compact(...$this->getParameterList()));
     }

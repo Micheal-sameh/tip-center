@@ -31,4 +31,6 @@ return [
     'professors' => 'Professors',
     'optional_phone' => 'Optional Phone',
     'professor_details' => 'Professor Details',
+    'stages' => 'Stages',
+    'no_stages_assigned' => 'No stages assigned to this professor.',
 ];
