@@ -32,7 +32,7 @@
                             </div>
                             <!-- Status Badge -->
                             <div class="position-absolute bottom-0 end-0 translate-middle">
-                                @if ($professor->status)
+                                @if ($professor->status == 1)
                                     <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm">
                                         <i class="fas fa-check-circle me-1"></i> {{ __('trans.active') }}
                                     </span>

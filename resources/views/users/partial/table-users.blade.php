@@ -35,7 +35,7 @@
                                 <td>{{ $user->roles->first()?->name }}</td>
                                 <td>{{ $user->birth_date }}</td>
                                 <td>
-                                    <button id="status-btn-{{ $user->id }}"
+                                    <button id="status-btn-desktop-{{ $user->id }}"
                                         onclick="toggleStatus({{ $user->id }})"
                                         class="badge border-0 px-3 py-2 {{ $user->status == 1 ? 'bg-success' : 'bg-secondary' }}">
                                         {{ $user->status == 1 ? __('trans.active') : __('trans.inactive') }}
@@ -85,9 +85,9 @@
                         <p class="mb-1"><strong>{{ __('trans.birth_date') }}:</strong> {{ $user->birth_date }}</p>
                         <p class="mb-2">
                             <strong>{{ __('trans.status') }}:</strong>
-                            <button id="status-btn-{{ $user->id }}" onclick="toggleStatus({{ $user->id }})"
-                                class="badge border-0 px-3 py-2 {{ $user->status ? 'bg-success' : 'bg-secondary' }}">
-                                {{ $user->status ? __('trans.active') : __('trans.inactive') }}
+                            <button id="status-btn-mobile-{{ $user->id }}" onclick="toggleStatus({{ $user->id }})"
+                                class="badge border-0 px-3 py-2 {{ $user->status == 1 ? 'bg-success' : 'bg-secondary' }}">
+                                {{ $user->status == 1 ? __('trans.active') : __('trans.inactive') }}
                             </button>
                         </p>
                         <div class="d-flex justify-content-end gap-2">
@@ -119,11 +119,11 @@
             @endforelse
         </div>
     </div>
+
     <div class="d-flex justify-content-center">
         @if ($users->hasPages())
             <nav>
                 <ul class="pagination">
-                    {{-- Previous Page Link --}}
                     @if ($users->onFirstPage())
                         <li class="page-item disabled">
                             <span class="page-link">&laquo;</span>
@@ -134,14 +134,12 @@
                         </li>
                     @endif
 
-                    {{-- Pagination Elements --}}
                     @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
                         <li class="page-item {{ $users->currentPage() === $page ? 'active' : '' }}">
                             <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                         </li>
                     @endforeach
 
-                    {{-- Next Page Link --}}
                     @if ($users->hasMorePages())
                         <li class="page-item">
                             <a class="page-link" href="{{ $users->nextPageUrl() }}" rel="next">&raquo;</a>
@@ -156,20 +154,23 @@
         @endif
     </div>
 
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <script>
         function toggleStatus(userId) {
-            const button = document.getElementById(`status-btn-${userId}`);
-            const currentStatus = button.classList.contains('bg-success');
+            const desktopBtn = document.getElementById(`status-btn-desktop-${userId}`);
+            const mobileBtn = document.getElementById(`status-btn-mobile-${userId}`);
+
+            const currentStatus = (desktopBtn || mobileBtn).classList.contains('bg-success');
             const newStatus = !currentStatus;
 
-            // Show loading state
-            button.disabled = true;
-            button.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+            [desktopBtn, mobileBtn].forEach(btn => {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+                }
+            });
 
-            // Make AJAX request
             fetch(`/users/${userId}/status`, {
                     method: 'PUT',
                     headers: {
@@ -184,12 +185,14 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Update button appearance
-                        button.classList.toggle('bg-success', newStatus);
-                        button.classList.toggle('bg-secondary', !newStatus);
-                        button.textContent = newStatus ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
+                        [desktopBtn, mobileBtn].forEach(btn => {
+                            if (btn) {
+                                btn.classList.toggle('bg-success', newStatus);
+                                btn.classList.toggle('bg-secondary', !newStatus);
+                                btn.textContent = newStatus ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
+                            }
+                        });
 
-                        // Optional: Show success message
                         Toastify({
                             text: "{{ __('trans.status_updated_successfully') }}",
                             duration: 3000,
@@ -203,8 +206,6 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    // Show error message
                     Toastify({
                         text: "{{ __('trans.failed_to_update_status') }}: " + error.message,
                         duration: 3000,
@@ -215,7 +216,9 @@
                     }).showToast();
                 })
                 .finally(() => {
-                    button.disabled = false;
+                    [desktopBtn, mobileBtn].forEach(btn => {
+                        if (btn) btn.disabled = false;
+                    });
                 });
         }
     </script>
