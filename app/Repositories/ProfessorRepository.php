@@ -1,0 +1,91 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Enums\UserStatus;
+use App\Models\Professor;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+
+class ProfessorRepository extends BaseRepository
+{
+    public function __construct(Professor $model)
+    {
+        $this->model = $model;
+    }
+
+    protected function model(): string
+    {
+        return Professor::class;
+    }
+
+    public bool $pagination = true;
+
+    public int $perPage = 10;
+
+    protected function execute(Builder $query): Collection|LengthAwarePaginator
+    {
+        return $this->pagination ? $query->paginate($this->perPage) : $query->get();
+    }
+
+    public function index()
+    {
+        $query = $this->model->query();
+
+        return $this->execute($query);
+    }
+
+    public function show($id)
+    {
+        return $this->findById($id);
+    }
+
+    public function store($input)
+    {
+        DB::beginTransaction();
+        $professor = $this->model->create([
+            'name' => $input->name,
+            'optional_phone' => $input->optional_phone,
+            'phone' => $input->phone,
+            'school' => $input->school,
+            'subject' => $input->subject,
+            'status' => UserStatus::ACTIVE,
+            'birth_date' => $input->birth_date,
+        ]);
+        DB::commit();
+
+        return $professor;
+    }
+
+    public function update($input, $id)
+    {
+        $professor = $this->findById($id);
+        $professor->update([
+            'name' => $input->name ?? $professor->name,
+            'optional_phone' => $input->optional_phone ?? $professor->optional_phone,
+            'phone' => $input->phone ?? $professor->phone,
+            'school' => $input->school ?? $professor->school,
+            'subject' => $input->subject ?? $professor->subject,
+        ]);
+
+        return $professor;
+    }
+
+    public function delete($id)
+    {
+        $professor = $this->findById($id);
+        $professor->delete();
+    }
+
+    public function changeStatus($id)
+    {
+        $professor = $this->findById($id);
+        $professor->update([
+            'status' => $professor->status == UserStatus::ACTIVE ? UserStatus::INACTIVE : UserStatus::ACTIVE,
+        ]);
+
+        return $professor;
+    }
+}

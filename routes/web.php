@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,17 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::put('/{id}/status', [UserController::class, 'changeStatus'])->name('users.status');
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'delete'])->name('users.delete');
+        });
+
+        Route::prefix('professors')->group(function () {
+            Route::get('/', [ProfessorController::class, 'index'])->name('professors.index');
+            Route::get('/create', [ProfessorController::class, 'create'])->name('professors.create');
+            Route::get('/{id}/show', [ProfessorController::class, 'show'])->name('professors.show');
+            Route::get('/{id}/edit', [ProfessorController::class, 'edit'])->name('professors.edit');
+            Route::post('/', [ProfessorController::class, 'store'])->name('professors.store');
+            Route::put('/{id}/status', [ProfessorController::class, 'changeStatus'])->name('professors.status');
+            Route::put('/{id}', [ProfessorController::class, 'update'])->name('professors.update');
+            Route::delete('/{id}', [ProfessorController::class, 'delete'])->name('professors.delete');
         });
 
         Route::prefix('settings')->group(function () {

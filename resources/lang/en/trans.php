@@ -25,4 +25,10 @@ return [
     'update' => 'Update',
     'edit_user' => 'Edit User',
     'email' => 'Email',
+    'school' => 'School',
+    'subject' => 'Subject',
+    'create_professor' => 'Create New Professor',
+    'professors' => 'Professors',
+    'optional_phone' => 'Optional Phone',
+    'professor_details' => 'Professor Details',
 ];

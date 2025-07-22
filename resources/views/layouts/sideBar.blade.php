@@ -195,10 +195,10 @@
                         @can('users_view')
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;" href="{{ route('users.index') }}"> {{__('messages.users')}}</a></li>
                         @endcan
-                        {{-- @can('competitions_list') --}}
-                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('competitions.index') }}">{{ __('messages.competitions') }}</a></li> --}}
-                        {{-- @endcan --}}
+                        @can('professors_view')
+                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('professors.index') }}">{{ __('messages.professors') }}</a></li>
+                        @endcan
                         {{-- @can('reservations_list') --}}
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('quizzes.index') }}">{{ __('messages.quizzes') }}</a></li> --}}

@@ -25,4 +25,10 @@ return [
     'update' => 'تحديث',
     'edit_user' => 'تعديل المستخدم',
     'email' => 'البريد الإلكتروني',
+    'school' => 'المدرسة',
+    'subject' => 'المادة',
+    'create_professor' => 'إنشاء مدرسين',
+    'professors' => 'المدرسين',
+    'optional_phone' => 'رقم هاتف اخر',
+    'professor_details' => 'تفاصيل المدرس',
 ];
