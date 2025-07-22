@@ -5,29 +5,19 @@ namespace App\Enums;
 use Illuminate\Support\Facades\App;
 use InvalidArgumentException;
 
-class CompetitionStatus
+class UserStatus
 {
-    public const PENDING = 1;
-    public const ACTIVE = 2;
-    public const FINISHED = 3;
-    public const CANCELLED = 4;
+    public const ACTIVE = 1;
+    public const INACTIVE = 2;
 
     private static array $translations = [
-        self::PENDING     => [
-            'en' => 'Pending',
-            'ar' => 'قيد الانتظار',
-        ],
-        self::ACTIVE    => [
+        self::ACTIVE => [
             'en' => 'Active',
             'ar' => 'فعال',
         ],
-        self::FINISHED   => [
-            'en' => 'Finished',
-            'ar' => 'منتهي',
-        ],
-        self::CANCELLED   => [
-            'en' => 'Cancelled',
-            'ar' => 'ملغى',
+        self::INACTIVE   => [
+            'en' => 'Inactive',
+            'ar' => 'غير فعال',
         ],
     ];
 
@@ -46,7 +36,7 @@ class CompetitionStatus
 
     public static function getStringValue(int $value): string
     {
-        if (!isset(self::$translations[$value])) {
+        if (! isset(self::$translations[$value])) {
             throw new InvalidArgumentException("Invalid listing type value: {$value}");
         }
 

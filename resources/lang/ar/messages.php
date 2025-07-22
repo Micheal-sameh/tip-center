@@ -163,4 +163,5 @@ return [
     'back' => 'الرجوع',
     'no_questions_found' => 'لا توجد اسئلة',
     'edit_competition' => 'تعديل المنافسة',
+    'Status updated' => 'تم تحديث الحالة بنجاح',
 ];

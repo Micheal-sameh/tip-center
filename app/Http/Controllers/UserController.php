@@ -75,4 +75,14 @@ class UserController extends Controller
 
         return to_route('users.index');
     }
+
+    public function changeStatus($id)
+    {
+        $user = $this->userService->changeStatus($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Status updated'),
+        ]);
+    }
 }

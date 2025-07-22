@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -84,6 +85,15 @@ class UserRepository extends BaseRepository
     {
         $user = $this->findById($id);
         $user->delete();
+    }
 
+    public function changeStatus($id)
+    {
+        $user = $this->findById($id);
+        $user->update([
+            'status' => $user->status == UserStatus::ACTIVE ? UserStatus::INACTIVE : UserStatus::ACTIVE,
+        ]);
+
+        return $user;
     }
 }

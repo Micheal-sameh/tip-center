@@ -44,4 +44,9 @@ class UserService
     {
         return $this->userRepository->delete($id);
     }
+
+    public function changeStatus($id)
+    {
+        return $this->userRepository->changeStatus($id);
+    }
 }
