@@ -197,7 +197,7 @@
                         @endcan
                         @can('professors_view')
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('professors.index') }}">{{ __('messages.professors') }}</a></li>
+                                href="{{ route('professors.index') }}">{{ __('trans.professors') }}</a></li>
                         @endcan
                         {{-- @can('reservations_list') --}}
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"

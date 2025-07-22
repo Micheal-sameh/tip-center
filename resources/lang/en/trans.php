@@ -33,4 +33,6 @@ return [
     'professor_details' => 'Professor Details',
     'stages' => 'Stages',
     'no_stages_assigned' => 'No stages assigned to this professor.',
+    'professors' => 'Professors',
+    'professor' => 'Professor',
 ];

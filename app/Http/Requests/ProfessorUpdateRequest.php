@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StagesEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProfessorUpdateRequest extends FormRequest
@@ -14,6 +15,8 @@ class ProfessorUpdateRequest extends FormRequest
             'subject' => 'string',
             'school' => 'string',
             'birth_date' => 'date',
+            'stages' => 'array',
+            'stages.*' => '|in:'.implode(',', array_column(StagesEnum::all(), 'value')),
         ];
     }
 }

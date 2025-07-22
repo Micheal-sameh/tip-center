@@ -71,6 +71,7 @@ class ProfessorRepository extends BaseRepository
             'school' => $input->school ?? $professor->school,
             'subject' => $input->subject ?? $professor->subject,
         ]);
+        $professor->professorStages()->sync($input->stages);
 
         return $professor;
     }

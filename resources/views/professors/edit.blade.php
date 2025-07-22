@@ -59,8 +59,31 @@
                         </div>
                     @endforeach
 
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ __('Stages') }}</label>
 
-                    {{-- <div class="mb-3">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
+                                data-bs-toggle="dropdown">
+                                {{ __('Select Stages') }}
+                            </button>
+                            <ul class="dropdown-menu p-2 dropdown-checkbox shadow-sm">
+                                @foreach (App\Enums\StagesEnum::all() as $stage)
+                                    <li>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="stages[]"
+                                                value="{{ $stage['value'] }}" id="stage_{{ $stage['value'] }}"
+                                                {{ in_array($stage['value'], old('stages', $professor->stages->pluck('stage')->toArray() ?? [])) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="stage_{{ $stage['value'] }}">
+                                                {{ $stage['name'] }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                        {{-- <div class="mb-3">
                     <label for="status" class="form-label fw-semibold">{{ __('Status') }}</label>
                     <select name="status" id="status" class="form-select shadow-sm" data-original="{{ $professor->status }}">
                         <option value="1" {{ $professor->status == 1 ? 'selected' : '' }}>{{ __('Active') }}</option>
@@ -69,11 +92,11 @@
                     @error('status') <small class="text-danger">{{ $message }}</small> @enderror
                 </div> --}}
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success shadow">
-                            <i class="fas fa-save me-1"></i> {{ __('Update Professor') }}
-                        </button>
-                    </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success shadow">
+                                <i class="fas fa-save me-1"></i> {{ __('Update Professor') }}
+                            </button>
+                        </div>
                 </form>
             </div>
         </div>

@@ -33,4 +33,6 @@ return [
     'professor_details' => 'تفاصيل المدرس',
     'stages' => 'صفوف التدريس',
     'no_stages_assigned' => 'لا يوجد صفوف دراسية',
+    'professors' => 'المدرسين',
+    'professor' => 'المدرس',
 ];
