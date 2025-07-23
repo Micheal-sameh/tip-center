@@ -39,4 +39,5 @@ return [
     'select_stages' => 'Select Stages',
     'search_name' => 'Search by name',
     'no_professors_found' => 'No professors found.',
+    'joined' => 'Joined',
 ];

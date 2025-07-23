@@ -39,4 +39,5 @@ return [
     'select_stages' => 'اختر صفوف التدريس',
     'search_name' => 'بحث باسم',
     'no_professors_found' => 'لا يوجد مدرسين',
+    'joined' => 'انضم',
 ];
