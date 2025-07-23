@@ -18,8 +18,8 @@
                     <div class="row g-3 align-items-end">
                         <div class="col-md-4">
                             <label class="form-label small mb-1">{{ __('trans.name') }}</label>
-                            <input type="text" name="name" value="{{ request('name') }}" class="form-control form-control-sm"
-                                placeholder="{{ __('trans.search_name') }}">
+                            <input type="text" name="name" value="{{ request('name') }}"
+                                class="form-control form-control-sm" placeholder="{{ __('trans.search_name') }}">
                         </div>
 
                         <div class="col-md-6">
@@ -78,10 +78,12 @@
                             </thead>
                             <tbody>
                                 @forelse ($professors as $index => $professor)
-                                    <tr id="professor-row-{{ $professor->id }}" class="{{ $professor->status ? '' : 'text-muted' }}">
+                                    <tr id="professor-row-{{ $professor->id }}"
+                                        class="{{ $professor->status ? '' : 'text-muted' }}">
                                         <td class="text-center">{{ $index + 1 }}</td>
                                         <td>
-                                            <a href="{{ route('professors.show', $professor) }}" class="text-decoration-none">
+                                            <a href="{{ route('professors.show', $professor) }}"
+                                                class="text-decoration-none">
                                                 {{ $professor->name }}
                                             </a>
                                         </td>
@@ -106,7 +108,8 @@
                                         <td>
                                             <div class="d-flex flex-wrap gap-1">
                                                 @foreach ($professor->stages as $stage)
-                                                    <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 py-1 px-2 small">
+                                                    <span
+                                                        class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 py-1 px-2 small">
                                                         {{ \App\Enums\StagesEnum::getStringValue($stage->stage) }}
                                                     </span>
                                                 @endforeach
@@ -115,7 +118,8 @@
                                         <td>
                                             <div class="d-flex gap-1">
                                                 @can('professors_update')
-                                                    <a href="{{ route('professors.edit', $professor) }}" class="btn btn-sm btn-outline-warning" title="{{ __('trans.edit') }}">
+                                                    <a href="{{ route('professors.edit', $professor) }}"
+                                                        class="btn btn-sm btn-outline-warning" title="{{ __('trans.edit') }}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 @endcan
@@ -125,7 +129,8 @@
                                                         onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ __('trans.delete') }}">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                            title="{{ __('trans.delete') }}">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -156,7 +161,8 @@
                                             {{ $professor->name }}
                                         </a>
                                     </h5>
-                                    <button id="status-btn-{{ $professor->id }}" onclick="toggleStatus({{ $professor->id }})"
+                                    <button id="status-btn-{{ $professor->id }}"
+                                        onclick="toggleStatus({{ $professor->id }})"
                                         class="badge border-0 px-2 py-1 rounded-1 {{ $professor->status == 1 ? 'bg-success' : 'bg-secondary' }}">
                                         {{ $professor->status == 1 ? __('trans.active') : __('trans.inactive') }}
                                     </button>
@@ -188,7 +194,8 @@
                                     <div class="text-muted small mb-1">{{ __('trans.stages') }}</div>
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach ($professor->stages as $stage)
-                                            <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 py-1 px-2 small">
+                                            <span
+                                                class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 py-1 px-2 small">
                                                 {{ \App\Enums\StagesEnum::getStringValue($stage->stage) }}
                                             </span>
                                         @endforeach
@@ -197,12 +204,14 @@
 
                                 <div class="d-flex justify-content-end gap-2">
                                     @can('professors_view')
-                                        <a href="{{ route('professors.show', $professor) }}" class="btn btn-sm btn-outline-info" title="{{ __('trans.view') }}">
+                                        <a href="{{ route('professors.show', $professor) }}"
+                                            class="btn btn-sm btn-outline-info" title="{{ __('trans.view') }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     @endcan
                                     @can('professors_update')
-                                        <a href="{{ route('professors.edit', $professor) }}" class="btn btn-sm btn-outline-warning" title="{{ __('trans.edit') }}">
+                                        <a href="{{ route('professors.edit', $professor) }}"
+                                            class="btn btn-sm btn-outline-warning" title="{{ __('trans.edit') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     @endcan
@@ -211,7 +220,8 @@
                                             onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ __('trans.delete') }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                title="{{ __('trans.delete') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -229,13 +239,43 @@
             </div>
 
             <!-- Pagination -->
-            @if($professors->hasPages())
-                <div class="card-footer py-2">
-                    <div class="d-flex justify-content-center">
-                        {{ $professors->links() }}
-                    </div>
-                </div>
-            @endif
+            <div class="d-flex justify-content-center pt-2">
+                @if ($professors->hasPages())
+                    <nav>
+                        <ul class="pagination">
+                            {{-- Previous Page Link --}}
+                            @if ($professors->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link">&laquo;</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $professors->previousPageUrl() }}"
+                                        rel="prev">&laquo;</a>
+                                </li>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @foreach ($professors->getUrlRange(1, $professors->lastPage()) as $page => $url)
+                                <li class="page-item {{ $professors->currentPage() === $page ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                </li>
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            @if ($professors->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $professors->nextPageUrl() }}" rel="next">&raquo;</a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link">&raquo;</span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                @endif
+            </div>
         </div>
     </div>
 
