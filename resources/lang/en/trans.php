@@ -25,4 +25,5 @@ return [
     'update' => 'Update',
     'edit_user' => 'Edit User',
     'email' => 'Email',
+    'joined' => 'Joined',
 ];
