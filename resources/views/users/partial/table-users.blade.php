@@ -127,59 +127,91 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="d-flex justify-content-center pt-3">
-            {{ $users->links() }}
+        <div class="d-flex justify-content-center pt-2">
+            @if ($users->hasPages())
+                <nav>
+                    <ul class="pagination">
+                        {{-- Previous Page Link --}}
+                        @if ($users->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $users->previousPageUrl() }}" rel="prev">&laquo;</a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
+                            <li class="page-item {{ $users->currentPage() === $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($users->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $users->nextPageUrl() }}" rel="next">&raquo;</a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            @endif
         </div>
-    </div>
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Status Toggle Script --}}
-    <script>
-        function toggleStatus(userId) {
-            const buttons = document.querySelectorAll(`.status-btn[data-user-id="${userId}"]`);
-            let currentStatus = null;
+        {{-- Status Toggle Script --}}
+        <script>
+            function toggleStatus(userId) {
+                const buttons = document.querySelectorAll(`.status-btn[data-user-id="${userId}"]`);
+                let currentStatus = null;
 
-            buttons.forEach(btn => {
-                if (currentStatus === null) {
-                    currentStatus = btn.classList.contains('bg-success');
-                }
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
-            });
-
-            const newStatus = !currentStatus;
-
-            fetch(`/users/${userId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        status: newStatus
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.success) throw new Error(data.message || 'Failed to update status');
-                    const isActive = data.status == 1;
-
-                    buttons.forEach(btn => {
-                        btn.classList.toggle('bg-success', isActive);
-                        btn.classList.toggle('bg-secondary', !isActive);
-                        btn.innerHTML = isActive ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
-                        btn.disabled = false;
-                    });
-                })
-                .catch(err => {
-                    buttons.forEach(btn => {
-                        btn.innerHTML = '{{ __('trans.status') }}';
-                        btn.disabled = false;
-                    });
-                    alert("{{ __('trans.failed_to_update_status') }}: " + err.message);
+                buttons.forEach(btn => {
+                    if (currentStatus === null) {
+                        currentStatus = btn.classList.contains('bg-success');
+                    }
+                    btn.disabled = true;
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
                 });
-        }
-    </script>
-@endsection
+
+                const newStatus = !currentStatus;
+
+                fetch(`/users/${userId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: newStatus
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) throw new Error(data.message || 'Failed to update status');
+                        const isActive = data.status == 1;
+
+                        buttons.forEach(btn => {
+                            btn.classList.toggle('bg-success', isActive);
+                            btn.classList.toggle('bg-secondary', !isActive);
+                            btn.innerHTML = isActive ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
+                            btn.disabled = false;
+                        });
+                    })
+                    .catch(err => {
+                        buttons.forEach(btn => {
+                            btn.innerHTML = '{{ __('trans.status') }}';
+                            btn.disabled = false;
+                        });
+                        alert("{{ __('trans.failed_to_update_status') }}: " + err.message);
+                    });
+            }
+        </script>
+    @endsection
