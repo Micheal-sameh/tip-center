@@ -30,9 +30,13 @@ class ProfessorRepository extends BaseRepository
         return $this->pagination ? $query->paginate($this->perPage) : $query->get();
     }
 
-    public function index()
+    public function index($input)
     {
-        $query = $this->model->query();
+        $query = $this->model->query()
+            ->when($input->has('name'), fn ($q) => $q->where('name', 'like', '%'.$input->name.'%'))
+            ->when($input->has('stages'), function ($query) use ($input) {
+                $query->whereHas('stages', fn ($q) => $q->whereIn('stage', $input->stages));
+            });
 
         return $this->execute($query);
     }

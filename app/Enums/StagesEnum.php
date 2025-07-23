@@ -52,7 +52,7 @@ class StagesEnum
      */
     public static function all(): array
     {
-        $locale = App::getLocale();
+        $locale = App::getLocale() ?? 'en';
         return array_map(
             fn($value) => [
                 'name'  => self::$translations[$value][$locale],

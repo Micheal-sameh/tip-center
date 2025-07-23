@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTOs\ProfessorDTO;
 use App\Http\Requests\professorCreateRequest;
+use App\Http\Requests\ProfessorIndexRequest;
 use App\Http\Requests\professorUpdateRequest;
 use App\Services\professorService;
 use Spatie\Permission\Models\Role;
@@ -12,16 +13,21 @@ class ProfessorController extends Controller
 {
     public function __construct(protected ProfessorService $professorService)
     {
-        // $this->middleware('permission:professors_view')->only(['index', 'show']);
-        // $this->middleware('permission:professors_create')->only(['create', 'store']);
-        // $this->middleware('permission:professors_update')->only(['edit', 'update']);
-        // $this->middleware('permission:professors_delete')->only('destroy');
-        // $this->middleware('permission:professors_resetPassword')->only('resetPassword');
+        $this->middleware('permission:professors_view')->only(['index', 'show']);
+        $this->middleware('permission:professors_create')->only(['create', 'store']);
+        $this->middleware('permission:professors_update')->only(['edit', 'update']);
+        $this->middleware('permission:professors_delete')->only('destroy');
+        $this->middleware('permission:professors_resetPassword')->only('resetPassword');
     }
 
-    public function index()
+    public function index(ProfessorIndexRequest $request)
     {
-        $professors = $this->professorService->index();
+        $input = new ProfessorDTO(...$request->validated());
+        $professors = $this->professorService->index($input);
+
+        if ($request->ajax()) {
+            return view('professors.partials.table', compact('professors'))->render();
+        }
 
         return view('professors.index', compact('professors'));
     }

@@ -35,4 +35,8 @@ return [
     'no_stages_assigned' => 'No stages assigned to this professor.',
     'professors' => 'Professors',
     'professor' => 'Professor',
+    'search' => 'Search',
+    'select_stages' => 'Select Stages',
+    'search_name' => 'Search by name',
+    'no_professors_found' => 'No professors found.',
 ];

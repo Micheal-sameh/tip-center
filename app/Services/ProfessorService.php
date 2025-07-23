@@ -8,9 +8,9 @@ class ProfessorService
 {
     public function __construct(protected ProfessorRepository $professorRepository) {}
 
-    public function index()
+    public function index($input)
     {
-        $professors = $this->professorRepository->index();
+        $professors = $this->professorRepository->index($input);
 
         return $professors;
     }
