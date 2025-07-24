@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Enums;
+
+use Illuminate\Support\Facades\App;
+use InvalidArgumentException;
+
+class SessionStatus
+{
+    public const PENDING = 1;
+    public const ACTIVE = 2;
+    public const INACTIVE = 3;
+
+    private static array $translations = [
+        self::PENDING => [
+            'en' => 'Pending',
+            'ar' => 'قيد الانتظار',
+        ],
+        self::ACTIVE => [
+            'en' => 'Active',
+            'ar' => 'فعال',
+        ],
+        self::INACTIVE   => [
+            'en' => 'Inactive',
+            'ar' => 'غير فعال',
+        ],
+    ];
+
+    public static function all(): array
+    {
+        $locale = App::isLocale('en') ? 'en' : 'ar';
+
+        return array_map(
+            fn ($value) => [
+                'name'  => self::$translations[$value][$locale],
+                'value' => $value,
+            ],
+            array_keys(self::$translations)
+        );
+    }
+
+    public static function getStringValue(int $value): string
+    {
+        if (! isset(self::$translations[$value])) {
+            throw new InvalidArgumentException("Invalid listing type value: {$value}");
+        }
+
+        return self::$translations[$value][App::isLocale('en') ? 'en' : 'ar'];
+    }
+
+    public static function getValues(): array
+    {
+        return array_keys(self::$translations);
+    }
+}

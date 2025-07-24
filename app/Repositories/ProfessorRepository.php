@@ -86,6 +86,11 @@ class ProfessorRepository extends BaseRepository
         $professor->delete();
     }
 
+    public function dropdown()
+    {
+        return $this->model->select('id', 'name')->get();
+    }
+
     public function changeStatus($id)
     {
         $professor = $this->findById($id);

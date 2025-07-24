@@ -41,6 +41,14 @@ class ProfessorService
         return $this->professorRepository->delete($id);
     }
 
+    public function dropdown()
+    {
+        $professors = $this->professorRepository->dropdown();
+        $professors->load('stages');
+
+        return $professors;
+    }
+
     public function changeStatus($id)
     {
         return $this->professorRepository->changeStatus($id);

@@ -204,8 +204,8 @@
                                 href="{{ route('students.index') }}">{{ __('trans.students') }}</a></li>
                         @endcan
                         {{-- @can('workDays_list') --}}
-                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('questions.index') }}">{{ __('messages.questions') }}</a></li> --}}
+                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('sessions.index') }}">{{ __('trans.sessions') }}</a></li>
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
