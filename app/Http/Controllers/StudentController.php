@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\StudentDTO;
 use App\Http\Requests\StudentCreateRequest;
 use App\Http\Requests\StudentIndexRequest;
+use App\Http\Requests\StudentUpdateRequest;
 use App\Services\StudentService;
 
 class StudentController extends Controller
@@ -56,10 +57,10 @@ class StudentController extends Controller
         return view('students.edit', compact('student'));
     }
 
-    public function update(studentUpdateRequest $request, $id)
+    public function update(StudentUpdateRequest $request, $id)
     {
-        $input = new studentDTO(...$request->only(
-            'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stages'
+        $input = new StudentDTO(...$request->only(
+            'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
         ));
 
         $this->studentservice->update($input, $id);

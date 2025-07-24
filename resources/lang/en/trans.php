@@ -40,4 +40,8 @@ return [
     'search_name' => 'Search by name',
     'no_professors_found' => 'No professors found.',
     'joined' => 'Joined',
+    'students' => 'Students',
+    'code' => 'Code',
+    'note' => 'Note',
+    'student_details' => 'Student Details',
 ];

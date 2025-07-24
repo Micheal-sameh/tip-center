@@ -87,13 +87,13 @@ class StudentRepository extends BaseRepository
     {
         $student = $this->findById($id);
         $student->update([
-            'name' => $input->name ?? $student->name,
-            'optional_phone' => $input->optional_phone ?? $student->optional_phone,
+            'stage' => $input->stage ?? $student->stage,
             'phone' => $input->phone ?? $student->phone,
-            'school' => $input->school ?? $student->school,
-            'subject' => $input->subject ?? $student->subject,
+            'parent_phone' => $input->parent_phone ?? $student->parent_phone,
+            'parent_phone_2' => $input->parent_phone_2 ?? $student->parent_phone_2,
+            'birth_date' => $input->birth_date ?? $student->birth_date,
+            'note' => $input->note ?? $student->note,
         ]);
-        $student->studentStages()->sync($input->stages);
 
         return $student;
     }

@@ -1,119 +1,154 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <style>
-        @media (max-width: 768px) {
-            .form-wrapper {
-                min-height: 100vh;
-            }
-        }
-    </style>
-
-    <div class="container form-wrapper d-flex justify-content-center align-items-center py-4">
-        <div class="card shadow-lg border-0 w-100" style="max-width: 650px;">
-            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center rounded-top">
-                <h5 class="mb-0">
-                    <i class="fas fa-edit me-2"></i>{{ __('Edit Professor') }}
-                </h5>
-                <a href="{{ route('professors.index') }}" class="btn btn-sm btn-light border">
-                    <i class="fas fa-arrow-left me-1"></i> {{ __('Back') }}
-                </a>
+    <div class="container py-4" style="width:93%">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">{{ __('Edit Student') }}</h2>
             </div>
 
-            <div class="card-body bg-white px-4 py-4">
-                <form action="{{ route('professors.update', $professor->id) }}" method="POST" class="needs-validation"
-                    novalidate id="edit-professor-form">
+            <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <strong>{{ __('Whoops!') }}</strong> {{ __('There were some problems with your input.') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <ul class="mt-2 mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form id="student-form" action="{{ route('students.update', $student) }}" method="POST">
                     @csrf
                     @method('PUT')
 
-                    @php
-                        $inputs = [
-                            ['name' => 'name', 'label' => 'Name', 'type' => 'text'],
-                            ['name' => 'phone', 'label' => 'Phone', 'type' => 'text'],
-                            ['name' => 'optional_phone', 'label' => 'Optional Phone', 'type' => 'text'],
-                            ['name' => 'subject', 'label' => 'Subject', 'type' => 'text'],
-                            ['name' => 'school', 'label' => 'School', 'type' => 'text'],
-                            ['name' => 'birth_date', 'label' => 'Birth Date', 'type' => 'date'],
-                        ];
-                    @endphp
-
-                    @foreach ($inputs as $input)
-                        <div class="mb-3">
-                            <label for="{{ $input['name'] }}" class="form-label fw-semibold">
-                                {{ __($input['label']) }}
-                            </label>
-
-                            @if ($input['name'] === 'name')
-                                <input type="text" name="name_disabled" id="name_disabled" class="form-control shadow-sm"
-                                    value="{{ $professor->name }}" disabled>
-                                <input type="hidden" name="name" value="{{ $professor->name }}">
-                            @else
-                                <input type="{{ $input['type'] }}" name="{{ $input['name'] }}" id="{{ $input['name'] }}"
-                                    class="form-control shadow-sm @error($input['name']) is-invalid @enderror"
-                                    value="{{ old($input['name'], $professor->{$input['name']}) }}"
-                                    data-original="{{ $professor->{$input['name']} }}">
-                                @error($input['name'])
-                                    <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                            @endif
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="name" class="form-control" id="name"
+                                    placeholder="{{ __('Name') }}" required value="{{ old('name', $student->name) }}" disabled>
+                                <label for="name">{{ __('Name') }}</label>
+                            </div>
                         </div>
-                    @endforeach
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">{{ __('Stages') }}</label>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select name="stage" class="form-select" id="stage" required>
+                                    <option value="" disabled>Select Stage</option>
+                                    @foreach (App\Enums\StagesEnum::all() as $stage)
+                                        <option value="{{ $stage['value'] }}"
+                                            @if (old('stage', $student->stage) == $stage['value']) selected @endif>
+                                            {{ $stage['name'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <label for="stage">{{ __('Stage') }}</label>
+                            </div>
+                        </div>
 
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
-                                data-bs-toggle="dropdown">
-                                {{ __('Select Stages') }}
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="tel" name="phone" class="form-control" id="phone"
+                                    placeholder="{{ __('Phone') }}" value="{{ old('phone', $student->phone) }}">
+                                <label for="phone">{{ __('Phone') }}</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="tel" name="parent_phone" class="form-control" id="parent_phone"
+                                    placeholder="{{ __('Parent Phone') }}" value="{{ old('parent_phone', $student->parent_phone) }}">
+                                <label for="parent_phone">{{ __('Parent Phone') }}</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="tel" name="parent_phone_2" class="form-control" id="parent_phone_2"
+                                    placeholder="{{ __('Parent Phone 2') }}" value="{{ old('parent_phone_2', $student->parent_phone_2) }}">
+                                <label for="parent_phone_2">{{ __('Parent Phone 2') }}</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" name="birth_date" class="form-control" id="birth_date"
+                                    value="{{ old('birth_date', $student->birth_date ?: '') }}">
+                                <label for="birth_date">{{ __('Birth Date') }}</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea name="note" class="form-control" id="note" placeholder="{{ __('Note') }}" style="height: 100px">{{ old('note', $student->note) }}</textarea>
+                                <label for="note">{{ __('Note') }}</label>
+                                <div class="form-text">Any additional information about the student</div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-save me-2"></i>{{ __('Update Student') }}
                             </button>
-                            <ul class="dropdown-menu p-2 dropdown-checkbox shadow-sm">
-                                @foreach (App\Enums\StagesEnum::all() as $stage)
-                                    <li>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="stages[]"
-                                                value="{{ $stage['value'] }}" id="stage_{{ $stage['value'] }}"
-                                                {{ in_array($stage['value'], old('stages', $professor->stages->pluck('stage')->toArray() ?? [])) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="stage_{{ $stage['value'] }}">
-                                                {{ $stage['name'] }}
-                                            </label>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                            <a href="{{ route('students.index') }}" class="btn btn-outline-secondary px-4 py-2 ms-2">
+                                <i class="fas fa-times me-2"></i>{{ __('Cancel') }}
+                            </a>
 
-                        {{-- <div class="mb-3">
-                    <label for="status" class="form-label fw-semibold">{{ __('Status') }}</label>
-                    <select name="status" id="status" class="form-select shadow-sm" data-original="{{ $professor->status }}">
-                        <option value="1" {{ $professor->status == 1 ? 'selected' : '' }}>{{ __('Active') }}</option>
-                        <option value="0" {{ $professor->status == 0 ? 'selected' : '' }}>{{ __('Inactive') }}</option>
-                    </select>
-                    @error('status') <small class="text-danger">{{ $message }}</small> @enderror
-                </div> --}}
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success shadow">
-                                <i class="fas fa-save me-1"></i> {{ __('Update Professor') }}
-                            </button>
+                            {{-- <button type="button" class="btn btn-danger px-4 py-2 ms-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
+                            </button> --}}
                         </div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 
-    @push('scripts')
-        <script>
-            document.getElementById('edit-professor-form').addEventListener('submit', function(e) {
-                const fields = this.querySelectorAll('input, select');
-                fields.forEach(field => {
-                    const original = field.dataset.original;
-                    const current = field.value.trim();
-                    if (original !== undefined && original === current) {
-                        field.disabled = true;
-                    }
-                });
+    <!-- Delete Confirmation Modal -->
+    {{-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">{{ __('Confirm Deletion') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ __('Are you sure you want to delete this student? This action cannot be undone.') }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <form action="{{ route('students.delete', $student) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">{{ __('Delete Student') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+
+    <style>
+        .form-floating label {
+            padding: 1rem 0.75rem;
+        }
+
+        .form-floating>.form-control:not(:placeholder-shown)~label,
+        .form-floating>.form-control:focus~label,
+        .form-floating>.form-select~label {
+            opacity: 0.8;
+            transform: scale(0.85) translateY(-0.8rem) translateX(0.15rem);
+        }
+    </style>
+    <script>
+        document.getElementById('student-form').addEventListener('submit', function(e) {
+            const inputs = this.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.disabled = true;
+                }
             });
-        </script>
-    @endpush
+        });
+    </script>
 @endsection

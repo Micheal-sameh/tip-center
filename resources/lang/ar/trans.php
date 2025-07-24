@@ -40,4 +40,8 @@ return [
     'search_name' => 'بحث باسم',
     'no_professors_found' => 'لا يوجد مدرسين',
     'joined' => 'انضم',
+    'students' => 'الطلاب',
+    'code' => 'كود',
+    'note' => 'ملاحظات',
+    'student_details' => 'معلومات الطالب',
 ];

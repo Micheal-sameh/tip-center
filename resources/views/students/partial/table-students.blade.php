@@ -94,11 +94,11 @@
                                                 <i class="fas fa-edit me-2"></i>{{ __('Edit') }}
                                             </a>
                                         </li>
-                                        <li>
+                                        {{-- <li>
                                             <a class="dropdown-item" href="#">
                                                 <i class="fas fa-file-invoice me-2"></i>{{ __('Reports') }}
                                             </a>
-                                        </li>
+                                        </li> --}}
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
