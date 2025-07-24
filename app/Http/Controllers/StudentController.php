@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\DTOs\StudentDTO;
+use App\Http\Requests\StudentCreateRequest;
+use App\Http\Requests\StudentIndexRequest;
+use App\Services\StudentService;
+
+class StudentController extends Controller
+{
+    public function __construct(protected StudentService $studentservice)
+    {
+        // $this->middleware('permission:students_view')->only(['index', 'show']);
+        // $this->middleware('permission:students_create')->only(['create', 'store']);
+        // $this->middleware('permission:students_update')->only(['edit', 'update']);
+        // $this->middleware('permission:students_delete')->only('destroy');
+        // $this->middleware('permission:students_resetPassword')->only('resetPassword');
+    }
+
+    public function index(StudentIndexRequest $request)
+    {
+        $students = $this->studentservice->index($request->validated());
+        $totalStudents = $students->total();
+
+        return view('students.index', compact('students', 'totalStudents'));
+    }
+
+    public function show($id)
+    {
+        $student = $this->studentservice->show($id);
+
+        return view('students.show', compact('student'));
+    }
+
+    public function create()
+    {
+        return view('students.create');
+    }
+
+    public function store(StudentCreateRequest $request)
+    {
+        $input = new StudentDTO(...$request->only(
+            'name', 'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
+        ));
+
+        $this->studentservice->store($input);
+
+        return to_route('students.index');
+    }
+
+    public function edit($id)
+    {
+        $student = $this->studentservice->show($id);
+
+        return view('students.edit', compact('student'));
+    }
+
+    public function update(studentUpdateRequest $request, $id)
+    {
+        $input = new studentDTO(...$request->only(
+            'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stages'
+        ));
+
+        $this->studentservice->update($input, $id);
+
+        return to_route('students.show', $id);
+    }
+
+    public function delete($id)
+    {
+        $this->studentservice->delete($id);
+
+        return to_route('students.index');
+    }
+
+    public function changeStatus($id)
+    {
+        $student = $this->studentservice->changeStatus($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => __('messages.Status updated'),
+        ]);
+    }
+}

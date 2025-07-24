@@ -199,10 +199,10 @@
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('professors.index') }}">{{ __('trans.professors') }}</a></li>
                         @endcan
-                        {{-- @can('reservations_list') --}}
-                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('quizzes.index') }}">{{ __('messages.quizzes') }}</a></li> --}}
-                        {{-- @endcan --}}
+                        @can('students_view')
+                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('students.index') }}">{{ __('trans.students') }}</a></li>
+                        @endcan
                         {{-- @can('workDays_list') --}}
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('questions.index') }}">{{ __('messages.questions') }}</a></li> --}}
