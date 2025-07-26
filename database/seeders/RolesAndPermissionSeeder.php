@@ -60,6 +60,8 @@ class RolesAndPermissionSeeder extends Seeder
 
         $staff = Role::firstOrCreate(['name' => 'staff']);
         $staff->givePermissionTo([
+            $professors_view,
+
             $students_delete,
             $students_update,
             $students_create,
