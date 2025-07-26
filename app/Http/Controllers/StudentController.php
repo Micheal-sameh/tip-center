@@ -12,11 +12,11 @@ class StudentController extends Controller
 {
     public function __construct(protected StudentService $studentservice)
     {
-        // $this->middleware('permission:students_view')->only(['index', 'show']);
-        // $this->middleware('permission:students_create')->only(['create', 'store']);
-        // $this->middleware('permission:students_update')->only(['edit', 'update']);
-        // $this->middleware('permission:students_delete')->only('destroy');
-        // $this->middleware('permission:students_resetPassword')->only('resetPassword');
+        $this->middleware('permission:students_view')->only(['index', 'show']);
+        $this->middleware('permission:students_create')->only(['create', 'store']);
+        $this->middleware('permission:students_update')->only(['edit', 'update']);
+        $this->middleware('permission:students_delete')->only('delete');
+        $this->middleware('permission:students_changeStatus')->only('changeStatus');
     }
 
     public function index(StudentIndexRequest $request)

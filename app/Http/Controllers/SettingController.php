@@ -7,7 +7,10 @@ use App\Services\SettingService;
 
 class SettingController extends Controller
 {
-    public function __construct(protected SettingService $settingService) {}
+    public function __construct(protected SettingService $settingService)
+    {
+        $this->middleware('permission:settings_view')->only(['index', 'update']);
+    }
 
     public function index()
     {

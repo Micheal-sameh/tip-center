@@ -16,8 +16,8 @@ class ProfessorController extends Controller
         $this->middleware('permission:professors_view')->only(['index', 'show']);
         $this->middleware('permission:professors_create')->only(['create', 'store']);
         $this->middleware('permission:professors_update')->only(['edit', 'update']);
-        $this->middleware('permission:professors_delete')->only('destroy');
-        $this->middleware('permission:professors_resetPassword')->only('resetPassword');
+        $this->middleware('permission:professors_delete')->only('delete');
+        $this->middleware('permission:professors_changeStatus')->only('changeStatus');
     }
 
     public function index(ProfessorIndexRequest $request)
