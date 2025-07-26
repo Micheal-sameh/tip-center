@@ -33,8 +33,12 @@ class ProfessorRepository extends BaseRepository
     public function index($input)
     {
         $query = $this->model->query()
-            ->when($input->has('name'), fn ($q) => $q->where('name', 'like', '%'.$input->name.'%'))
-            ->when($input->has('stages'), function ($query) use ($input) {
+            ->when($input->has('name'), function ($q) use ($input) {
+                $q->where(function ($subQuery) use ($input) {
+                    $subQuery->where('name', 'like', '%'.$input->name.'%')
+                        ->orWhere('phone', 'like', '%'.$input->name.'%');
+                });
+            })->when($input->has('stages'), function ($query) use ($input) {
                 $query->whereHas('stages', fn ($q) => $q->whereIn('stage', $input->stages));
             });
 
