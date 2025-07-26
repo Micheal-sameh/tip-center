@@ -9,7 +9,7 @@ class SettingController extends Controller
 {
     public function __construct(protected SettingService $settingService)
     {
-        $this->middleware('permission:settings_view')->only(['index', 'update']);
+        $this->middleware('permission:settings_update')->only(['index', 'update']);
     }
 
     public function index()

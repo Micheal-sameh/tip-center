@@ -36,6 +36,9 @@ class RolesAndPermissionSeeder extends Seeder
         $students_view = Permission::firstOrCreate(['name' => 'students_view']);
         $students_changeStatus = Permission::firstOrCreate(['name' => 'students_changeStatus']);
 
+        // settings
+        $settings_update = Permission::firstOrCreate(['name' => 'settings_update']);
+
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $admin->givePermissionTo([
             $users_delete,
@@ -56,6 +59,8 @@ class RolesAndPermissionSeeder extends Seeder
             $students_create,
             $students_view,
             $students_changeStatus,
+
+            $settings_update,
         ]);
 
         $staff = Role::firstOrCreate(['name' => 'staff']);
@@ -73,6 +78,5 @@ class RolesAndPermissionSeeder extends Seeder
         $user->givePermissionTo([
 
         ]);
-
     }
 }
