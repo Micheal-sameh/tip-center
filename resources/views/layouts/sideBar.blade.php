@@ -56,11 +56,15 @@
 
         /* Content Area */
         .content-wrapper {
-            display: flex;
-            width: 90%;
-        }
+    display: flex;
+    margin: 0;
+    padding: 0;
+    /* width: 100%; */
+}
+
 
         .content-area {
+            width: calc(100vw - 200px);
             flex-grow: 1;
             margin-left: 200px;
         }
@@ -207,10 +211,10 @@
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('sessions.index') }}">{{ __('trans.sessions') }}</a></li>
                         {{-- @endcan --}}
-                        {{-- @can('reports_list') --}}
+                        @can('settings_update')
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('settings.index') }}">{{ __('messages.settings') }}</a></li>
-                        {{-- @endcan --}}
+                        @endcan
                         {{-- @can('reports_list') --}}
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('groups.index') }}">{{ __('messages.groups') }}</a></li> --}}

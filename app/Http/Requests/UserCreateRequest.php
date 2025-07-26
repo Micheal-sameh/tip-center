@@ -11,7 +11,7 @@ class UserCreateRequest extends FormRequest
         return [
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
-            'phone' => ['required', 'regex:/^[0-9]{11}$/'],
+            'phone' => ['required', 'regex:/^[0-9]{11}$/', 'unique:users,phone'],
             'role_id' => 'required|integer|exists:roles,id',
             'birth_date' => 'required|date',
         ];

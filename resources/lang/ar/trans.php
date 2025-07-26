@@ -44,4 +44,6 @@ return [
     'code' => 'كود',
     'note' => 'ملاحظات',
     'student_details' => 'معلومات الطالب',
+    'stage' => 'المرحلة',
+    'parent_phone' => 'رقم ولي الامر'
 ];

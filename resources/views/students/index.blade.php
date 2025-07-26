@@ -4,7 +4,7 @@
     <div class="container py-4" style="width:93%">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h4 class="fw-bold text-dark mb-1">{{ __('Students Management') }}</h4>
+                <h4 class="fw-bold text-dark mb-1 me-1">{{ __('Students') }}</h4>
             </div>
             <div class="d-flex gap-2">
                 <a href="{{ route('students.create') }}" class="btn btn-primary">

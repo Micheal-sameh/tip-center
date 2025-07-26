@@ -21,7 +21,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $request->session()->regenerate();
 
-            return redirect()->intended(route('settings.index'))->with('success', 'Welcome back, Admin!');
+            return redirect()->intended(route('students.index'))->with('success', 'Welcome back, Admin!');
         }
 
         return redirect()->back()
@@ -33,6 +33,6 @@ class AuthController extends Controller
     {
         Auth::logout();
 
-        return redirect()->route('login');
+        return redirect()->route('loginPage');
     }
 }

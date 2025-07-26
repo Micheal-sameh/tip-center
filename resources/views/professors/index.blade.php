@@ -2,14 +2,14 @@
 
 @section('content')
     <div class="container" style="width: 90%;">
-        @can('professors_create')
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4>{{ __('trans.professors') }}</h4>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>{{ __('trans.professors') }}</h4>
+            @can('professors_create')
                 <a href="{{ route('professors.create') }}" class="btn btn-primary">
                     {{ __('trans.create_professor') }}
                 </a>
-            </div>
-        @endcan
+            @endcan
+        </div>
 
         <form id="filterForm" class="mb-4">
             <div class="row align-items-end g-3">
@@ -101,7 +101,7 @@
                 $('#professorsTableContainer, #paginationContainer').hide();
 
                 $.ajax({
-                    url: '{{ route("professors.index") }}?' + query,
+                    url: '{{ route('professors.index') }}?' + query,
                     type: 'GET',
                     success: function(response) {
                         $('#professorsTableContainer').html(response.html);
@@ -136,7 +136,9 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     'Accept': 'application/json'
                 },
-                data: { status: newStatus },
+                data: {
+                    status: newStatus
+                },
                 success: function(response) {
                     if (response.success) {
                         buttons.forEach(button => {

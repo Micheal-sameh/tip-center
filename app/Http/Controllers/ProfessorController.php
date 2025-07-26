@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\ProfessorDTO;
-use App\Http\Requests\professorCreateRequest;
+use App\Http\Requests\ProfessorCreateRequest;
 use App\Http\Requests\ProfessorIndexRequest;
-use App\Http\Requests\professorUpdateRequest;
-use App\Services\professorService;
+use App\Http\Requests\ProfessorUpdateRequest;
+use App\Services\ProfessorService;
 use Spatie\Permission\Models\Role;
 
 class ProfessorController extends Controller
@@ -16,8 +16,8 @@ class ProfessorController extends Controller
         $this->middleware('permission:professors_view')->only(['index', 'show']);
         $this->middleware('permission:professors_create')->only(['create', 'store']);
         $this->middleware('permission:professors_update')->only(['edit', 'update']);
-        $this->middleware('permission:professors_delete')->only('destroy');
-        $this->middleware('permission:professors_resetPassword')->only('resetPassword');
+        $this->middleware('permission:professors_delete')->only('delete');
+        $this->middleware('permission:professors_changeStatus')->only('changeStatus');
     }
 
     public function index(ProfessorIndexRequest $request)
@@ -62,7 +62,7 @@ class ProfessorController extends Controller
         return view('professors.edit', compact('professor', 'roles'));
     }
 
-    public function update(professorUpdateRequest $request, $id)
+    public function update(ProfessorUpdateRequest $request, $id)
     {
         $input = new professorDTO(...$request->only(
             'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stages'

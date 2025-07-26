@@ -20,18 +20,24 @@ class RolesAndPermissionSeeder extends Seeder
         $users_create = Permission::firstOrCreate(['name' => 'users_create']);
         $users_view = Permission::firstOrCreate(['name' => 'users_view']);
         $users_resetPassword = Permission::firstOrCreate(['name' => 'users_resetPassword']);
+        $users_changeStatus = Permission::firstOrCreate(['name' => 'users_changeStatus']);
 
         // professors
         $professors_delete = Permission::firstOrCreate(['name' => 'professors_delete']);
         $professors_update = Permission::firstOrCreate(['name' => 'professors_update']);
         $professors_create = Permission::firstOrCreate(['name' => 'professors_create']);
         $professors_view = Permission::firstOrCreate(['name' => 'professors_view']);
+        $professors_changeStatus = Permission::firstOrCreate(['name' => 'professors_changeStatus']);
 
         // students
         $students_delete = Permission::firstOrCreate(['name' => 'students_delete']);
         $students_update = Permission::firstOrCreate(['name' => 'students_update']);
         $students_create = Permission::firstOrCreate(['name' => 'students_create']);
         $students_view = Permission::firstOrCreate(['name' => 'students_view']);
+        $students_changeStatus = Permission::firstOrCreate(['name' => 'students_changeStatus']);
+
+        // settings
+        $settings_update = Permission::firstOrCreate(['name' => 'settings_update']);
 
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $admin->givePermissionTo([
@@ -40,27 +46,37 @@ class RolesAndPermissionSeeder extends Seeder
             $users_create,
             $users_view,
             $users_resetPassword,
+            $users_changeStatus,
 
             $professors_delete,
             $professors_update,
             $professors_create,
+            $professors_view,
+            $professors_changeStatus,
+
+            $students_delete,
+            $students_update,
+            $students_create,
+            $students_view,
+            $students_changeStatus,
+
+            $settings_update,
+        ]);
+
+        $staff = Role::firstOrCreate(['name' => 'staff']);
+        $staff->givePermissionTo([
             $professors_view,
 
             $students_delete,
             $students_update,
             $students_create,
             $students_view,
-        ]);
-
-        $staff = Role::firstOrCreate(['name' => 'staff']);
-        $staff->givePermissionTo([
-
+            $students_changeStatus,
         ]);
 
         $user = Role::firstOrCreate(['name' => 'student']);
         $user->givePermissionTo([
 
         ]);
-
     }
 }

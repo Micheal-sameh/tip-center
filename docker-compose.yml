@@ -1,39 +1,30 @@
 services:
   app:
     build:
-      args:
-        user: tip
-        uid: 1500
       context: ./docker/php
       dockerfile: Dockerfile
-    container_name: tip
+      args:
+        user: tip-test
+        uid: 1500
+    container_name: tip-test
     restart: unless-stopped
-    working_dir: /var/www/tip
+    working_dir: /var/www/tip-test
     volumes:
-      - ./:/var/www/tip
+      - ./:/var/www/tip-test
       - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     networks:
-      - tip
+      - tip-test
       - external_db_network
+    ports:
+      - "1200:9000"
     depends_on:
       - db
 
-  nginx:
-    container_name: reservation-test-nginx
-    restart: unless-stopped
-    image: nginx
-    ports:
-      - 1600:80
-    depends_on:
-      - app
-    volumes:
-      - ./:/var/www/tip
-      - ./docker/nginx/conf.d/:/etc/nginx/conf.d
-    networks:
-      - tip
+
+
   db:
     image: mariadb:10.5
-    container_name: reservation-test-db
+    container_name: tip-test-db
     restart: unless-stopped
     command: --max_allowed_packet=67108864
     environment:
@@ -44,30 +35,30 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
-      - "1601:3306"
+      - "1201:3306"
     networks:
-      - tip
+      - tip-test
       - external_db_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: tip-db
+    container_name: tip-test-phpmyadmin
     restart: unless-stopped
     environment:
-      PMA_HOST: db  # Points to the db service
+      PMA_HOST: db
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       UPLOAD_LIMIT: 256M
     ports:
-      - "1602:80"
+      - "1202:80"
     networks:
-      - tip
+      - tip-test
 
 networks:
-  tip:
+  tip-test:
     driver: bridge
   external_db_network:
-    external: false
+    driver: bridge
 
 volumes:
   mysql-data:

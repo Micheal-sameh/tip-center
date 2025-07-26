@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container py-4" style="width: 95%;">
-    <h2 class="mb-4">{{__('messages.Application Settings')}}</h2>
+    <h2 class="mb-4">{{ __('messages.Application Settings') }}</h2>
 
     {{-- Success Message --}}
     @if(session('success'))
@@ -27,37 +27,45 @@
     <form method="POST" action="{{ route('settings.update') }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        <table  class="table table-bordered">
-            <thead>
-              <tr>
-                <th>{{ __('messages.name') }}</th>
-                <th>{{ __('messages.value') }}</th>
-                <th>{{ __('messages.type') }}</th>
-                {{-- <th>{{ __('messages.actions') }}</th> --}}
-              </tr>
-            </thead>
-            <tbody>
-                @foreach($settings as $setting)
-                <tr>
-                    <td>
-                        <input type="text" name="settings[{{ $setting->id }}][name]"
-                               value="{{ $setting->name }}" class="form-control" readonly disabled>
-                    </td>
-                    <td>
-                        <input type="{{ $setting->type === 'file' ? 'file' : 'text' }}"
-                               name="settings[{{ $setting->id }}][value]"
-                               value="{{ $setting->value }}" class="form-control">
-                    </td>
-                    <td>
-                        <input
-                               name="settings[{{ $setting->id }}][value]"
-                               value="{{ $setting->type }}" class="form-control" disabled>
-                    </td>
-                </tr>
 
-                @endforeach
-            </tbody>
-          </table>
+        <div class="row">
+            @foreach($settings as $setting)
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $setting->name }}</h5>
+
+                            {{-- Value Field --}}
+                            <div class="mb-3">
+                                @if($setting->type === 'file')
+                                    <input type="file"
+                                           name="settings[{{ $setting->id }}][value]"
+                                           class="form-control">
+                                @else
+                                    <input type="text"
+                                           name="settings[{{ $setting->id }}][value]"
+                                           value="{{ $setting->value }}"
+                                           class="form-control">
+                                @endif
+                            </div>
+
+                            {{-- Type (Disabled) --}}
+                            <div>
+                                <input type="text"
+                                       value="{{ $setting->type }}"
+                                       class="form-control"
+                                       disabled>
+                            </div>
+
+                            {{-- Hidden name (so backend still receives it) --}}
+                            <input type="hidden"
+                                   name="settings[{{ $setting->id }}][name]"
+                                   value="{{ $setting->name }}">
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
 
         <button type="submit" class="btn btn-primary">{{ __('messages.save') }}</button>
     </form>
