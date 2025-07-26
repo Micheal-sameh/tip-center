@@ -21,39 +21,49 @@ class SettingValidatorRule implements ValidationRule
         foreach ($value as $key => $settingValue) {
             $setting = $settingRepository->findById($key);
 
+            if (!$setting) {
+                $fail("Setting with ID $key not found.");
+                continue;
+            }
+
             $rules = match ($setting->name) {
                 'logo' => ['required', 'file', 'mimes:png,svg,jpeg,jpg'],
+                'academic_year' => ['required', 'integer', 'gte:' . date('y')],
 
-                // 'android_version' => ['required', 'string', 'regex:/^\d+\.\d+\.\d+$/',
+                // Uncomment and adjust version validation if needed
+                // 'android_version' => [
+                //     'required', 'string', 'regex:/^\d+\.\d+\.\d+$/',
                 //     function ($attribute, $versionInput, $fail) use ($setting) {
                 //         $currentVersion = $setting->value;
                 //         if (version_compare($versionInput, $currentVersion, '<')) {
-                //             return $fail("The version must be newer than: $currentVersion.");
+                //             $fail("The version must be newer than: $currentVersion.");
                 //         }
                 //     },
                 // ],
-                // 'ios_version' => ['required', 'string', 'regex:/^\d+\.\d+\.\d+$/',
+                // 'ios_version' => [
+                //     'required', 'string', 'regex:/^\d+\.\d+\.\d+$/',
                 //     function ($attribute, $versionInput, $fail) use ($setting) {
                 //         $currentVersion = $setting->value;
                 //         if (version_compare($versionInput, $currentVersion, '<')) {
-                //             return $fail("The version must be newer than: $currentVersion.");
+                //             $fail("The version must be newer than: $currentVersion.");
                 //         }
                 //     },
                 // ],
-                'academic_year' => 'required|integer|gte:'.date('y'),
+
                 default => [],
             };
 
-            // Only validate if there are rules
-            if (! empty($rules)) {
-                $validator = Validator::make(
-                    ['value' => $settingValue['value']],
-                    ['value' => $rules]
-                );
+            if (!empty($rules)) {
+                if($settingValue['name'] != 'logo'){
+                    $validator = Validator::make(
+                        ['value' => $settingValue['value']],
+                        ['value' => $rules]
+                    );
 
-                if ($validator->fails()) {
-                    foreach ($validator->errors()->all() as $error) {
-                        $fail("$setting->name : $error");
+                    if ($validator->fails()) {
+                        foreach ($validator->errors()->all() as $error) {
+                            $fail($setting->name . ' : ' . $error);
+                        }
                     }
                 }
             }

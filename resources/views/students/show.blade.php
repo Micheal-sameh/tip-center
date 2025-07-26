@@ -82,27 +82,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Stages Section -->
-                <div class="mt-4 pt-3 border-top">
-                    <h5 class="text-muted fw-semibold mb-3 d-flex align-items-center">
-                        <i class="fas fa-graduation-cap me-2"></i> {{ __('trans.stages') }}
-                    </h5>
-                    @if ($student->stages && count($student->stages))
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach ($student->stages as $stage)
-                                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill border border-primary border-opacity-25">
-                                    <i class="fas fa-layer-group me-1"></i>
-                                    {{ \App\Enums\stagesEnum::getStringValue($stage->stage) }}
-                                </span>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="alert alert-light border d-inline-block">
-                            <i class="fas fa-info-circle me-2"></i> {{ __('trans.no_stages_assigned') }}
-                        </div>
-                    @endif
-                </div>
             </div>
 
             <!-- Action Buttons -->

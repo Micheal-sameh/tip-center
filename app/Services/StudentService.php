@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Repositories\studentRepository;
+use App\Repositories\StudentRepository;
 
 class StudentService
 {
-    public function __construct(protected studentRepository $studentRepository) {}
+    public function __construct(protected StudentRepository $studentRepository) {}
 
     public function index($input)
     {

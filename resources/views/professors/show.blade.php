@@ -91,7 +91,7 @@
                             @foreach ($professor->stages as $stage)
                                 <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill border border-primary border-opacity-25">
                                     <i class="fas fa-layer-group me-1"></i>
-                                    {{ \App\Enums\stagesEnum::getStringValue($stage->stage) }}
+                                    {{ \App\Enums\StagesEnum::getStringValue($stage->stage) }}
                                 </span>
                             @endforeach
                         </div>

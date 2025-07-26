@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\ProfessorDTO;
-use App\Http\Requests\professorCreateRequest;
+use App\Http\Requests\ProfessorCreateRequest;
 use App\Http\Requests\ProfessorIndexRequest;
-use App\Http\Requests\professorUpdateRequest;
-use App\Services\professorService;
+use App\Http\Requests\ProfessorUpdateRequest;
+use App\Services\ProfessorService;
 use Spatie\Permission\Models\Role;
 
 class ProfessorController extends Controller
@@ -62,7 +62,7 @@ class ProfessorController extends Controller
         return view('professors.edit', compact('professor', 'roles'));
     }
 
-    public function update(professorUpdateRequest $request, $id)
+    public function update(ProfessorUpdateRequest $request, $id)
     {
         $input = new professorDTO(...$request->only(
             'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stages'

@@ -27,7 +27,7 @@ return [
     'email' => 'Email',
     'school' => 'School',
     'subject' => 'Subject',
-    'create_professor' => 'Create New Professor',
+    'create_professor' => 'New Professor',
     'professors' => 'Professors',
     'optional_phone' => 'Optional Phone',
     'professor_details' => 'Professor Details',
@@ -44,4 +44,6 @@ return [
     'code' => 'Code',
     'note' => 'Note',
     'student_details' => 'Student Details',
+    'stage' => 'Stage',
+    'parent_phone' => 'Parent Phone',
 ];

@@ -56,11 +56,15 @@
 
         /* Content Area */
         .content-wrapper {
-            display: flex;
-            width: 90%;
-        }
+    display: flex;
+    margin: 0;
+    padding: 0;
+    /* width: 100%; */
+}
+
 
         .content-area {
+            width: calc(100vw - 200px);
             flex-grow: 1;
             margin-left: 200px;
         }
