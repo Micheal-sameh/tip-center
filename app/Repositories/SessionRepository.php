@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Enums\SessionStatus;
-use App\Enums\UserStatus;
 use App\Models\Session;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -99,7 +98,7 @@ class SessionRepository extends BaseRepository
     {
         $session = $this->findById($id);
         $session->update([
-            'status' => $session->status == UserStatus::ACTIVE ? UserStatus::INACTIVE : UserStatus::ACTIVE,
+            'status' => $session->status == SessionStatus::ACTIVE ? SessionStatus::INACTIVE : SessionStatus::ACTIVE,
         ]);
 
         return $session;

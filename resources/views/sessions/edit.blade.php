@@ -1,154 +1,128 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <div class="container py-4" style="width:93%">
+    <div class="container py-4" style="max-width: 850px;">
         <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">{{ __('Edit Student') }}</h2>
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">{{ __('Edit Session') }}</h4>
+                <a href="{{ route('sessions.index') }}" class="btn btn-light btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> {{ __('Back') }}
+                </a>
             </div>
 
             <div class="card-body">
-                @if ($errors->any())
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <strong>{{ __('Whoops!') }}</strong> {{ __('There were some problems with your input.') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        <ul class="mt-2 mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <form id="student-form" action="{{ route('students.update', $student) }}" method="POST">
+                <form method="POST" action="{{ route('sessions.update', $session->id) }}">
                     @csrf
                     @method('PUT')
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" name="name" class="form-control" id="name"
-                                    placeholder="{{ __('Name') }}" required value="{{ old('name', $student->name) }}" disabled>
-                                <label for="name">{{ __('Name') }}</label>
+                    <!-- Professor Information (disabled) -->
+                    <div class="mb-4">
+                        <h5 class="mb-3 text-muted"><i class="fas fa-chalkboard-teacher me-2"></i> Professor Information</h5>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control-plaintext"
+                                                   value="{{ $session->professor->name }}" readonly>
+                                            <label>Professor Name</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control-plaintext"
+                                                   value="{{ App\Enums\StagesEnum::getStringValue($session->stage) }}" readonly>
+                                            <label>Stage</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <select name="stage" class="form-select" id="stage" required>
-                                    <option value="" disabled>Select Stage</option>
-                                    @foreach (App\Enums\StagesEnum::all() as $stage)
-                                        <option value="{{ $stage['value'] }}"
-                                            @if (old('stage', $student->stage) == $stage['value']) selected @endif>
-                                            {{ $stage['name'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <label for="stage">{{ __('Stage') }}</label>
+                    <!-- Session Details -->
+                    <div class="mb-4">
+                        <h5 class="mb-3 text-muted"><i class="fas fa-calendar-alt me-2"></i> Session Details</h5>
+                        <div class="row g-3">
+                            <!-- Pricing -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" step="0.01" name="professor_price" id="professor_price"
+                                           value="{{ old('professor_price', $session->professor_price) }}" placeholder="0.00"
+                                           class="form-control @error('professor_price') is-invalid @enderror" required>
+                                    <label for="professor_price">{{ __('Professor Price') }}</label>
+                                    @error('professor_price')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" step="0.01" name="center_price" id="center_price"
+                                           value="{{ old('center_price', $session->center_price) }}" placeholder="0.00"
+                                           class="form-control @error('center_price') is-invalid @enderror" required>
+                                    <label for="center_price">{{ __('Center Price') }}</label>
+                                    @error('center_price')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" step="0.01" name="printables" id="printables"
+                                           value="{{ old('printables', $session->printables) }}" placeholder="0.00"
+                                           class="form-control @error('printables') is-invalid @enderror">
+                                    <label for="printables">{{ __('Printables Cost') }}</label>
+                                    @error('printables')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-md-4">
-                            <div class="form-floating">
-                                <input type="tel" name="phone" class="form-control" id="phone"
-                                    placeholder="{{ __('Phone') }}" value="{{ old('phone', $student->phone) }}">
-                                <label for="phone">{{ __('Phone') }}</label>
+                    <!-- Timing -->
+                    <div class="mb-4">
+                        <h5 class="mb-3 text-muted"><i class="fas fa-clock me-2"></i> Timing</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="time" name="start_at" id="start_at"
+                                           value="{{ old('start_at', optional($session->start_at)->format('H:i')) }}"
+                                           class="form-control @error('start_at') is-invalid @enderror">
+                                    <label for="start_at">{{ __('Start Time') }}</label>
+                                    @error('start_at')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="time" name="end_at" id="end_at"
+                                           value="{{ old('end_at', optional($session->end_at)->format('H:i')) }}"
+                                           class="form-control @error('end_at') is-invalid @enderror">
+                                    <label for="end_at">{{ __('End Time') }}</label>
+                                    @error('end_at')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-md-4">
-                            <div class="form-floating">
-                                <input type="tel" name="parent_phone" class="form-control" id="parent_phone"
-                                    placeholder="{{ __('Parent Phone') }}" value="{{ old('parent_phone', $student->parent_phone) }}">
-                                <label for="parent_phone">{{ __('Parent Phone') }}</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-floating">
-                                <input type="tel" name="parent_phone_2" class="form-control" id="parent_phone_2"
-                                    placeholder="{{ __('Parent Phone 2') }}" value="{{ old('parent_phone_2', $student->parent_phone_2) }}">
-                                <label for="parent_phone_2">{{ __('Parent Phone 2') }}</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="date" name="birth_date" class="form-control" id="birth_date"
-                                    value="{{ old('birth_date', $student->birth_date ?: '') }}">
-                                <label for="birth_date">{{ __('Birth Date') }}</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <textarea name="note" class="form-control" id="note" placeholder="{{ __('Note') }}" style="height: 100px">{{ old('note', $student->note) }}</textarea>
-                                <label for="note">{{ __('Note') }}</label>
-                                <div class="form-text">Any additional information about the student</div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-primary px-4 py-2">
-                                <i class="fas fa-save me-2"></i>{{ __('Update Student') }}
-                            </button>
-                            <a href="{{ route('students.index') }}" class="btn btn-outline-secondary px-4 py-2 ms-2">
-                                <i class="fas fa-times me-2"></i>{{ __('Cancel') }}
-                            </a>
-
-                            {{-- <button type="button" class="btn btn-danger px-4 py-2 ms-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
-                            </button> --}}
-                        </div>
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                        <a href="{{ route('sessions.index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i> {{ __('Cancel') }}
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-1"></i> {{ __('Update Session') }}
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    {{-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">{{ __('Confirm Deletion') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ __('Are you sure you want to delete this student? This action cannot be undone.') }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
-                    <form action="{{ route('students.delete', $student) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">{{ __('Delete Student') }}</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
-    <style>
-        .form-floating label {
-            padding: 1rem 0.75rem;
-        }
-
-        .form-floating>.form-control:not(:placeholder-shown)~label,
-        .form-floating>.form-control:focus~label,
-        .form-floating>.form-select~label {
-            opacity: 0.8;
-            transform: scale(0.85) translateY(-0.8rem) translateX(0.15rem);
-        }
-    </style>
-    <script>
-        document.getElementById('student-form').addEventListener('submit', function(e) {
-            const inputs = this.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                if (!input.value.trim()) {
-                    input.disabled = true;
-                }
-            });
-        });
-    </script>
 @endsection

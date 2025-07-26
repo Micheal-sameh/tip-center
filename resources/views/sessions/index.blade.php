@@ -60,8 +60,9 @@
                         <div class="col-md-2">
                             <select name="status" class="form-select">
                                 <option value="">All Statuses</option>
-                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Pendind</option>
+                                <option value="2" {{ request('status') == '2' ? 'selected' : '' }}>Active</option>
+                                <option value="3" {{ request('status') == '3' ? 'selected' : '' }}>Inactive
                                 </option>
                             </select>
                         </div>
@@ -100,7 +101,7 @@
                                 <div
                                     class="card-header bg-{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'success' : 'secondary' }} text-white py-2">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <small class="fw-bold">#{{ $session->key }}</small>
+                                        <small class="fw-bold">#{{ $key + 1 }}</small>
                                         <span class="badge bg-white text-dark status-badge">
                                             {{ App\Enums\SessionStatus::getStringValue($session->status) }}
                                         </span>
@@ -145,33 +146,40 @@
 
                                 <div class="card-footer bg-white border-top-0">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <button
-                                            class="btn btn-sm btn-{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'success' : 'secondary' }} status-toggle"
-                                            data-id="{{ $session->id }}"
+                                        <form method="POST" action="{{ route('sessions.status', $session->id) }}"
+                                            class="d-inline status-toggle-form" data-id="{{ $session->id }}"
                                             data-status="{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'active' : 'inactive' }}">
-                                            <i
-                                                class="fas {{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
-                                            {{ App\Enums\SessionStatus::getStringValue($session->status) }}
-                                        </button>
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                class="btn btn-sm btn-{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'success' : 'secondary' }}">
+                                                <i
+                                                    class="fas {{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
+                                                {{ App\Enums\SessionStatus::getStringValue($session->status) }}
+                                            </button>
+                                        </form>
+
 
                                         <div class="btn-group">
                                             <a href="{{ route('sessions.show', $session->id) }}"
                                                 class="btn btn-sm btn-outline-info" title="View">
                                                 <i class="fas fa-eye"></i>
                                             </a>
+                                            @can('sessions_update')
                                             <a href="{{ route('sessions.edit', $session->id) }}"
                                                 class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('sessions.delete', $session->id) }}" method="POST"
+                                            @endcan
+                                            {{-- <form action="{{ route('sessions.delete', $session->id) }}" method="POST"
                                                 class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"
-                                                    onclick="return confirm('Are you sure?')">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    title="Delete" onclick="return confirm('Are you sure?')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                            </form>
+                                            </form> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -260,108 +268,88 @@
 @endsection
 
 @section('scripts')
-    @if (session('success'))
-        <script>
-            $(document).ready(function() {
-                toastr.success('{{ session('success') }}');
-            });
-        </script>
-    @endif
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
-            // Professor search functionality in modal
+            // Status toggle handler
+            $(document).on('click', '.status-toggle', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const btn = $(this);
+                const sessionId = btn.data('id');
+                const currentStatus = btn.data('status');
+                const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+
+                // Visual feedback
+                btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
+                // AJAX request using your exact route
+                $.ajax({
+                    url: `/sessions/${sessionId}/status`, // Matches your route
+                    type: 'PUT',
+                    data: {
+                        status: newStatus
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'Accept': 'application/json'
+                    },
+                    success: function(response) {
+                        // Update button appearance
+                        btn.removeClass(
+                                `btn-${currentStatus === 'active' ? 'success' : 'secondary'}`)
+                            .addClass(`btn-${newStatus === 'active' ? 'success' : 'secondary'}`)
+                            .html(
+                                `<i class="fas ${newStatus === 'active' ? 'fa-check-circle' : 'fa-times-circle'} me-1"></i> ${newStatus === 'active' ? 'Active' : 'Inactive'}`
+                            )
+                            .data('status', newStatus);
+
+                        // Update card header
+                        btn.closest('.card').find('.card-header')
+                            .removeClass(
+                                `bg-${currentStatus === 'active' ? 'success' : 'secondary'}`)
+                            .addClass(`bg-${newStatus === 'active' ? 'success' : 'secondary'}`);
+
+                        // Update status badge
+                        btn.closest('.card').find('.status-badge')
+                            .text(newStatus === 'active' ? 'Active' : 'Inactive');
+
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Status updated',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    },
+                    error: function(xhr) {
+                        console.error("Error:", xhr);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Update failed',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false);
+                    }
+                });
+            });
+
+            // Professor search in modal
             $('#professorSearch').on('input', function() {
                 const searchText = $(this).val().toLowerCase();
                 $('#professorList a').each(function() {
                     const professorText = $(this).text().toLowerCase();
                     $(this).toggle(professorText.includes(searchText));
                 });
-            });
-
-            // Auto-focus search field when modal opens
-            $('#professorSelectionModal').on('shown.bs.modal', function() {
-                $('#professorSearch').focus();
-            });
-
-            // Status toggle functionality
-            $(document).on('click', '.status-toggle', function() {
-                const button = $(this);
-                const sessionId = button.data('id');
-                const currentStatus = button.data('status');
-                const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-
-                $.ajax({
-                    url: `/sessions/${sessionId}/status`,
-                    type: 'PUT',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        status: newStatus
-                    },
-                    success: function(response) {
-                        // Update button appearance
-                        button.removeClass(
-                                `btn-${currentStatus === 'active' ? 'success' : 'secondary'}`)
-                            .addClass(
-                            `btn-${newStatus === 'active' ? 'success' : 'secondary'}`);
-
-                        // Update icon and text
-                        const icon = button.find('i');
-                        icon.removeClass(currentStatus === 'active' ? 'fa-check-circle' :
-                                'fa-times-circle')
-                            .addClass(newStatus === 'active' ? 'fa-check-circle' :
-                                'fa-times-circle');
-
-                        button.html(icon.prop('outerHTML') + ' ' +
-                            (newStatus === 'active' ? 'Active' : 'Inactive'));
-
-                        // Update data attribute
-                        button.data('status', newStatus);
-
-                        // Update card header
-                        const cardHeader = button.closest('.card').find('.card-header');
-                        cardHeader.removeClass(
-                                `bg-${currentStatus === 'active' ? 'success' : 'secondary'}`)
-                            .addClass(`bg-${newStatus === 'active' ? 'success' : 'secondary'}`);
-
-                        // Update status badge
-                        const statusBadge = button.closest('.card').find('.status-badge');
-                        statusBadge.text(newStatus === 'active' ? 'Active' : 'Inactive');
-
-                        toastr.success('Status updated successfully');
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseText);
-                        toastr.error('Failed to update status');
-                    }
-                });
-            });
-
-            // AJAX form submission for filters
-            $('#filterForm').on('submit', function(e) {
-                e.preventDefault();
-                const form = $(this);
-                const url = form.attr('action');
-                const data = form.serialize();
-
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    data: data,
-                    success: function(response) {
-                        $('#sessionsContainer').html($(response).find('#sessionsContainer')
-                            .html());
-                        history.pushState(null, '', url + '?' + data);
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseText);
-                    }
-                });
-            });
-
-            // Handle browser back/forward buttons
-            $(window).on('popstate', function() {
-                location.reload();
             });
         });
     </script>

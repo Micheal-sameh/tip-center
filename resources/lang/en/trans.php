@@ -46,4 +46,5 @@ return [
     'student_details' => 'Student Details',
     'stage' => 'Stage',
     'parent_phone' => 'Parent Phone',
+    'sessions' => 'Sessions',
 ];

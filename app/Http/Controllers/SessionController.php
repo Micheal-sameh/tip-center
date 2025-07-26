@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\SessionDTO;
+use App\Enums\StagesEnum;
 use App\Http\Requests\SessionCreateRequest;
 use App\Http\Requests\SessionIndexRequest;
 use App\Http\Requests\SessionUpdateRequest;
@@ -15,11 +16,11 @@ class SessionController extends Controller
         protected SessionService $sessionservice,
         protected ProfessorService $professorService,
     ) {
-        // $this->middleware('permission:sessions_view')->only(['index', 'show']);
-        // $this->middleware('permission:sessions_create')->only(['create', 'store']);
-        // $this->middleware('permission:sessions_update')->only(['edit', 'update']);
-        // $this->middleware('permission:sessions_delete')->only('destroy');
-        // $this->middleware('permission:sessions_resetPassword')->only('resetPassword');
+        $this->middleware('permission:sessions_view')->only(['index', 'show']);
+        $this->middleware('permission:sessions_create')->only(['create', 'store']);
+        $this->middleware('permission:sessions_update')->only(['edit', 'update']);
+        $this->middleware('permission:sessions_delete')->only('destroy');
+        $this->middleware('permission:sessions_resetPassword')->only('resetPassword');
     }
 
     public function index(SessionIndexRequest $request)
@@ -64,7 +65,7 @@ class SessionController extends Controller
         return view('sessions.edit', compact('session'));
     }
 
-    public function update(sessionUpdateRequest $request, $id)
+    public function update(SessionUpdateRequest $request, $id)
     {
         $input = new sessionDTO(...$request->only(
             'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
@@ -86,9 +87,6 @@ class SessionController extends Controller
     {
         $session = $this->sessionservice->changeStatus($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => __('messages.Status updated'),
-        ]);
+        return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
     }
 }

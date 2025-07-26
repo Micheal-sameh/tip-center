@@ -1,145 +1,106 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <div class="container py-4" style="max-width: 1200px;">
-        <!-- student Details Card -->
-        <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
-            <!-- Card Header with Gradient Background -->
-            <div class="bg-gradient-primary text-white px-4 py-4 d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div class="bg-white bg-opacity-20 rounded-circle p-3 me-3">
-                        <i class="fas fa-chalkboard-teacher fa-2x"></i>
-                    </div>
-                    <div>
-                        <h4 class="mb-0 fw-bold">{{ __('trans.student_details') }}</h4>
-                    </div>
-                </div>
-                <a href="{{ route('students.index') }}" class="btn btn-outline-light btn-sm rounded-pill">
-                    <i class="fas fa-arrow-left me-1"></i> {{ __('trans.back') }}
+    <div class="container py-4" style="max-width: 850px;">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Session Details</h4>
+                <a href="{{ route('sessions.index') }}" class="btn btn-light btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Back
                 </a>
             </div>
 
-            <!-- Card Body -->
-            <div class="card-body p-4">
-                <div class="row">
-                    <!-- student Avatar Column -->
-                    <div class="col-md-4 text-center mb-4 mb-md-0">
-                        <div class="position-relative d-inline-block">
-                            <div class="rounded-circle bg-light border border-4 border-primary d-flex align-items-center justify-content-center mx-auto"
-                                 style="width: 160px; height: 160px; background-color: #f0f8ff;">
-                                <i class="fas fa-user-tie fa-4x text-primary"></i>
-                            </div>
+            <div class="card-body">
+                <!-- Basic Info Section -->
+                <div class="mb-4 p-3 bg-light rounded">
+                    <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1 text-muted">Professor</p>
+                            <p class="fw-bold">{{ $session->professor->name }}</p>
                         </div>
-                        <h3 class="mt-4 text-primary fw-bold">{{ $student->name }}</h3>
-                        <h5 class="mt-4 text-primary fw-bold">{{ $student->code }}</h5>
-                    </div>
-
-                    <!-- student Info Column -->
-                    <div class="col-md-8">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"></i>{{ __('trans.code') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $student->code }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-phone me-2"></i>{{ __('trans.phone') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $student->phone ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-birthday-cake me-2"></i>{{ __('trans.birth_date') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $student->birth_date }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-phone me-2"></i>{{ __('trans.parent_phone') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $student->parent_phone }}</p>
-                                    <p class="mb-0 fw-bold">{{ $student->parent_phone_2 }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-book me-2"></i>{{ __('trans.stage') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ App\Enums\StagesEnum::getStringValue($student->stage) }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-note me-2"></i>{{ __('trans.note') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $student->note }}</p>
-                                </div>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1 text-muted">Stage</p>
+                            <p class="fw-bold">{{ App\Enums\StagesEnum::getStringValue($session->stage) }}</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Stages Section -->
+                <!-- Pricing Section -->
+                <div class="mb-4 p-3 bg-light rounded">
+                    <h5 class="mb-3"><i class="fas fa-money-bill-wave me-2"></i>Pricing</h5>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <p class="mb-1 text-muted">Professor Price</p>
+                            <p class="fw-bold">{{ number_format($session->professor_price, 2) }} {{ config('app.currency', 'EGP') }}</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <p class="mb-1 text-muted">Center Price</p>
+                            <p class="fw-bold">{{ number_format($session->center_price, 2) }} {{ config('app.currency', 'EGP') }}</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <p class="mb-1 text-muted">Printables</p>
+                            <p class="fw-bold">{{ $session->printables ? number_format($session->printables, 2).' '.config('app.currency', 'EGP') : 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timing Section -->
+                @if($session->start_at && $session->end_at)
+                <div class="mb-4 p-3 bg-light rounded">
+                    <h5 class="mb-3"><i class="fas fa-clock me-2"></i>Timing</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1 text-muted">Start Time</p>
+                            <p class="fw-bold">{{ \Carbon\Carbon::parse($session->start_at)->format('h:i A') }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1 text-muted">End Time</p>
+                            <p class="fw-bold">{{ \Carbon\Carbon::parse($session->end_at)->format('h:i A') }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Status Section -->
+                <div class="mb-4 p-3 bg-light rounded">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-1 text-muted">Status</p>
+                            <span class="badge bg-{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'success' : 'secondary' }}">
+                                {{ App\Enums\SessionStatus::getStringValue($session->status) }}
+                            </span>
+                        </div>
+                        <div>
+                            <form action="{{ route('sessions.status', $session->id) }}" method="POST" class="d-inline me-2">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="status" value="{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'inactive' : 'active' }}">
+                                <button type="submit" class="btn btn-sm btn-{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'outline-danger' : 'outline-success' }}">
+                                    {{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'Deactivate' : 'Activate' }}
+                                </button>
+                            </form>
+                            <a href="{{ route('sessions.edit', $session->id) }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meta Info -->
                 <div class="mt-4 pt-3 border-top">
-                    <h5 class="text-muted fw-semibold mb-3 d-flex align-items-center">
-                        <i class="fas fa-graduation-cap me-2"></i> {{ __('trans.stages') }}
-                    </h5>
-                    @if ($student->stages && count($student->stages))
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach ($student->stages as $stage)
-                                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill border border-primary border-opacity-25">
-                                    <i class="fas fa-layer-group me-1"></i>
-                                    {{ \App\Enums\stagesEnum::getStringValue($stage->stage) }}
-                                </span>
-                            @endforeach
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted small mb-1">Created At</p>
+                            <p class="small">{{ $session->created_at->format('M d, Y h:i A') }}</p>
                         </div>
-                    @else
-                        <div class="alert alert-light border d-inline-block">
-                            <i class="fas fa-info-circle me-2"></i> {{ __('trans.no_stages_assigned') }}
+                        <div class="col-md-6">
+                            <p class="text-muted small mb-1">Last Updated</p>
+                            <p class="small">{{ $session->updated_at->format('M d, Y h:i A') }}</p>
                         </div>
-                    @endif
+                    </div>
                 </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-3 py-3 px-4">
-                @can('students_update')
-                    <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary rounded-pill px-4">
-                        <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
-                    </a>
-                @endcan
-                @can('students_delete')
-                    <form action="{{ route('students.delete', $student->id) }}" method="POST"
-                        onsubmit="return confirm('{{ __('trans.delete_confirm') }}')">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger rounded-pill px-4">
-                            <i class="fas fa-trash-alt me-2"></i> {{ __('trans.delete') }}
-                        </button>
-                    </form>
-                @endcan
             </div>
         </div>
     </div>
-
-    <style>
-        .bg-gradient-primary {
-            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
-        }
-        .info-card {
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        .info-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .rounded-4 {
-            border-radius: 1rem !important;
-        }
-    </style>
 @endsection

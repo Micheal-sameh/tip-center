@@ -35,6 +35,12 @@ class RolesAndPermissionSeeder extends Seeder
         $students_create = Permission::firstOrCreate(['name' => 'students_create']);
         $students_view = Permission::firstOrCreate(['name' => 'students_view']);
         $students_changeStatus = Permission::firstOrCreate(['name' => 'students_changeStatus']);
+        // students
+        $sessions_delete = Permission::firstOrCreate(['name' => 'sessions_delete']);
+        $sessions_update = Permission::firstOrCreate(['name' => 'sessions_update']);
+        $sessions_create = Permission::firstOrCreate(['name' => 'sessions_create']);
+        $sessions_view = Permission::firstOrCreate(['name' => 'sessions_view']);
+        $sessions_changeStatus = Permission::firstOrCreate(['name' => 'sessions_changeStatus']);
 
         // settings
         $settings_update = Permission::firstOrCreate(['name' => 'settings_update']);
@@ -60,6 +66,12 @@ class RolesAndPermissionSeeder extends Seeder
             $students_view,
             $students_changeStatus,
 
+            $sessions_delete,
+            $sessions_update,
+            $sessions_create,
+            $sessions_view,
+            $sessions_changeStatus,
+
             $settings_update,
         ]);
 
@@ -72,6 +84,12 @@ class RolesAndPermissionSeeder extends Seeder
             $students_create,
             $students_view,
             $students_changeStatus,
+
+            $sessions_delete,
+            $sessions_update,
+            $sessions_create,
+            $sessions_view,
+            $sessions_changeStatus,
         ]);
 
         $user = Role::firstOrCreate(['name' => 'student']);
