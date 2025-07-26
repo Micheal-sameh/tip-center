@@ -211,7 +211,7 @@
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('questions.index') }}">{{ __('messages.questions') }}</a></li> --}}
                         {{-- @endcan --}}
-                        @can('settings_view')
+                        @can('settings_update')
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('settings.index') }}">{{ __('messages.settings') }}</a></li>
                         @endcan
