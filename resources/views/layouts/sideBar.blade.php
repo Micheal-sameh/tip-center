@@ -211,10 +211,10 @@
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('questions.index') }}">{{ __('messages.questions') }}</a></li> --}}
                         {{-- @endcan --}}
-                        {{-- @can('reports_list') --}}
+                        @can('settings_view')
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('settings.index') }}">{{ __('messages.settings') }}</a></li>
-                        {{-- @endcan --}}
+                        @endcan
                         {{-- @can('reports_list') --}}
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
                                 href="{{ route('groups.index') }}">{{ __('messages.groups') }}</a></li> --}}
