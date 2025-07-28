@@ -220,12 +220,12 @@
                                 href="{{ route('attendances.index') }}">{{ __('trans.attendence') }}</a></li>
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
-                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('rewards.index') }}">{{ __('trans.rewards') }}</a></li> --}}
+                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('reports.index') }}">{{ __('trans.session_reports') }}</a></li>
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
-                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('orders.index') }}">{{ __('trans.orders') }}</a></li> --}}
+                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('reports.student') }}">{{ __('trans.student_reports') }}</a></li>
                         {{-- @endcan --}}
                     @endauth
                     @auth

@@ -19,17 +19,17 @@ class ReportService
         return $sessions;
     }
 
-    public function show($id)
-    {
-        $student = $this->sessionStudentRepository->show($id);
-
-        return $student;
-    }
-
     public function session($session_id)
     {
         $student = $this->sessionStudentRepository->session($session_id);
 
         return $student;
+    }
+
+    public function student($input)
+    {
+        $report = $this->sessionStudentRepository->student($input);
+
+        return $report;
     }
 }

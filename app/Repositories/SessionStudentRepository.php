@@ -133,4 +133,13 @@ class SessionStudentRepository extends BaseRepository
     {
         return $this->model->where('session_id', $session_id)->get();
     }
+
+    public function student($input)
+    {
+        return $this->model->where('student_id', $input['student_id'])
+            ->whereHas('session', function ($query) use ($input) {
+                $query->where('professor_id', $input['professor_id']);
+            })->latest()
+            ->get();
+    }
 }

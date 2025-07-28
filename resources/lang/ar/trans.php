@@ -51,4 +51,6 @@ return [
     'attendence' => 'الحضور',
     'home' => 'الرئيسية',
     'logout' => 'تسجيل الخروج',
+    'session_reports' => 'تقارير الحصص',
+    'student_report' => 'تقارير الطلاب',
 ];

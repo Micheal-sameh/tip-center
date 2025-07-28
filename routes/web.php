@@ -54,6 +54,7 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::prefix('professors')->group(function () {
             Route::get('/', [ProfessorController::class, 'index'])->name('professors.index');
             Route::get('/create', [ProfessorController::class, 'create'])->name('professors.create');
+            Route::get('/dropdown', [ProfessorController::class, 'dropdown'])->name('professors.dropdown');
             Route::get('/{id}/show', [ProfessorController::class, 'show'])->name('professors.show');
             Route::get('/{id}/edit', [ProfessorController::class, 'edit'])->name('professors.edit');
             Route::post('/', [ProfessorController::class, 'store'])->name('professors.store');
@@ -99,14 +100,7 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::prefix('reports')->group(function () {
             Route::get('/', [ReportController::class, 'index'])->name('reports.index');
             Route::get('/{session_id}/session', [ReportController::class, 'session'])->name('reports.session');
-            Route::get('/create', [ReportController::class, 'create'])->name('reports.create');
-            Route::get('/select-student', [ReportController::class, 'selectStudent'])->name('attendance.select-student');
-            Route::get('/{id}/show', [ReportController::class, 'show'])->name('reports.show');
-            Route::get('/{id}/edit', [ReportController::class, 'edit'])->name('reports.edit');
-            Route::post('/', [ReportController::class, 'store'])->name('reports.store');
-            // Route::put('/{id}/status', [ReportController::class, 'changeStatus'])->name('reports.status');
-            Route::put('/{id}', [ReportController::class, 'update'])->name('reports.update');
-            Route::delete('/{id}', [ReportController::class, 'delete'])->name('reports.delete');
+            Route::get('/students', [ReportController::class, 'student'])->name('reports.student');
         });
 
         Route::prefix('settings')->group(function () {

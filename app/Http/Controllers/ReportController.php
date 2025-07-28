@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\DTOs\SessionDTO;
-use App\DTOs\SessionStudentDTO;
-use App\Enums\StagesEnum;
 use App\Http\Requests\ReportIndexRequest;
-use App\Http\Requests\SessionUpdateRequest;
-use App\Http\Requests\StoreSessionStudentRequest;
+use App\Services\ProfessorService;
 use App\Services\ReportService;
 use App\Services\SessionService;
 use App\Services\SessionStudentService;
+use App\Services\StudentService;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
     public function __construct(
         protected SessionService $sessionservice,
+        protected StudentService $studentService,
+        protected ProfessorService $professorService,
         protected ReportService $reportService,
         protected SessionStudentService $sessionStudentService,
     ) {
@@ -34,13 +33,6 @@ class ReportController extends Controller
         return view('reports.index', compact('sessions'));
     }
 
-    public function show($id)
-    {
-        $session = $this->sessionservice->show($id);
-
-        return view('sessions.show', compact('session'));
-    }
-
     public function session($session_id)
     {
         $report = $this->reportService->session($session_id);
@@ -49,54 +41,20 @@ class ReportController extends Controller
         // return view('session_students.create', compact('student', 'session'));
     }
 
-    public function selectStudent(Request $request)
+    public function student(Request $request)
     {
-        $selected_student = $this->reportService->show($request->student_id);
-        $input['stage'] = $selected_student->stage;
-        $sessions = $this->sessionservice->index($input);
+        if ($request['professor_id'] && $request['student_id']) {
+            $reports = $this->reportService->student($request);
 
-        return view('session_students.index', compact('selected_student', 'sessions'));
-    }
+            return view('reports.student', compact('reports'));
+        } elseif ($request['search']) {
+            $students = $this->studentService->index($request);
 
-    public function store(StoreSessionStudentRequest $request)
-    {
-        $input = new SessionStudentDTO(...$request->only(
-            'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables'
-        ));
-        $this->sessionStudentService->store($input);
+            return view('reports.student', compact('students'));
+        }
 
-        return to_route('attendances.index');
-    }
-
-    public function edit($id)
-    {
-        $session = $this->sessionservice->show($id);
-
-        return view('sessions.edit', compact('session'));
-    }
-
-    public function update(SessionUpdateRequest $request, $id)
-    {
-        $input = new sessionDTO(...$request->only(
-            'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
-        ));
-
-        $this->sessionservice->update($input, $id);
-
-        return to_route('sessions.show', $id);
-    }
-
-    public function delete($id)
-    {
-        $this->sessionservice->delete($id);
-
-        return to_route('sessions.index');
-    }
-
-    public function changeStatus($id)
-    {
-        $session = $this->sessionservice->changeStatus($id);
-
-        return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
+        // $professors = $this->professorService->dropdown();
+        // return $report;
+        return view('reports.student');
     }
 }

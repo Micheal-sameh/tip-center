@@ -90,9 +90,12 @@ class ProfessorRepository extends BaseRepository
         $professor->delete();
     }
 
-    public function dropdown()
+    public function dropdown($input)
     {
-        return $this->model->select('id', 'name')->get();
+        return $this->model
+            ->when(isset($input['stage']), function ($query) use ($input) {
+                $query->whereHas('stages', fn ($q) => $q->where('stage', $input['stage']));
+            })->select('id', 'name')->get();
     }
 
     public function changeStatus($id)
