@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\SessionDTO;
 use App\DTOs\SessionStudentDTO;
 use App\Enums\StagesEnum;
+use App\Http\Requests\AttendanceCreateRequest;
 use App\Http\Requests\SessionUpdateRequest;
 use App\Http\Requests\StoreSessionStudentRequest;
 use App\Services\SessionService;
@@ -48,7 +49,7 @@ class SessionStudentController extends Controller
         return view('sessions.show', compact('session'));
     }
 
-    public function create(Request $request)
+    public function create(AttendanceCreateRequest $request)
     {
         $student = $this->studentService->show($request->student_id);
         $session = $this->sessionservice->show($request->session_id);
