@@ -3,23 +3,22 @@
 namespace App\Repositories;
 
 use App\Enums\SessionStatus;
-use App\Models\Session;
-use Carbon\Carbon;
+use App\Models\SessionStudent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
-class SessionRepository extends BaseRepository
+class SessionStudentRepository extends BaseRepository
 {
-    public function __construct(Session $model)
+    public function __construct(SessionStudent $model)
     {
         $this->model = $model;
     }
 
     protected function model(): string
     {
-        return Session::class;
+        return SessionStudent::class;
     }
 
     public bool $pagination = true;
@@ -54,23 +53,49 @@ class SessionRepository extends BaseRepository
         return $this->findById($id);
     }
 
-    public function store($input)
+    public function simplePay($input, $session)
     {
-        $status = Carbon::parse($input->start_at) >= now() ? SessionStatus::ACTIVE : SessionStatus::PENDING;
+        if ($input->total_paid >= $session->center_price) {
+            $input->center_price = $session->center_price;
+            $input->total_paid -= $input->center_price;
+        }
+        if ($input->total_paid >= $session->printables) {
+            $input->printables = $session->printables;
+            $input->total_paid -= $input->printables;
+        }
+        if ($input->total_paid >= $session->professor_price) {
+            $input->professor_price = $session->professor_price;
+        } else {
+            $input->professor_price = $input->total_paid;
+            $reminder = $session->center_price + $session->professor_price + $session->printables - $input->total_paid;
+        }
         DB::beginTransaction();
-        $session = $this->model->create([
-            'professor_id' => $input->professor_id,
-            'stage' => $input->stage,
+        $attendence = $this->model->create([
+            'session_id' => $input->session_id,
+            'student_id' => $input->student_id,
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
-            'status' => $status,
             'printables' => $input->printables,
-            'start_at' => $input->start_at,
-            'end_at' => $input->end_at,
+            'to_pay' => $reminder ?? 0,
         ]);
         DB::commit();
 
-        return $session;
+        return $attendence;
+    }
+
+    public function advancedPay($input)
+    {
+        DB::beginTransaction();
+        $attendence = $this->model->create([
+            'session_id' => $input->session_id,
+            'student_id' => $input->student_id,
+            'professor_price' => $input->professor_price,
+            'center_price' => $input->center_price,
+            'printables' => $input->printables,
+        ]);
+        DB::commit();
+
+        return $attendence;
     }
 
     public function update($input, $id)

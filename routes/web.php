@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SessionStudentController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
@@ -80,6 +81,18 @@ Route::group(['middleware' => ['setlocale']], function () {
             // Route::put('/{id}/status', [StudentController::class, 'changeStatus'])->name('students.status');
             Route::put('/{id}', [StudentController::class, 'update'])->name('students.update');
             Route::delete('/{id}', [StudentController::class, 'delete'])->name('students.delete');
+        });
+
+        Route::prefix('session-students')->group(function () {
+            Route::get('/', [SessionStudentController::class, 'index'])->name('attendances.index');
+            Route::get('/create', [SessionStudentController::class, 'create'])->name('attendances.create');
+            Route::get('/select-student', [SessionStudentController::class, 'selectStudent'])->name('attendance.select-student');
+            Route::get('/{id}/show', [SessionStudentController::class, 'show'])->name('attendances.show');
+            Route::get('/{id}/edit', [SessionStudentController::class, 'edit'])->name('attendances.edit');
+            Route::post('/', [SessionStudentController::class, 'store'])->name('attendances.store');
+            // Route::put('/{id}/status', [SessionStudentController::class, 'changeStatus'])->name('attendances.status');
+            Route::put('/{id}', [SessionStudentController::class, 'update'])->name('attendances.update');
+            Route::delete('/{id}', [SessionStudentController::class, 'delete'])->name('attendances.delete');
         });
 
         Route::prefix('settings')->group(function () {

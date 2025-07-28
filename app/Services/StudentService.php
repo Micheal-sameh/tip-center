@@ -22,6 +22,13 @@ class StudentService
         return $student;
     }
 
+    public function search($search)
+    {
+        $student = $this->studentRepository->search($search);
+
+        return $student;
+    }
+
     public function store($input)
     {
         $student = $this->studentRepository->store($input);

@@ -66,6 +66,17 @@ class StudentRepository extends BaseRepository
         return $this->findById($id);
     }
 
+    public function search($search)
+    {
+        return $this->model->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('code', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('parent_phone', 'like', "%{$search}%")
+                ->orWhere('parent_phone_2', 'like', "%{$search}%");
+        })->get();
+    }
+
     public function store($input)
     {
         DB::beginTransaction();
