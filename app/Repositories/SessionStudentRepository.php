@@ -128,4 +128,9 @@ class SessionStudentRepository extends BaseRepository
 
         return $session;
     }
+
+    public function session($session_id)
+    {
+        return $this->model->where('session_id', $session_id)->get();
+    }
 }

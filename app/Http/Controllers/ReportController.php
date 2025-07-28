@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use App\DTOs\SessionDTO;
 use App\DTOs\SessionStudentDTO;
 use App\Enums\StagesEnum;
+use App\Http\Requests\ReportIndexRequest;
 use App\Http\Requests\SessionUpdateRequest;
 use App\Http\Requests\StoreSessionStudentRequest;
+use App\Services\ReportService;
 use App\Services\SessionService;
 use App\Services\SessionStudentService;
-use App\Services\StudentService;
 use Illuminate\Http\Request;
 
-class SessionStudentController extends Controller
+class ReportController extends Controller
 {
     public function __construct(
         protected SessionService $sessionservice,
-        protected StudentService $studentService,
+        protected ReportService $reportService,
         protected SessionStudentService $sessionStudentService,
     ) {
         //     $this->middleware('permission:sessions_view')->only(['index', 'show']);
@@ -26,19 +27,11 @@ class SessionStudentController extends Controller
         //     $this->middleware('permission:sessions_resetPassword')->only('resetPassword');
     }
 
-    public function index(Request $request)
+    public function index(ReportIndexRequest $request)
     {
-        if ($request->code) {
-            $students = $this->studentService->search($request->code);
+        $sessions = $this->reportService->index($request->validated());
 
-            return view('session_students.index', compact('students'));
-
-        }
-        if ($request->student_id) {
-            return $this->selectStudent($request);
-        }
-
-        return view('session_students.index');
+        return view('reports.index', compact('sessions'));
     }
 
     public function show($id)
@@ -48,24 +41,21 @@ class SessionStudentController extends Controller
         return view('sessions.show', compact('session'));
     }
 
-    public function create(Request $request)
+    public function session($session_id)
     {
-        $student = $this->studentService->show($request->student_id);
-        $session = $this->sessionservice->show($request->session_id);
-        // $last_session = $this->sessionservice->lastSession($session, $student);
+        $report = $this->reportService->session($session_id);
 
-        return view('session_students.create', compact('student', 'session'));
+        return $report;
+        // return view('session_students.create', compact('student', 'session'));
     }
 
     public function selectStudent(Request $request)
     {
-        $selected_student = $this->studentService->show($request->student_id);
+        $selected_student = $this->reportService->show($request->student_id);
         $input['stage'] = $selected_student->stage;
-        $input['student_id'] = $selected_student->id;
         $sessions = $this->sessionservice->index($input);
-        $my_sessions = $this->sessionservice->mySessions($input);
 
-        return view('session_students.index', compact('selected_student', 'sessions', 'my_sessions'));
+        return view('session_students.index', compact('selected_student', 'sessions'));
     }
 
     public function store(StoreSessionStudentRequest $request)

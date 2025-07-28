@@ -49,6 +49,7 @@
                                     </div>
                                     <div class="text-end">
                                         <small class="d-block">{{ $student->phone }}</small>
+                                        <small class="d-block">{{ App\Enums\StagesEnum::getStringValue($student->stage) }}</small>
                                         <span class="badge bg-light text-dark">
                                             <i class="fas fa-chevron-right"></i>
                                         </span>
@@ -78,11 +79,9 @@
                                 <span class="badge bg-light text-dark">
                                     <i class="fas fa-phone me-1"></i> {{ $selected_student->phone }}
                                 </span>
-                            </div>
-                        </div>
-                        <div class="col-md-4 text-md-end">
-                            <div class="avatar-lg bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <i class="fas fa-user-graduate fs-4 text-primary"></i>
+                                <span class="badge bg-light text-dark">
+                                    <i class="fas fa-layer-group me-1"></i> {{ App\Enums\StagesEnum::getStringValue($selected_student->stage) }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -90,6 +89,49 @@
             </div>
 
             <!-- Sessions Display -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>default Sessions</h5>
+                </div>
+                <div class="card-body">
+                    @isset($my_sessions)
+                        <div class="row g-3" id="sessions-container">
+                            @foreach ($my_sessions as $my_session)
+                                <div class="col-md-6 col-lg-4">
+                                    <a href="{{ route('attendances.create', [
+                                        'student_id' => $selected_student->id,
+                                        'session_id' => $my_session->id
+                                    ]) }}" class="text-decoration-none">
+                                        <div class="card session-card h-100 m-0 position-relative" style="border-radius: 10px;">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <div class="avatar-sm bg-light-primary rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                        <i class="fas fa-chalkboard-teacher text-primary fs-5"></i>
+                                                    </div>
+                                                    <h6 class="mb-0 text-truncate">{{ $my_session->professor->name }}</h6>
+                                                </div>
+
+                                                <div class="d-flex flex-column gap-2">
+                                                    <span class="badge bg-light text-dark text-start">
+                                                        <i class="fas fa-layer-group me-1 text-muted"></i>
+                                                        {{ \App\Enums\StagesEnum::getStringValue($my_session->stage) }}
+                                                    </span>
+                                                    <span class="badge bg-light text-dark text-start">
+                                                        <i class="fas fa-clock me-1 text-muted"></i>
+                                                        {{ \Carbon\Carbon::parse($my_session->start_at)->format('h:i A') }} -
+                                                        {{ \Carbon\Carbon::parse($my_session->end_at)->format('h:i A') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endisset
+                </div>
+            </div>
+            {{--  --}}
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Available Sessions</h5>

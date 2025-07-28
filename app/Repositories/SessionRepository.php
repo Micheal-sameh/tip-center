@@ -34,6 +34,7 @@ class SessionRepository extends BaseRepository
     public function index($input)
     {
         $query = $this->model->query()
+            ->whereDate('created_at', today())
             ->when(isset($input['professor_id']), fn ($q) => $q->where('professor_id', $input['professor_id']))
             ->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
             ->when(isset($input['status']), fn ($q) => $q->where('status', $input['status']))
@@ -44,7 +45,8 @@ class SessionRepository extends BaseRepository
                             ->orWhere('phone', 'like', '%'.$input['search'].'%');
                     });
                 });
-            });
+            })
+            ->orderBy('status');
 
         return $this->execute($query);
     }
@@ -102,5 +104,46 @@ class SessionRepository extends BaseRepository
         ]);
 
         return $session;
+    }
+
+    public function mySessions(array $input)
+    {
+        $professorIds = $this->model
+            ->where('stage', $input['stage'])
+            ->whereHas('sessionStudents', fn ($q) => $q->where('student_id', $input['student_id'])
+            )
+            ->where('status', SessionStatus::INACTIVE)
+            ->latest()
+            ->get()
+            ->unique('professor_id')
+            ->pluck('professor_id');
+
+        return $this->model
+            ->where('stage', $input['stage'])
+            ->where('status', SessionStatus::ACTIVE)
+            ->whereIn('professor_id', $professorIds)
+            // ->whereHas('sessionStudents', fn($q) => $q->where('student_id', '!=', $input['student_id']))
+            ->get();
+    }
+
+    public function lastSession($session, $student)
+    {
+        return $this->model->whereHas('sessionStudents',
+            fn ($q) => $q->where('student_id', $student->id)
+        )->where('stage', $session->stage)->where('professor_id', $session->professor_id)
+            ->where('status', SessionStatus::INACTIVE)->latest()->first();
+    }
+
+    public function reports($input)
+    {
+        $query = $this->model->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
+            ->when(isset($input['professor']), function ($query) use ($input) {
+                $query->whereHas('professor', fn ($q) => $q->where('name', 'like', '%'.$input['professor'].'%'));
+            })
+            ->when(isset($input['from']), fn ($q) => $q->whereDate('created_at', '>=', $input['from']))
+            ->when(isset($input['to']), fn ($q) => $q->whereDate('created_at', '<=', $input['to']))
+            ->latest();
+
+        return $this->execute($query);
     }
 }

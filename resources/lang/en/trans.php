@@ -47,4 +47,8 @@ return [
     'stage' => 'Stage',
     'parent_phone' => 'Parent Phone',
     'sessions' => 'Sessions',
+    'settings' => 'Settings',
+    'attendence' => 'Attendence',
+    'home' => 'Home',
+    'logout' => 'Logout',
 ];

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfessorController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SessionStudentController;
 use App\Http\Controllers\SettingController;
@@ -93,6 +94,19 @@ Route::group(['middleware' => ['setlocale']], function () {
             // Route::put('/{id}/status', [SessionStudentController::class, 'changeStatus'])->name('attendances.status');
             Route::put('/{id}', [SessionStudentController::class, 'update'])->name('attendances.update');
             Route::delete('/{id}', [SessionStudentController::class, 'delete'])->name('attendances.delete');
+        });
+
+        Route::prefix('reports')->group(function () {
+            Route::get('/', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/{session_id}/session', [ReportController::class, 'session'])->name('reports.session');
+            Route::get('/create', [ReportController::class, 'create'])->name('reports.create');
+            Route::get('/select-student', [ReportController::class, 'selectStudent'])->name('attendance.select-student');
+            Route::get('/{id}/show', [ReportController::class, 'show'])->name('reports.show');
+            Route::get('/{id}/edit', [ReportController::class, 'edit'])->name('reports.edit');
+            Route::post('/', [ReportController::class, 'store'])->name('reports.store');
+            // Route::put('/{id}/status', [ReportController::class, 'changeStatus'])->name('reports.status');
+            Route::put('/{id}', [ReportController::class, 'update'])->name('reports.update');
+            Route::delete('/{id}', [ReportController::class, 'delete'])->name('reports.delete');
         });
 
         Route::prefix('settings')->group(function () {

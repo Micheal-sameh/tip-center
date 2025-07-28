@@ -24,4 +24,9 @@ class Session extends Model
     {
         return $this->belongsTo(Professor::class);
     }
+
+    public function sessionStudents()
+    {
+        return $this->hasMany(SessionStudent::class);
+    }
 }

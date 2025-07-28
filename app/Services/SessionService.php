@@ -45,4 +45,14 @@ class SessionService
     {
         return $this->sessionRepository->changeStatus($id);
     }
+
+    public function mySessions($input)
+    {
+        return $this->sessionRepository->mySessions($input);
+    }
+
+    public function lastSession($session, $student)
+    {
+        return $this->sessionRepository->lastSession($session, $student);
+    }
 }

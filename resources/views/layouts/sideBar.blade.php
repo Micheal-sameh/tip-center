@@ -194,10 +194,10 @@
                 <ul class="nav flex-column">
                     @auth
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ url('/') }}"> {{ __('messages.home') }} </a></li>
-                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;" href="{{ route('users.profile') }}">{{__('messages.profile')}} </a></li> --}}
+                                href="{{ url('/') }}"> {{ __('trans.home') }} </a></li>
+                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;" href="{{ route('users.profile') }}">{{__('trans.profile')}} </a></li> --}}
                         @can('users_view')
-                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;" href="{{ route('users.index') }}"> {{__('messages.users')}}</a></li>
+                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;" href="{{ route('users.index') }}"> {{__('trans.users')}}</a></li>
                         @endcan
                         @can('professors_view')
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
@@ -213,19 +213,19 @@
                         {{-- @endcan --}}
                         @can('settings_update')
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('settings.index') }}">{{ __('messages.settings') }}</a></li>
+                                href="{{ route('settings.index') }}">{{ __('trans.settings') }}</a></li>
                         @endcan
                         {{-- @can('reports_list') --}}
-                        {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('groups.index') }}">{{ __('messages.groups') }}</a></li> --}}
+                        <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
+                                href="{{ route('attendances.index') }}">{{ __('trans.attendence') }}</a></li>
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('rewards.index') }}">{{ __('messages.rewards') }}</a></li> --}}
+                                href="{{ route('rewards.index') }}">{{ __('trans.rewards') }}</a></li> --}}
                         {{-- @endcan --}}
                         {{-- @can('reports_list') --}}
                         {{-- <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
-                                href="{{ route('orders.index') }}">{{ __('messages.orders') }}</a></li> --}}
+                                href="{{ route('orders.index') }}">{{ __('trans.orders') }}</a></li> --}}
                         {{-- @endcan --}}
                     @endauth
                     @auth
@@ -234,13 +234,13 @@
                                 @csrf
                                 <button type="submit" class="nav-item text-white"
                                     style="background: none; border: none; padding: 0; cursor: pointer;">
-                                    {{ __('messages.logout') }}
+                                    {{ __('trans.logout') }}
                                 </button>
                             </form>
                         </li>
                     @else
                         <a href="{{ route('loginPage') }}"
-                            class="nav-link text-white text-begin">{{ __('messages.login') }}</a>
+                            class="nav-link text-white text-begin">{{ __('trans.login') }}</a>
                     @endauth
 
                 </ul>

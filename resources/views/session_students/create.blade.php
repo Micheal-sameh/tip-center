@@ -121,7 +121,7 @@
                         <label for="total_paid" class="form-label">Amount Paid</label>
                         <div class="input-group mb-3">
                             <span class="input-group-text">$</span>
-                            <input type="number" name="total_paid" id="paidAmountInput" step="0.01" min="0"
+                            <input type="number" name="total_paid" id="paidAmountInput" step="1" min="0"
                                 class="form-control" required>
                         </div>
                         <label class="form-label">Remaining</label>
@@ -156,17 +156,17 @@
                     <div class="modal-body row g-3">
                         <div class="col-md-4">
                             <label>Center Paid</label>
-                            <input type="number" name="center_price" step="0.01" min="0"
+                            <input type="number" name="center_price" step="1" min="0"
                                 class="form-control" value="{{ $session->center_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Professor Paid</label>
-                            <input type="number" name="professor_price" step="0.01" min="0"
+                            <input type="number" name="professor_price" step="1" min="0"
                                 class="form-control" value="{{ $session->professor_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Printables</label>
-                            <input type="number" name="printables" step="0.01" min="0" class="form-control"
+                            <input type="number" name="printables" step="1" min="0" class="form-control"
                                 value="{{ $session->printables ?? 0 }}">
                         </div>
                     </div>

@@ -47,4 +47,8 @@ return [
     'stage' => 'المرحلة',
     'parent_phone' => 'رقم ولي الامر',
     'sessions' => 'الحصص',
+    'settings' => 'الإعدادات',
+    'attendence' => 'الحضور',
+    'home' => 'الرئيسية',
+    'logout' => 'تسجيل الخروج',
 ];
