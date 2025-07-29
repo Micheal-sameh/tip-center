@@ -24,7 +24,7 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Session</th>
+                <th>Session Date</th>
                 <th>Professor</th>
                 <th>Attend</th>
                 <th>Paid</th>
@@ -36,7 +36,7 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ \Carbon\Carbon::parse($report->session->created_at)->format('d-m-Y') }}</td>
                     <td>{{ $report->session->professor->name ?? 'N/A' }}</td>
-                    <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d-m-Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($report->created_at)->format('h:i:s') }}</td>
                     <td>{{ $report->professor_price + $report->center_price + $report->printables }}</td>
                 </tr>
             @endforeach

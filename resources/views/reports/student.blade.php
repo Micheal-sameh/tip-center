@@ -79,7 +79,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
-                                    <th>Session</th>
+                                    <th>Session Date</th>
                                     <th>Professor</th>
                                     <th>Attend</th>
                                     <th>paid</th>
@@ -92,7 +92,7 @@
                                         <td>{{ Carbon\carbon::parse($report->session->created_at)->format('d-m-Y') ?? 'N/A' }}
                                         </td>
                                         <td>{{ $report->session->professor->name ?? 'N/A' }}</td>
-                                        <td>{{ Carbon\carbon::parse($report->created_at)->format('d-m-Y') ?? 'N/A' }} </td>
+                                        <td>{{ Carbon\carbon::parse($report->created_at)->format('h:i:s') ?? 'N/A' }} </td>
                                         <td>{{ $report->professor_price + $report->center_price + $report->printables }} </td>
                                     </tr>
                                 @empty

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ReportIndexRequest;
+use App\Http\Requests\StudentReportRequest;
 use App\Services\ProfessorService;
 use App\Services\ReportService;
 use App\Services\SessionService;
 use App\Services\SessionStudentService;
 use App\Services\StudentService;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -42,9 +42,9 @@ class ReportController extends Controller
         // return view('session_students.create', compact('student', 'session'));
     }
 
-    public function student(Request $request)
+    public function student(StudentReportRequest $request)
     {
-        if ($request['professor_id'] && $request['student_id']) {
+        if ($request['student_id']) {
             $reports = $this->reportService->student($request);
 
             return view('reports.student', compact('reports'));
@@ -54,12 +54,10 @@ class ReportController extends Controller
             return view('reports.student', compact('students'));
         }
 
-        // $professors = $this->professorService->dropdown();
-        // return $report;
         return view('reports.student');
     }
 
-    public function downloadStudentReport(Request $request)
+    public function downloadStudentReport(StudentReportRequest $request)
     {
         $reports = $this->reportService->student($request);
 

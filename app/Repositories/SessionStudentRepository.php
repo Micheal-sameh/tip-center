@@ -137,9 +137,12 @@ class SessionStudentRepository extends BaseRepository
     public function student($input)
     {
         return $this->model->where('student_id', $input['student_id'])
-            ->whereHas('session', function ($query) use ($input) {
-                $query->where('professor_id', $input['professor_id']);
-            })->latest()
+            ->when(! is_null($input['professor_id']), function ($query) use ($input) {
+                $query->whereHas('session', function ($query) use ($input) {
+                    $query->where('professor_id', $input['professor_id']);
+                });
+            })
+            ->latest()
             ->get();
     }
 }
