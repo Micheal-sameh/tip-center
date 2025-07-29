@@ -33,6 +33,7 @@ class SessionRepository extends BaseRepository
 
     public function index($input)
     {
+        $this->checkActive();
         $query = $this->model->query()
             ->whereDate('created_at', today())
             ->when(isset($input['professor_id']), fn ($q) => $q->where('professor_id', $input['professor_id']))
@@ -128,6 +129,8 @@ class SessionRepository extends BaseRepository
 
     public function lastSession($session, $student)
     {
+        $this->checkActive();
+
         return $this->model->whereHas('sessionStudents',
             fn ($q) => $q->where('student_id', $student->id)
         )->where('stage', $session->stage)->where('professor_id', $session->professor_id)
@@ -145,5 +148,15 @@ class SessionRepository extends BaseRepository
             ->latest();
 
         return $this->execute($query);
+    }
+
+    public function checkActive()
+    {
+        $sessions = $this->model->where('status', SessionStatus::ACTIVE)
+            ->whereDate('created_at', '<', Carbon::today())
+            ->get();
+        $sessions->each(function ($session) {
+            $session->update(['status' => SessionStatus::INACTIVE]);
+        });
     }
 }

@@ -45,9 +45,9 @@ class ProfessorService
         return $this->professorRepository->delete($id);
     }
 
-    public function dropdown($input)
+    public function dropdown($input = null)
     {
-        if ($input['student_id']) {
+        if (! is_null($input) && $input['student_id']) {
             $input['stage'] = $this->studentRepository->findById($input['student_id'])?->stage;
         }
         $professors = $this->professorRepository->dropdown($input);
