@@ -8,6 +8,7 @@ use App\Services\ReportService;
 use App\Services\SessionService;
 use App\Services\SessionStudentService;
 use App\Services\StudentService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -56,5 +57,15 @@ class ReportController extends Controller
         // $professors = $this->professorService->dropdown();
         // return $report;
         return view('reports.student');
+    }
+
+    public function downloadStudentReport(Request $request)
+    {
+        $reports = $this->reportService->student($request);
+
+        $pdf = Pdf::loadView('reports.pdf', compact('reports'));
+        $student = $reports?->first()?->student->name;
+
+        return $pdf->download("$student.pdf");
     }
 }

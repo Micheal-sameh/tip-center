@@ -66,7 +66,14 @@
             <!-- Reports Table -->
             <div class="card mt-4">
                 <div class="card-body">
+                    @if (isset($reports) && count($reports))
+                        <a href="{{ route('reports.download.pdf', request()->query()) }}"
+                            class="btn btn-danger btn-sm mb-3 float-end" target="_blank">
+                            <i class="fas fa-file-pdf me-1"></i> Download PDF
+                        </a>
+                    @endif
                     <h5 class="card-title">Reports</h5>
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle" id="reportsTable">
                             <thead class="table-light">
@@ -80,10 +87,10 @@
                             </thead>
                             <tbody>
                                 @forelse ($reports as $report)
-
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ Carbon\carbon::parse($report->session->created_at)->format('d-m-Y') ?? 'N/A' }}</td>
+                                        <td>{{ Carbon\carbon::parse($report->session->created_at)->format('d-m-Y') ?? 'N/A' }}
+                                        </td>
                                         <td>{{ $report->session->professor->name ?? 'N/A' }}</td>
                                         <td>{{ Carbon\carbon::parse($report->created_at)->format('d-m-Y') ?? 'N/A' }} </td>
                                         <td>{{ $report->professor_price + $report->center_price + $report->printables }} </td>
