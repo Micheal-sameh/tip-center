@@ -18,8 +18,8 @@
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-search"></i>
                             </span>
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                   class="form-control" placeholder="Search by student code or name">
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                                placeholder="Search by student code or name">
                         </div>
                     </div>
 
@@ -87,7 +87,7 @@
                         </table>
                     </div>
 
-                    @if($students->hasPages())
+                    @if ($students->hasPages())
                         <div class="d-flex justify-content-center">
                             {{ $students->withQueryString()->links() }}
                         </div>
@@ -157,11 +157,6 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <div class="avatar-sm me-2">
-                                                        <div class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                                            {{ substr($report->session->professor->name ?? 'N/A', 0, 1) }}
-                                                        </div>
-                                                    </div>
                                                     {{ $report->session->professor->name ?? 'N/A' }}
                                                 </div>
                                             </td>
@@ -193,6 +188,7 @@
         .cursor-pointer {
             cursor: pointer;
         }
+
         .avatar-sm {
             width: 30px;
             height: 30px;
@@ -200,10 +196,12 @@
             align-items: center;
             justify-content: center;
         }
+
         .avatar-title {
             font-size: 0.875rem;
             font-weight: 500;
         }
+
         tr:hover {
             background-color: rgba(0, 0, 0, 0.02);
         }
@@ -241,7 +239,8 @@
 
                     try {
                         // Show loading state
-                        const dropdownWrapper = document.getElementById('professorDropdownWrapper');
+                        const dropdownWrapper = document.getElementById(
+                            'professorDropdownWrapper');
                         dropdownWrapper.style.display = 'block';
                         const dropdown = document.getElementById('finalProfessorSelect');
                         dropdown.innerHTML = '<option value="">Loading professors...</option>';
@@ -261,13 +260,17 @@
                                 dropdown.appendChild(option);
                             });
 
-                            dropdownWrapper.scrollIntoView({ behavior: 'smooth' });
+                            dropdownWrapper.scrollIntoView({
+                                behavior: 'smooth'
+                            });
                         } else {
-                            dropdown.innerHTML = '<option value="">No professors available</option>';
+                            dropdown.innerHTML =
+                                '<option value="">No professors available</option>';
                         }
                     } catch (error) {
                         console.error('Error fetching professors:', error);
-                        dropdown.innerHTML = '<option value="">Error loading professors</option>';
+                        dropdown.innerHTML =
+                            '<option value="">Error loading professors</option>';
                     }
                 });
             });
