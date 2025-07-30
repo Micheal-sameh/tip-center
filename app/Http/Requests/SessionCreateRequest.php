@@ -15,6 +15,7 @@ class SessionCreateRequest extends FormRequest
             'professor_price' => 'required|numeric|min:0',
             'center_price' => 'required|numeric|min:0',
             'printables' => 'numeric|min:0',
+            'materials' => 'numeric|min:0',
             'start_at' => 'date_format:H:i',
             'end_at' => 'date_format:H:i|after:start_at',
         ];

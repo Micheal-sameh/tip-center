@@ -42,7 +42,8 @@
 
                     <!-- Professor Information -->
                     <div class="mb-4">
-                        <h5 class="mb-3 text-muted"><i class="fas fa-chalkboard-teacher me-2"></i> Professor Information</h5>
+                        <h5 class="mb-3 text-muted"><i class="fas fa-chalkboard-teacher me-2"></i> Professor Information
+                        </h5>
                         <div class="card bg-light">
                             <div class="card-body">
                                 <div class="row">
@@ -123,6 +124,19 @@
                                     @enderror
                                 </div>
                             </div>
+                            <!-- materials Fees -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" step="0.01" name="materials" id="materials"
+                                        value="{{ old('materials') }}" placeholder="0.00"
+                                        class="form-control @error('materials') is-invalid @enderror">
+                                    <label for="materials">{{ __('materials Fees') }}</label>
+                                    @error('materials')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -169,27 +183,27 @@
 @endsection
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('session-form');
-    if (!form) return;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('session-form');
+            if (!form) return;
 
-    form.addEventListener('submit', function () {
-        const inputs = form.querySelectorAll('input, select, textarea');
+            form.addEventListener('submit', function() {
+                const inputs = form.querySelectorAll('input, select, textarea');
 
-        inputs.forEach(input => {
-            const type = input.type;
-            const shouldIgnore =
-                type === 'hidden' || type === 'submit' ||
-                input.disabled || !input.name;
+                inputs.forEach(input => {
+                    const type = input.type;
+                    const shouldIgnore =
+                        type === 'hidden' || type === 'submit' ||
+                        input.disabled || !input.name;
 
-            if (shouldIgnore) return;
+                    if (shouldIgnore) return;
 
-            if (input.value.trim() === '') {
-                input.remove(); // ✅ remove empty inputs from DOM before submission
-            }
+                    if (input.value.trim() === '') {
+                        input.remove(); // ✅ remove empty inputs from DOM before submission
+                    }
+                });
+            });
         });
-    });
-});
-</script>
+    </script>
 @endpush

@@ -12,6 +12,7 @@ class SessionDTO extends DTO
     public ?int $professor_price;
     public ?int $center_price;
     public ?float $printables;
+    public ?float $materials;
     public ?string $start_at;
     public ?string $end_at;
 
@@ -21,6 +22,7 @@ class SessionDTO extends DTO
         int $professor_price = parent::INT,
         int $center_price = parent::INT,
         float $printables = parent::FLOAT,
+        float $materials = parent::FLOAT,
         string $start_at = parent::STRING,
         string $end_at = parent::STRING,
     ) {

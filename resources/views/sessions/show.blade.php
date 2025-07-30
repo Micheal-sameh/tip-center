@@ -2,6 +2,32 @@
 
 @section('content')
     <div class="container py-4" style="max-width: 850px;">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        {{-- Error Message --}}
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        {{-- Validation Errors --}}
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Session Details</h4>
@@ -40,14 +66,55 @@
                             <p class="fw-bold">{{ number_format($session->center_price, 2) }}
                                 {{ config('app.currency', 'EGP') }}</p>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <p class="mb-1 text-muted">Printables</p>
-                            <p class="fw-bold">
-                                {{ $session->printables ? number_format($session->printables, 2) . ' ' . config('app.currency', 'EGP') : 'N/A' }}
-                            </p>
-                        </div>
+                        @if ($session->printables)
+                            <div class="col-md-4 mb-3">
+                                <p class="mb-1 text-muted">Printables</p>
+                                <p class="fw-bold">
+                                    {{ $session->printables ? number_format($session->printables, 2) . ' ' . config('app.currency', 'EGP') : 'N/A' }}
+                                </p>
+                            </div>
+                        @endif
+                        @if ($session->materials)
+                            <div class="col-md-4 mb-3">
+                                <p class="mb-1 text-muted">Materials</p>
+                                <p class="fw-bold">
+                                    {{ $session->materials ? number_format($session->materials, 2) . ' ' . config('app.currency', 'EGP') : 'N/A' }}
+                                </p>
+                            </div>
+                        @endif
                     </div>
                 </div>
+
+                <!-- Extra -->
+                @if ($session->sessionExtra)
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <h5 class="mb-3"><i class="fas fa-money-bill-wave me-2"></i>Extras</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <p class="mb-1 text-muted">Markers</p>
+                                <p class="fw-bold">{{ number_format($session->sessionExtra->markers, 2) }}
+                                    {{ config('app.currency', 'EGP') }}</p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <p class="mb-1 text-muted">Cafeterea</p>
+                                <p class="fw-bold">{{ number_format($session->sessionExtra->cafeterea, 2) }}
+                                    {{ config('app.currency', 'EGP') }}</p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <p class="mb-1 text-muted">Copies</p>
+                                <p class="fw-bold">
+                                    {{ $session->printables ? number_format($session->sessionExtra->copies, 2) . ' ' . config('app.currency', 'EGP') : 'N/A' }}
+                                </p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <p class="mb-1 text-muted">Note</p>
+                                <p class="fw-bold">
+                                    {{ $session->sessionExtra->notes ? number_format($session->sessionExtra->notes, 2) . ' ' . config('app.currency', 'EGP') : 'N/A' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Timing Section -->
                 @if ($session->start_at && $session->end_at)
@@ -77,7 +144,7 @@
                             </span>
                         </div>
                         <div class="d-flex gap-2">
-                            <form action="{{ route('sessions.status', $session->id) }}" method="POST" class="d-inline">
+                            {{-- <form action="{{ route('sessions.status', $session->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="status"
@@ -86,13 +153,14 @@
                                     class="btn btn-sm btn-{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'outline-danger' : 'outline-success' }}">
                                     {{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'Deactivate' : 'Activate' }}
                                 </button>
-                            </form>
+                            </form> --}}
 
                             <a href="{{ route('sessions.edit', $session->id) }}" class="btn btn-sm btn-primary">
                                 <i class="fas fa-edit me-1"></i> Edit
                             </a>
 
-                            <a href="{{ route('reports.session', $session->id) }}" class="btn btn-sm btn-warning">
+                            <a href="{{ route('reports.session', ['session_id' => $session->id, 'type' => \App\Enums\ReportType::STUDENT]) }}"
+                                class="btn btn-sm btn-warning">
                                 <i class="fas fa-file-alt me-1"></i> Report
                             </a>
                         </div>

@@ -126,35 +126,40 @@
 
         .total-box {
             display: flex;
-            flex-wrap: nowrap;
-            /* Force all items on one line */
             gap: 15px;
-            justify-content: space-between;
             margin-top: 30px;
+            /* Remove flex-wrap or set to nowrap */
+            flex-wrap: nowrap;
+            /* Allow horizontal scrolling if needed */
+            overflow-x: auto;
+            padding-bottom: 10px;
+            /* Space for scrollbar */
         }
 
-
         .total-item {
-            flex: 1 1 0;
-            /* allow shrinking */
+            /* Remove max-width constraint */
+            flex: 1;
+            min-width: 180px;
+            /* Set a reasonable minimum width */
             background: #ebf8ff;
             padding: 18px 15px;
             border-radius: 8px;
             text-align: center;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            min-width: 0;
-            /* prevent overflow */
+            /* Prevent text from wrapping inside items */
+            white-space: nowrap;
         }
 
+        /* For PDF/printing */
+        @media print {
+            .total-box {
+                flex-wrap: nowrap;
+                overflow-x: visible;
+            }
 
-
-
-        .total-item {
-            background: #ebf8ff;
-            padding: 18px 15px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            .total-item {
+                flex: 1;
+            }
         }
 
         .total-item-title {
@@ -213,7 +218,12 @@
                 <th>Student</th>
                 <th>Phone</th>
                 <th>Phone (P)</th>
-                <th>Book Price</th>
+                @if ($session->materials)
+                    <th>Materials</th>
+                @endif
+                @if ($session->printables)
+                    <th>Printables</th>
+                @endif
                 <th class="text-right">Payment</th>
                 <th class="text-right">To Pay</th>
             </tr>
@@ -225,9 +235,14 @@
                     <td>{{ $report->student->name }}</td>
                     <td>{{ $report->student->phone }}</td>
                     <td>{{ $report->student->parent_phone }}</td>
-                    <td>{{ $report->book_price }}</td>
+                    @if ($session->materials)
+                        <td>{{ $report->materials }}</td>
+                    @endif
+                    @if ($session->printables)
+                        <td class="text-end">{{ $report->printables }}</td>
+                    @endif
                     <td class="text-right money">
-                        {{ number_format($report->professor_price + $report->center_price + $report->printables, 2) }}
+                        {{ number_format($report->professor_price + $report->center_price, 2) }}
                     </td>
                     <td class="text-right money {{ $report->to_pay > 0 ? 'warning-text' : '' }}">
                         {{ number_format($report->to_pay, 2) }}
@@ -242,20 +257,28 @@
             <div class="total-item-title">Total Students</div>
             <div class="total-value">{{ $reports->count() }}</div>
         </div>
-        <div class="total-item">
-            <div class="total-item-title">Professor Earnings</div>
-            <div class="total-value money">{{ number_format($reports->sum('professor_price'), 2) }}</div>
-        </div>
-        @if ($reports?->first()?->center_price)
+        @if ($session->professor_price)
+            <div class="total-item">
+                <div class="total-item-title">Professor Earnings</div>
+                <div class="total-value money">{{ number_format($reports->sum('professor_price'), 2) }}</div>
+            </div>
+        @endif
+        @if ($session->center_price)
             <div class="total-item">
                 <div class="total-item-title">Center Earnings</div>
                 <div class="total-value money">{{ number_format($reports->sum('center_price'), 2) }}</div>
             </div>
         @endif
+        @if ($session->materials)
+            <div class="total-item">
+                <div class="total-item-title">Material</div>
+                <div class="total-value money">{{ number_format($reports->sum('materials'), 2) }}</div>
+            </div>
+        @endif
         <div class="total-item highlight-total">
             <div class="total-item-title">Total Session Value</div>
             <div class="total-value money">
-                {{ number_format($reports->sum(function ($r) {return $r->professor_price + $r->center_price + $r->printables;}),2) }}
+                {{ number_format($reports->sum(function ($r) {return $r->professor_price + $r->center_price + $r->printables + $r->materials;}),2) }}
             </div>
         </div>
         <div class="total-item {{ $reports->sum('to_pay') > 0 ? 'unpaid-row' : '' }}">

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\SessionDTO;
+use App\Enums\SessionStatus;
 use App\Enums\StagesEnum;
+use App\Http\Requests\CloseSessionRequesst;
 use App\Http\Requests\SessionCreateRequest;
 use App\Http\Requests\SessionIndexRequest;
 use App\Http\Requests\SessionUpdateRequest;
@@ -50,7 +52,7 @@ class SessionController extends Controller
     public function store(SessionCreateRequest $request)
     {
         $input = new SessionDTO(...$request->only(
-            'professor_id', 'stage', 'professor_price', 'center_price', 'printables', 'start_at', 'end_at',
+            'professor_id', 'stage', 'professor_price', 'center_price', 'printables', 'start_at', 'end_at', 'materials'
         ));
 
         $this->sessionservice->store($input);
@@ -61,6 +63,11 @@ class SessionController extends Controller
     public function edit($id)
     {
         $session = $this->sessionservice->show($id);
+
+        if ($session->status != SessionStatus::ACTIVE) {
+            return redirect()->back()
+                ->with('error', 'You cannot edit an inactive session.');
+        }
 
         return view('sessions.edit', compact('session'));
     }
@@ -83,9 +90,9 @@ class SessionController extends Controller
         return to_route('sessions.index');
     }
 
-    public function changeStatus($id)
+    public function close(CloseSessionRequesst $request, $id)
     {
-        $session = $this->sessionservice->changeStatus($id);
+        $session = $this->sessionservice->close($request->validated(), $id);
 
         return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
     }

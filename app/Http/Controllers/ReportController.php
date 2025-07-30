@@ -40,8 +40,9 @@ class ReportController extends Controller
     {
         $session = $this->sessionservice->report($request->validated());
         $reports = $this->reportService->session($request->validated());
+        $selected_type = $request->type;
 
-        return view('reports.session', compact('reports', 'session'));
+        return view('reports.session', compact('reports', 'session', 'selected_type'));
     }
 
     public function student(StudentReportRequest $request)
@@ -73,8 +74,9 @@ class ReportController extends Controller
     {
         $session = $this->sessionservice->report($request->validated());
         $reports = $this->reportService->session($request->validated());
+        $selected_type = $request->type;
 
-        $pdf = Pdf::loadView('reports.session-pdf', compact('reports', 'session'));
+        $pdf = Pdf::loadView('reports.session-pdf', compact('reports', 'session', 'selected_type'));
         $filename = Str::slug($session->professor->name).'.pdf';
 
         return $pdf->download($filename);

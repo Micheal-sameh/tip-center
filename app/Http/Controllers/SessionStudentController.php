@@ -72,7 +72,7 @@ class SessionStudentController extends Controller
     public function store(StoreSessionStudentRequest $request)
     {
         $input = new SessionStudentDTO(...$request->only(
-            'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables'
+            'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables', 'materials'
         ));
         $this->sessionStudentService->store($input);
 

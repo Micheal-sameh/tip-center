@@ -63,7 +63,7 @@ class SessionRepository extends BaseRepository
         $query = $this->model->where('id', $input['session_id']);
         if (isset($input['type'])) {
             match ((int) $input['type']) {
-                ReportType::PROFESSOR => $query->select('created_at', 'id', 'professor_id', 'stage', 'professor_price'),
+                ReportType::PROFESSOR => $query->select('created_at', 'id', 'professor_id', 'stage', 'professor_price', 'materials'),
                 ReportType::CENTER => $query->select('created_at', 'id', 'professor_id', 'stage', 'printables', 'center_price'),
                 default => $query,
             };
@@ -83,6 +83,7 @@ class SessionRepository extends BaseRepository
             'center_price' => $input->center_price,
             'status' => $status,
             'printables' => $input->printables,
+            'materials' => $input->materials,
             'start_at' => $input->start_at,
             'end_at' => $input->end_at,
         ]);
@@ -112,11 +113,18 @@ class SessionRepository extends BaseRepository
         $session->delete();
     }
 
-    public function changeStatus($id)
+    public function close($input, $id)
     {
         $session = $this->findById($id);
         $session->update([
-            'status' => $session->status == SessionStatus::ACTIVE ? SessionStatus::INACTIVE : SessionStatus::ACTIVE,
+            'status' => SessionStatus::INACTIVE,
+        ]);
+        $session->sessionExtra()->create([
+            'copies' => $input['copies'],
+            'markers' => $input['markers'],
+            'cafeterea' => $input['cafeterea'],
+            'other' => $input['other'],
+            'notes' => $input['notes'],
         ]);
 
         return $session;

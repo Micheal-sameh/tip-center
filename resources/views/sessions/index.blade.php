@@ -60,10 +60,9 @@
                         <div class="col-md-2">
                             <select name="status" class="form-select">
                                 <option value="">All Statuses</option>
-                                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Pendind</option>
+                                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Pending</option>
                                 <option value="2" {{ request('status') == '2' ? 'selected' : '' }}>Active</option>
-                                <option value="3" {{ request('status') == '3' ? 'selected' : '' }}>Inactive
-                                </option>
+                                <option value="3" {{ request('status') == '3' ? 'selected' : '' }}>Inactive</option>
                             </select>
                         </div>
 
@@ -131,6 +130,13 @@
                                                     {{ config('app.currency', 'EGP') }}</span>
                                             </div>
                                         @endif
+                                        @if ($session->materials)
+                                            <div class="d-flex justify-content-between">
+                                                <span>Materials:</span>
+                                                <span class="fw-bold">{{ number_format($session->materials, 2) }}
+                                                    {{ config('app.currency', 'EGP') }}</span>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     @if ($session->start_at && $session->end_at)
@@ -146,18 +152,19 @@
 
                                 <div class="card-footer bg-white border-top-0">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <form method="POST" action="{{ route('sessions.status', $session->id) }}"
-                                            class="d-inline status-toggle-form" data-id="{{ $session->id }}"
-                                            data-status="{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'active' : 'inactive' }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit"
-                                                class="btn btn-sm btn-{{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'success' : 'secondary' }}">
-                                                <i
-                                                    class="fas {{ $session->status === App\Enums\SessionStatus::ACTIVE ? 'fa-check-circle' : 'fa-times-circle' }} me-1"></i>
+                                        @if ($session->status === App\Enums\SessionStatus::ACTIVE)
+                                            <button type="button" class="btn btn-sm btn-success status-toggle"
+                                                data-bs-toggle="modal" data-bs-target="#statusChangeModal"
+                                                data-id="{{ $session->id }}" data-status="active">
+                                                <i class="fas fa-check-circle me-1"></i>
                                                 {{ App\Enums\SessionStatus::getStringValue($session->status) }}
                                             </button>
-                                        </form>
+                                        @else
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-times-circle me-1"></i>
+                                                {{ App\Enums\SessionStatus::getStringValue($session->status) }}
+                                            </span>
+                                        @endif
 
 
                                         <div class="btn-group">
@@ -166,20 +173,11 @@
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             @can('sessions_update')
-                                            <a href="{{ route('sessions.edit', $session->id) }}"
-                                                class="btn btn-sm btn-outline-primary" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
+                                                <a href="{{ route('sessions.edit', $session->id) }}"
+                                                    class="btn btn-sm btn-outline-primary" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
                                             @endcan
-                                            {{-- <form action="{{ route('sessions.delete', $session->id) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    title="Delete" onclick="return confirm('Are you sure?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -264,6 +262,52 @@
                 </div>
             </div>
         </div>
+
+        <!-- Status Change Modal -->
+        <div class="modal fade" id="statusChangeModal" tabindex="-1" aria-labelledby="statusChangeModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="statusChangeModalLabel">Change Session Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="statusChangeForm" method="POST" action="{{ route('sessions.status', $session->id) }}">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label for="markers" class="form-label">Marqueur</label>
+                                <input type="number" class="form-control" id="markers" name="markers" min="0"
+                                    placeholder="Enter number of markers used">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="copies" class="form-label">Copies</label>
+                                <input type="number" class="form-control" id="copies" name="copies" min="0"
+                                    placeholder="Enter number of copies used">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cafeterea" class="form-label">Cafeterea</label>
+                                <input type="number" class="form-control" id="cafeterea" name="cafeterea"
+                                    min="0" placeholder="Enter number of cafeterea used">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Any additional notes"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Confirm Change</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -273,72 +317,64 @@
 
     <script>
         $(document).ready(function() {
-            // Status toggle handler
-            $(document).on('click', '.status-toggle', function(e) {
+            // Status modal handler
+            $('#statusChangeModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var sessionId = button.data('id');
+                var currentStatus = button.data('status');
+                var newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+
+                // Update modal content
+                var modal = $(this);
+                modal.find('#newStatusDisplay').text(newStatus === 'active' ? 'Active' : 'Inactive');
+                modal.find('form').attr('action', '/sessions/' + sessionId + '/status');
+
+                // Add hidden input for status
+                if (modal.find('input[name="status"]').length === 0) {
+                    modal.find('form').append('<input type="hidden" name="status" value="' + newStatus +
+                        '">');
+                } else {
+                    modal.find('input[name="status"]').val(newStatus);
+                }
+            });
+
+            // Status form submission
+            $('#statusChangeForm').on('submit', function(e) {
                 e.preventDefault();
-                e.stopPropagation();
+                var form = $(this);
+                var submitBtn = form.find('button[type="submit"]');
 
-                const btn = $(this);
-                const sessionId = btn.data('id');
-                const currentStatus = btn.data('status');
-                const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+                // Disable button during submission
+                submitBtn.prop('disabled', true).html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
+                );
 
-                // Visual feedback
-                btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
-
-                // AJAX request using your exact route
                 $.ajax({
-                    url: `/sessions/${sessionId}/status`, // Matches your route
-                    type: 'PUT',
-                    data: {
-                        status: newStatus
-                    },
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        'Accept': 'application/json'
-                    },
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
                     success: function(response) {
-                        // Update button appearance
-                        btn.removeClass(
-                                `btn-${currentStatus === 'active' ? 'success' : 'secondary'}`)
-                            .addClass(`btn-${newStatus === 'active' ? 'success' : 'secondary'}`)
-                            .html(
-                                `<i class="fas ${newStatus === 'active' ? 'fa-check-circle' : 'fa-times-circle'} me-1"></i> ${newStatus === 'active' ? 'Active' : 'Inactive'}`
-                            )
-                            .data('status', newStatus);
-
-                        // Update card header
-                        btn.closest('.card').find('.card-header')
-                            .removeClass(
-                                `bg-${currentStatus === 'active' ? 'success' : 'secondary'}`)
-                            .addClass(`bg-${newStatus === 'active' ? 'success' : 'secondary'}`);
-
-                        // Update status badge
-                        btn.closest('.card').find('.status-badge')
-                            .text(newStatus === 'active' ? 'Active' : 'Inactive');
-
+                        $('#statusChangeModal').modal('hide');
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
                             icon: 'success',
-                            title: 'Status updated',
+                            title: 'Status updated successfully',
                             showConfirmButton: false,
                             timer: 3000
+                        }).then(() => {
+                            location.reload();
                         });
                     },
                     error: function(xhr) {
-                        console.error("Error:", xhr);
                         Swal.fire({
-                            toast: true,
-                            position: 'top-end',
                             icon: 'error',
-                            title: 'Update failed',
-                            showConfirmButton: false,
-                            timer: 3000
+                            title: 'Error',
+                            text: xhr.responseJSON.message || 'Failed to update status'
                         });
                     },
                     complete: function() {
-                        btn.prop('disabled', false);
+                        submitBtn.prop('disabled', false).text('Confirm Change');
                     }
                 });
             });

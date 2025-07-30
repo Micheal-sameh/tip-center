@@ -77,10 +77,18 @@
                         <h6>Professor Price</h6>
                         <p>${{ number_format($session->professor_price, 2) }}</p>
                     </div>
-                    <div class="col-md-4">
-                        <h6>Printables</h6>
-                        <p>${{ number_format($session->printables ?? 0, 2) }}</p>
-                    </div>
+                    @if ($session->printables)
+                        <div class="col-md-4">
+                            <h6>Printables</h6>
+                            <p>${{ number_format($session->printables ?? 0, 2) }}</p>
+                        </div>
+                    @endif
+                    @if ($session->materials)
+                        <div class="col-md-4">
+                            <h6>materials</h6>
+                            <p>${{ number_format($session->materials ?? 0, 2) }}</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -164,11 +172,20 @@
                             <input type="number" name="professor_price" step="1" min="0"
                                 class="form-control" value="{{ $session->professor_price }}">
                         </div>
-                        <div class="col-md-4">
-                            <label>Printables</label>
-                            <input type="number" name="printables" step="1" min="0" class="form-control"
-                                value="{{ $session->printables ?? 0 }}">
-                        </div>
+                        @if ($session->printables)
+                            <div class="col-md-4">
+                                <label>Printables</label>
+                                <input type="number" name="printables" step="1" min="0"
+                                    class="form-control" value="{{ $session->printables ?? 0 }}">
+                            </div>
+                        @endif
+                        @if ($session->materials)
+                            <div class="col-md-4">
+                                <label>materials</label>
+                                <input type="number" name="materials" step="1" min="0"
+                                    class="form-control" value="{{ $session->materials ?? 0 }}">
+                            </div>
+                        @endif
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>

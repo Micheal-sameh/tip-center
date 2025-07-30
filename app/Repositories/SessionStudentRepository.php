@@ -92,7 +92,8 @@ class SessionStudentRepository extends BaseRepository
             'student_id' => $input->student_id,
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
-            'printables' => $input->printables,
+            'printables' => $input->printables ?? 0,
+            'materials' => $input->materials ?? 0,
         ]);
         DB::commit();
 
@@ -135,7 +136,7 @@ class SessionStudentRepository extends BaseRepository
         $query = $this->model->where('session_id', $input['session_id']);
         if (isset($input['type'])) {
             match ((int) $input['type']) {
-                ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay'),
+                ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials'),
                 ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id'),
                 default => $query,
             };

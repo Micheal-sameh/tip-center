@@ -25,6 +25,7 @@ class SessionService
     public function report($input)
     {
         $session = $this->sessionRepository->report($input);
+        $session->load('sessionExtra');
 
         return $session;
     }
@@ -48,9 +49,9 @@ class SessionService
         return $this->sessionRepository->delete($id);
     }
 
-    public function changeStatus($id)
+    public function close($input, $id)
     {
-        return $this->sessionRepository->changeStatus($id);
+        return $this->sessionRepository->close($input, $id);
     }
 
     public function mySessions($input)

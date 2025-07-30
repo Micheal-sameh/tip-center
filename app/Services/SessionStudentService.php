@@ -35,7 +35,6 @@ class SessionStudentService
 
         return $this->sessionStudentRepository->advancedPay($input);
 
-        return $attendence;
     }
 
     public function update($input, $id)

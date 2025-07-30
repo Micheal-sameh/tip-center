@@ -16,6 +16,7 @@ class Session extends Model
         'center_price',
         'status',
         'printables',
+        'materials',
         'start_at',
         'end_at',
     ];
@@ -28,5 +29,10 @@ class Session extends Model
     public function sessionStudents()
     {
         return $this->hasMany(SessionStudent::class);
+    }
+
+    public function sessionExtra()
+    {
+        return $this->hasOne(SessionExtra::class);
     }
 }
