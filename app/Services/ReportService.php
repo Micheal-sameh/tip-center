@@ -19,9 +19,9 @@ class ReportService
         return $sessions;
     }
 
-    public function session($session_id)
+    public function session($input)
     {
-        $student = $this->sessionStudentRepository->session($session_id);
+        $student = $this->sessionStudentRepository->session($input);
 
         return $student;
     }

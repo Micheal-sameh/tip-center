@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Models\Session;
 use Carbon\Carbon;
@@ -55,6 +56,20 @@ class SessionRepository extends BaseRepository
     public function show($id)
     {
         return $this->findById($id);
+    }
+
+    public function report($input)
+    {
+        $query = $this->model->where('id', $input['session_id']);
+        if (isset($input['type'])) {
+            match ((int) $input['type']) {
+                ReportType::PROFESSOR => $query->select('created_at', 'id', 'professor_id', 'stage', 'professor_price'),
+                ReportType::CENTER => $query->select('created_at', 'id', 'professor_id', 'stage', 'printables', 'center_price'),
+                default => $query,
+            };
+        }
+
+        return $query->first();
     }
 
     public function store($input)

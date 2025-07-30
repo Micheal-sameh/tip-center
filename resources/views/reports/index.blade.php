@@ -86,10 +86,11 @@
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <a href="{{ route('reports.session', $session->id) }}"
-                                        class="btn btn-sm btn-outline-warning">
+                                    <button type="button" class="btn btn-sm btn-outline-warning"
+                                        onclick="openReportModal({{ $session->id }})">
                                         <i class="fas fa-file-alt me-1"></i> View Report
-                                    </a>
+                                    </button>
+
                                 </td>
                             </tr>
                         @empty
@@ -120,7 +121,7 @@
                             </span>
                         </p>
                         <div class="d-grid mt-2">
-                            <a href="{{ route('reports.session', $session->id) }}" class="btn btn-outline-warning btn-sm">
+                            <a href="{{ route('reports.session') }}" class="btn btn-outline-warning btn-sm">
                                 <i class="fas fa-file-alt me-1"></i> View Report
                             </a>
                         </div>
@@ -168,4 +169,46 @@
         </div>
 
     </div>
+    <!-- Report Type Modal -->
+    <div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="reportTypeForm" method="GET">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Choose Report Type</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="session_id" id="reportSessionId">
+                        <div class="mb-3">
+                            <label for="reportTypeSelect" class="form-label">Report From</label>
+                            <select name="type" id="reportTypeSelect" class="form-select" required>
+                                <option value="" disabled selected>Select Type</option>
+                                @foreach (\App\Enums\ReportType::all() as $type)
+                                    <option value="{{ $type['value'] }}">{{ $type['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-file-alt me-1"></i> View Report
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 @endsection
+@push('scripts')
+    <script>
+        function openReportModal(sessionId) {
+            const form = document.getElementById('reportTypeForm');
+            form.action = "{{ route('reports.session', 'SESSION_ID') }}".replace('SESSION_ID', sessionId);
+            document.getElementById('reportSessionId').value = sessionId;
+            var modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
+            modal.show();
+        }
+    </script>
+@endpush

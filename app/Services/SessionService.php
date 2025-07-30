@@ -22,6 +22,13 @@ class SessionService
         return $session;
     }
 
+    public function report($input)
+    {
+        $session = $this->sessionRepository->report($input);
+
+        return $session;
+    }
+
     public function store($input)
     {
         $session = $this->sessionRepository->store($input);

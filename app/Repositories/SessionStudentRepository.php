@@ -130,9 +130,18 @@ class SessionStudentRepository extends BaseRepository
         return $session;
     }
 
-    public function session($session_id)
+    public function session($input)
     {
-        return $this->model->where('session_id', $session_id)->get();
+        $query = $this->model->where('session_id', $input['session_id']);
+        if (isset($input['type'])) {
+            match ((int) $input['type']) {
+                ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay'),
+                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id'),
+                default => $query,
+            };
+        }
+
+        return $query->get();
     }
 
     public function student($input)

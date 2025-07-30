@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ReportIndexRequest;
+use App\Http\Requests\SessionReportRequest;
 use App\Http\Requests\StudentReportRequest;
 use App\Services\ProfessorService;
 use App\Services\ReportService;
@@ -10,6 +11,7 @@ use App\Services\SessionService;
 use App\Services\SessionStudentService;
 use App\Services\StudentService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class ReportController extends Controller
 {
@@ -34,12 +36,12 @@ class ReportController extends Controller
         return view('reports.index', compact('sessions'));
     }
 
-    public function session($session_id)
+    public function session(SessionReportRequest $request)
     {
-        $report = $this->reportService->session($session_id);
+        $session = $this->sessionservice->report($request->validated());
+        $reports = $this->reportService->session($request->validated());
 
-        return $report;
-        // return view('session_students.create', compact('student', 'session'));
+        return view('reports.session', compact('reports', 'session'));
     }
 
     public function student(StudentReportRequest $request)
@@ -61,9 +63,20 @@ class ReportController extends Controller
     {
         $reports = $this->reportService->student($request->validated());
 
-        $pdf = Pdf::loadView('reports.pdf', compact('reports'));
+        $pdf = Pdf::loadView('reports.student-pdf', compact('reports'));
         $student = $reports?->first()?->student->name;
 
         return $pdf->download("$student.pdf");
+    }
+
+    public function downloadSessionReport(SessionReportRequest $request)
+    {
+        $session = $this->sessionservice->report($request->validated());
+        $reports = $this->reportService->session($request->validated());
+
+        $pdf = Pdf::loadView('reports.session-pdf', compact('reports', 'session'));
+        $filename = Str::slug($session->professor->name).'.pdf';
+
+        return $pdf->download($filename);
     }
 }
