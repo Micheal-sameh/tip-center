@@ -202,7 +202,16 @@
 
 <body>
     <div class="header">
-        <img src="{{ public_path('images/logo.png') }}" class="logo" alt="Company Logo">
+        @php
+            $logoSetting = App\Models\Setting::where('name', 'logo')->first();
+            $logoUrl = $logoSetting?->getFirstMediaPath('app_logo');
+        @endphp
+
+        @if ($logoUrl)
+            <img src="{{ $logoUrl }}" alt="App Logo" class="img-fluid mb-3 pt-3" style="max-height: 100px;">
+        @else
+            <p class="text-muted">No logo available</p>
+        @endif
         <div class="header-content">
             <h1>{{ $session->professor->name }} - {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</h1>
             <p>{{ $session->created_at->format('l, F j, Y') }} • {{ $session->created_at->format('h:i A') }}</p>
