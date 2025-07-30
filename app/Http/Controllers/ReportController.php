@@ -45,11 +45,11 @@ class ReportController extends Controller
     public function student(StudentReportRequest $request)
     {
         if ($request['student_id']) {
-            $reports = $this->reportService->student($request);
+            $reports = $this->reportService->student($request->validated());
 
             return view('reports.student', compact('reports'));
         } elseif ($request['search']) {
-            $students = $this->studentService->index($request);
+            $students = $this->studentService->index($request->validated());
 
             return view('reports.student', compact('students'));
         }
@@ -59,7 +59,7 @@ class ReportController extends Controller
 
     public function downloadStudentReport(StudentReportRequest $request)
     {
-        $reports = $this->reportService->student($request);
+        $reports = $this->reportService->student($request->validated());
 
         $pdf = Pdf::loadView('reports.pdf', compact('reports'));
         $student = $reports?->first()?->student->name;

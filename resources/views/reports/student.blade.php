@@ -67,11 +67,30 @@
             <div class="card mt-4">
                 <div class="card-body">
                     @if (isset($reports) && count($reports))
-                        <a href="{{ route('reports.download.pdf', request()->query()) }}"
-                            class="btn btn-danger btn-sm mb-3 float-end" target="_blank">
-                            <i class="fas fa-file-pdf me-1"></i> Download PDF
-                        </a>
+                        <form method="GET" action="{{ route('reports.download.pdf') }}" target="_blank"
+                            class="mb-3 float-end d-flex flex-column align-items-end gap-2">
+
+                            @foreach (request()->query() as $key => $value)
+                                @if (!in_array($key, ['type']))
+                                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                @endif
+                            @endforeach
+
+                            <div class="d-flex align-items-center gap-2">
+                                <select name="type" id="type" class="form-select form-select-sm w-auto" required>
+                                    <option value="" disabled selected>Select source</option>
+                                    @foreach (App\Enums\ReportType::all() as $type)
+                                        <option value="{{ $type['value'] }}">{{ $type['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fas fa-file-pdf me-1"></i> Download
+                            </button>
+                        </form>
                     @endif
+
                     <h5 class="card-title">Reports</h5>
 
                     <div class="table-responsive">

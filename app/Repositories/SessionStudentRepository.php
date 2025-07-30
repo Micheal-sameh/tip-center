@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Models\SessionStudent;
 use Illuminate\Database\Eloquent\Builder;
@@ -136,13 +137,20 @@ class SessionStudentRepository extends BaseRepository
 
     public function student($input)
     {
-        return $this->model->where('student_id', $input['student_id'])
+        $query = $this->model->where('student_id', $input['student_id'])
             ->when(! is_null($input['professor_id']), function ($query) use ($input) {
                 $query->whereHas('session', function ($query) use ($input) {
                     $query->where('professor_id', $input['professor_id']);
                 });
-            })
-            ->latest()
-            ->get();
+            })->latest();
+        if (isset($input['type'])) {
+            match ((int) $input['type']) {
+                ReportType::PROFESSOR => $query->select('session_id', 'created_at', 'professor_price', 'student_id'),
+                ReportType::CENTER => $query->select('session_id', 'created_at', 'center_price', 'printables', 'student_id'),
+                default => $query,
+            };
+        }
+
+        return $query->get();
     }
 }
