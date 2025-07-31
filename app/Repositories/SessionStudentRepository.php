@@ -155,7 +155,7 @@ class SessionStudentRepository extends BaseRepository
             })->latest();
         if (isset($input['type'])) {
             match ((int) $input['type']) {
-                ReportType::PROFESSOR => $query->select('session_id', 'created_at', 'professor_price', 'student_id'),
+                ReportType::PROFESSOR => $query->select('session_id', 'created_at', 'professor_price', 'student_id', 'to_pay', 'materials'),
                 ReportType::CENTER => $query->select('session_id', 'created_at', 'center_price', 'printables', 'student_id'),
                 default => $query,
             };

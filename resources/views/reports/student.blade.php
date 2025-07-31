@@ -143,7 +143,10 @@
                                         <th>Session Date</th>
                                         <th>Professor</th>
                                         <th>Attend Time</th>
-                                        <th class="text-end pe-3">Total Paid</th>
+                                        <th>Materials</th>
+                                        <th>Printables</th>
+                                        <th>Total Paid</th>
+                                        <th>To Pay</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -161,9 +164,12 @@
                                                 </div>
                                             </td>
                                             <td>{{ Carbon\carbon::parse($report->created_at)->format('h:i A') ?? 'N/A' }}</td>
-                                            <td class="text-end pe-3 fw-bold">
+                                            <td>{{ $report->materials ?? 'N/A' }}</td>
+                                            <td>{{ $report->printables ?? 'N/A' }}</td>
+                                            <td class="fw-bold">
                                                 {{ number_format($report->professor_price + $report->center_price + $report->printables, 2) }}
                                             </td>
+                                            <td>{{ $report->to_pay ?? 'N/A' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

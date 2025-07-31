@@ -28,8 +28,9 @@ class ReportService
 
     public function student($input)
     {
-        $report = $this->sessionStudentRepository->student($input);
+        $reports = $this->sessionStudentRepository->student($input);
+        $reports->load('session.sessionExtra');
 
-        return $report;
+        return $reports;
     }
 }
