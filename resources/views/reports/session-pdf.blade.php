@@ -2,229 +2,146 @@
 <html>
 
 <head>
-    <title>{{ $session->professor->name }} - {{ $session->created_at->format('Y-m-d') }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Session Report - {{ $session->created_at->format('Y-m-d') }}</title>
     <style>
-        @page {
-            size: A4;
-            margin: 15mm;
-        }
-
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            color: #2d3748;
-            line-height: 1.5;
-            padding: 25px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
         }
 
-        .header {
+        .header-container {
             display: flex;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
         }
 
         .logo {
-            height: 80px;
-            max-width: 220px;
-            object-fit: contain;
+            width: 80px;
+            height: auto;
+            margin-right: 20px;
         }
 
-        .header-content {
-            flex-grow: 1;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        .header h1 {
-            color: #1a365d;
-            margin: 0;
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        .header p {
-            margin: 5px 0 0;
-            color: #718096;
-            font-size: 15px;
-        }
-
-        /* Professor and Stage side by side */
-        .info-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .info-card {
+        .header-text {
             flex: 1;
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            text-align: center;
         }
 
-        .info-label {
-            font-weight: 600;
-            color: #4a5568;
-            font-size: 14px;
-            margin-bottom: 5px;
+        .header-text h1 {
+            font-size: 18px;
+            margin: 0;
+            color: #333;
         }
 
-        .info-value {
-            font-size: 16px;
-            color: #1a202c;
-            font-weight: 500;
+        .subheader {
+            margin-bottom: 15px;
         }
 
-        .section-title {
-            color: #2d3748;
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 15px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .students-table {
+        table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 15px;
-            font-size: 14px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border-collapse: collapse;
+            margin-bottom: 15px;
         }
 
-        .students-table th {
-            background-color: #2b6cb0;
+        table th {
+            background-color: #343a40;
             color: white;
-            padding: 14px 12px;
+            padding: 8px;
             text-align: left;
-            font-weight: 600;
         }
 
-        .students-table td {
-            padding: 12px;
-            border-bottom: 1px solid #edf2f7;
-            vertical-align: middle;
+        table td {
+            padding: 8px;
+            border: 1px solid #ddd;
         }
 
-        .students-table tr:nth-child(even) {
-            background-color: #f8fafc;
+        .table-warning {
+            background-color: #fff3cd;
         }
 
-        .unpaid-row {
-            background-color: #fffaf0 !important;
-        }
-
-        .text-right {
+        .text-end {
             text-align: right;
         }
 
-        .total-box {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            /* Remove flex-wrap or set to nowrap */
-            flex-wrap: nowrap;
-            /* Allow horizontal scrolling if needed */
-            overflow-x: auto;
-            padding-bottom: 10px;
-            /* Space for scrollbar */
-        }
-
-        .total-item {
-            /* Remove max-width constraint */
-            flex: 1;
-            min-width: 180px;
-            /* Set a reasonable minimum width */
-            background: #ebf8ff;
-            padding: 18px 15px;
-            border-radius: 8px;
+        .text-center {
             text-align: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            /* Prevent text from wrapping inside items */
-            white-space: nowrap;
         }
 
-        /* For PDF/printing */
-        @media print {
-            .total-box {
-                flex-wrap: nowrap;
-                overflow-x: visible;
-            }
-
-            .total-item {
-                flex: 1;
-            }
+        .fw-bold {
+            font-weight: bold;
         }
 
-        .total-item-title {
-            font-size: 14px;
-            color: #4a5568;
-            margin-bottom: 8px;
-            font-weight: 600;
+        .text-danger {
+            color: #dc3545;
+        }
+
+        .text-primary {
+            color: #0d6efd;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa;
+        }
+
+        .bg-warning {
+            background-color: #fff3cd;
+        }
+
+        .totals-table th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .totals-table td {
+            font-weight: bold;
         }
 
         .total-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: #2b6cb0;
+            font-size: 1.1em;
         }
 
-        .highlight-total {
-            background: #bee3f8;
+        .expenses-table {
+            margin-top: 20px;
         }
 
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 13px;
-            color: #718096;
-            padding-top: 15px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .money {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-        }
-
-        .warning-text {
-            color: #c05621;
-            font-weight: 600;
+        .expenses-table th {
+            background-color: #e9ecef;
+            color: #333;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        @php
-            $logoSetting = App\Models\Setting::where('name', 'logo')->first();
-            $logoUrl = $logoSetting?->getFirstMediaPath('app_logo');
-        @endphp
-
-        @if ($logoUrl)
-            <img src="{{ $logoUrl }}" alt="App Logo" class="img-fluid mb-3 pt-3" style="max-height: 100px;">
-        @else
-            <p class="text-muted">No logo available</p>
-        @endif
-        <div class="header-content">
-            <h1>{{ $session->professor->name }} - {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</h1>
-            <p>{{ $session->created_at->format('l, F j, Y') }} • {{ $session->created_at->format('h:i A') }}</p>
+    @php
+        $logo = App\Models\Setting::where('name', 'logo')->first();
+        $faviconUrl = $logo?->getFirstMediaPath('app_logo');
+    @endphp
+    <div class="header-container">
+        <!-- Replace with your actual logo path -->
+        <img src="{{ $faviconUrl }}" class="logo" alt="Company Logo">
+        <div class="header-text">
+            <h1> {{ $session->professor->name }} - {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</h1>
         </div>
-        <div style="width: 80px;"></div>
+    </div>
+    <h1>Session Report - {{ $session->created_at->format('Y-m-d') }}</h1>
     </div>
 
-    {{-- <h3 class="section-title">Students Attendance</h3> --}}
-    <table class="students-table">
+    <div class="subheader">
+        <div><strong>Professor:</strong> {{ $session->professor->name }}</div>
+        <div><strong>Stage:</strong> {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</div>
+    </div>
+
+    <h5 class="mt-4 mb-3">Students Attendance</h5>
+    <table>
         <thead>
             <tr>
                 <th>#</th>
-                <th>Student</th>
+                <th>Student Name</th>
                 <th>Phone</th>
                 <th>Phone (P)</th>
                 @if ($session->materials)
@@ -233,13 +150,15 @@
                 @if ($session->printables)
                     <th>Printables</th>
                 @endif
-                <th class="text-right">Payment</th>
-                <th class="text-right">To Pay</th>
+                <th class="text-end">Payment</th>
+                @if ($reports->contains(fn($r) => $r->to_pay > 0))
+                    <th class="text-end">To Pay</th>
+                @endif
             </tr>
         </thead>
         <tbody>
             @foreach ($reports as $report)
-                <tr class="{{ $report->to_pay > 0 ? 'unpaid-row' : '' }}">
+                <tr class="{{ $report->to_pay > 0 ? 'table-warning' : '' }}">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $report->student->name }}</td>
                     <td>{{ $report->student->phone }}</td>
@@ -250,57 +169,127 @@
                     @if ($session->printables)
                         <td class="text-end">{{ $report->printables }}</td>
                     @endif
-                    <td class="text-right money">
+                    <td class="text-end">
                         {{ number_format($report->professor_price + $report->center_price, 2) }}
                     </td>
-                    <td class="text-right money {{ $report->to_pay > 0 ? 'warning-text' : '' }}">
-                        {{ number_format($report->to_pay, 2) }}
-                    </td>
+                    @if ($report->to_pay)
+                        <td class="text-end fw-bold {{ $report->to_pay > 0 ? 'text-danger' : '' }}">
+                            {{ number_format($report->to_pay, 2) }}
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <div class="total-box">
-        <div class="total-item">
-            <div class="total-item-title">Total Students</div>
-            <div class="total-value">{{ $reports->count() }}</div>
-        </div>
-        @if ($session->professor_price)
-            <div class="total-item">
-                <div class="total-item-title">Professor Earnings</div>
-                <div class="total-value money">{{ number_format($reports->sum('professor_price'), 2) }}</div>
-            </div>
-        @endif
-        @if ($session->center_price)
-            <div class="total-item">
-                <div class="total-item-title">Center Earnings</div>
-                <div class="total-value money">{{ number_format($reports->sum('center_price'), 2) }}</div>
-            </div>
-        @endif
-        @if ($session->materials)
-            <div class="total-item">
-                <div class="total-item-title">Material</div>
-                <div class="total-value money">{{ number_format($reports->sum('materials'), 2) }}</div>
-            </div>
-        @endif
-        <div class="total-item highlight-total">
-            <div class="total-item-title">Total Session Value</div>
-            <div class="total-value money">
-                {{ number_format($reports->sum(function ($r) {return $r->professor_price + $r->center_price + $r->printables + $r->materials;}),2) }}
-            </div>
-        </div>
-        <div class="total-item {{ $reports->sum('to_pay') > 0 ? 'unpaid-row' : '' }}">
-            <div class="total-item-title">Amount to Collect</div>
-            <div class="total-value money {{ $reports->sum('to_pay') > 0 ? 'warning-text' : '' }}">
-                {{ number_format($reports->sum('to_pay'), 2) }}
-            </div>
-        </div>
-    </div>
+    @if ($session->sessionExtra)
+        @php $extra = $session->sessionExtra; @endphp
+        <h5 class="mt-4 mb-3">Expenses</h5>
+        <table class="expenses-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Markers</td>
+                    <td class="text-end">
+                        @if ($selected_type == App\Enums\ReportType::PROFESSOR)
+                            {{ $extra->markers > 0 ? -number_format($extra->markers, 2) : 0 }}
+                        @else
+                            {{ number_format($extra->markers ?? 0, 2) }}
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td>Cafeterea</td>
+                    <td class="text-end">
+                        @if ($selected_type == App\Enums\ReportType::PROFESSOR)
+                            {{ $extra->cafeterea > 0 ? -number_format($extra->cafeterea, 2) : 0 }}
+                        @else
+                            {{ number_format($extra->cafeterea ?? 0, 2) }}
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td>Copies</td>
+                    <td class="text-end">
+                        @if ($selected_type == App\Enums\ReportType::PROFESSOR)
+                            {{ $extra->copies > 0 ? -number_format($extra->copies, 2) : 0 }}
+                        @else
+                            {{ number_format($extra->copies ?? 0, 2) }}
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td>Other</td>
+                    <td class="text-end">
+                        @if ($selected_type == App\Enums\ReportType::PROFESSOR)
+                            {{ $extra->other > 0 ? -number_format($extra->other, 2) : 0 }}
+                        @else
+                            {{ number_format($extra->other ?? 0, 2) }}
+                        @endif
+                    </td>
+                </tr>
+                @if ($session->sessionExtra->notes)
+                    <tr>
+                        <td colspan="2"><strong>Notes:</strong> {{ $extra->notes ?? 'N/A' }}</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+    @endif
 
-    <div class="footer">
-        Generated on {{ now()->format('M j, Y \a\t h:i A') }} | &copy; {{ date('Y') }} {{ config('app.name') }}
-    </div>
+    <h5 class="mt-4 mb-3">Session Totals</h5>
+    <table class="totals-table">
+        <tbody>
+            <tr>
+                <th>Total Students</th>
+                <td class="text-end">{{ $reports->count() }}</td>
+            </tr>
+            @if ($session->professor_price)
+                <tr>
+                    <th>Professor Fees</th>
+                    <td class="text-end">{{ number_format($reports->sum('professor_price'), 2) }}</td>
+                </tr>
+            @endif
+            @if ($session->materials)
+                <tr>
+                    <th>Materials</th>
+                    <td class="text-end">{{ number_format($reports->sum('materials'), 2) }}</td>
+                </tr>
+            @endif
+            @if ($session->center_price)
+                <tr>
+                    <th>Center Fees</th>
+                    <td class="text-end">{{ number_format($reports->sum('center_price'), 2) }}</td>
+                </tr>
+            @endif
+            <tr class="bg-light">
+                <th>Total Session Value</th>
+                <td class="text-end text-primary total-value">
+                    @php
+                        $total = $reports->sum(
+                            fn($r) => $r->professor_price + $r->center_price + $r->printables + $r->materials,
+                        );
+                        if ($session->sessionExtra) {
+                            $adjustment = $extra->markers + $extra->copies + $extra->other + $extra->cafeterea;
+                            $total += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adjustment : $adjustment;
+                        }
+                    @endphp
+                    {{ number_format($total, 2) }}
+                </td>
+            </tr>
+            <tr class="{{ $reports->sum('to_pay') > 0 ? 'bg-warning' : '' }}">
+                <th>Amount To Collect</th>
+                <td class="text-end {{ $reports->sum('to_pay') > 0 ? 'text-danger' : '' }} total-value">
+                    {{ number_format($reports->sum('to_pay'), 2) }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
 </html>

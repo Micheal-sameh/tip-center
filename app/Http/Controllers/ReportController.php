@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StagesEnum;
 use App\Http\Requests\ReportIndexRequest;
 use App\Http\Requests\SessionReportRequest;
 use App\Http\Requests\StudentReportRequest;
@@ -77,7 +78,7 @@ class ReportController extends Controller
         $selected_type = $request->type;
 
         $pdf = Pdf::loadView('reports.session-pdf', compact('reports', 'session', 'selected_type'));
-        $filename = Str::slug($session->professor->name).'.pdf';
+        $filename = Str::slug($session->professor->name).' - '.StagesEnum::getStringValue($session->stage).'.pdf';
 
         return $pdf->download($filename);
     }
