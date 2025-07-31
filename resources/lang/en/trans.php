@@ -46,4 +46,11 @@ return [
     'student_details' => 'Student Details',
     'stage' => 'Stage',
     'parent_phone' => 'Parent Phone',
+    'sessions' => 'Sessions',
+    'settings' => 'Settings',
+    'attendence' => 'Attendence',
+    'home' => 'Home',
+    'logout' => 'Logout',
+    'session_reports' => 'Sessions Reports',
+    'student_reports' => 'Students Report',
 ];

@@ -3,10 +3,14 @@
 namespace App\Services;
 
 use App\Repositories\ProfessorRepository;
+use App\Repositories\StudentRepository;
 
 class ProfessorService
 {
-    public function __construct(protected ProfessorRepository $professorRepository) {}
+    public function __construct(
+        protected ProfessorRepository $professorRepository,
+        protected StudentRepository $studentRepository,
+    ) {}
 
     public function index($input)
     {
@@ -39,6 +43,17 @@ class ProfessorService
     public function delete($id)
     {
         return $this->professorRepository->delete($id);
+    }
+
+    public function dropdown($input = null)
+    {
+        if (! is_null($input) && $input['student_id']) {
+            $input['stage'] = $this->studentRepository->findById($input['student_id'])?->stage;
+        }
+        $professors = $this->professorRepository->dropdown($input);
+        // $professors->load('stages');
+
+        return $professors;
     }
 
     public function changeStatus($id)

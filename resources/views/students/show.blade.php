@@ -26,7 +26,7 @@
                     <div class="col-md-4 text-center mb-4 mb-md-0">
                         <div class="position-relative d-inline-block">
                             <div class="rounded-circle bg-light border border-4 border-primary d-flex align-items-center justify-content-center mx-auto"
-                                 style="width: 160px; height: 160px; background-color: #f0f8ff;">
+                                style="width: 160px; height: 160px; background-color: #f0f8ff;">
                                 <i class="fas fa-user-tie fa-4x text-primary"></i>
                             </div>
                         </div>
@@ -45,7 +45,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-phone me-2"></i>{{ __('trans.phone') }}</h6>
+                                    <h6 class="text-muted mb-2"><i class="fas fa-phone me-2"></i>{{ __('trans.phone') }}
+                                    </h6>
                                     <p class="mb-0 fw-bold">{{ $student->phone ?? 'N/A' }}</p>
                                 </div>
                             </div>
@@ -54,13 +55,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-birthday-cake me-2"></i>{{ __('trans.birth_date') }}</h6>
+                                    <h6 class="text-muted mb-2"><i
+                                            class="fas fa-birthday-cake me-2"></i>{{ __('trans.birth_date') }}</h6>
                                     <p class="mb-0 fw-bold">{{ $student->birth_date }}</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-phone me-2"></i>{{ __('trans.parent_phone') }}</h6>
+                                    <h6 class="text-muted mb-2"><i
+                                            class="fas fa-phone me-2"></i>{{ __('trans.parent_phone') }}</h6>
                                     <p class="mb-0 fw-bold">{{ $student->parent_phone }}</p>
                                     <p class="mb-0 fw-bold">{{ $student->parent_phone_2 }}</p>
                                 </div>
@@ -69,7 +72,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-book me-2"></i>{{ __('trans.stage') }}</h6>
+                                    <h6 class="text-muted mb-2"><i class="fas fa-book me-2"></i>{{ __('trans.stage') }}
+                                    </h6>
                                     <p class="mb-0 fw-bold">{{ App\Enums\StagesEnum::getStringValue($student->stage) }}</p>
                                 </div>
                             </div>
@@ -91,6 +95,7 @@
                         <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
                     </a>
                 @endcan
+
                 @can('students_delete')
                     <form action="{{ route('students.delete', $student->id) }}" method="POST"
                         onsubmit="return confirm('{{ __('trans.delete_confirm') }}')">
@@ -101,7 +106,15 @@
                         </button>
                     </form>
                 @endcan
+
+                {{-- @can('reports_view') --}}
+                    <a href="{{ route('reports.student', ['search' => $student->code]) }}"
+                        class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fas fa-chart-line me-2"></i> {{ __('trans.report') }}
+                    </a>
+                {{-- @endcan --}}
             </div>
+
         </div>
     </div>
 
@@ -109,14 +122,17 @@
         .bg-gradient-primary {
             background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
         }
+
         .info-card {
             transition: all 0.3s ease;
             height: 100%;
         }
+
         .info-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+
         .rounded-4 {
             border-radius: 1rem !important;
         }

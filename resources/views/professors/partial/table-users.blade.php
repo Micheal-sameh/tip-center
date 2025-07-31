@@ -123,15 +123,12 @@
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 @endcan
-                                                @can('professors_delete')
-                                                    <form action="{{ route('professors.delete', $professor) }}" method="POST"
-                                                        class="d-inline-block"
-                                                        onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                            title="{{ __('trans.delete') }}">
-                                                            <i class="fas fa-trash"></i>
+                                                @can('sessions_create')
+                                                    <form action="{{ route('sessions.create', $professor->id) }}"
+                                                        method="GET" class="d-inline">
+                                                        <button type="submit" class="btn btn-sm btn-outline-success"
+                                                            title="{{ __('trans.create_session') }}">
+                                                            <i class="fas fa-calendar-plus me-1"></i> + Session
                                                         </button>
                                                     </form>
                                                 @endcan
@@ -226,6 +223,15 @@
                                             </button>
                                         </form>
                                     @endcan
+                                    {{-- @can('sessions_create') --}}
+                                    <form action="{{ route('sessions.create', $professor->id) }}" method="GET"
+                                        class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-success"
+                                            title="{{ __('trans.create_session') }}">
+                                            <i class="fas fa-calendar-plus me-1"></i> + Session
+                                        </button>
+                                    </form>
+                                    {{-- @endcan --}}
                                 </div>
                             </div>
                         </div>
@@ -265,7 +271,8 @@
                             {{-- Next Page Link --}}
                             @if ($professors->hasMorePages())
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ $professors->nextPageUrl() }}" rel="next">&raquo;</a>
+                                    <a class="page-link" href="{{ $professors->nextPageUrl() }}"
+                                        rel="next">&raquo;</a>
                                 </li>
                             @else
                                 <li class="page-item disabled">

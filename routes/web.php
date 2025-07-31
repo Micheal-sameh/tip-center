@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfessorController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SessionStudentController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
@@ -51,12 +54,24 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::prefix('professors')->group(function () {
             Route::get('/', [ProfessorController::class, 'index'])->name('professors.index');
             Route::get('/create', [ProfessorController::class, 'create'])->name('professors.create');
+            Route::get('/dropdown', [ProfessorController::class, 'dropdown'])->name('professors.dropdown');
             Route::get('/{id}/show', [ProfessorController::class, 'show'])->name('professors.show');
             Route::get('/{id}/edit', [ProfessorController::class, 'edit'])->name('professors.edit');
             Route::post('/', [ProfessorController::class, 'store'])->name('professors.store');
             Route::put('/{id}/status', [ProfessorController::class, 'changeStatus'])->name('professors.status');
             Route::put('/{id}', [ProfessorController::class, 'update'])->name('professors.update');
             Route::delete('/{id}', [ProfessorController::class, 'delete'])->name('professors.delete');
+        });
+
+        Route::prefix('sessions')->group(function () {
+            Route::get('/', [SessionController::class, 'index'])->name('sessions.index');
+            Route::get('/{professor_id}/create', [SessionController::class, 'create'])->name('sessions.create');
+            Route::get('/{id}/show', [SessionController::class, 'show'])->name('sessions.show');
+            Route::get('/{id}/edit', [SessionController::class, 'edit'])->name('sessions.edit');
+            Route::post('/', [SessionController::class, 'store'])->name('sessions.store');
+            Route::put('/{id}/status', [SessionController::class, 'close'])->name('sessions.status');
+            Route::put('/{id}', [SessionController::class, 'update'])->name('sessions.update');
+            Route::delete('/{id}', [SessionController::class, 'delete'])->name('sessions.delete');
         });
 
         Route::prefix('students')->group(function () {
@@ -68,6 +83,26 @@ Route::group(['middleware' => ['setlocale']], function () {
             // Route::put('/{id}/status', [StudentController::class, 'changeStatus'])->name('students.status');
             Route::put('/{id}', [StudentController::class, 'update'])->name('students.update');
             Route::delete('/{id}', [StudentController::class, 'delete'])->name('students.delete');
+        });
+
+        Route::prefix('session-students')->group(function () {
+            Route::get('/', [SessionStudentController::class, 'index'])->name('attendances.index');
+            Route::get('/create', [SessionStudentController::class, 'create'])->name('attendances.create');
+            Route::get('/select-student', [SessionStudentController::class, 'selectStudent'])->name('attendance.select-student');
+            Route::get('/{id}/show', [SessionStudentController::class, 'show'])->name('attendances.show');
+            Route::get('/{id}/edit', [SessionStudentController::class, 'edit'])->name('attendances.edit');
+            Route::post('/', [SessionStudentController::class, 'store'])->name('attendances.store');
+            // Route::put('/{id}/status', [SessionStudentController::class, 'changeStatus'])->name('attendances.status');
+            Route::put('/{id}', [SessionStudentController::class, 'update'])->name('attendances.update');
+            Route::delete('/{id}', [SessionStudentController::class, 'delete'])->name('attendances.delete');
+        });
+
+        Route::prefix('reports')->group(function () {
+            Route::get('/', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/session', [ReportController::class, 'session'])->name('reports.session');
+            Route::get('/students', [ReportController::class, 'student'])->name('reports.student');
+            Route::get('/student-pdf', [ReportController::class, 'downloadStudentReport'])->name('reports.download.pdf');
+            Route::get('/session-pdf', [ReportController::class, 'downloadSessionReport'])->name('reports.session.pdf');
         });
 
         Route::prefix('settings')->group(function () {
