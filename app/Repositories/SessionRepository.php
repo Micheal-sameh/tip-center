@@ -119,10 +119,10 @@ class SessionRepository extends BaseRepository
             'status' => SessionStatus::INACTIVE,
         ]);
         $session->sessionExtra()->create([
-            'copies' => $input['copies'],
-            'markers' => $input['markers'],
-            'cafeterea' => $input['cafeterea'],
-            'other' => $input['other'],
+            'copies' => $input['copies'] ?? 0,
+            'markers' => $input['markers'] ?? 0,
+            'cafeterea' => $input['cafeterea'] ?? 0,
+            'other' => $input['other'] ?? 0,
             'notes' => $input['notes'],
         ]);
 
