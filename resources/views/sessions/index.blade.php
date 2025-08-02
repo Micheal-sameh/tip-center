@@ -272,46 +272,48 @@
                         <h5 class="modal-title" id="statusChangeModalLabel">Change Session Status</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="statusChangeForm" method="POST" action="{{ route('sessions.status', $session->id) }}">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
+                    @isset($session)
+                        <form id="statusChangeForm" method="POST" action="{{ route('sessions.status', $session->id) }}">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-body">
 
-                            <div class="mb-3">
-                                <label for="markers" class="form-label">Marqueur</label>
-                                <input type="number" class="form-control" id="markers" name="markers" min="0"
-                                    placeholder="Enter number of markers used">
-                            </div>
+                                <div class="mb-3">
+                                    <label for="markers" class="form-label">Marqueur</label>
+                                    <input type="number" class="form-control" id="markers" name="markers" min="0"
+                                        placeholder="Enter number of markers used">
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="copies" class="form-label">Copies</label>
-                                <input type="number" class="form-control" id="copies" name="copies" min="0"
-                                    placeholder="Enter number of copies used">
-                            </div>
+                                <div class="mb-3">
+                                    <label for="copies" class="form-label">Copies</label>
+                                    <input type="number" class="form-control" id="copies" name="copies" min="0"
+                                        placeholder="Enter number of copies used">
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="cafeterea" class="form-label">Cafeterea</label>
-                                <input type="number" class="form-control" id="cafeterea" name="cafeterea"
-                                    min="0" placeholder="Enter number of cafeterea used">
-                            </div>
+                                <div class="mb-3">
+                                    <label for="cafeterea" class="form-label">Cafeterea</label>
+                                    <input type="number" class="form-control" id="cafeterea" name="cafeterea"
+                                        min="0" placeholder="Enter number of cafeterea used">
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="other" class="form-label">O
-                                ther</label>
-                                <input type="number" class="form-control" id="other" name="other"
-                                    min="0" placeholder="Enter number of other used">
-                            </div>
+                                <div class="mb-3">
+                                    <label for="other" class="form-label">O
+                                        ther</label>
+                                    <input type="number" class="form-control" id="other" name="other" min="0"
+                                        placeholder="Enter number of other used">
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="notes" class="form-label">Notes</label>
-                                <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Any additional notes"></textarea>
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Notes</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Any additional notes"></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Confirm Change</button>
-                        </div>
-                    </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Confirm Change</button>
+                            </div>
+                        </form>
+                    @endisset
                 </div>
             </div>
         </div>
