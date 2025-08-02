@@ -2,20 +2,19 @@
 
 @section('content')
     <div class="container py-4">
+        {{-- Flash Messages --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
-
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
-
         @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <ul class="mb-0">
@@ -23,12 +22,15 @@
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
+
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0"><i class="fas fa-file-alt me-2"></i>Session Reports</h4>
+            <h4><i class="fas fa-file-alt me-2"></i>Session Reports</h4>
         </div>
+
+        {{-- Filter Form --}}
         <form method="GET" action="{{ route('reports.index') }}" class="row g-2 mb-4">
             <div class="col-md-2">
                 <input type="text" name="professor" class="form-control" placeholder="Search by professor name"
@@ -58,7 +60,7 @@
             </div>
         </form>
 
-        <!-- Desktop Table -->
+        {{-- Desktop Table --}}
         <div class="d-none d-md-block">
             <div class="table-responsive">
                 <table class="table table-striped align-middle mb-0">
@@ -78,7 +80,7 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $session->professor->name }}</td>
                                 <td>{{ \App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
-                                <td>{{ \Carbon\Carbon::parse($session->created_at)->format('M d, Y') }}</td>
+                                <td>{{ $session->created_at->format('M d, Y') }}</td>
                                 <td>
                                     <span
                                         class="badge bg-{{ $session->status === \App\Enums\SessionStatus::ACTIVE ? 'success' : 'secondary' }}">
@@ -90,7 +92,6 @@
                                         onclick="openReportModal({{ $session->id }})">
                                         <i class="fas fa-file-alt me-1"></i> View Report
                                     </button>
-
                                 </td>
                             </tr>
                         @empty
@@ -103,7 +104,7 @@
             </div>
         </div>
 
-        <!-- Mobile Cards -->
+        {{-- Mobile Cards --}}
         <div class="d-md-none">
             @forelse($sessions as $index => $session)
                 <div class="card mb-3 shadow-sm">
@@ -111,8 +112,7 @@
                         <h5 class="card-title mb-2">{{ $session->professor->name }}</h5>
                         <p class="mb-1"><strong>Stage:</strong>
                             {{ \App\Enums\StagesEnum::getStringValue($session->stage) }}</p>
-                        <p class="mb-1"><strong>Date:</strong>
-                            {{ \Carbon\Carbon::parse($session->start_at)->format('M d, Y') }}</p>
+                        <p class="mb-1"><strong>Date:</strong> {{ $session->created_at->format('M d, Y') }}</p>
                         <p class="mb-1">
                             <strong>Status:</strong>
                             <span
@@ -121,9 +121,9 @@
                             </span>
                         </p>
                         <div class="d-grid mt-2">
-                            <a href="{{ route('reports.session') }}" class="btn btn-outline-warning btn-sm">
+                            <button onclick="openReportModal({{ $session->id }})" class="btn btn-outline-warning btn-sm">
                                 <i class="fas fa-file-alt me-1"></i> View Report
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -131,6 +131,8 @@
                 <p class="text-center text-muted">No sessions available.</p>
             @endforelse
         </div>
+
+        {{-- Pagination --}}
         <div class="d-flex justify-content-center pt-2">
             @if ($sessions->hasPages())
                 <nav>
@@ -167,16 +169,16 @@
                 </nav>
             @endif
         </div>
-
     </div>
-    <!-- Report Type Modal -->
+
+    {{-- Report Type Modal --}}
     <div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form id="reportTypeForm" method="GET">
+            <form id="reportTypeForm" method="GET" action="{{ route('reports.session') }}" target="_blank">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Choose Report Type</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="session_id" id="reportSessionId">
@@ -199,16 +201,19 @@
             </form>
         </div>
     </div>
-
 @endsection
+
 @push('scripts')
     <script>
         function openReportModal(sessionId) {
             const form = document.getElementById('reportTypeForm');
-            form.action = "{{ route('reports.session', 'SESSION_ID') }}".replace('SESSION_ID', sessionId);
             document.getElementById('reportSessionId').value = sessionId;
-            var modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
-            modal.show();
+
+            // Mobile-safe modal show
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
+                modal.show();
+            }, 200);
         }
     </script>
 @endpush
