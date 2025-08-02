@@ -12,6 +12,7 @@ class CloseSessionRequesst extends FormRequest
             'markers' => 'nullable|numeric|min:0',
             'copies' => 'nullable|numeric|min:0',
             'cafeterea' => 'nullable|numeric|min:0',
+            'other' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
         ];
     }

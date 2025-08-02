@@ -74,14 +74,13 @@ class SessionRepository extends BaseRepository
 
     public function store($input)
     {
-        $status = Carbon::parse($input->start_at) >= now() ? SessionStatus::ACTIVE : SessionStatus::PENDING;
         DB::beginTransaction();
         $session = $this->model->create([
             'professor_id' => $input->professor_id,
             'stage' => $input->stage,
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
-            'status' => $status,
+            'status' => SessionStatus::ACTIVE,
             'printables' => $input->printables,
             'materials' => $input->materials,
             'start_at' => $input->start_at,

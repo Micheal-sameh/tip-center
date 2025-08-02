@@ -296,6 +296,13 @@
                             </div>
 
                             <div class="mb-3">
+                                <label for="other" class="form-label">O
+                                ther</label>
+                                <input type="number" class="form-control" id="other" name="other"
+                                    min="0" placeholder="Enter number of other used">
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="notes" class="form-label">Notes</label>
                                 <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Any additional notes"></textarea>
                             </div>
