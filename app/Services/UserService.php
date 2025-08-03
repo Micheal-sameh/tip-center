@@ -49,4 +49,9 @@ class UserService
     {
         return $this->userRepository->changeStatus($id);
     }
+
+    public function profilePic($image, $id)
+    {
+        return $this->userRepository->profilePic($image, $id);
+    }
 }

@@ -96,4 +96,15 @@ class UserRepository extends BaseRepository
 
         return $user;
     }
+
+    public function profilePic($image, $id)
+    {
+        $user = $this->findById($id);
+
+        $user->clearMediaCollection('profile_pic');
+        $user->addMedia($image)
+            ->toMediaCollection('profile_pic');
+
+        return $user;
+    }
 }

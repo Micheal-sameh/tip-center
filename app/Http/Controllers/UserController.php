@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\UserDTO;
+use App\Http\Requests\ProfilePicRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Services\UserService;
@@ -85,5 +86,12 @@ class UserController extends Controller
             'success' => true,
             'message' => __('messages.Status updated'),
         ]);
+    }
+
+    public function profilePic(ProfilePicRequest $request, $id)
+    {
+        $user = $this->userService->profilePic($request->image, $id);
+
+        return to_route('users.show', $id)->with('success', 'Profile picture updated successfully');
     }
 }
