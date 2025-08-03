@@ -41,12 +41,14 @@ Route::group(['middleware' => ['setlocale']], function () {
     Route::middleware(['auth'])->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
+            Route::get('/profile', [UserController::class, 'profile'])->name('users.profile');
             Route::get('/create', [UserController::class, 'create'])->name('users.create');
             Route::get('/{id}/show', [UserController::class, 'show'])->name('users.show');
             Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
             Route::get('/users/table', [UserController::class, 'tablePartial'])->name('users.table');
             Route::post('/', [UserController::class, 'store'])->name('users.store');
             Route::put('/{id}/status', [UserController::class, 'changeStatus'])->name('users.status');
+            Route::put('/{id}/password', [UserController::class, 'updatePassword'])->name('users.updatePassword');
             Route::put('/{id}/profile-pic', [UserController::class, 'profilePic'])->name('users.pic_upload');
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'delete'])->name('users.delete');

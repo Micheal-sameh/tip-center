@@ -7,7 +7,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class UserRepository extends BaseRepository
@@ -101,6 +103,16 @@ class UserRepository extends BaseRepository
     {
         $model = $this->findById($id);
 
-        return $this->updateProfilePic($model, $image);
+        return $this->updateProfilePic($model, $image, 'profile_pic');
+    }
+
+    public function updatePassword($password)
+    {
+        $user = $this->findById(Auth::id());
+        $user->update([
+            'password' => Hash::make($password),
+        ]);
+
+        return $user;
     }
 }

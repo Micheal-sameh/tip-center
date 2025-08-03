@@ -54,4 +54,12 @@ class UserService
     {
         return $this->userRepository->profilePic($image, $id);
     }
+
+    public function updatePassword($password)
+    {
+        $user = $this->userRepository->updatePassword($password);
+        $user->load('roles');
+
+        return $user;
+    }
 }
