@@ -24,27 +24,45 @@
             <div class="card-body p-4">
                 <div class="row">
                     <!-- Professor Avatar Column -->
-                    <div class="col-md-4 text-center mb-4 mb-md-0">
-                        <div class="position-relative d-inline-block">
-                            <div class="rounded-circle bg-light border border-4 border-primary d-flex align-items-center justify-content-center mx-auto"
-                                 style="width: 160px; height: 160px; background-color: #f0f8ff;">
-                                <i class="fas fa-user-tie fa-4x text-primary"></i>
+                    <div class="col-md-4 p-4 text-center border-end bg-light">
+                        <div class="d-flex flex-column align-items-center h-100">
+                            <!-- Avatar with hover effect -->
+                            <div class="avatar-wrapper mx-auto mb-3 position-relative">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#avatarModal" class="avatar-link">
+                                    @if ($professor->hasMedia('profile_pic'))
+                                        <img src="{{ $professor->getFirstMediaUrl('profile_pic') }}"
+                                            class="avatar img-fluid rounded-circle shadow-sm" alt="Professor Avatar">
+                                        <div class="avatar-overlay rounded-circle">
+                                            <i class="fas fa-camera text-white"></i>
+                                        </div>
+                                    @else
+                                        @php
+                                            $logo = App\Models\Setting::where('name', 'logo')->first();
+                                        @endphp
+                                        <img src="{{ $logo?->getFirstMediaUrl('app_logo') ?? asset('images/default-avatar.png') }}"
+                                            class="avatar img-fluid rounded-circle shadow-sm" alt="Professor Avatar">
+                                        <div class="avatar-overlay rounded-circle">
+                                            <i class="fas fa-camera text-white"></i>
+                                        </div>
+                                    @endif
+                                </a>
                             </div>
-                            <!-- Status Badge -->
-                            <div class="position-absolute bottom-0 end-0 translate-middle">
+
+                            <div class="mt-auto w-100">
+                                <h5 class="text-dark fw-bold mb-1">{{ $professor->name }}</h5>
+                                <p class="text-muted small mb-3">{{ $professor->email }}</p>
                                 @if ($professor->status == 1)
-                                    <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm">
-                                        <i class="fas fa-check-circle me-1"></i> {{ __('trans.active') }}
+                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+                                        <i class="fas fa-circle me-1 small"></i> {{ __('trans.active') }}
                                     </span>
                                 @else
-                                    <span class="badge bg-danger rounded-pill px-3 py-2 shadow-sm">
-                                        <i class="fas fa-times-circle me-1"></i> {{ __('trans.inactive') }}
+                                    <span
+                                        class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-normal">
+                                        <i class="fas fa-circle me-1 small"></i> {{ __('trans.inactive') }}
                                     </span>
                                 @endif
                             </div>
                         </div>
-                        <h3 class="mt-4 text-primary fw-bold">{{ $professor->name }}</h3>
-                        <p class="text-muted mb-0">{{ $professor->school }}</p>
                     </div>
 
                     <!-- Professor Info Column -->
@@ -52,13 +70,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-phone-alt me-2"></i>{{ __('trans.phone') }}</h6>
+                                    <h6 class="text-muted mb-2"><i
+                                            class="fas fa-phone-alt me-2"></i>{{ __('trans.phone') }}</h6>
                                     <p class="mb-0 fw-bold">{{ $professor->phone }}</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-phone me-2"></i>{{ __('trans.optional_phone') }}</h6>
+                                    <h6 class="text-muted mb-2"><i
+                                            class="fas fa-phone me-2"></i>{{ __('trans.optional_phone') }}</h6>
                                     <p class="mb-0 fw-bold">{{ $professor->optional_phone ?? 'N/A' }}</p>
                                 </div>
                             </div>
@@ -67,13 +87,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-birthday-cake me-2"></i>{{ __('trans.birth_date') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $professor->birth_date }}</p>
+                                    <h6 class="text-muted mb-2"><i
+                                            class="fas fa-birthday-cake me-2"></i>{{ __('trans.birth_date') }}</h6>
+                                    <p class="mb-0 fw-bold">{{ $professor->birth_date->format('d-m-Y') }}</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-book me-2"></i>{{ __('trans.subject') }}</h6>
+                                    <h6 class="text-muted mb-2"><i class="fas fa-book me-2"></i>{{ __('trans.subject') }}
+                                    </h6>
                                     <p class="mb-0 fw-bold">{{ $professor->subject }}</p>
                                 </div>
                             </div>
@@ -89,7 +111,8 @@
                     @if ($professor->stages && count($professor->stages))
                         <div class="d-flex flex-wrap gap-2">
                             @foreach ($professor->stages as $stage)
-                                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill border border-primary border-opacity-25">
+                                <span
+                                    class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill border border-primary border-opacity-25">
                                     <i class="fas fa-layer-group me-1"></i>
                                     {{ \App\Enums\stagesEnum::getStringValue($stage->stage) }}
                                 </span>
@@ -124,20 +147,189 @@
         </div>
     </div>
 
+    <!-- Avatar Modal -->
+    <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-semibold">{{ __('trans.profile_picture') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('Close') }}"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="mb-4">
+                        <div class="avatar-preview mx-auto">
+                            @if ($professor->hasMedia('profile_pic'))
+                                <img src="{{ $professor->getFirstMediaUrl('profile_pic') }}"
+                                    class="img-fluid rounded shadow" id="zoomableImage"
+                                    style="max-height: 500px; cursor: zoom-in;" alt="Professor Avatar">
+                            @else
+                                @php
+                                    $logo = App\Models\Setting::where('name', 'logo')->first();
+                                @endphp
+                                <img src="{{ $logo?->getFirstMediaUrl('app_logo') ?? asset('images/default-avatar.png') }}"
+                                    class="img-fluid rounded shadow" style="max-height: 500px;" alt="Professor Avatar">
+                            @endif
+                        </div>
+                    </div>
+
+                    @can('professors_update')
+                        <form action="{{ route('professors.profilePic', $professor->id) }}" method="POST"
+                            enctype="multipart/form-data" class="px-3">
+                            @csrf
+                            @method('PUT')
+                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                                <div class="mb-3 flex-grow-1">
+                                    <input type="file" name="image" id="avatarUpload" accept="image/*"
+                                        class="form-control d-none" required>
+                                    <label for="avatarUpload" class="btn btn-primary rounded-pill px-4 py-2 w-100">
+                                        <i class="fas fa-cloud-upload-alt me-2"></i> {{ __('trans.choose_new_photo') }}
+                                    </label>
+                                    <div id="fileName" class="small text-muted mt-2"></div>
+                                </div>
+                                <button type="submit" class="btn btn-success rounded-pill px-4 py-2 mb-3 mb-md-0"
+                                    id="uploadBtn" disabled>
+                                    <i class="fas fa-check me-2"></i> {{ __('trans.update_photo') }}
+                                </button>
+                                {{-- @if ($professor->hasMedia('profile_pic'))
+                                    <button type="button" class="btn btn-danger rounded-pill px-4 py-2"
+                                        id="removeAvatarBtn">
+                                        <i class="fas fa-trash-alt me-2"></i> {{ __('trans.remove_photo') }}
+                                    </button>
+                                @endif --}}
+                            </div>
+                        </form>
+                    @endcan
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Avatar Form (hidden) -->
+    {{-- @can('professors_update')
+        <form id="removeAvatarForm" action="{{ route('professors.remove.avatar', $professor->id) }}" method="POST"
+            class="d-none">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endcan --}}
+
     <style>
         .bg-gradient-primary {
             background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
         }
+
         .info-card {
             transition: all 0.3s ease;
             height: 100%;
         }
+
         .info-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+
         .rounded-4 {
             border-radius: 1rem !important;
         }
+
+        /* Avatar Styles */
+        .avatar-wrapper {
+            width: 160px;
+            height: 160px;
+            position: relative;
+        }
+
+        .avatar-link {
+            display: block;
+            position: relative;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 4px solid rgba(var(--bs-primary-rgb), 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .avatar-link:hover .avatar-overlay {
+            opacity: 1;
+        }
+
+        /* Modal Styles */
+        .avatar-preview {
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        /* Zoom effect */
+        .zoomed {
+            cursor: zoom-out;
+            transform: scale(1.5);
+            transition: transform 0.3s ease;
+        }
     </style>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Show selected file name
+                document.getElementById('avatarUpload')?.addEventListener('change', function(e) {
+                    const fileName = document.getElementById('fileName');
+                    const uploadBtn = document.getElementById('uploadBtn');
+
+                    if (this.files.length > 0) {
+                        fileName.textContent = this.files[0].name;
+                        uploadBtn.disabled = false;
+
+                        // Preview the selected image
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const preview = document.querySelector('.avatar-preview img');
+                            if (preview) {
+                                preview.src = e.target.result;
+                            }
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    } else {
+                        fileName.textContent = '';
+                        uploadBtn.disabled = true;
+                    }
+                });
+
+                // Zoom functionality
+                const zoomableImage = document.getElementById('zoomableImage');
+                if (zoomableImage) {
+                    zoomableImage.addEventListener('click', function() {
+                        this.classList.toggle('zoomed');
+                    });
+                }
+
+                // Remove avatar button
+                const removeAvatarBtn = document.getElementById('removeAvatarBtn');
+                if (removeAvatarBtn) {
+                    removeAvatarBtn.addEventListener('click', function() {
+                        if (confirm('{{ __('trans.confirm_remove_avatar') }}')) {
+                            document.getElementById('removeAvatarForm').submit();
+                        }
+                    });
+                }
+            });
+        </script>
+    @endpush
 @endsection

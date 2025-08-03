@@ -45,4 +45,9 @@ class ProfessorService
     {
         return $this->professorRepository->changeStatus($id);
     }
+
+    public function profilePic($image, $id)
+    {
+        return $this->professorRepository->profilePic($image, $id);
+    }
 }
