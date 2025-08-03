@@ -229,7 +229,10 @@
             <!-- Sidebar -->
             <div id="sidebar">
 
-                <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}" alt="Logo" class="img-fluid mb-3 pt-3">
+                <a href="{{ route('users.profile') }}">
+                    <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}" alt="Logo"
+                        class="img-fluid mb-3 pt-3" style="cursor: pointer;">
+                </a>
                 <ul class="nav flex-column">
                     @auth
                         <li class="nav-item">
