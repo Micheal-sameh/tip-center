@@ -63,4 +63,12 @@ class SessionService
     {
         return $this->sessionRepository->lastSession($session, $student);
     }
+
+    public function students($id)
+    {
+        $session = $this->sessionRepository->show($id);
+        $session->load('sessionStudents');
+
+        return $session;
+    }
 }

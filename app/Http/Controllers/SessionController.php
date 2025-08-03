@@ -96,4 +96,11 @@ class SessionController extends Controller
 
         return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
     }
+
+    public function students($id)
+    {
+        $session = $this->sessionservice->students($id);
+
+        return view('sessions.students', compact('session'));
+    }
 }

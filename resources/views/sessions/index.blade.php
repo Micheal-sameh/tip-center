@@ -155,7 +155,7 @@
                                             </div>
                                         @endif
                                         <div class="d-flex justify-content-between">
-                                            <a class="fw-bold" href='#' >Students:</a>
+                                            <a class="fw-bold" href='{{ route('sessions.students', $session->id)}}'>Students:</a>
                                             <span class="fw-bold">{{ $session->session_students_count }} </span>
                                         </div>
                                     </div>
