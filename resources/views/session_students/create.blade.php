@@ -25,43 +25,6 @@
             </div>
         </div>
 
-        <!-- Student Info Card -->
-        <div class="card shadow-sm mb-4 border-primary">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-user-graduate me-2"></i>Student Information</h5>
-            </div>
-            <div class="card-body">
-                <h5 class="mb-2">{{ $student->name }}</h5>
-                <div class="d-flex flex-wrap gap-2 mb-2">
-                    <span class="badge bg-light text-dark">
-                        <i class="fas fa-id-card me-1"></i> {{ $student->code }}
-                    </span>
-                    <span class="badge bg-light text-dark">
-                        <i class="fas fa-phone me-1"></i> {{ $student->phone }}
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Session Info Card -->
-        <div class="card shadow-sm mb-4 border-info">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="fas fa-chalkboard-teacher me-2"></i>Session Information</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Professor</h6>
-                        <p>{{ $session->professor->name }}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Stage</h6>
-                        <p>{{ \App\Enums\StagesEnum::getStringValue($session->stage) }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Pricing Card -->
         <div class="card shadow-sm mb-4 border-secondary">
             <div class="card-header bg-secondary text-white">

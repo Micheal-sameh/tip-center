@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect()->route('students.index');
+    return redirect()->route('attendances.index');
 });
 Route::group(['middleware' => ['setlocale']], function () {
     // Language change routes (optional, if you want to switch languages via URL)
@@ -68,8 +68,10 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{professor_id}/create', [SessionController::class, 'create'])->name('sessions.create');
             Route::get('/{id}/show', [SessionController::class, 'show'])->name('sessions.show');
             Route::get('/{id}/edit', [SessionController::class, 'edit'])->name('sessions.edit');
+            Route::get('/{id}/students', [SessionController::class, 'students'])->name('sessions.students');
             Route::post('/', [SessionController::class, 'store'])->name('sessions.store');
-            Route::put('/{id}/status', [SessionController::class, 'close'])->name('sessions.status');
+            Route::put('/{id}/close', [SessionController::class, 'close'])->name('sessions.close');
+            Route::put('/{id}/active', [SessionController::class, 'active'])->name('sessions.active');
             Route::put('/{id}', [SessionController::class, 'update'])->name('sessions.update');
             Route::delete('/{id}', [SessionController::class, 'delete'])->name('sessions.delete');
         });

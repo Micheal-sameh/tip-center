@@ -33,7 +33,7 @@ class ReportType
 
     public static function all(): array
     {
-        $locale = App::isLocale('en') ? 'en' : 'ar';
+        $locale = App::isLocale('ar') ? 'ar' : 'en';
 
         return array_map(
             fn ($value) => [
@@ -50,7 +50,7 @@ class ReportType
             throw new InvalidArgumentException("Invalid listing type value: {$value}");
         }
 
-        return self::$translations[$value][App::isLocale('en') ? 'en' : 'ar'];
+        return self::$translations[$value][App::isLocale('ar') ? 'ar' : 'en'];
     }
 
     public static function getValues(): array

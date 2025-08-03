@@ -54,6 +54,11 @@ class SessionService
         return $this->sessionRepository->close($input, $id);
     }
 
+    public function status($status, $id)
+    {
+        return $this->sessionRepository->status($status, $id);
+    }
+
     public function mySessions($input)
     {
         return $this->sessionRepository->mySessions($input);
@@ -62,5 +67,13 @@ class SessionService
     public function lastSession($session, $student)
     {
         return $this->sessionRepository->lastSession($session, $student);
+    }
+
+    public function students($id)
+    {
+        $session = $this->sessionRepository->show($id);
+        $session->load('sessionStudents');
+
+        return $session;
     }
 }

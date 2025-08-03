@@ -89,7 +89,7 @@
                             <!-- Professor Price -->
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="number" step="0.01" name="professor_price" id="professor_price"
+                                    <input type="number" step="1" name="professor_price" id="professor_price"
                                         value="{{ old('professor_price') }}" placeholder="0.00"
                                         class="form-control @error('professor_price') is-invalid @enderror" required>
                                     <label for="professor_price">{{ __('Professor Price') }}</label>
@@ -102,7 +102,7 @@
                             <!-- Center Price -->
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="number" step="0.01" name="center_price" id="center_price"
+                                    <input type="number" step="1" name="center_price" id="center_price"
                                         value="{{ old('center_price') }}" placeholder="0.00"
                                         class="form-control @error('center_price') is-invalid @enderror" required>
                                     <label for="center_price">{{ __('Center Price') }}</label>
@@ -115,7 +115,7 @@
                             <!-- Printables -->
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="number" step="0.01" name="printables" id="printables"
+                                    <input type="number" step="1" name="printables" id="printables"
                                         value="{{ old('printables') }}" placeholder="0.00"
                                         class="form-control @error('printables') is-invalid @enderror">
                                     <label for="printables">{{ __('Printables Cost') }}</label>
@@ -127,11 +127,23 @@
                             <!-- materials Fees -->
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="number" step="0.01" name="materials" id="materials"
+                                    <input type="number" step="1" name="materials" id="materials"
                                         value="{{ old('materials') }}" placeholder="0.00"
                                         class="form-control @error('materials') is-invalid @enderror">
                                     <label for="materials">{{ __('materials Fees') }}</label>
                                     @error('materials')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="integer" step="1" name="room" id="room Number"
+                                        value="{{ old('room Number') }}" placeholder="1"
+                                        class="form-control @error('room Number') is-invalid @enderror">
+                                    <label for="room Number">{{ __('room Number') }}</label>
+                                    @error('room Number')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -142,12 +154,12 @@
 
                     <!-- Timing -->
                     <div class="mb-4">
-                        <h5 class="mb-3 text-muted"><i class="fas fa-clock me-2"></i> Timing (Optional)</h5>
+                        <h5 class="mb-3 text-muted"><i class="fas fa-clock me-2"></i> Timing</h5>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="time" name="start_at" id="start_at" value="{{ old('start_at') }}"
-                                        class="form-control @error('start_at') is-invalid @enderror">
+                                        class="form-control @error('start_at') is-invalid @enderror" required>
                                     <label for="start_at">{{ __('Start Time') }}</label>
                                     @error('start_at')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -157,7 +169,7 @@
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="time" name="end_at" id="end_at" value="{{ old('end_at') }}"
-                                        class="form-control @error('end_at') is-invalid @enderror">
+                                        class="form-control @error('end_at') is-invalid @enderror" required>
                                     <label for="end_at">{{ __('End Time') }}</label>
                                     @error('end_at')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>

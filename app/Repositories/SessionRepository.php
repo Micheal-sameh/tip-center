@@ -34,9 +34,11 @@ class SessionRepository extends BaseRepository
 
     public function index($input)
     {
+        $this->checkYesterday();
         $this->checkActive();
         $query = $this->model->query()
             ->whereDate('created_at', today())
+            ->withCount('sessionStudents')
             ->when(isset($input['professor_id']), fn ($q) => $q->where('professor_id', $input['professor_id']))
             ->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
             ->when(isset($input['status']), fn ($q) => $q->where('status', $input['status']))
@@ -80,11 +82,12 @@ class SessionRepository extends BaseRepository
             'stage' => $input->stage,
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
-            'status' => SessionStatus::ACTIVE,
+            'status' => SessionStatus::INACTIVE,
             'printables' => $input->printables,
             'materials' => $input->materials,
             'start_at' => $input->start_at,
             'end_at' => $input->end_at,
+            'room' => $input->room,
         ]);
         DB::commit();
 
@@ -114,9 +117,10 @@ class SessionRepository extends BaseRepository
 
     public function close($input, $id)
     {
+        DB::beginTransaction();
         $session = $this->findById($id);
         $session->update([
-            'status' => SessionStatus::INACTIVE,
+            'status' => SessionStatus::FINISHED,
         ]);
         $session->sessionExtra()->create([
             'copies' => $input['copies'] ?? 0,
@@ -124,6 +128,17 @@ class SessionRepository extends BaseRepository
             'cafeterea' => $input['cafeterea'] ?? 0,
             'other' => $input['other'] ?? 0,
             'notes' => $input['notes'],
+        ]);
+        DB::commit();
+
+        return $session;
+    }
+
+    public function status($status, $id)
+    {
+        $session = $this->findById($id);
+        $session->update([
+            'status' => $status,
         ]);
 
         return $session;
@@ -172,13 +187,30 @@ class SessionRepository extends BaseRepository
         return $this->execute($query);
     }
 
-    public function checkActive()
+    public function checkActive(): void
     {
-        $sessions = $this->model->where('status', SessionStatus::ACTIVE)
+        // Sessions that started and not yet ended → make ACTIVE
+        $this->model->where('status', SessionStatus::INACTIVE)
+            ->whereDate('created_at', Carbon::today())
+            ->where('start_at', '<=', now())
+            ->where('end_at', '>', now())
+            ->update(['status' => SessionStatus::ACTIVE]);
+
+        // Sessions already ended → make PENDING
+        $this->model->whereIn('status', [SessionStatus::ACTIVE, SessionStatus::INACTIVE])
+            ->whereDate('created_at', Carbon::today())
+            ->where('end_at', '<=', now())
+            ->update(['status' => SessionStatus::PENDING]);
+    }
+
+    public function checkYesterday(): void
+    {
+        $this->model->whereIn('status', [
+            SessionStatus::ACTIVE,
+            SessionStatus::INACTIVE,
+            SessionStatus::PENDING,
+        ])
             ->whereDate('created_at', '<', Carbon::today())
-            ->get();
-        $sessions->each(function ($session) {
-            $session->update(['status' => SessionStatus::INACTIVE]);
-        });
+            ->update(['status' => SessionStatus::FINISHED]);
     }
 }

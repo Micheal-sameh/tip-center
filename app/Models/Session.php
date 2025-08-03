@@ -19,6 +19,12 @@ class Session extends Model
         'materials',
         'start_at',
         'end_at',
+        'room',
+    ];
+
+    protected $casts = [
+        'start_at' => 'datetime',
+        'end_at' => 'datetime',
     ];
 
     public function professor()
