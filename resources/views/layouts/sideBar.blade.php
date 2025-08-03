@@ -186,7 +186,7 @@
             <!-- Sidebar -->
             <div id="sidebar">
 
-                <img src="{{ $faviconUrl }}" alt="Logo" class="img-fluid mb-3 pt-3">
+                <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}" alt="Logo" class="img-fluid mb-3 pt-3">
                 <ul class="nav flex-column">
                     @auth
                         <li class="nav-item text-begin"><a class="nav-item text-white" style="text-decoration: none;"
