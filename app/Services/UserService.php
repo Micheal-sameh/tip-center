@@ -62,4 +62,11 @@ class UserService
 
         return $user;
     }
+
+    public function resetPassword($id)
+    {
+        $user = $this->userRepository->resetPassword($id);
+
+        return $user;
+    }
 }

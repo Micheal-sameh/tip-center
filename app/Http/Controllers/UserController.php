@@ -110,4 +110,11 @@ class UserController extends Controller
 
         return to_route('users.profile')->with('success', 'Password updated successfully');
     }
+
+    public function resetPassword($id)
+    {
+        $user = $this->userService->resetPassword($id);
+
+        return to_route('users.index')->with('success', 'Password updated successfully');
+    }
 }
