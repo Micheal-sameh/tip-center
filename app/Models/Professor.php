@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Professor extends Model
+class Professor extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory , InteractsWithMedia;
 
     protected $fillable = [
         'name',
@@ -17,6 +19,14 @@ class Professor extends Model
         'school',
         'birth_date',
         'status',
+    ];
+
+    protected $mediaAttributes = [
+        'image',
+    ];
+
+    protected $casts = [
+        'birth_date' => 'datetime',
     ];
 
     public function professorStages()
