@@ -24,4 +24,12 @@ abstract class BaseRepository
     }
 
     abstract protected function model(): string;
+
+    public function updateProfilePic($model, $image, string $collection)
+    {
+        $model->clearMediaCollection($collection);
+        $model->addMedia($image)->toMediaCollection($collection);
+
+        return $model;
+    }
 }

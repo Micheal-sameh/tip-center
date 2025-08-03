@@ -52,4 +52,11 @@ class StudentService
     {
         return $this->studentRepository->changeStatus($id);
     }
+
+    public function profilePic($image, $id)
+    {
+        $student = $this->studentRepository->profilePic($image, $id);
+
+        return $student;
+    }
 }

@@ -24,13 +24,13 @@
             <div class="card-body p-4">
                 <div class="row">
                     <!-- Professor Avatar Column -->
-                    <div class="col-md-4 p-4 text-center border-end bg-light">
+                    <div class="col-md-4 p-4 text-center border-end bg-light bg-opacity-10">
                         <div class="d-flex flex-column align-items-center h-100">
                             <!-- Avatar with hover effect -->
                             <div class="avatar-wrapper mx-auto mb-3 position-relative">
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#avatarModal" class="avatar-link">
-                                    @if ($professor->hasMedia('profile_pic'))
-                                        <img src="{{ $professor->getFirstMediaUrl('profile_pic') }}"
+                                    @if ($professor->hasMedia('professors_images'))
+                                        <img src="{{ $professor->getFirstMediaUrl('professors_images') }}"
                                             class="avatar img-fluid rounded-circle shadow-sm" alt="Professor Avatar">
                                         <div class="avatar-overlay rounded-circle">
                                             <i class="fas fa-camera text-white"></i>
@@ -49,16 +49,18 @@
                             </div>
 
                             <div class="mt-auto w-100">
-                                <h5 class="text-dark fw-bold mb-1">{{ $professor->name }}</h5>
+                                <h5 class="text-dark fw-bold pt-4 mb-1">{{ $professor->name }}</h5>
                                 <p class="text-muted small mb-3">{{ $professor->email }}</p>
                                 @if ($professor->status == 1)
                                     <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
-                                        <i class="fas fa-circle me-1 small"></i> {{ __('trans.active') }}
+                                        <i class="fas fa-circle me-1 small" style="font-size: 8px;"></i>
+                                        {{ __('trans.active') }}
                                     </span>
                                 @else
                                     <span
                                         class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-normal">
-                                        <i class="fas fa-circle me-1 small"></i> {{ __('trans.inactive') }}
+                                        <i class="fas fa-circle me-1 small" style="font-size: 8px;"></i>
+                                        {{ __('trans.inactive') }}
                                     </span>
                                 @endif
                             </div>
@@ -67,36 +69,37 @@
 
                     <!-- Professor Info Column -->
                     <div class="col-md-8">
-                        <div class="row">
+                        <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i
-                                            class="fas fa-phone-alt me-2"></i>{{ __('trans.phone') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $professor->phone }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i
-                                            class="fas fa-phone me-2"></i>{{ __('trans.optional_phone') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $professor->optional_phone ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i
-                                            class="fas fa-birthday-cake me-2"></i>{{ __('trans.birth_date') }}</h6>
-                                    <p class="mb-0 fw-bold">{{ $professor->birth_date->format('d-m-Y') }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card mb-3 p-3 rounded-3 bg-light">
-                                    <h6 class="text-muted mb-2"><i class="fas fa-book me-2"></i>{{ __('trans.subject') }}
+                                <div class="info-card p-3 rounded-3 bg-light bg-opacity-10 border border-light">
+                                    <h6 class="text-muted mb-2 d-flex align-items-center">
+                                        <i class="fas fa-phone-alt me-2 text-primary"></i>{{ __('trans.phone') }}
                                     </h6>
-                                    <p class="mb-0 fw-bold">{{ $professor->subject }}</p>
+                                    <p class="mb-0 fw-bold text-dark">{{ $professor->phone }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card p-3 rounded-3 bg-light bg-opacity-10 border border-light">
+                                    <h6 class="text-muted mb-2 d-flex align-items-center">
+                                        <i class="fas fa-phone me-2 text-primary"></i>{{ __('trans.optional_phone') }}
+                                    </h6>
+                                    <p class="mb-0 fw-bold text-dark">{{ $professor->optional_phone ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card p-3 rounded-3 bg-light bg-opacity-10 border border-light">
+                                    <h6 class="text-muted mb-2 d-flex align-items-center">
+                                        <i class="fas fa-birthday-cake me-2 text-primary"></i>{{ __('trans.birth_date') }}
+                                    </h6>
+                                    <p class="mb-0 fw-bold text-dark">{{ $professor->birth_date->format('d-m-Y') }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card p-3 rounded-3 bg-light bg-opacity-10 border border-light">
+                                    <h6 class="text-muted mb-2 d-flex align-items-center">
+                                        <i class="fas fa-book me-2 text-primary"></i>{{ __('trans.subject') }}
+                                    </h6>
+                                    <p class="mb-0 fw-bold text-dark">{{ $professor->subject }}</p>
                                 </div>
                             </div>
                         </div>
@@ -106,7 +109,7 @@
                 <!-- Stages Section -->
                 <div class="mt-4 pt-3 border-top">
                     <h5 class="text-muted fw-semibold mb-3 d-flex align-items-center">
-                        <i class="fas fa-graduation-cap me-2"></i> {{ __('trans.stages') }}
+                        <i class="fas fa-graduation-cap me-2 text-primary"></i> {{ __('trans.stages') }}
                     </h5>
                     @if ($professor->stages && count($professor->stages))
                         <div class="d-flex flex-wrap gap-2">
@@ -120,7 +123,7 @@
                         </div>
                     @else
                         <div class="alert alert-light border d-inline-block">
-                            <i class="fas fa-info-circle me-2"></i> {{ __('trans.no_stages_assigned') }}
+                            <i class="fas fa-info-circle me-2 text-primary"></i> {{ __('trans.no_stages_assigned') }}
                         </div>
                     @endif
                 </div>
@@ -159,8 +162,8 @@
                 <div class="modal-body text-center py-4">
                     <div class="mb-4">
                         <div class="avatar-preview mx-auto">
-                            @if ($professor->hasMedia('profile_pic'))
-                                <img src="{{ $professor->getFirstMediaUrl('profile_pic') }}"
+                            @if ($professor->hasMedia('professors_images'))
+                                <img src="{{ $professor->getFirstMediaUrl('professors_images') }}"
                                     class="img-fluid rounded shadow" id="zoomableImage"
                                     style="max-height: 500px; cursor: zoom-in;" alt="Professor Avatar">
                             @else
@@ -191,12 +194,12 @@
                                     id="uploadBtn" disabled>
                                     <i class="fas fa-check me-2"></i> {{ __('trans.update_photo') }}
                                 </button>
-                                {{-- @if ($professor->hasMedia('profile_pic'))
+                                {{-- @if ($professor->hasMedia('professors_images'))
                                     <button type="button" class="btn btn-danger rounded-pill px-4 py-2"
                                         id="removeAvatarBtn">
                                         <i class="fas fa-trash-alt me-2"></i> {{ __('trans.remove_photo') }}
-                                    </button>
-                                @endif --}}
+                                    </button> --}}
+                                {{-- @endif --}}
                             </div>
                         </form>
                     @endcan
@@ -222,11 +225,13 @@
         .info-card {
             transition: all 0.3s ease;
             height: 100%;
+            background-color: rgba(248, 249, 250, 0.5);
         }
 
         .info-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background-color: white;
         }
 
         .rounded-4 {
@@ -282,6 +287,19 @@
             cursor: zoom-out;
             transform: scale(1.5);
             transition: transform 0.3s ease;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767.98px) {
+            .avatar-wrapper {
+                width: 120px;
+                height: 120px;
+            }
+
+            .col-md-4.border-end {
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
         }
     </style>
 

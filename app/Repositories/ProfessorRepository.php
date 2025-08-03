@@ -110,12 +110,8 @@ class ProfessorRepository extends BaseRepository
 
     public function profilePic($image, $id)
     {
-        $professor = $this->findById($id);
+        $model = $this->findById($id);
 
-        $professor->clearMediaCollection('profile_pic');
-        $professor->addMedia($image)
-            ->toMediaCollection('profile_pic');
-
-        return $professor;
+        return $this->updateProfilePic($model, $image, 'professors_images');
     }
 }
