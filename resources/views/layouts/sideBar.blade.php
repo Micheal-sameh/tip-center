@@ -8,7 +8,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>@yield('title', config('app.name'))</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -24,7 +25,8 @@
             --mobile-header-height: 60px;
         }
 
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -53,7 +55,7 @@
             padding: 0 15px;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         [dir="rtl"] .mobile-header {
@@ -73,13 +75,13 @@
             z-index: 1040;
             overflow-y: auto;
             transition: transform 0.3s ease;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         [dir="rtl"] .sidebar {
             left: auto;
             right: 0;
-            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         /* Content Area */
@@ -173,7 +175,7 @@
         }
 
         /* Prevent horizontal scrolling */
-        .main-content > .container {
+        .main-content>.container {
             max-width: 100%;
             padding-left: 15px;
             padding-right: 15px;
@@ -204,10 +206,8 @@
         </button>
         <div class="d-flex align-items-center">
 
-            <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}"
-                 alt="Profile"
-                 class="rounded-circle"
-                 style="width: 40px; height: 40px; object-fit: cover;">
+            <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}" alt="Profile" class="rounded-circle"
+                style="width: 40px; height: 40px; object-fit: cover;">
         </div>
         <button class="btn-menu" id="backButton">
             <i class="fas fa-arrow-left"></i>
@@ -217,12 +217,13 @@
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="text-center py-3">
-                        <a href="{{ route('users.profile') }}">
-
-            <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}"
-                 alt="Profile"
-                 class="profile-img">
-                 </a>
+            <a href="{{ route('users.profile') }}">
+                @if (auth()->user()->hasMedia('profile_pic'))
+                    <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}" alt="Profile" class="profile-img">
+                @else
+                    <img src="{{ $faviconUrl }}" alt="Profile" class="profile-img">
+                @endif
+            </a>
         </div>
 
         <nav>
@@ -235,11 +236,11 @@
                     </li>
 
                     @can('users_view')
-                    <li class="nav-item">
-                        <a href="{{ route('users.index') }}" class="nav-link">
-                            <i class="fas fa-users me-2"></i> {{ __('trans.users') }}
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="{{ route('users.index') }}" class="nav-link">
+                                <i class="fas fa-users me-2"></i> {{ __('trans.users') }}
+                            </a>
+                        </li>
                     @endcan
 
                     <li class="nav-item">
@@ -249,11 +250,11 @@
                     </li>
 
                     @can('professors_view')
-                    <li class="nav-item">
-                        <a href="{{ route('professors.index') }}" class="nav-link">
-                            <i class="fas fa-chalkboard-teacher me-2"></i> {{ __('trans.professors') }}
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="{{ route('professors.index') }}" class="nav-link">
+                                <i class="fas fa-chalkboard-teacher me-2"></i> {{ __('trans.professors') }}
+                            </a>
+                        </li>
                     @endcan
 
                     <li class="nav-item">
@@ -263,11 +264,11 @@
                     </li>
 
                     @can('settings_update')
-                    <li class="nav-item">
-                        <a href="{{ route('settings.index') }}" class="nav-link">
-                            <i class="fas fa-cog me-2"></i> {{ __('trans.settings') }}
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="{{ route('settings.index') }}" class="nav-link">
+                                <i class="fas fa-cog me-2"></i> {{ __('trans.settings') }}
+                            </a>
+                        </li>
                     @endcan
 
                     <li class="nav-item">
@@ -283,11 +284,11 @@
                     </li>
 
                     @can('students_view')
-                    <li class="nav-item">
-                        <a href="{{ route('students.index') }}" class="nav-link">
-                            <i class="fas fa-user-friends me-2"></i> {{ __('trans.students') }}
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="{{ route('students.index') }}" class="nav-link">
+                                <i class="fas fa-user-friends me-2"></i> {{ __('trans.students') }}
+                            </a>
+                        </li>
                     @endcan
 
                     <li class="nav-item">
@@ -378,4 +379,5 @@
 
     @stack('scripts')
 </body>
+
 </html>

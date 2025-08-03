@@ -52,6 +52,15 @@
                                             </a>
                                         @endcan --}}
                                         @can('users_update')
+                                            <form action="{{ route('users.resetPassword', $user->id) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-link p-0 m-0 align-baseline"
+                                                    title="{{ __('trans.reset_password') }}">
+                                                    <i class="fas fa-key text-primary"></i>
+                                                </button>
+                                            </form>
                                             <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-warning"
                                                 title="{{ __('trans.edit') }}">
                                                 <i class="fas fa-edit"></i>

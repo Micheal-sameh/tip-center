@@ -54,4 +54,5 @@ return [
     'session_reports' => 'Sessions Reports',
     'student_reports' => 'Students Report',
     'report' => 'Report',
+    'reset_password' => 'Reset Password',
 ];

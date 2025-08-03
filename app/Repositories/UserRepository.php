@@ -115,4 +115,14 @@ class UserRepository extends BaseRepository
 
         return $user;
     }
+
+    public function resetPassword($id)
+    {
+        $user = $this->findById($id);
+        $user->update([
+            'password' => Hash::make('tip_family'),
+        ]);
+
+        return $user;
+    }
 }
