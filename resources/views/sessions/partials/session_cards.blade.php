@@ -10,27 +10,26 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach ($sessions as $key => $session)
             <div class="col">
-            @php
-                                switch ($session->status) {
-                                    case \App\Enums\SessionStatus::PENDING:
-                                        $btnClass = 'danger'; // red
-                                        break;
-                                    case \App\Enums\SessionStatus::INACTIVE:
-                                        $btnClass = 'secondary'; // grey
-                                        break;
-                                    case \App\Enums\SessionStatus::ACTIVE:
-                                        $btnClass = 'success'; // green
-                                        break;
-                                    case \App\Enums\SessionStatus::FINISHED:
-                                        $btnClass = 'primary'; // blue
-                                        break;
-                                    default:
-                                        $btnClass = 'light'; // fallback
-                                }
-                            @endphp
+                @php
+                    switch ($session->status) {
+                        case \App\Enums\SessionStatus::PENDING:
+                            $btnClass = 'danger'; // red
+                            break;
+                        case \App\Enums\SessionStatus::INACTIVE:
+                            $btnClass = 'secondary'; // grey
+                            break;
+                        case \App\Enums\SessionStatus::ACTIVE:
+                            $btnClass = 'success'; // green
+                            break;
+                        case \App\Enums\SessionStatus::FINISHED:
+                            $btnClass = 'primary'; // blue
+                            break;
+                        default:
+                            $btnClass = 'light'; // fallback
+                    }
+                @endphp
                 <div class="card h-100 shadow-sm">
-                    <div
-                        class="card-header bg-{{ $btnClass }} text-white py-2">
+                    <div class="card-header bg-{{ $btnClass }} text-white py-2">
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="fw-bold">#{{ $key + 1 }}</small>
                             <span class="badge bg-white text-dark status-badge">
@@ -73,6 +72,13 @@
                                 <a class="fw-bold" href='{{ route('sessions.students', $session->id) }}'>Students:</a>
                                 <span class="fw-bold">{{ $session->session_students_count }} </span>
                             </div>
+                            @if ($session->room)
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold"
+                                        >Room:</a>
+                                    <span class="fw-bold">{{ $session->room }} </span>
+                                </div>
+                            @endif
                         </div>
 
                         @if ($session->start_at && $session->end_at)

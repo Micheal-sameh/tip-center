@@ -55,7 +55,7 @@ class SessionController extends Controller
     public function store(SessionCreateRequest $request)
     {
         $input = new SessionDTO(...$request->only(
-            'professor_id', 'stage', 'professor_price', 'center_price', 'printables', 'start_at', 'end_at', 'materials'
+            'professor_id', 'stage', 'professor_price', 'center_price', 'printables', 'start_at', 'end_at', 'materials', 'room'
         ));
 
         $this->sessionservice->store($input);

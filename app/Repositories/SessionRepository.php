@@ -82,11 +82,12 @@ class SessionRepository extends BaseRepository
             'stage' => $input->stage,
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
-            'status' => SessionStatus::ACTIVE,
+            'status' => SessionStatus::INACTIVE,
             'printables' => $input->printables,
             'materials' => $input->materials,
             'start_at' => $input->start_at,
             'end_at' => $input->end_at,
+            'room' => $input->room,
         ]);
         DB::commit();
 
@@ -116,7 +117,7 @@ class SessionRepository extends BaseRepository
 
     public function close($input, $id)
     {
-
+        DB::beginTransaction();
         $session = $this->findById($id);
         $session->update([
             'status' => SessionStatus::FINISHED,
@@ -128,6 +129,7 @@ class SessionRepository extends BaseRepository
             'other' => $input['other'] ?? 0,
             'notes' => $input['notes'],
         ]);
+        DB::commit();
 
         return $session;
     }
