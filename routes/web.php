@@ -47,6 +47,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/users/table', [UserController::class, 'tablePartial'])->name('users.table');
             Route::post('/', [UserController::class, 'store'])->name('users.store');
             Route::put('/{id}/status', [UserController::class, 'changeStatus'])->name('users.status');
+            Route::put('/{id}/profile-pic', [UserController::class, 'profilePic'])->name('users.pic_upload');
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'delete'])->name('users.delete');
         });
