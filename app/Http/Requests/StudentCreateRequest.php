@@ -12,8 +12,8 @@ class StudentCreateRequest extends FormRequest
         return [
             'name' => 'required|string',
             'stage' => 'required|integer|in:'.implode(',', array_column(StagesEnum::all(), 'value')),
-            'phone' => 'string',
-            'parent_phone' => 'string',
+            'phone' => 'required_without:parent_phone|string',
+            'parent_phone' => 'required_wihtout:phone|string',
             'parent_phone_2' => 'string',
             'birth_date' => 'date',
             'note' => 'string',

@@ -8,6 +8,13 @@
                 <i class="fas fa-calendar-check me-1"></i> {{ now()->format('M d, Y') }}
             </div>
         </div>
+        <!-- Add Student Button -->
+        <div class="d-flex justify-content-end mb-2">
+            <a href="{{ route('students.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>{{ __('Add Student') }}
+            </a>
+        </div>
+
 
         <!-- Search Student Form -->
         <div class="card shadow-sm mb-4">
@@ -19,7 +26,7 @@
                                 <i class="fas fa-user-graduate text-muted"></i>
                             </span>
                             <input type="text" name="code" class="form-control border-start-0"
-                                   placeholder="Search by phone or code" value="{{ request('code') }}">
+                                placeholder="Search by phone or code" value="{{ request('code') }}">
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -49,7 +56,8 @@
                                     </div>
                                     <div class="text-end">
                                         <small class="d-block">{{ $student->phone }}</small>
-                                        <small class="d-block">{{ App\Enums\StagesEnum::getStringValue($student->stage) }}</small>
+                                        <small
+                                            class="d-block">{{ App\Enums\StagesEnum::getStringValue($student->stage) }}</small>
                                         <span class="badge bg-light text-dark">
                                             <i class="fas fa-chevron-right"></i>
                                         </span>
@@ -80,7 +88,8 @@
                                     <i class="fas fa-phone me-1"></i> {{ $selected_student->phone }}
                                 </span>
                                 <span class="badge bg-light text-dark">
-                                    <i class="fas fa-layer-group me-1"></i> {{ App\Enums\StagesEnum::getStringValue($selected_student->stage) }}
+                                    <i class="fas fa-layer-group me-1"></i>
+                                    {{ App\Enums\StagesEnum::getStringValue($selected_student->stage) }}
                                 </span>
                             </div>
                         </div>
@@ -100,12 +109,14 @@
                                 <div class="col-md-6 col-lg-4">
                                     <a href="{{ route('attendances.create', [
                                         'student_id' => $selected_student->id,
-                                        'session_id' => $my_session->id
-                                    ]) }}" class="text-decoration-none">
+                                        'session_id' => $my_session->id,
+                                    ]) }}"
+                                        class="text-decoration-none">
                                         <div class="card session-card h-100 m-0 position-relative" style="border-radius: 10px;">
                                             <div class="card-body p-3">
                                                 <div class="d-flex align-items-center mb-2">
-                                                    <div class="avatar-sm bg-light-primary rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                    <div
+                                                        class="avatar-sm bg-light-primary rounded-circle d-flex align-items-center justify-content-center me-2">
                                                         <i class="fas fa-chalkboard-teacher text-primary fs-5"></i>
                                                     </div>
                                                     <h6 class="mb-0 text-truncate">{{ $my_session->professor->name }}</h6>
@@ -143,12 +154,14 @@
                                 <div class="col-md-6 col-lg-4">
                                     <a href="{{ route('attendances.create', [
                                         'student_id' => $selected_student->id,
-                                        'session_id' => $session->id
-                                    ]) }}" class="text-decoration-none">
+                                        'session_id' => $session->id,
+                                    ]) }}"
+                                        class="text-decoration-none">
                                         <div class="card session-card h-100 m-0 position-relative" style="border-radius: 10px;">
                                             <div class="card-body p-3">
                                                 <div class="d-flex align-items-center mb-2">
-                                                    <div class="avatar-sm bg-light-primary rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                    <div
+                                                        class="avatar-sm bg-light-primary rounded-circle d-flex align-items-center justify-content-center me-2">
                                                         <i class="fas fa-chalkboard-teacher text-primary fs-5"></i>
                                                     </div>
                                                     <h6 class="mb-0 text-truncate">{{ $session->professor->name }}</h6>
@@ -181,50 +194,50 @@
         @endisset
     </div>
 
-    @section('styles')
-        <style>
-            .session-card {
-                transition: all 0.2s ease;
-                border: 1px solid #e9ecef;
-                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-                cursor: pointer;
-            }
+@section('styles')
+    <style>
+        .session-card {
+            transition: all 0.2s ease;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
 
-            .session-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-                border-color: #dee2e6;
-                background-color: #f8f9fa;
-            }
+        .session-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            border-color: #dee2e6;
+            background-color: #f8f9fa;
+        }
 
-            .avatar-sm {
-                width: 2rem;
-                height: 2rem;
-                font-size: 1rem;
-            }
+        .avatar-sm {
+            width: 2rem;
+            height: 2rem;
+            font-size: 1rem;
+        }
 
-            .avatar-lg {
-                width: 3.5rem;
-                height: 3.5rem;
-                font-size: 1.5rem;
-            }
+        .avatar-lg {
+            width: 3.5rem;
+            height: 3.5rem;
+            font-size: 1.5rem;
+        }
 
-            .bg-light-primary {
-                background-color: rgba(13, 110, 253, 0.1);
-            }
+        .bg-light-primary {
+            background-color: rgba(13, 110, 253, 0.1);
+        }
 
-            .badge {
-                font-weight: 500;
-                padding: 0.35rem 0.65rem;
-                border-radius: 6px;
-            }
+        .badge {
+            font-weight: 500;
+            padding: 0.35rem 0.65rem;
+            border-radius: 6px;
+        }
 
-            .text-truncate {
-                max-width: 150px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        </style>
-    @endsection
+        .text-truncate {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+@endsection
 @endsection

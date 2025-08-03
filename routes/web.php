@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect()->route('students.index');
+    return redirect()->route('attendances.index');
 });
 Route::group(['middleware' => ['setlocale']], function () {
     // Language change routes (optional, if you want to switch languages via URL)
