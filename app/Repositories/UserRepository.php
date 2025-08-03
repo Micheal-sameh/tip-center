@@ -99,12 +99,8 @@ class UserRepository extends BaseRepository
 
     public function profilePic($image, $id)
     {
-        $user = $this->findById($id);
+        $model = $this->findById($id);
 
-        $user->clearMediaCollection('profile_pic');
-        $user->addMedia($image)
-            ->toMediaCollection('profile_pic');
-
-        return $user;
+        return $this->updateProfilePic($model, $image);
     }
 }

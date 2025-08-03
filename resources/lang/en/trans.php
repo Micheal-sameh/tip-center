@@ -53,4 +53,5 @@ return [
     'logout' => 'Logout',
     'session_reports' => 'Sessions Reports',
     'student_reports' => 'Students Report',
+    'report' => 'Report',
 ];

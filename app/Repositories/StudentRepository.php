@@ -124,4 +124,11 @@ class StudentRepository extends BaseRepository
 
         return $student;
     }
+
+    public function profilePic($image, $id)
+    {
+        $model = $this->findById($id);
+
+        return $this->updateProfilePic($model, $image, 'students_images');
+    }
 }

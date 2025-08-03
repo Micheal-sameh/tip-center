@@ -53,4 +53,5 @@ return [
     'logout' => 'تسجيل الخروج',
     'session_reports' => 'تقارير الحصص',
     'student_report' => 'تقارير الطلاب',
+    'report' => 'تقرير',
 ];

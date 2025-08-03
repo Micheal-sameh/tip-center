@@ -5,10 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Student extends Model
+class Student extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'name',
@@ -19,6 +21,14 @@ class Student extends Model
         'parent_phone_2',
         'birth_date',
         'note',
+    ];
+
+    protected $mediaAttributes = [
+        'image',
+    ];
+
+    protected $casts = [
+        'birth_date' => 'datetime',
     ];
 
     protected static function booted()
