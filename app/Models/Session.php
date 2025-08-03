@@ -21,6 +21,11 @@ class Session extends Model
         'end_at',
     ];
 
+    protected $casts = [
+        'start_at' => 'datetime',
+        'end_at' => 'datetime',
+    ];
+
     public function professor()
     {
         return $this->belongsTo(Professor::class);

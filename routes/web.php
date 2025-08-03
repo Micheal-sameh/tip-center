@@ -70,7 +70,8 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/edit', [SessionController::class, 'edit'])->name('sessions.edit');
             Route::get('/{id}/students', [SessionController::class, 'students'])->name('sessions.students');
             Route::post('/', [SessionController::class, 'store'])->name('sessions.store');
-            Route::put('/{id}/status', [SessionController::class, 'close'])->name('sessions.status');
+            Route::put('/{id}/close', [SessionController::class, 'close'])->name('sessions.close');
+            Route::put('/{id}/active', [SessionController::class, 'active'])->name('sessions.active');
             Route::put('/{id}', [SessionController::class, 'update'])->name('sessions.update');
             Route::delete('/{id}', [SessionController::class, 'delete'])->name('sessions.delete');
         });

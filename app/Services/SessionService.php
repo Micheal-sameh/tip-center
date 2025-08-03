@@ -54,6 +54,11 @@ class SessionService
         return $this->sessionRepository->close($input, $id);
     }
 
+    public function status($status, $id)
+    {
+        return $this->sessionRepository->status($status, $id);
+    }
+
     public function mySessions($input)
     {
         return $this->sessionRepository->mySessions($input);

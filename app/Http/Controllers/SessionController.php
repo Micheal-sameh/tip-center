@@ -30,6 +30,9 @@ class SessionController extends Controller
         $sessions = $this->sessionservice->index($request->validated());
         $totalsessions = $sessions->total();
         $professors = $this->professorService->dropdown();
+        if ($request->ajax()) {
+            return view('sessions.partials.session_cards', ['sessions' => $sessions]);
+        }
 
         return view('sessions.index', compact('sessions', 'totalsessions', 'professors'));
     }
@@ -64,7 +67,7 @@ class SessionController extends Controller
     {
         $session = $this->sessionservice->show($id);
 
-        if ($session->status != SessionStatus::ACTIVE) {
+        if ($session->status == SessionStatus::FINISHED) {
             return redirect()->back()
                 ->with('error', 'You cannot edit an inactive session.');
         }
@@ -93,6 +96,13 @@ class SessionController extends Controller
     public function close(CloseSessionRequesst $request, $id)
     {
         $session = $this->sessionservice->close($request->validated(), $id);
+
+        return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
+    }
+
+    public function active($id)
+    {
+        $session = $this->sessionservice->status(SessionStatus::ACTIVE, $id);
 
         return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
     }

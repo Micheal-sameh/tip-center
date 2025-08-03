@@ -8,8 +8,9 @@ use InvalidArgumentException;
 class SessionStatus
 {
     public const PENDING = 1;
-    public const ACTIVE = 2;
-    public const INACTIVE = 3;
+    public const INACTIVE = 2;
+    public const ACTIVE = 3;
+    public const FINISHED = 4;
 
     private static array $translations = [
         self::PENDING => [
@@ -24,11 +25,15 @@ class SessionStatus
             'en' => 'Inactive',
             'ar' => 'غير فعال',
         ],
+        self::FINISHED   => [
+            'en' => 'Finished',
+            'ar' => 'مكتمل',
+        ],
     ];
 
     public static function all(): array
     {
-        $locale = App::isLocale('en') ? 'en' : 'ar';
+        $locale = App::isLocale('ar') ? 'ar' : 'en';
 
         return array_map(
             fn ($value) => [
@@ -45,7 +50,7 @@ class SessionStatus
             throw new InvalidArgumentException("Invalid listing type value: {$value}");
         }
 
-        return self::$translations[$value][App::isLocale('en') ? 'en' : 'ar'];
+        return self::$translations[$value][App::isLocale('ar') ? 'ar' : 'en'];
     }
 
     public static function getValues(): array
