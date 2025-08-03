@@ -6,6 +6,7 @@ use App\DTOs\ProfessorDTO;
 use App\Http\Requests\ProfessorCreateRequest;
 use App\Http\Requests\ProfessorIndexRequest;
 use App\Http\Requests\ProfessorUpdateRequest;
+use App\Http\Requests\ProfilePicRequest;
 use App\Services\ProfessorService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -89,6 +90,13 @@ class ProfessorController extends Controller
             'success' => true,
             'message' => __('messages.Status updated'),
         ]);
+    }
+
+    public function profilePic(ProfilePicRequest $request, $id)
+    {
+        $professor = $this->professorService->profilePic($request->image, $id);
+
+        return to_route('professors.show', $professor->id)->with('success', 'Profile picture updated successfully');
     }
 
     public function dropdown(Request $request)

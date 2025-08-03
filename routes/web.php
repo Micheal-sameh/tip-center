@@ -60,6 +60,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/edit', [ProfessorController::class, 'edit'])->name('professors.edit');
             Route::post('/', [ProfessorController::class, 'store'])->name('professors.store');
             Route::put('/{id}/status', [ProfessorController::class, 'changeStatus'])->name('professors.status');
+            Route::put('/{id}/profile-pic', [ProfessorController::class, 'profilePic'])->name('professors.profilePic');
             Route::put('/{id}', [ProfessorController::class, 'update'])->name('professors.update');
             Route::delete('/{id}', [ProfessorController::class, 'delete'])->name('professors.delete');
         });

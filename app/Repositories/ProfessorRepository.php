@@ -107,4 +107,15 @@ class ProfessorRepository extends BaseRepository
 
         return $professor;
     }
+
+    public function profilePic($image, $id)
+    {
+        $professor = $this->findById($id);
+
+        $professor->clearMediaCollection('profile_pic');
+        $professor->addMedia($image)
+            ->toMediaCollection('profile_pic');
+
+        return $professor;
+    }
 }
