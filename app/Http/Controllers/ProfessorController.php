@@ -49,7 +49,7 @@ class ProfessorController extends Controller
     public function store(ProfessorCreateRequest $request)
     {
         $input = new ProfessorDTO(...$request->only(
-            'name', 'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stages'
+            'name', 'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stage_schedules'
         ));
         $this->professorService->store($input);
 
@@ -67,7 +67,7 @@ class ProfessorController extends Controller
     public function update(ProfessorUpdateRequest $request, $id)
     {
         $input = new professorDTO(...$request->only(
-            'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stages'
+            'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stage_schedules'
         ));
 
         $this->professorService->update($input, $id);

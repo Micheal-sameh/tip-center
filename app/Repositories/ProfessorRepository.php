@@ -63,7 +63,7 @@ class ProfessorRepository extends BaseRepository
             'birth_date' => $input->birth_date,
         ]);
 
-        $professor->professorStages()->sync($input->stages);
+        $professor->professorStages()->sync($input->stage_schedules);
         DB::commit();
 
         return $professor;
@@ -79,7 +79,7 @@ class ProfessorRepository extends BaseRepository
             'school' => $input->school ?? $professor->school,
             'subject' => $input->subject ?? $professor->subject,
         ]);
-        $professor->professorStages()->sync($input->stages);
+        $professor->professorStages()->sync($input->stage_schedules);
 
         return $professor;
     }

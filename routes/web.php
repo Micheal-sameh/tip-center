@@ -24,6 +24,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('attendances.index');
 });
+Route::get('/professors/stage-row', function () {
+    $index = request('index', 0);
+
+    return view('professors.partials.stage_schedule_row', ['index' => $index]);
+})->name('professors.stage-row');
 Route::group(['middleware' => ['setlocale']], function () {
     // Language change routes (optional, if you want to switch languages via URL)
     Route::get('/lang/{lang}', function ($lang) {
