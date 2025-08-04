@@ -4,7 +4,7 @@
     <div class="container py-4">
         <div class="card mb-4">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Session Report - {{ $session->created_at->format('Y-m-d') }}</h5>
+                <h5 class="mb-0">Session Report - {{ $session->created_at->format('d-m-Y') }}</h5>
                 <form method="GET" action="{{ route('reports.session.pdf') }}" target="_blank" class="form-inline">
                     <input type="hidden" name="session_id" value="{{ $session->id }}">
                     <div class="input-group input-group-sm">
@@ -38,6 +38,7 @@
                                 <th>Student Name</th>
                                 <th>Phone</th>
                                 <th>Phone (P)</th>
+                                <th>Attend</th>
                                 @if ($session->materials)
                                     <th>Materials</th>
                                 @endif
@@ -54,9 +55,10 @@
                             @foreach ($reports as $report)
                                 <tr class="{{ $report->to_pay > 0 ? 'table-warning' : '' }}">
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $report->student->name }}</td>
+                                    <td><a href="{{route('students.show', $report->student_id)}}">{{ $report->student->name }} </a></td>
                                     <td>{{ $report->student->phone }}</td>
                                     <td>{{ $report->student->parent_phone }}</td>
+                                    <td>{{ $report->created_at->format('h:i:A') }}</td>
                                     @if ($session->materials)
                                         <td>{{ $report->materials }}</td>
                                     @endif

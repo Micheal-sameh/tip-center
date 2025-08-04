@@ -94,6 +94,7 @@ class SessionStudentRepository extends BaseRepository
             'center_price' => $input->center_price,
             'printables' => $input->printables ?? 0,
             'materials' => $input->materials ?? 0,
+            'to_pay' => $input->to_pay ?? 0,
         ]);
         DB::commit();
 
@@ -137,7 +138,7 @@ class SessionStudentRepository extends BaseRepository
         if (isset($input['type'])) {
             match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials'),
-                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id'),
+                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay'),
                 default => $query,
             };
         }
@@ -156,7 +157,7 @@ class SessionStudentRepository extends BaseRepository
         if (isset($input['type'])) {
             match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('session_id', 'created_at', 'professor_price', 'student_id', 'to_pay', 'materials'),
-                ReportType::CENTER => $query->select('session_id', 'created_at', 'center_price', 'printables', 'student_id'),
+                ReportType::CENTER => $query->select('session_id', 'created_at', 'center_price', 'printables', 'student_id', 'to_pay'),
                 default => $query,
             };
         }

@@ -50,12 +50,12 @@
                     @php
                         $defaultTotal = number_format(
                             ($session->materials ?? 0) +
-                            ($session->printables ?? 0) +
-                            ($session->professor_price ?? 0) +
-                            ($session->center_price ?? 0),
+                                ($session->printables ?? 0) +
+                                ($session->professor_price ?? 0) +
+                                ($session->center_price ?? 0),
                             2,
                             '.',
-                            ''
+                            '',
                         );
                     @endphp
 
@@ -67,10 +67,8 @@
                                 <input type="hidden" name="session_id" value="{{ $session->id }}">
                                 <input type="hidden" name="student_id" value="{{ $student->id }}">
                                 <input type="number" id="paidAmountInput" name="total_paid" step="1" min="0"
-                                       class="form-control"
-                                       placeholder="Enter total paid"
-                                       value="{{ old('total_paid', (int) $defaultTotal) }}"
-                                       required>
+                                    class="form-control" placeholder="Enter total paid"
+                                    value="{{ old('total_paid', (int) $defaultTotal) }}" required>
                                 <button type="submit" class="btn btn-success">Pay</button>
                             </div>
                         </div>
@@ -85,7 +83,7 @@
                 <h5 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Select Payment Mode</h5>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                            data-bs-target="#advancedPaymentModal">
+                        data-bs-target="#advancedPaymentModal">
                         <i class="fas fa-cogs me-1"></i> Advanced Payment
                     </button>
                 </div>
@@ -95,7 +93,7 @@
 
     <!-- Advanced Payment Modal -->
     <div class="modal fade" id="advancedPaymentModal" tabindex="-1" aria-labelledby="advancedPaymentModalLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <form action="{{ route('attendances.store', $session->id) }}" method="POST">
@@ -106,34 +104,38 @@
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title">Advanced Payment</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            aria-label="Close"></button>
                     </div>
 
                     <div class="modal-body row g-3">
                         <div class="col-md-4">
                             <label>Center Paid</label>
                             <input type="number" name="center_price" step="1" min="0" class="form-control"
-                                   value="{{ $session->center_price }}">
+                                value="{{ $session->center_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Professor Paid</label>
                             <input type="number" name="professor_price" step="1" min="0" class="form-control"
-                                   value="{{ $session->professor_price }}">
+                                value="{{ $session->professor_price }}">
                         </div>
                         @if ($session->printables)
                             <div class="col-md-4">
                                 <label>Printables</label>
                                 <input type="number" name="printables" step="1" min="0" class="form-control"
-                                       value="{{ $session->printables ?? 0 }}">
+                                    value="{{ $session->printables ?? 0 }}">
                             </div>
                         @endif
                         @if ($session->materials)
                             <div class="col-md-4">
                                 <label>Materials</label>
                                 <input type="number" name="materials" step="1" min="0" class="form-control"
-                                       value="{{ $session->materials ?? 0 }}">
+                                    value="{{ $session->materials ?? 0 }}">
                             </div>
                         @endif
+                        <div class="col-md-4">
+                            <label>To Pay</label>
+                            <input type="number" name="to_pay" step="1" min="0" class="form-control">
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -149,7 +151,7 @@
 @push('scripts')
     @if (collect($errors->all())->contains(fn($e) => str_contains($e, 'underpaid')))
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 const modal = new bootstrap.Modal(document.getElementById('advancedPaymentModal'));
                 modal.show();
             });
@@ -157,11 +159,12 @@
     @endif
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const paidInput = document.getElementById('paidAmountInput');
-            const total = {{ $session->center_price + $session->professor_price + ($session->printables ?? 0) + ($session->materials ?? 0) }};
+            const total =
+                {{ $session->center_price + $session->professor_price + ($session->printables ?? 0) + ($session->materials ?? 0) }};
 
-            paidInput?.addEventListener('input', function () {
+            paidInput?.addEventListener('input', function() {
                 const paid = parseFloat(paidInput.value) || 0;
                 const remaining = total - paid;
                 console.log('Remaining:', remaining.toFixed(2));
