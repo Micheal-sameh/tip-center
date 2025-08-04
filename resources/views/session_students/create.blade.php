@@ -10,6 +10,15 @@
             </ul>
         </div>
     @endif
+    @if ($to_pay && $to_pay > 0)
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <div>
+                <strong>Warning:</strong> This student has a pending payment of
+                <strong>{{ number_format($to_pay, 2) }} EGP</strong> from a previous sessions.
+            </div>
+        </div>
+    @endif
 
     <div class="container" style="max-width: 800px">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -73,6 +82,11 @@
                             </div>
                         </div>
                     </form>
+                    @if ($to_pay && $to_pay > 0)
+                        <button class="btn btn-warning mb-3" data-bs-toggle="modal" data-bs-target="#settleDueModal">
+                            <i class="fas fa-wallet me-1"></i> Settle Previous Dues
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -146,6 +160,51 @@
             </div>
         </div>
     </div>
+
+    @if ($to_pay && $to_pay > 0)
+        <!-- Settle Due Modal -->
+        <div class="modal fade" id="settleDueModal" tabindex="-1" aria-labelledby="settleDueModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('students.settle_due', $student->id) }}" method="POST">
+                        @csrf
+                        @method('put')
+                        <input type="hidden" name="student_id" value="{{ $student->id }}">
+                        <input type="hidden" name="previous_to_pay_id" value="{{ $to_pay_id ?? '' }}">
+
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title" id="settleDueModalLabel">
+                                <i class="fas fa-wallet me-2"></i>Settle Previous Dues
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p>
+                                This student has <strong>{{ number_format($to_pay, 2) }} EGP</strong> in unpaid dues.
+                            </p>
+
+                            <div class="mb-3">
+                                <label for="settled_to_pay" class="form-label">Amount to Pay Now</label>
+                                <input type="number" class="form-control" name="paid" id="settled_to_pay"
+                                    step="1" min="0" max="{{ $to_pay }}" required>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-check-circle me-1"></i> Settle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
 @endsection
 
 @push('scripts')

@@ -146,4 +146,12 @@ class ProfessorRepository extends BaseRepository
 
         return $this->updateProfilePic($model, $image, 'professors_images');
     }
+
+    public function settleDue($attendence)
+    {
+        return $attendence->session->professor->update([
+            'balance' => $attendence->session->professor->balance + $attendence->to_pay,
+        ]);
+
+    }
 }

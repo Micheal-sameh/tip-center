@@ -92,6 +92,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/show', [StudentController::class, 'show'])->name('students.show');
             Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
             Route::post('/', [StudentController::class, 'store'])->name('students.store');
+            Route::put('/{id}/settle', [StudentController::class, 'settleDue'])->name('students.settle_due');
             // Route::put('/{id}/status', [StudentController::class, 'changeStatus'])->name('students.status');
             Route::put('/{id}/profile-pic', [StudentController::class, 'profilePic'])->name('students.profilePic');
             Route::put('/{id}', [StudentController::class, 'update'])->name('students.update');

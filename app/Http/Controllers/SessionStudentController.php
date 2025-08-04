@@ -50,9 +50,9 @@ class SessionStudentController extends Controller
     {
         $student = $this->studentService->show($request->student_id);
         $session = $this->sessionservice->show($request->session_id);
-        // $last_session = $this->sessionservice->lastSession($session, $student);
+        $to_pay = $student->toPay()->sum('to_pay');
 
-        return view('session_students.create', compact('student', 'session'));
+        return view('session_students.create', compact('student', 'session', 'to_pay'));
     }
 
     public function selectStudent(Request $request)

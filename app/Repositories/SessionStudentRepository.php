@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
+use App\Models\Session;
 use App\Models\SessionStudent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -163,5 +164,45 @@ class SessionStudentRepository extends BaseRepository
         }
 
         return $query->get();
+    }
+
+    public function settleDue($paid, $student_id)
+    {
+        $attendances = $this->model
+            ->where('student_id', $student_id)
+            ->where('to_pay', '>', 0)
+            ->orderBy('created_at') // or 'id' to go oldest first
+            ->get();
+
+        foreach ($attendances as $attendance) {
+            if ($paid <= 0) {
+                break;
+            }
+
+            $session = Session::find($attendance->session_id);
+
+            if ($session) {
+                if ($attendance->center_price != $session->center_price) {
+                    $attendance->center_price = $session->center_price;
+                }
+                if ($attendance->professor_price != $session->professor_price) {
+                    $attendance->professor_price = $session->professor_price;
+                }
+            }
+
+            $due = $attendance->to_pay;
+
+            if ($paid >= $due) {
+                $paid -= $due;
+                $attendance->to_pay = 0;
+            } else {
+                $attendance->to_pay -= $paid;
+                $paid = 0;
+            }
+
+            $attendance->save();
+        }
+
+        return $attendances;
     }
 }
