@@ -12,6 +12,8 @@ class SessionUpdateRequest extends FormRequest
             'professor_price' => 'numeric|min:0',
             'center_price' => 'numeric|min:0',
             'printables' => 'numeric|min:0',
+            'materials' => 'numeric|min:0',
+            'room' => 'numeric|min:0',
             'start_at' => 'nullable|date_format:H:i',
             'end_at' => 'nullable|date_format:H:i|after:start_at',
         ];
