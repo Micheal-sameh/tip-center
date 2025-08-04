@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\DTOs\SessionDTO;
 use App\DTOs\SessionStudentDTO;
-use App\Enums\StagesEnum;
 use App\Http\Requests\AttendanceCreateRequest;
 use App\Http\Requests\SessionUpdateRequest;
 use App\Http\Requests\StoreSessionStudentRequest;
@@ -102,12 +101,5 @@ class SessionStudentController extends Controller
         $this->sessionservice->delete($id);
 
         return to_route('sessions.index');
-    }
-
-    public function changeStatus($id)
-    {
-        $session = $this->sessionservice->changeStatus($id);
-
-        return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
     }
 }

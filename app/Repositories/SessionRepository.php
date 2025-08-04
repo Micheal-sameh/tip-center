@@ -99,10 +99,13 @@ class SessionRepository extends BaseRepository
         $session = $this->findById($id);
         $session->update([
             'stage' => $input->stage ?? $session->stage,
-            'phone' => $input->phone ?? $session->phone,
-            'parent_phone' => $input->parent_phone ?? $session->parent_phone,
-            'parent_phone_2' => $input->parent_phone_2 ?? $session->parent_phone_2,
-            'birth_date' => $input->birth_date ?? $session->birth_date,
+            'professor_price' => $input->professor_price ?? $session->professor_price,
+            'center_price' => $input->center_price ?? $session->center_price,
+            'printables' => $input->printables ?? $session->printables,
+            'materials' => $input->materials ?? $session->materials,
+            'start_at' => $input->start_at ?? $session->start_at,
+            'end_at' => $input->end_at ?? $session->end_at,
+            'room' => $input->room ?? $session->room,
             'note' => $input->note ?? $session->note,
         ]);
 

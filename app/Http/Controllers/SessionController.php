@@ -78,7 +78,7 @@ class SessionController extends Controller
     public function update(SessionUpdateRequest $request, $id)
     {
         $input = new sessionDTO(...$request->only(
-            'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
+            'stage', 'professor_price', 'center_price', 'printables', 'start_at', 'end_at', 'materials', 'room'
         ));
 
         $this->sessionservice->update($input, $id);
