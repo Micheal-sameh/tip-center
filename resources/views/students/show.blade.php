@@ -48,7 +48,7 @@
                             </div>
 
                             <div class="mt-auto w-100">
-                                <h3 class="text-dark fw-bold mb-1">{{ $student->name }}</h3>
+                                <h3 class="text-dark fw-bold pt-3 mb-1">{{ $student->name }}</h3>
                                 <h5 class="text-primary fw-bold">{{ $student->code }}</h5>
                             </div>
                         </div>
