@@ -107,4 +107,11 @@ class ProfessorRepository extends BaseRepository
 
         return $professor;
     }
+
+    public function profilePic($image, $id)
+    {
+        $model = $this->findById($id);
+
+        return $this->updateProfilePic($model, $image, 'professors_images');
+    }
 }

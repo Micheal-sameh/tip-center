@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StudentDTO;
+use App\Http\Requests\ProfilePicRequest;
 use App\Http\Requests\StudentCreateRequest;
 use App\Http\Requests\StudentIndexRequest;
 use App\Http\Requests\StudentUpdateRequest;
@@ -75,13 +76,10 @@ class StudentController extends Controller
         return to_route('students.index');
     }
 
-    public function changeStatus($id)
+    public function profilePic(ProfilePicRequest $request, $id)
     {
-        $student = $this->studentservice->changeStatus($id);
+        $this->studentservice->profilePic($request->image, $id);
 
-        return response()->json([
-            'success' => true,
-            'message' => __('messages.Status updated'),
-        ]);
+        return to_route('students.show', $id)->with('success', 'Profile picture updated successfully');
     }
 }

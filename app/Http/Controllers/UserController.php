@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\UserDTO;
+use App\Http\Requests\ProfilePicRequest;
+use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -85,5 +88,33 @@ class UserController extends Controller
             'success' => true,
             'message' => __('messages.Status updated'),
         ]);
+    }
+
+    public function profilePic(ProfilePicRequest $request, $id)
+    {
+        $user = $this->userService->profilePic($request->image, $id);
+
+        return to_route('users.show', $id)->with('success', 'Profile picture updated successfully');
+    }
+
+    public function profile()
+    {
+        $user = $this->userService->show(Auth::id());
+
+        return view('users.profile', compact('user'));
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        $user = $this->userService->updatePassword($request->new_password);
+
+        return to_route('users.profile')->with('success', 'Password updated successfully');
+    }
+
+    public function resetPassword($id)
+    {
+        $user = $this->userService->resetPassword($id);
+
+        return to_route('users.index')->with('success', 'Password updated successfully');
     }
 }

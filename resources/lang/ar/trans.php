@@ -53,4 +53,6 @@ return [
     'logout' => 'تسجيل الخروج',
     'session_reports' => 'تقارير الحصص',
     'student_report' => 'تقارير الطلاب',
+    'report' => 'تقرير',
+    'reset_password' => 'إعادة تعيين كلمة المرور',
 ];

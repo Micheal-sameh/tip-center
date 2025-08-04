@@ -41,12 +41,16 @@ Route::group(['middleware' => ['setlocale']], function () {
     Route::middleware(['auth'])->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
+            Route::get('/profile', [UserController::class, 'profile'])->name('users.profile');
             Route::get('/create', [UserController::class, 'create'])->name('users.create');
             Route::get('/{id}/show', [UserController::class, 'show'])->name('users.show');
             Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
             Route::get('/users/table', [UserController::class, 'tablePartial'])->name('users.table');
             Route::post('/', [UserController::class, 'store'])->name('users.store');
             Route::put('/{id}/status', [UserController::class, 'changeStatus'])->name('users.status');
+            Route::put('/{id}/password', [UserController::class, 'updatePassword'])->name('users.updatePassword');
+            Route::put('/{id}/reset', [UserController::class, 'resetPassword'])->name('users.resetPassword');
+            Route::put('/{id}/profile-pic', [UserController::class, 'profilePic'])->name('users.pic_upload');
             Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}', [UserController::class, 'delete'])->name('users.delete');
         });
@@ -59,6 +63,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/edit', [ProfessorController::class, 'edit'])->name('professors.edit');
             Route::post('/', [ProfessorController::class, 'store'])->name('professors.store');
             Route::put('/{id}/status', [ProfessorController::class, 'changeStatus'])->name('professors.status');
+            Route::put('/{id}/profile-pic', [ProfessorController::class, 'profilePic'])->name('professors.profilePic');
             Route::put('/{id}', [ProfessorController::class, 'update'])->name('professors.update');
             Route::delete('/{id}', [ProfessorController::class, 'delete'])->name('professors.delete');
         });
@@ -83,6 +88,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
             Route::post('/', [StudentController::class, 'store'])->name('students.store');
             // Route::put('/{id}/status', [StudentController::class, 'changeStatus'])->name('students.status');
+            Route::put('/{id}/profile-pic', [StudentController::class, 'profilePic'])->name('students.profilePic');
             Route::put('/{id}', [StudentController::class, 'update'])->name('students.update');
             Route::delete('/{id}', [StudentController::class, 'delete'])->name('students.delete');
         });

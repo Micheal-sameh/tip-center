@@ -49,4 +49,24 @@ class UserService
     {
         return $this->userRepository->changeStatus($id);
     }
+
+    public function profilePic($image, $id)
+    {
+        return $this->userRepository->profilePic($image, $id);
+    }
+
+    public function updatePassword($password)
+    {
+        $user = $this->userRepository->updatePassword($password);
+        $user->load('roles');
+
+        return $user;
+    }
+
+    public function resetPassword($id)
+    {
+        $user = $this->userRepository->resetPassword($id);
+
+        return $user;
+    }
 }
