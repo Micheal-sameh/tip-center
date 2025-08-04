@@ -27,14 +27,16 @@ class SessionController extends Controller
 
     public function index(SessionIndexRequest $request)
     {
-        $sessions = $this->sessionservice->index($request->validated());
+        $data = $this->sessionservice->index($request->validated());
+        $sessions = $data['sessions'];
         $totalsessions = $sessions->total();
+        $online_sessions = $data['onlineSessions'];
         $professors = $this->professorService->dropdown();
         if ($request->ajax()) {
-            return view('sessions.partials.session_cards', ['sessions' => $sessions]);
+            return view('sessions.partials.session_cards', ['sessions' => $sessions, 'online_sessions' => $online_sessions]);
         }
 
-        return view('sessions.index', compact('sessions', 'totalsessions', 'professors'));
+        return view('sessions.index', compact('sessions', 'totalsessions', 'professors', 'online_sessions'));
     }
 
     public function show($id)
@@ -78,7 +80,7 @@ class SessionController extends Controller
     public function update(SessionUpdateRequest $request, $id)
     {
         $input = new sessionDTO(...$request->only(
-            'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
+            'stage', 'professor_price', 'center_price', 'printables', 'start_at', 'end_at', 'materials', 'room'
         ));
 
         $this->sessionservice->update($input, $id);

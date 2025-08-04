@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTOs\StudentDTO;
 use App\Http\Requests\ProfilePicRequest;
+use App\Http\Requests\SettleDueRequest;
 use App\Http\Requests\StudentCreateRequest;
 use App\Http\Requests\StudentIndexRequest;
 use App\Http\Requests\StudentUpdateRequest;
@@ -81,5 +82,12 @@ class StudentController extends Controller
         $this->studentservice->profilePic($request->image, $id);
 
         return to_route('students.show', $id)->with('success', 'Profile picture updated successfully');
+    }
+
+    public function settleDue(SettleDueRequest $request, $id)
+    {
+        $this->studentservice->settleDue($request->paid, $id);
+
+        return redirect()->back()->with('success', 'paid money successful');
     }
 }

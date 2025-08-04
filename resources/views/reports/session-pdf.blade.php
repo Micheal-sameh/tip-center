@@ -14,21 +14,18 @@
 
         .header-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #333;
+            text-align: center;
         }
 
         .logo {
             width: 80px;
             height: auto;
-            margin-right: 20px;
-        }
-
-        .header-text {
-            flex: 1;
-            text-align: center;
+            margin-bottom: 10px;
         }
 
         .header-text h1 {
@@ -122,13 +119,10 @@
         $faviconUrl = $logo?->getFirstMediaPath('app_logo');
     @endphp
     <div class="header-container">
-        <!-- Replace with your actual logo path -->
         <img src="{{ $faviconUrl }}" class="logo" alt="Company Logo">
         <div class="header-text">
-            <h1> {{ $session->professor->name }} - {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</h1>
+            <h1>Session Report - {{ $session->created_at->format('d-m-Y') }}</h1>
         </div>
-    </div>
-    <h1>Session Report - {{ $session->created_at->format('Y-m-d') }}</h1>
     </div>
 
     <div class="subheader">
@@ -144,6 +138,7 @@
                 <th>Student Name</th>
                 <th>Phone</th>
                 <th>Phone (P)</th>
+                <th>Attending</th>
                 @if ($session->materials)
                     <th>Materials</th>
                 @endif
@@ -163,6 +158,7 @@
                     <td>{{ $report->student->name }}</td>
                     <td>{{ $report->student->phone }}</td>
                     <td>{{ $report->student->parent_phone }}</td>
+                    <td>{{ $report->created_at->format('h:i:A') }}</td>
                     @if ($session->materials)
                         <td>{{ $report->materials }}</td>
                     @endif

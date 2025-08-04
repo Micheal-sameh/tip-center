@@ -72,6 +72,7 @@
                                     <th>{{ __('trans.school') }}</th>
                                     <th width="110">{{ __('trans.birth_date') }}</th>
                                     <th width="100">{{ __('trans.status') }}</th>
+                                    <th width="100">{{ __('trans.type') }}</th>
                                     <th width="150">{{ __('trans.stages') }}</th>
                                     <th width="100">{{ __('trans.actions') }}</th>
                                 </tr>
@@ -97,7 +98,7 @@
                                         </td>
                                         <td>{{ $professor->subject }}</td>
                                         <td>{{ $professor->school }}</td>
-                                        <td>{{ $professor->birth_date }}</td>
+                                        <td>{{ $professor->birth_date->format('d-m-Y') }}</td>
                                         <td>
                                             <button id="status-btn-{{ $professor->id }}"
                                                 onclick="toggleStatus({{ $professor->id }})"
@@ -105,6 +106,7 @@
                                                 {{ $professor->status == 1 ? __('trans.active') : __('trans.inactive') }}
                                             </button>
                                         </td>
+                                        <td>{{ App\Enums\ProfessorType::getStringValue($professor->type) }}</td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-1">
                                                 @foreach ($professor->stages as $stage)
@@ -183,7 +185,11 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="text-muted">{{ __('trans.birth_date') }}</div>
-                                        <div>{{ $professor->birth_date }}</div>
+                                        <div>{{ $professor->birth_date->format('d-m-Y') }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-muted">{{ __('trans.type') }}</div>
+                                        <div>{{ App\Enums\ProfessorType::getStringValue($professor->type) }}</div>
                                     </div>
                                 </div>
 

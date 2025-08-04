@@ -15,13 +15,17 @@ class CanAttendPrice implements ValidationRule
         $sessionRepository = app(SessionRepository::class);
         $session = $sessionRepository->findById($this->session_id);
 
-        $requiredAmount = $session->center_price + ($session->printables ?? 0);
-
+        $requiredAmount = $session->center_price + $session->printables + $session->materials + $session->professor_price;
         if ($value < $requiredAmount) {
-            $fail('The paid amount is less than the required total of $'.number_format($requiredAmount, 2));
+            $fail(
+                'underpaid: The paid amount is less than the required total of '.number_format($requiredAmount, 2).' EGP.'."\n".
+                'We need '.number_format($requiredAmount - $value, 2).' EGP more to attend the session.'
+            );
+
         }
-        if ($value > $requiredAmount + $session->professor_price) {
-            $fail('The paid amount is more than the required total of $'.number_format($requiredAmount + $session->professor_price, 2));
+        if ($value > $requiredAmount) {
+            $fail('The paid amount is more than the required total of '.number_format($requiredAmount, 2).' EGP'."\n".
+            'you will need to return '.$value - $requiredAmount."\n"."please enter $requiredAmount EGP and press enter");
         }
     }
 }

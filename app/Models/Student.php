@@ -67,6 +67,12 @@ class Student extends Model implements HasMedia
             ->count();
     }
 
+    public function toPay()
+    {
+        return $this->hasMany(SessionStudent::class, 'student_id', 'id')
+            ->where('to_pay', '>', 0);
+    }
+
     public function isBirthdayToday()
     {
         if (! $this->birth_date) {

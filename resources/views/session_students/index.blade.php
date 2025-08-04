@@ -151,6 +151,7 @@
                     @isset($sessions)
                         <div class="row g-3" id="sessions-container">
                             @foreach ($sessions as $session)
+
                                 <div class="col-md-6 col-lg-4">
                                     <a href="{{ route('attendances.create', [
                                         'student_id' => $selected_student->id,

@@ -82,6 +82,14 @@
                                 </p>
                             </div>
                         @endif
+                        @if ($session->room)
+                            <div class="col-md-4 mb-3">
+                                <p class="mb-1 text-muted">Room</p>
+                                <p class="fw-bold">
+                                    {{ $session->room ? $session->room : 'N/A' }}
+                                </p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

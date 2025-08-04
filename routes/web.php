@@ -24,6 +24,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('attendances.index');
 });
+Route::get('/professors/stage-row', function () {
+    $index = request('index', 0);
+
+    return view('professors.partials.stage_schedule_row', ['index' => $index]);
+})->name('professors.stage-row');
 Route::group(['middleware' => ['setlocale']], function () {
     // Language change routes (optional, if you want to switch languages via URL)
     Route::get('/lang/{lang}', function ($lang) {
@@ -87,6 +92,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/show', [StudentController::class, 'show'])->name('students.show');
             Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
             Route::post('/', [StudentController::class, 'store'])->name('students.store');
+            Route::put('/{id}/settle', [StudentController::class, 'settleDue'])->name('students.settle_due');
             // Route::put('/{id}/status', [StudentController::class, 'changeStatus'])->name('students.status');
             Route::put('/{id}/profile-pic', [StudentController::class, 'profilePic'])->name('students.profilePic');
             Route::put('/{id}', [StudentController::class, 'update'])->name('students.update');

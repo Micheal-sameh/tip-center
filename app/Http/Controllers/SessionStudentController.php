@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\DTOs\SessionDTO;
 use App\DTOs\SessionStudentDTO;
-use App\Enums\StagesEnum;
 use App\Http\Requests\AttendanceCreateRequest;
-use App\Http\Requests\SessionUpdateRequest;
 use App\Http\Requests\StoreSessionStudentRequest;
 use App\Services\SessionService;
 use App\Services\SessionStudentService;
@@ -53,9 +50,9 @@ class SessionStudentController extends Controller
     {
         $student = $this->studentService->show($request->student_id);
         $session = $this->sessionservice->show($request->session_id);
-        // $last_session = $this->sessionservice->lastSession($session, $student);
+        $to_pay = $student->toPay()->sum('to_pay');
 
-        return view('session_students.create', compact('student', 'session'));
+        return view('session_students.create', compact('student', 'session', 'to_pay'));
     }
 
     public function selectStudent(Request $request)
@@ -72,29 +69,11 @@ class SessionStudentController extends Controller
     public function store(StoreSessionStudentRequest $request)
     {
         $input = new SessionStudentDTO(...$request->only(
-            'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables', 'materials'
+            'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables', 'materials', 'to_pay'
         ));
         $this->sessionStudentService->store($input);
 
         return to_route('attendances.index');
-    }
-
-    public function edit($id)
-    {
-        $session = $this->sessionservice->show($id);
-
-        return view('sessions.edit', compact('session'));
-    }
-
-    public function update(SessionUpdateRequest $request, $id)
-    {
-        $input = new sessionDTO(...$request->only(
-            'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
-        ));
-
-        $this->sessionservice->update($input, $id);
-
-        return to_route('sessions.show', $id);
     }
 
     public function delete($id)
@@ -102,12 +81,5 @@ class SessionStudentController extends Controller
         $this->sessionservice->delete($id);
 
         return to_route('sessions.index');
-    }
-
-    public function changeStatus($id)
-    {
-        $session = $this->sessionservice->changeStatus($id);
-
-        return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
     }
 }

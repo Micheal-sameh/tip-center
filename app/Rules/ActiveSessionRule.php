@@ -13,7 +13,7 @@ class ActiveSessionRule implements ValidationRule
     {
         $sessionRepository = app(SessionRepository::class);
         $session = $sessionRepository->findById($value);
-        if ($session->status != SessionStatus::ACTIVE) {
+        if ($session->status == SessionStatus::FINISHED) {
             $fail('session not active');
         }
     }

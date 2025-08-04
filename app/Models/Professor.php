@@ -19,6 +19,8 @@ class Professor extends Model implements HasMedia
         'school',
         'birth_date',
         'status',
+        'type',
+        'balance',
     ];
 
     protected $mediaAttributes = [

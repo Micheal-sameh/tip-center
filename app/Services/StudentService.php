@@ -2,11 +2,18 @@
 
 namespace App\Services;
 
+use App\Repositories\ProfessorRepository;
+use App\Repositories\SessionStudentRepository;
 use App\Repositories\StudentRepository;
+use Illuminate\Support\Facades\DB;
 
 class StudentService
 {
-    public function __construct(protected StudentRepository $studentRepository) {}
+    public function __construct(
+        protected StudentRepository $studentRepository,
+        protected SessionStudentRepository $sessionStudentRepository,
+        protected ProfessorRepository $professorRepository,
+    ) {}
 
     public function index($input)
     {
@@ -58,5 +65,17 @@ class StudentService
         $student = $this->studentRepository->profilePic($image, $id);
 
         return $student;
+    }
+
+    public function settleDue($paid, $id)
+    {
+        DB::beginTransaction();
+        $attendences = $this->sessionStudentRepository->settleDue($paid, $id);
+        $attendences->each(function ($attendence) {
+            $this->professorRepository->settleDue($attendence);
+        });
+        DB::commit();
+
+        return $attendences;
     }
 }

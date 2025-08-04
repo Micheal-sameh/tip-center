@@ -10,7 +10,13 @@ class SessionService
 
     public function index($input)
     {
+
         $sessions = $this->sessionRepository->index($input);
+        if (! isset($input['student_id'])) {
+            $onlineSessions = $this->sessionRepository->onlineSessions();
+
+            return compact('sessions', 'onlineSessions');
+        }
 
         return $sessions;
     }
