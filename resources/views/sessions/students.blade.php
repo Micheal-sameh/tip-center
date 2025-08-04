@@ -37,7 +37,7 @@
                                     <td>{{ $student->student->code }}</td>
                                     <td>{{ $student->student->phone }}</td>
                                     <td>{{ $student->student->parent_phone }}</td>
-                                    <td>{{ $student->created_at->format('H:i') }}</td>
+                                    <td>{{ $student->created_at->format('h:i:A') }}</td>
                                     <td>{{ $student->center_price + $student->professor_price + $student->prinatables + $student->materials }}
                                     </td>
                                 </tr>
