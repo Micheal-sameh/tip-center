@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Enums\UserStatus;
 use App\Models\Professor;
+use App\Models\ProfessorStage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -72,6 +73,8 @@ class ProfessorRepository extends BaseRepository
     public function update($input, $id)
     {
         $professor = $this->findById($id);
+
+        // Update professor fields
         $professor->update([
             'name' => $input->name ?? $professor->name,
             'optional_phone' => $input->optional_phone ?? $professor->optional_phone,
@@ -79,7 +82,36 @@ class ProfessorRepository extends BaseRepository
             'school' => $input->school ?? $professor->school,
             'subject' => $input->subject ?? $professor->subject,
         ]);
-        $professor->professorStages()->sync($input->stage_schedules);
+
+        $ids = array_filter(array_column($input->stage_schedules, 'id'));
+        $existingIds = $professor->stages->pluck('id')->toArray();
+        $toDelete = array_diff($existingIds, $ids);
+
+        foreach ($input->stage_schedules as $schedule) {
+            if (isset($schedule['id'])) {
+                $stage = ProfessorStage::find($schedule['id']);
+
+                if ($stage && $stage->professor_id === $professor->id) {
+                    $stage->update([
+                        'stage' => $schedule['stage'],
+                        'day' => $schedule['day'],
+                        'from' => $schedule['from'],
+                        'to' => $schedule['to'],
+                    ]);
+                }
+            } elseif (isset($schedule['stage'])) {
+                ProfessorStage::create([
+                    'stage' => $schedule['stage'],
+                    'day' => $schedule['day'],
+                    'from' => $schedule['from'],
+                    'to' => $schedule['to'],
+                    'professor_id' => $professor->id,
+                ]);
+            }
+        }
+        if (! empty($toDelete)) {
+            ProfessorStage::whereIn('id', $toDelete)->delete();
+        }
 
         return $professor;
     }

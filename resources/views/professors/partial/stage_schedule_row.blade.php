@@ -1,4 +1,6 @@
 <div class="stage-row row g-2">
+    <input type="hidden" name="stage_schedules[{{ $index }}][id]" value="{{ $data['id'] ?? '' }}">
+
     <div class="col-md-4">
         <label class="form-label">Stage</label>
         <select name="stage_schedules[{{ $index }}][stage]" class="form-select" required>
@@ -37,13 +39,15 @@
     <div class="col-md-2">
         <label class="form-label">From</label>
         <input type="time" name="stage_schedules[{{ $index }}][from]" class="form-control"
-            value="{{ old("stage_schedules.$index.from") ?? ($data['from'] ?? '') }}" required>
+            value="{{ old("stage_schedules.$index.from") ?? (!empty($data['from']) ? \Carbon\Carbon::parse($data['from'])->format('H:i') : '') }}" required>
     </div>
 
     <div class="col-md-2">
         <label class="form-label">To</label>
         <input type="time" name="stage_schedules[{{ $index }}][to]" class="form-control"
-            value="{{ old("stage_schedules.$index.to") ?? ($data['to'] ?? '') }}" required>
+            value="{{ old("stage_schedules.$index.to") ?? (!empty($data['to']) ? \Carbon\Carbon::parse($data['to'])->format('H:i') : '') }}"
+            required>
+
     </div>
 
     <div class="col-md-1 d-flex align-items-end">

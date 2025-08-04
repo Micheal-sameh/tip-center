@@ -84,6 +84,20 @@
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label fw-semibold">Professor Type</label>
+                        <select name="type" id="type" class="form-select @error('type') is-invalid @enderror"
+                            required>
+                            @foreach (App\Enums\ProfessorType::all() as $type)
+                                <option
+                                    value="{{ $type['value'] }}"{{ old('type', $professor->type ?? '') == $type['value'] ? 'selected' : '' }}>
+                                    {{ $type['name'] }} </option>
+                            @endforeach
+                        </select>
+                        @error('type')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
 
 
                     {{-- Stages with Day and Time --}}

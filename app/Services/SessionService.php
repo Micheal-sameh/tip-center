@@ -11,8 +11,9 @@ class SessionService
     public function index($input)
     {
         $sessions = $this->sessionRepository->index($input);
+        $onlineSessions = $this->sessionRepository->onlineSessions();
 
-        return $sessions;
+        return compact('sessions', 'onlineSessions');
     }
 
     public function show($id)

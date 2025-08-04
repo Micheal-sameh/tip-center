@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ProfessorType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Models\Session;
@@ -53,6 +54,16 @@ class SessionRepository extends BaseRepository
             ->orderBy('status');
 
         return $this->execute($query);
+    }
+
+    public function onlineSessions()
+    {
+        $query = $this->model->query()
+            ->where('status', SessionStatus::ACTIVE)
+            ->whereHas('professor', fn ($q) => $q->where('type', ProfessorType::ONLINE));
+
+        return $this->execute($query);
+
     }
 
     public function show($id)
@@ -194,6 +205,7 @@ class SessionRepository extends BaseRepository
     {
         // Sessions that started and not yet ended → make ACTIVE
         $this->model->where('status', SessionStatus::INACTIVE)
+            ->whereHas('professor', fn ($q) => $q->where('type', ProfessorType::OFFLINE))
             ->whereDate('created_at', Carbon::today())
             ->where('start_at', '<=', now())
             ->where('end_at', '>', now())
@@ -201,6 +213,7 @@ class SessionRepository extends BaseRepository
 
         // Sessions already ended → make PENDING
         $this->model->whereIn('status', [SessionStatus::ACTIVE, SessionStatus::INACTIVE])
+            ->whereHas('professor', fn ($q) => $q->where('type', ProfessorType::OFFLINE))
             ->whereDate('created_at', Carbon::today())
             ->where('end_at', '<=', now())
             ->update(['status' => SessionStatus::PENDING]);
@@ -213,6 +226,9 @@ class SessionRepository extends BaseRepository
             SessionStatus::INACTIVE,
             SessionStatus::PENDING,
         ])
+            ->whereHas('professor', function ($query) {
+                $query->where('type', ProfessorType::OFFLINE);
+            })
             ->whereDate('created_at', '<', Carbon::today())
             ->update(['status' => SessionStatus::FINISHED]);
     }

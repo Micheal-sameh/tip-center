@@ -126,6 +126,22 @@
             </div>
         </div>
     </div>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-dark"><i class="fas fa-list-ul text-primary me-2"></i>Online Sessions</h5>
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2" >
+                        {{ $online_sessions->total() }} Online
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="sessionsContainer">
+                    @include('sessions.partials.onlineSession_cards')
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Professor Selection Modal -->
     <div class="modal fade" id="professorSelectionModal" tabindex="-1" aria-hidden="true">
