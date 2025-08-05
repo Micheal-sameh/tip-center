@@ -78,8 +78,8 @@ class SessionStudentController extends Controller
 
     public function delete($id)
     {
-        $this->sessionservice->delete($id);
+        $this->sessionStudentService->delete($id);
 
-        return to_route('sessions.index');
+        return to_route('attendances.index');
     }
 }

@@ -57,28 +57,14 @@ class SessionStudentRepository extends BaseRepository
 
     public function simplePay($input, $session)
     {
-        if ($input->total_paid >= $session->center_price) {
-            $input->center_price = $session->center_price;
-            $input->total_paid -= $input->center_price;
-        }
-        if ($input->total_paid >= $session->printables) {
-            $input->printables = $session->printables;
-            $input->total_paid -= $input->printables;
-        }
-        if ($input->total_paid >= $session->professor_price) {
-            $input->professor_price = $session->professor_price;
-        } else {
-            $input->professor_price = $input->total_paid;
-            $reminder = $session->center_price + $session->professor_price + $session->printables - $input->total_paid;
-        }
         DB::beginTransaction();
         $attendence = $this->model->create([
             'session_id' => $input->session_id,
             'student_id' => $input->student_id,
-            'professor_price' => $input->professor_price,
-            'center_price' => $input->center_price,
-            'printables' => $input->printables,
-            'materials' => $input->materials,
+            'professor_price' => $session->professor_price,
+            'center_price' => $session->center_price,
+            'printables' => $session->printables ?? 0,
+            'materials' => $session->materials ?? 0,
             'to_pay' => $reminder ?? 0,
         ]);
         DB::commit();
@@ -101,21 +87,6 @@ class SessionStudentRepository extends BaseRepository
         DB::commit();
 
         return $attendence;
-    }
-
-    public function update($input, $id)
-    {
-        $session = $this->findById($id);
-        $session->update([
-            'stage' => $input->stage ?? $session->stage,
-            'phone' => $input->phone ?? $session->phone,
-            'parent_phone' => $input->parent_phone ?? $session->parent_phone,
-            'parent_phone_2' => $input->parent_phone_2 ?? $session->parent_phone_2,
-            'birth_date' => $input->birth_date ?? $session->birth_date,
-            'note' => $input->note ?? $session->note,
-        ]);
-
-        return $session;
     }
 
     public function delete($id)
