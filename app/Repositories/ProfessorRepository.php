@@ -149,9 +149,20 @@ class ProfessorRepository extends BaseRepository
 
     public function settleDue($attendence)
     {
-        return $attendence->session->professor->update([
-            'balance' => $attendence->session->professor->balance + $attendence->to_pay,
+        $professor = $attendence->session->professor;
+
+        return $professor->update([
+            'balance' => $attendence->session->professor->balance + $attendence->due,
         ]);
 
+    }
+
+    public function settle($id)
+    {
+        $professor = $this->findById($id);
+
+        return $professor->update([
+            'balance' => 0,
+        ]);
     }
 }

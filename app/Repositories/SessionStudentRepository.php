@@ -201,6 +201,7 @@ class SessionStudentRepository extends BaseRepository
             }
 
             $attendance->save();
+            $attendance['due'] = $due;
         }
 
         return $attendances;

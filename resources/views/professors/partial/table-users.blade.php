@@ -70,11 +70,12 @@
                                     <th>{{ __('trans.phone') }}</th>
                                     <th>{{ __('trans.subject') }}</th>
                                     <th>{{ __('trans.school') }}</th>
-                                    <th width="110">{{ __('trans.birth_date') }}</th>
-                                    <th width="100">{{ __('trans.status') }}</th>
-                                    <th width="100">{{ __('trans.type') }}</th>
-                                    <th width="150">{{ __('trans.stages') }}</th>
-                                    <th width="100">{{ __('trans.actions') }}</th>
+                                    <th>{{ __('trans.birth_date') }}</th>
+                                    <th>{{ __('trans.status') }}</th>
+                                    <th>{{ __('trans.type') }}</th>
+                                    <th width="120">{{ __('trans.stages') }}</th>
+                                    <th width="80">{{ __('trans.balance') }}</th>
+                                    <th width="120">{{ __('trans.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -117,6 +118,7 @@
                                                 @endforeach
                                             </div>
                                         </td>
+                                        <td class="text-center">{{ $professor->balance }}</td>
                                         <td>
                                             <div class="d-flex gap-1">
                                                 @can('professors_update')
@@ -134,6 +136,18 @@
                                                         </button>
                                                     </form>
                                                 @endcan
+                                                @if ($professor->balance > 0)
+                                                    <form action="{{ route('professors.settle', $professor->id) }}"
+                                                        method="post" class="d-inline">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button type="submit" class="btn btn-sm btn-outline-success"
+                                                            title="{{ __('trans.settle') }}">
+                                                            <i class="fas fa-money-bill-wave me-1"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+
                                             </div>
                                         </td>
                                     </tr>
@@ -229,15 +243,26 @@
                                             </button>
                                         </form>
                                     @endcan
-                                    {{-- @can('sessions_create') --}}
-                                    <form action="{{ route('sessions.create', $professor->id) }}" method="GET"
-                                        class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-outline-success"
-                                            title="{{ __('trans.create_session') }}">
-                                            <i class="fas fa-calendar-plus me-1"></i> + Session
-                                        </button>
-                                    </form>
-                                    {{-- @endcan --}}
+                                    @can('sessions_create')
+                                        <form action="{{ route('sessions.create', $professor->id) }}" method="GET"
+                                            class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-success"
+                                                title="{{ __('trans.create_session') }}">
+                                                <i class="fas fa-calendar-plus me-1"></i> + Session
+                                            </button>
+                                        </form>
+                                    @endcan
+                                    @if ($professor->balance > 0)
+                                        <form action="{{ route('professors.settle', $professor->id) }}" method="post"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-outline-success"
+                                                title="{{ __('trans.settle') }}">
+                                                <i class="fas fa-money-bill-wave me-1"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </div>
                         </div>
