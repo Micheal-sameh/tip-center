@@ -57,4 +57,7 @@ return [
     'reset_password' => 'Reset Password',
     'type' => 'Type',
     'balance' => 'Balance',
+    'day' => 'Day',
+    'from' => 'From',
+    'to' => 'To',
 ];
