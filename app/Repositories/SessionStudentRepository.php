@@ -78,6 +78,7 @@ class SessionStudentRepository extends BaseRepository
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
             'printables' => $input->printables,
+            'materials' => $input->materials,
             'to_pay' => $reminder ?? 0,
         ]);
         DB::commit();
