@@ -103,4 +103,11 @@ class ProfessorController extends Controller
     {
         return response()->json($this->professorService->dropdown($request));
     }
+
+    public function settle($id)
+    {
+        $this->professorService->settle($id);
+
+        return to_route('professors.index');
+    }
 }

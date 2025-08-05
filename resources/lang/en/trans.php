@@ -55,4 +55,6 @@ return [
     'student_reports' => 'Students Report',
     'report' => 'Report',
     'reset_password' => 'Reset Password',
+    'type' => 'Type',
+    'balance' => 'Balance',
 ];

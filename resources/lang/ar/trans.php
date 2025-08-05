@@ -55,4 +55,6 @@ return [
     'student_report' => 'تقارير الطلاب',
     'report' => 'تقرير',
     'reset_password' => 'إعادة تعيين كلمة المرور',
+    'type' => 'نوع الحصص',
+    'balance' => 'الرصيد',
 ];

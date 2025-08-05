@@ -86,7 +86,7 @@ class StudentController extends Controller
 
     public function settleDue(SettleDueRequest $request, $id)
     {
-        $this->studentservice->settleDue($request->paid, $id);
+        $this->studentservice->settleDue($request->paid, $request->student_id);
 
         return redirect()->back()->with('success', 'paid money successful');
     }

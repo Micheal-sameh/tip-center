@@ -65,4 +65,11 @@ class ProfessorService
     {
         return $this->professorRepository->profilePic($image, $id);
     }
+
+    public function settle($id)
+    {
+        $this->professorRepository->settle($id);
+
+        return true;
+    }
 }
