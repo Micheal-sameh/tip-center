@@ -63,7 +63,7 @@
                             </td>
                             <td>
                                 @if ($student->birth_date)
-                                    {{ $student->birth_date }}
+                                    {{ $student->birth_date->format('d-m-Y') }}
                                     @if ($student->isBirthdayToday())
                                         <span class="badge bg-warning text-dark ms-2">
                                             <i class="fas fa-cake-candles me-1"></i> Today
@@ -181,7 +181,7 @@
                     <div class="col-12">
                         <div class="d-flex align-items-center text-muted">
                             <i class="fas fa-birthday-cake me-2"></i>
-                            <small>{{ $student->birth_date ?: 'N/A' }}</small>
+                            <small>{{ $student->birth_date ? $student->birth_date->format('d-m-Y') : 'N/A' }}</small>
                         </div>
                     </div>
                 </div>

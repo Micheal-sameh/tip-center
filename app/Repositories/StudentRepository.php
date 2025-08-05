@@ -74,7 +74,9 @@ class StudentRepository extends BaseRepository
                 ->orWhere('phone', 'like', "%{$search}%")
                 ->orWhere('parent_phone', 'like', "%{$search}%")
                 ->orWhere('parent_phone_2', 'like', "%{$search}%");
-        })->get();
+        })
+            ->select('id', 'name', 'stage', 'code')
+            ->get();
     }
 
     public function store($input)

@@ -16,6 +16,7 @@ class SessionStudent extends Model
         'center_price',
         'printables',
         'to_pay',
+        'materials',
     ];
 
     public function session()
