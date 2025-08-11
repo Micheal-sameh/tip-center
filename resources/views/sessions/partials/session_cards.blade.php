@@ -96,9 +96,9 @@
                         <div class="d-flex justify-content-between align-items-center">
 
                             @if ($session->status != App\Enums\SessionStatus::FINISHED)
-                                <button type="button"class="btn btn-sm btn-{{ $btnClass }} status-toggle"
+                                <button type="button"class="btn btn-sm btn-primary status-toggle"
                                     data-id="{{ $session->id }}">
-                                    {{ App\Enums\SessionStatus::getStringValue($session->status) }}
+                                    Close
                                 </button>
                             @else
                                 <span

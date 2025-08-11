@@ -71,7 +71,10 @@ class SessionStudentController extends Controller
         $input = new SessionStudentDTO(...$request->only(
             'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables', 'materials', 'to_pay'
         ));
-        $this->sessionStudentService->store($input);
+        $reminder = $this->sessionStudentService->store($input);
+        if ($reminder > 0) {
+            return redirect()->route('attendances.index')->with('success', "Reminder $reminder EGP");
+        }
 
         return to_route('attendances.index');
     }
