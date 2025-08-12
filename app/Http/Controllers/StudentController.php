@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StudentDTO;
+use App\Enums\StagesEnum;
 use App\Http\Requests\ProfilePicRequest;
 use App\Http\Requests\SettleDueRequest;
 use App\Http\Requests\StudentCreateRequest;
 use App\Http\Requests\StudentIndexRequest;
 use App\Http\Requests\StudentUpdateRequest;
+use App\Models\Student;
 use App\Services\StudentService;
+use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
@@ -27,6 +30,29 @@ class StudentController extends Controller
         $totalStudents = $students->total();
 
         return view('students.index', compact('students', 'totalStudents'));
+    }
+
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        return Student::query()
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%")
+                    ->orWhere('phone', 'like', "%{$searchTerm}%")
+                    ->orWhere('code', 'like', "%{$searchTerm}%");
+            })
+            ->limit(10)
+            ->get()
+            ->map(function ($student) {
+                return [
+                    'id' => $student->id,
+                    'name' => $student->name,
+                    'code' => $student->code,
+                    'phone' => $student->phone_number,
+                    'stage_name' => StagesEnum::getStringValue($student->stage),
+                ];
+            });
     }
 
     public function show($id)

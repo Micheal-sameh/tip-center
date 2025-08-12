@@ -26,6 +26,7 @@ class SessionStudentController extends Controller
 
     public function index(Request $request)
     {
+        $all_students = $this->studentService->dropdown($request->code);
         if ($request->code) {
             $students = $this->studentService->search($request->code);
 
@@ -36,7 +37,7 @@ class SessionStudentController extends Controller
             return $this->selectStudent($request);
         }
 
-        return view('session_students.index');
+        return view('session_students.index', compact('all_students'));
     }
 
     public function show($id)

@@ -1,6 +1,8 @@
 @extends('layouts.sideBar')
 
 @section('content')
+
+
     <div class="container py-4" style="max-width: 1200px;">
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white">
@@ -18,12 +20,12 @@
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-search"></i>
                             </span>
-                            <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-                                placeholder="Search by student code or name">
+                            <input type="text" id="studentSearchInput" name="search" value="{{ request('search') }}"
+                                class="form-control" placeholder="Search by student code, name or phone" autocomplete="off">
                         </div>
                     </div>
 
-                    <div class="col-md-5" id="professorDropdownWrapper" style="display: none;">
+                    <div class="col-md-4" id="professorDropdownWrapper" style="display: none;">
                         <div class="input-group">
                             <span class="input-group-text bg-light">
                                 <i class="fas fa-chalkboard-teacher"></i>
@@ -36,12 +38,13 @@
 
                     <input type="hidden" name="student_id" id="selectedStudentId">
 
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-search me-1"></i> Search
                         </button>
                     </div>
                 </form>
+
 
                 @if (isset($students))
                     <!-- Student Table -->
@@ -59,11 +62,11 @@
                             <tbody>
                                 @forelse ($students as $student)
                                     <tr data-student-id="{{ $student->id }}" class="cursor-pointer">
-                                        <td class="ps-3 fw-bold">{{ $student->code }}</td>
-                                        <td>{{ $student->name }}</td>
-                                        <td>{{ $student->phone ?: 'N/A' }}</td>
+                                        <td class="ps-3 fw-bold student-code">{{ $student->code }}</td>
+                                        <td class="student-name">{{ $student->name }}</td>
+                                        <td class="student-phone">{{ $student->phone ?: 'N/A' }}</td>
                                         <td>
-                                            <span class="badge bg-info">
+                                            <span class="badge bg-info student-stage">
                                                 {{ App\Enums\StagesEnum::getStringValue($student->stage) }}
                                             </span>
                                         </td>
@@ -155,7 +158,7 @@
                                             <td class="ps-3">{{ $loop->iteration }}</td>
                                             <td>
                                                 <span class="badge bg-light text-dark">
-                                                    {{ Carbon\carbon::parse($report->session->created_at)->format('d M Y') ?? 'N/A' }}
+                                                    {{ \Carbon\Carbon::parse($report->session->created_at)->format('d M Y') ?? 'N/A' }}
                                                 </span>
                                             </td>
                                             <td>
@@ -163,7 +166,7 @@
                                                     {{ $report->session->professor->name ?? 'N/A' }}
                                                 </div>
                                             </td>
-                                            <td>{{ Carbon\carbon::parse($report->created_at)->format('h:i A') ?? 'N/A' }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($report->created_at)->format('h:i A') ?? 'N/A' }}</td>
                                             <td>{{ $report->materials ?? 'N/A' }}</td>
                                             <td>{{ $report->printables ?? 'N/A' }}</td>
                                             <td class="fw-bold">
@@ -195,19 +198,6 @@
             cursor: pointer;
         }
 
-        .avatar-sm {
-            width: 30px;
-            height: 30px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .avatar-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
         tr:hover {
             background-color: rgba(0, 0, 0, 0.02);
         }
@@ -217,10 +207,60 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Make student rows clickable
-            document.querySelectorAll('#studentsTable tbody tr').forEach(row => {
+            const searchInput = document.getElementById('studentSearchInput');
+            const tableRows = document.querySelectorAll('#studentsTable tbody tr');
+            const searchForm = document.getElementById('searchForm');
+            const loader = document.getElementById('loader');
+            const searchBtn = document.getElementById('searchBtn');
+
+            // Debounce function to delay execution
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+
+            // Filter table rows as user types (optional)
+            function filterRows(query) {
+                query = query.trim().toLowerCase();
+
+                tableRows.forEach(row => {
+                    const code = row.querySelector('.student-code').textContent.toLowerCase();
+                    const name = row.querySelector('.student-name').textContent.toLowerCase();
+                    const phone = row.querySelector('.student-phone').textContent.toLowerCase();
+
+                    if (code.includes(query) || name.includes(query) || phone.includes(query)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            // Function to submit form programmatically
+            function submitSearch() {
+                // Only submit if input not empty to avoid reloads on empty input
+                if (searchInput.value.trim().length > 0) {
+                    searchForm.submit();
+                }
+            }
+
+            // Debounced submit on user stop typing for 700ms
+            const debouncedSubmit = debounce(() => {
+                submitSearch();
+            }, 700);
+
+            // Live filter and schedule auto-submit
+            searchInput.addEventListener('input', function() {
+                filterRows(this.value);
+                debouncedSubmit();
+            });
+
+            // Make rows clickable except select button
+            tableRows.forEach(row => {
                 row.addEventListener('click', function(e) {
-                    // Don't trigger if clicking on the select button
                     if (!e.target.closest('.select-student-btn')) {
                         const btn = this.querySelector('.select-student-btn');
                         if (btn) btn.click();
@@ -228,7 +268,7 @@
                 });
             });
 
-            // Student selection handler
+            // Student select button handler
             document.querySelectorAll('.select-student-btn').forEach(btn => {
                 btn.addEventListener('click', async function(e) {
                     e.stopPropagation();
@@ -237,23 +277,20 @@
                     const studentId = row.getAttribute('data-student-id');
                     document.getElementById('selectedStudentId').value = studentId;
 
-                    // Highlight selected row
-                    document.querySelectorAll('#studentsTable tbody tr').forEach(r => {
-                        r.classList.remove('table-active');
-                    });
+                    // Highlight selected student row
+                    tableRows.forEach(r => r.classList.remove('table-active'));
                     row.classList.add('table-active');
 
-                    try {
-                        // Show loading state
-                        const dropdownWrapper = document.getElementById(
-                            'professorDropdownWrapper');
-                        dropdownWrapper.style.display = 'block';
-                        const dropdown = document.getElementById('finalProfessorSelect');
-                        dropdown.innerHTML = '<option value="">Loading professors...</option>';
+                    // Show professor dropdown and load professors
+                    const dropdownWrapper = document.getElementById('professorDropdownWrapper');
+                    dropdownWrapper.style.display = 'block';
+                    const dropdown = document.getElementById('finalProfessorSelect');
+                    dropdown.innerHTML = '<option value="">Loading professors...</option>';
 
-                        // Fetch professors
+                    try {
                         const response = await fetch(
-                            `{{ route('professors.dropdown') }}?student_id=${studentId}`);
+                            `{{ route('professors.dropdown') }}?student_id=${studentId}`
+                        );
                         const data = await response.json();
 
                         dropdown.innerHTML = '<option value="">-- Select Professor --</option>';
@@ -280,6 +317,20 @@
                     }
                 });
             });
+
+            // Loader & disable button on form submit
+            searchForm.addEventListener('submit', () => {
+                searchBtn.disabled = true;
+                loader.style.display = 'inline-block';
+            });
+
+            // Focus input and move cursor to end on page load
+            if (searchInput) {
+                searchInput.focus();
+                const val = searchInput.value;
+                searchInput.value = '';
+                searchInput.value = val;
+            }
         });
     </script>
 @endpush

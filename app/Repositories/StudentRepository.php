@@ -133,4 +133,9 @@ class StudentRepository extends BaseRepository
 
         return $this->updateProfilePic($model, $image, 'students_images');
     }
+
+    public function dropdown()
+    {
+        return $this->model->get(['id', 'name', 'stage', 'code', 'phone']);
+    }
 }
