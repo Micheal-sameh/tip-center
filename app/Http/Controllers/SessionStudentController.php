@@ -26,6 +26,7 @@ class SessionStudentController extends Controller
 
     public function index(Request $request)
     {
+        $all_students = $this->studentService->dropdown($request->code);
         if ($request->code) {
             $students = $this->studentService->search($request->code);
 
@@ -36,7 +37,7 @@ class SessionStudentController extends Controller
             return $this->selectStudent($request);
         }
 
-        return view('session_students.index');
+        return view('session_students.index', compact('all_students'));
     }
 
     public function show($id)
@@ -71,7 +72,10 @@ class SessionStudentController extends Controller
         $input = new SessionStudentDTO(...$request->only(
             'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables', 'materials', 'to_pay'
         ));
-        $this->sessionStudentService->store($input);
+        $reminder = $this->sessionStudentService->store($input);
+        if ($reminder > 0) {
+            return redirect()->route('attendances.index')->with('success', "Reminder $reminder EGP");
+        }
 
         return to_route('attendances.index');
     }

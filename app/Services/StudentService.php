@@ -78,4 +78,9 @@ class StudentService
 
         return $attendences;
     }
+
+    public function dropdown()
+    {
+        return $this->studentRepository->dropdown();
+    }
 }

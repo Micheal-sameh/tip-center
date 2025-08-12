@@ -2,14 +2,27 @@
 
 @section('content')
     @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
+        <div class="alert alert-danger alert-dismissible fade show position-fixed top-50 start-50 translate-middle"
+            style="z-index: 9999; min-width: 300px; max-width: 500px; text-align: center;" role="alert" id="error-popup">
+            <ul class="mb-0">
                 @foreach ($errors->all() as $error)
                     <li>{!! nl2br(e($error)) !!}</li>
                 @endforeach
             </ul>
         </div>
+
+        <script>
+            // Auto-hide after 5 seconds
+            setTimeout(function() {
+                let popup = document.getElementById('error-popup');
+                if (popup) {
+                    popup.classList.remove('show'); // Bootstrap fade-out
+                    setTimeout(() => popup.remove(), 500); // Remove after fade
+                }
+            }, 5000);
+        </script>
     @endif
+
     @if ($to_pay && $to_pay > 0)
         <div class="alert alert-warning d-flex align-items-center" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
@@ -142,8 +155,8 @@
                         @if ($session->materials)
                             <div class="col-md-4">
                                 <label>Materials</label>
-                                <input type="number" name="materials" step="1" min="0" class="form-control"
-                                    value="{{ $session->materials ?? 0 }}">
+                                <input type="number" name="materials" step="1" min="0"
+                                    class="form-control" value="{{ $session->materials ?? 0 }}">
                             </div>
                         @endif
                         <div class="col-md-4">

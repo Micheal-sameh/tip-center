@@ -89,6 +89,7 @@ Route::group(['middleware' => ['setlocale']], function () {
 
         Route::prefix('students')->group(function () {
             Route::get('/', [StudentController::class, 'index'])->name('students.index');
+            Route::get('/search', [StudentController::class, 'search'])->name('students.search');
             Route::get('/create', [StudentController::class, 'create'])->name('students.create');
             Route::get('/{id}/show', [StudentController::class, 'show'])->name('students.show');
             Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');

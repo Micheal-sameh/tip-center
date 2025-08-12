@@ -65,11 +65,12 @@ class SessionStudentRepository extends BaseRepository
             'center_price' => $session->center_price,
             'printables' => $session->printables ?? 0,
             'materials' => $session->materials ?? 0,
-            'to_pay' => $reminder ?? 0,
         ]);
+        $required_price = $session->professor_price + $session->center_price + $session->printables + $session->materials;
+        $reminder = $input->total_paid - $required_price;
         DB::commit();
 
-        return $attendence;
+        return $reminder;
     }
 
     public function advancedPay($input)

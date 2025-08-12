@@ -23,9 +23,9 @@ class CanAttendPrice implements ValidationRule
             );
 
         }
-        if ($value > $requiredAmount) {
-            $fail('The paid amount is more than the required total of '.number_format($requiredAmount, 2).' EGP'."\n".
-            'you will need to return '.$value - $requiredAmount."\n"."please enter $requiredAmount EGP and press enter");
-        }
+        // if ($value > $requiredAmount) {
+        //     $fail('The paid amount is more than the required total of '.number_format($requiredAmount, 2).' EGP'."\n".
+        //     'you will need to return '.$value - $requiredAmount."\n"."please enter $requiredAmount EGP and press enter");
+        // }
     }
 }
