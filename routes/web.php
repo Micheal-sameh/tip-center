@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect()->route('attendances.index');
+    return view('welcome.index');
 });
 Route::get('/professors/stage-row', function () {
     $index = request('index', 0);
@@ -126,4 +126,13 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::put('/', [SettingController::class, 'update'])->name('settings.update');
         });
     });
+
+    Route::prefix('parents')->group(function () {
+        Route::get('/', function () {
+            return view('parents.index');
+        })->name('parents.index');
+        Route::get('/parent', [ReportController::class, 'parent'])->name('parents.student');
+        Route::get('/student-pdf', [ReportController::class, 'downloadStudentReport'])->name('parents.download.pdf');
+    });
+
 });

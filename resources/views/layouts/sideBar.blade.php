@@ -206,7 +206,7 @@
         </button>
         <div class="d-flex align-items-center">
 
-            <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}" alt="Profile" class="rounded-circle"
+            <img src="{{ auth()->user()?->getFirstMediaUrl('profile_pic') }}" alt="Profile" class="rounded-circle"
                 style="width: 40px; height: 40px; object-fit: cover;">
         </div>
         <button class="btn-menu" id="backButton">
@@ -218,7 +218,7 @@
     <aside class="sidebar">
         <div class="text-center py-3">
             <a href="{{ route('users.profile') }}">
-                @if (auth()->user()->hasMedia('profile_pic'))
+                @if (auth()->user()?->hasMedia('profile_pic'))
                     <img src="{{ auth()->user()->getFirstMediaUrl('profile_pic') }}" alt="Profile" class="profile-img">
                 @else
                     <img src="{{ $faviconUrl }}" alt="Profile" class="profile-img">
