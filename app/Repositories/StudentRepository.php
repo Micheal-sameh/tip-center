@@ -138,4 +138,9 @@ class StudentRepository extends BaseRepository
     {
         return $this->model->get(['id', 'name', 'stage', 'code', 'phone']);
     }
+
+    public function parent($input)
+    {
+        return $this->model->where('parent_phone', $input['phone'])->where('code', $input['code'])->first();
+    }
 }

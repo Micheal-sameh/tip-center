@@ -179,4 +179,9 @@ class SessionStudentRepository extends BaseRepository
 
         return $attendances;
     }
+
+    public function parent($student)
+    {
+        return $this->model->where('student_id', $student->id)->get();
+    }
 }
