@@ -51,7 +51,8 @@ class SessionRepository extends BaseRepository
                     });
                 });
             })
-            ->orderBy('status');
+            ->orderBy('status')
+            ->orderBy('type');
 
         return $this->execute($query);
     }
