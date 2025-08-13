@@ -41,13 +41,17 @@
                 <div class="mb-4 p-3 bg-light rounded">
                     <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
                             <p class="mb-1 text-muted">Professor</p>
                             <p class="fw-bold">{{ $session->professor->name }}</p>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
                             <p class="mb-1 text-muted">Stage</p>
                             <p class="fw-bold">{{ App\Enums\StagesEnum::getStringValue($session->stage) }}</p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <p class="mb-1 text-muted">Session Type</p>
+                            <p class="fw-bold">{{ App\Enums\SessionType::getStringValue($session->type) }}</p>
                         </div>
                     </div>
                 </div>
