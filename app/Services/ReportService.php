@@ -24,6 +24,9 @@ class ReportService
     public function parent($input)
     {
         $student = $this->studentRepository->parent($input);
+        if (! $student) {
+            return false;
+        }
         $reports = $this->sessionStudentRepository->parent($student);
         $reports->load('session.professor', 'student');
 

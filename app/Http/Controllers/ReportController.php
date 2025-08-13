@@ -65,6 +65,9 @@ class ReportController extends Controller
     public function parent(ParentReportRequest $request)
     {
         $reports = $this->reportService->parent($request->validated());
+        if ($reports == false) {
+            return redirect()->back()->with('error', 'No student found');
+        }
 
         return view('parents.student', compact('reports'));
     }
