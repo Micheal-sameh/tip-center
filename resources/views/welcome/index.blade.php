@@ -47,7 +47,7 @@
 
     {{-- Choices --}}
     <div class="d-flex flex-column flex-sm-row gap-3 w-100" style="max-width: 400px;">
-        <a href="{{ route('loginPage') }}" class="btn btn-primary btn-lg flex-fill text-white text-decoration-none">
+        <a href="{{ auth()->check() ? route('attendances.index') : route('loginPage') }}" class="btn btn-primary btn-lg flex-fill text-white text-decoration-none">
             <i class="fas fa-user-tie me-2"></i> Staff
         </a>
 
