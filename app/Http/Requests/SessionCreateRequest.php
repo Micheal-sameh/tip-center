@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\SessionType;
 use App\Enums\StagesEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -19,6 +20,7 @@ class SessionCreateRequest extends FormRequest
             'room' => 'numeric|min:1',
             'start_at' => 'date_format:H:i',
             'end_at' => 'date_format:H:i|after:start_at',
+            'type' => 'in:'.implode(',', array_column(SessionType::all(), 'value')),
         ];
     }
 }

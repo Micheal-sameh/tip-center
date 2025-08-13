@@ -72,7 +72,7 @@
                                     <th>{{ __('trans.school') }}</th>
                                     <th>{{ __('trans.birth_date') }}</th>
                                     <th>{{ __('trans.status') }}</th>
-                                    <th>{{ __('trans.type') }}</th>
+                                    {{-- <th>{{ __('trans.type') }}</th> --}}
                                     <th width="120">{{ __('trans.stages') }}</th>
                                     <th width="80">{{ __('trans.balance') }}</th>
                                     <th width="120">{{ __('trans.actions') }}</th>
@@ -107,7 +107,7 @@
                                                 {{ $professor->status == 1 ? __('trans.active') : __('trans.inactive') }}
                                             </button>
                                         </td>
-                                        <td>{{ App\Enums\ProfessorType::getStringValue($professor->type) }}</td>
+                                        {{-- <td>{{ App\Enums\SessionType::getStringValue($professor->type) }}</td> --}}
                                         <td>
                                             <div class="d-flex flex-wrap gap-1">
                                                 @foreach ($professor->stages as $stage)
@@ -201,10 +201,10 @@
                                         <div class="text-muted">{{ __('trans.birth_date') }}</div>
                                         <div>{{ $professor->birth_date->format('d-m-Y') }}</div>
                                     </div>
-                                    <div class="col-6">
+                                    {{-- <div class="col-6">
                                         <div class="text-muted">{{ __('trans.type') }}</div>
-                                        <div>{{ App\Enums\ProfessorType::getStringValue($professor->type) }}</div>
-                                    </div>
+                                        <div>{{ App\Enums\SessionType::getStringValue($professor->type) }}</div>
+                                    </div> --}}
                                 </div>
 
                                 <div class="mb-3">

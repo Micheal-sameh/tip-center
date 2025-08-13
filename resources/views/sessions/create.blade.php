@@ -149,6 +149,25 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select id="type" name="type"
+                                        class="form-select @error('type') is-invalid @enderror" required>
+                                        <option value="" disabled selected>{{ __('Select type') }}</option>
+                                        @foreach ( App\Enums\SessionType::all() as $type)
+                                            <option value="{{ $type['value'] }}"
+                                                {{ old('type') == $type['value'] ? 'selected' : '' }}>
+                                                {{ $type['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <label for="type">{{ __('type') }}</label>
+                                    @error('type')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
