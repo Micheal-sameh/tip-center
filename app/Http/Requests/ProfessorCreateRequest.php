@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ProfessorType;
+use App\Enums\SessionType;
 use App\Enums\StagesEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -17,7 +17,7 @@ class ProfessorCreateRequest extends FormRequest
             'subject' => 'required|string',
             'school' => 'required|string',
             'birth_date' => 'required|date',
-            'type' => 'required|integer|in:'.implode(',', array_column(ProfessorType::all(), 'value')),
+            // 'type' => 'required|integer|in:'.implode(',', array_column(SessionType::all(), 'value')),
             'stage_schedules' => 'array|min:1',
             'stage_schedules.*.stage' => 'integer|in:'.implode(',', array_column(StagesEnum::all(), 'value')),
             'stage_schedules.*.day' => 'integer|in:0,1,2,3,4,5,6,7',

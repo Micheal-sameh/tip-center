@@ -63,7 +63,9 @@ class ProfessorRepository extends BaseRepository
             'status' => UserStatus::ACTIVE,
             'birth_date' => $input->birth_date,
         ]);
-
+        if (isset($input->stage_schedules['__INDEX__'])) {
+            unset($input->stage_schedules['__INDEX__']);
+        }
         $professor->professorStages()->sync($input->stage_schedules);
         DB::commit();
 

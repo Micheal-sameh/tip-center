@@ -19,6 +19,7 @@ class Session extends Model
         'materials',
         'start_at',
         'end_at',
+        'type',
         'room',
     ];
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ProfessorType;
+use App\Enums\SessionType;
 use App\Enums\StagesEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,7 +16,7 @@ class ProfessorUpdateRequest extends FormRequest
             'subject' => 'string',
             'school' => 'string',
             'birth_date' => 'date',
-            'type' => 'required|integer|in:'.implode(',', array_column(ProfessorType::all(), 'value')),
+            // 'type' => 'required|integer|in:'.implode(',', array_column(SessionType::all(), 'value')),
             'stage_schedules' => 'array|min:1',
             'stage_schedules.*.id' => 'nullable|integer|exists:professor_stages,id',
             'stage_schedules.*.stage' => 'integer|in:'.implode(',', array_column(StagesEnum::all(), 'value')),

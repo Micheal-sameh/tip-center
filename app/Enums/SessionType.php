@@ -5,7 +5,7 @@ namespace App\Enums;
 use Illuminate\Support\Facades\App;
 use InvalidArgumentException;
 
-class ProfessorType
+class SessionType
 {
     public const OFFLINE = 1;
     public const ONLINE = 2;

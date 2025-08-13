@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\SessionType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SessionUpdateRequest extends FormRequest
@@ -16,6 +17,7 @@ class SessionUpdateRequest extends FormRequest
             'room' => 'numeric|min:0',
             'start_at' => 'nullable|date_format:H:i',
             'end_at' => 'nullable|date_format:H:i|after:start_at',
+            'type' => 'in:'.implode(',', array_column(SessionType::all(), 'value')),
         ];
     }
 }

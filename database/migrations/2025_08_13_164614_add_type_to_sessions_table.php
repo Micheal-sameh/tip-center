@@ -12,9 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('professors', function (Blueprint $table) {
+        Schema::table('sessions', function (Blueprint $table) {
             $table->integer('type')->default(SessionType::OFFLINE);
-            $table->integer('balance')->default(0);
         });
     }
 
@@ -23,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('professors', function (Blueprint $table) {
-            $table->dropColumn('type', 'balance');
+        Schema::table('sessions', function (Blueprint $table) {
+            $table->dropColumn('type');
         });
     }
 };

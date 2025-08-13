@@ -13,7 +13,7 @@ class ProfessorDTO extends DTO
     public ?string $school;
     public ?string $subject;
     public ?string $birth_date;
-    public ?int $type;
+    // public ?int $type;
     public ?array $stages;
     public ?array $stage_schedules;
 
@@ -25,7 +25,7 @@ class ProfessorDTO extends DTO
         string $school = parent::STRING,
         string $subject = parent::STRING,
         string $birth_date = parent::STRING,
-        int $type = parent::INT,
+        // int $type = parent::INT,
         array $stages = parent::ARRAY,
         array $stage_schedules = parent::ARRAY,
     ) {

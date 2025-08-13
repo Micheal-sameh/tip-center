@@ -75,8 +75,14 @@
                             @if ($session->room)
                                 <div class="d-flex justify-content-between">
                                     <span class="fw-bold"
-                                        >Room:</a>
+                                        >Room: </span>
                                     <span class="fw-bold">{{ $session->room }} </span>
+                                </div>
+                            @endif
+                            @if ($session->type)
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold">Session Type: </span>
+                                    <span class="fw-bold">{{ App\Enums\SessionType::getStringValue($session->type) }} </span>
                                 </div>
                             @endif
                         </div>
