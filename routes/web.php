@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome.index');
+    return auth()->check() ? to_route('attendances.index') : view('welcome.index');
 });
 Route::get('/professors/stage-row', function () {
     $index = request('index', 0);
