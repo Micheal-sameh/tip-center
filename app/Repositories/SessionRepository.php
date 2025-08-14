@@ -51,9 +51,15 @@ class SessionRepository extends BaseRepository
                     });
                 });
             })
-            ->when(true, function ($q) {
-                $q->when(request('type') === 'offline', fn ($q2) => $q2->whereDate('created_at', today()));
-                $q->when(request('type') === 'online', fn ($q2) => $q2->where('status', 'active'));
+            ->where(function ($q) {
+                $q->where(function ($q2) {
+                    $q2->where('type', SessionType::OFFLINE)
+                        ->whereDate('created_at', today());
+                })
+                    ->orWhere(function ($q2) {
+                        $q2->where('type', SessionType::ONLINE)
+                            ->where('status', SessionStatus::ACTIVE);
+                    });
             })
             ->orderBy('type')
             ->orderBy('status');
@@ -98,7 +104,7 @@ class SessionRepository extends BaseRepository
             'stage' => $input->stage,
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
-            'status' => SessionStatus::INACTIVE,
+            'status' => $input->type == SessionType::ONLINE ? SessionStatus::ACTIVE : SessionStatus::INACTIVE,
             'printables' => $input->printables,
             'materials' => $input->materials,
             'start_at' => $input->start_at,
