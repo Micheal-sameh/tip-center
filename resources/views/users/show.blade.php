@@ -107,7 +107,7 @@
                                     <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
                                 </a>
                             @endcan
-                            @can('users_delete')
+                            {{-- @can('users_delete')
                                 <form action="{{ route('users.delete', $user->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
@@ -116,7 +116,7 @@
                                         <i class="fas fa-trash me-2"></i> {{ __('trans.delete') }}
                                     </button>
                                 </form>
-                            @endcan
+                            @endcan --}}
                         </div>
                     </div>
                 </div>

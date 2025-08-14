@@ -151,7 +151,7 @@
                             <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
                         </a>
                     @endcan
-                    @can('professors_delete')
+                    {{-- @can('professors_delete')
                         <form action="{{ route('professors.delete', $professor->id) }}" method="POST"
                             onsubmit="return confirm('{{ __('trans.delete_confirm') }}')">
                             @csrf
@@ -160,7 +160,7 @@
                                 <i class="fas fa-trash-alt me-2"></i> {{ __('trans.delete') }}
                             </button>
                         </form>
-                    @endcan
+                    @endcan --}}
                 </div>
             </div>
         </div>
