@@ -38,11 +38,11 @@ class SessionRepository extends BaseRepository
         $this->checkYesterday();
         $this->checkActive();
         $query = $this->model->query()
-            ->whereDate('created_at', today())
             ->withCount('sessionStudents')
             ->when(isset($input['professor_id']), fn ($q) => $q->where('professor_id', $input['professor_id']))
             ->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
             ->when(isset($input['status']), fn ($q) => $q->where('status', $input['status']))
+            ->when(isset($input['type']), fn ($q) => $q->where('type', $input['type']))
             ->when(isset($input['search']), function ($query) use ($input) {
                 $query->whereHas('professor', function ($q) use ($input) {
                     $q->where(function ($q) use ($input) {
@@ -51,8 +51,12 @@ class SessionRepository extends BaseRepository
                     });
                 });
             })
-            ->orderBy('status')
-            ->orderBy('type');
+            ->when(true, function ($q) {
+                $q->when(request('type') === 'offline', fn ($q2) => $q2->whereDate('created_at', today()));
+                $q->when(request('type') === 'online', fn ($q2) => $q2->where('status', 'active'));
+            })
+            ->orderBy('type')
+            ->orderBy('status');
 
         return $this->execute($query);
     }

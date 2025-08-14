@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\SessionStatus;
+use App\Enums\SessionType;
 use App\Enums\StagesEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,6 +16,7 @@ class SessionIndexRequest extends FormRequest
             'professor_id' => 'nullable|integer|exists:professors,id',
             'status' => 'nullable|in:'.implode(',', array_column(SessionStatus::all(), 'value')),
             'stage' => 'nullable|in:'.implode(',', array_column(StagesEnum::all(), 'value')),
+            'type' => 'nullable|in:'.implode(',', array_column(SessionType::all(), 'value')),
         ];
     }
 }

@@ -73,7 +73,7 @@
                 <form method="GET" action="{{ route('sessions.index') }}" id="filterForm">
                     <div class="row g-3">
                         <!-- General Search -->
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-search"></i></span>
                                 <input type="text" name="search" class="form-control" placeholder="Search sessions..."
@@ -95,13 +95,24 @@
                         </div>
 
                         <!-- Stage Filter -->
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select name="stage" class="form-select">
                                 <option value="">All Stages</option>
                                 @foreach (App\Enums\StagesEnum::all() as $stage)
                                     <option value="{{ $stage['value'] }}"
                                         {{ request('stage') == $stage['value'] ? 'selected' : '' }}>
                                         {{ $stage['name'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select name="type" class="form-select">
+                                <option value="">All Types</option>
+                                @foreach (App\Enums\SessionType::all() as $type)
+                                    <option value="{{ $type['value'] }}"
+                                        {{ request('type') == $type['value'] ? 'selected' : '' }}>
+                                        {{ $type['name'] }}
                                     </option>
                                 @endforeach
                             </select>
@@ -188,6 +199,7 @@
                     search: $('input[name="search"]').val(),
                     professor_id: $('select[name="professor_id"]').val(),
                     stage: $('select[name="stage"]').val(),
+                    type: $('select[name="type"]').val(),
                     status: $('select[name="status"]').val(),
                     ajax: true
                 };
@@ -311,6 +323,7 @@
                 $('input[name="search"]').val('');
                 $('select[name="professor_id"]').val('');
                 $('select[name="stage"]').val('');
+                $('select[name="type"]').val('');
                 $('select[name="status"]').val('');
                 reloadSessions();
             });
