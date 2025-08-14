@@ -121,7 +121,7 @@
                         <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
                     </a>
                 @endcan
-                @can('students_delete')
+                {{-- @can('students_delete')
                     <form action="{{ route('students.delete', $student->id) }}" method="POST"
                         onsubmit="return confirm('{{ __('trans.delete_confirm') }}')">
                         @csrf
@@ -130,7 +130,7 @@
                             <i class="fas fa-trash-alt me-2"></i> {{ __('trans.delete') }}
                         </button>
                     </form>
-                @endcan
+                @endcan --}}
                 <a href="{{ route('reports.student', ['search' => $student->code]) }}"
                     class="btn btn-outline-secondary rounded-pill px-4">
                     <i class="fas fa-chart-line me-2"></i> {{ __('trans.report') }}

@@ -66,7 +66,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         @endcan
-                                        @can('users_delete')
+                                        {{-- @can('users_delete')
                                             <form action="{{ route('users.delete', $user) }}" method="POST"
                                                 class="d-inline-block"
                                                 onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
@@ -77,7 +77,7 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                        @endcan
+                                        @endcan --}}
                                     </div>
                                 </td>
                             </tr>
@@ -118,7 +118,7 @@
                                 <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-warning"><i
                                         class="fas fa-edit"></i></a>
                             @endcan
-                            @can('users_delete')
+                            {{-- @can('users_delete')
                                 <form action="{{ route('users.delete', $user) }}" method="POST"
                                     onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
                                     @csrf
@@ -126,7 +126,7 @@
                                     <button type="submit" class="btn btn-sm btn-outline-danger"><i
                                             class="fas fa-trash"></i></button>
                                 </form>
-                            @endcan
+                            @endcan --}}
                         </div>
                     </div>
                 </div>

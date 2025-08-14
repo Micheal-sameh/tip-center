@@ -102,7 +102,7 @@
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li>
+                                        {{-- <li>
                                             <form action="{{ route('students.delete', $student) }}"
                                                 method="POST">
                                                 @csrf
@@ -112,7 +112,7 @@
                                                     <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
                                                 </button>
                                             </form>
-                                        </li>
+                                        </li> --}}
                                     </ul>
                                 </div>
                             </td>
@@ -203,7 +203,7 @@
                                     <i class="fas fa-edit me-2"></i>{{ __('Edit') }}
                                 </a>
                             </li>
-                            <li>
+                            {{-- <li>
                                 <form action="{{ route('students.delete', $student) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
@@ -212,7 +212,7 @@
                                         <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
                                     </button>
                                 </form>
-                            </li>
+                            </li> --}}
                         </ul>
                     </div>
                 </div>
