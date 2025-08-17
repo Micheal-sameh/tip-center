@@ -95,7 +95,7 @@
                                 </span>
                                 <span class="badge bg-light text-dark">
                                     <i class="fas fa-layer-group me-1"></i>
-                                    {{-- {{ App\Enums\StagesEnum::getStringValue($selected_student->stage) }} --}}
+                                    {{ App\Enums\StagesEnum::getStringValue($selected_student->stage) }}
                                 </span>
                             </div>
                         </div>
@@ -135,7 +135,7 @@
                                                 <div class="d-flex flex-column gap-2">
                                                     <span class="badge bg-light text-dark text-start">
                                                         <i class="fas fa-layer-group me-1 text-muted"></i>
-                                                        {{-- {{ \App\Enums\StagesEnum::getStringValue($session->stage) }} --}}
+                                                        {{ \App\Enums\StagesEnum::getStringValue($session->stage) }}
                                                     </span>
                                                     <span class="badge bg-light text-dark text-start">
                                                         <i class="fas fa-clock me-1 text-muted"></i>

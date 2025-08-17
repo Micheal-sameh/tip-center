@@ -35,7 +35,7 @@
                                 <td>{{ $user->phone }}</td>
                                 <td><span class="badge bg-info text-dark">{{ $user->roles->first()?->name ?? '-' }}</span>
                                 </td>
-                                <td>{{ $user->birth_date }}</td>
+                                <td>{{ $user->birth_date?->format('d-m-Y') }}</td>
                                 <td>
                                     <button onclick="toggleStatus({{ $user->id }})"
                                         class="status-btn badge border-0 px-3 py-2 rounded-pill {{ $user->status ? 'bg-success' : 'bg-secondary' }}"

@@ -155,9 +155,9 @@
             @foreach ($reports as $report)
                 <tr class="{{ $report->to_pay > 0 ? 'table-warning' : '' }}">
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $report->student->name }}</td>
-                    <td>{{ $report->student->phone }}</td>
-                    <td>{{ $report->student->parent_phone }}</td>
+                    <td>{{ $report->student?->name }}</td>
+                    <td>{{ $report->student?->phone }}</td>
+                    <td>{{ $report->student?->parent_phone }}</td>
                     <td>{{ $report->created_at->format('h:i:A') }}</td>
                     @if ($session->materials)
                         <td>{{ $report->materials }}</td>

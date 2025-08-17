@@ -55,9 +55,9 @@
                             @foreach ($reports as $report)
                                 <tr class="{{ $report->to_pay > 0 ? 'table-warning' : '' }}">
                                     <td>{{ $loop->iteration }}</td>
-                                    <td><a href="{{route('students.show', $report->student_id)}}">{{ $report->student->name }} </a></td>
-                                    <td>{{ $report->student->phone }}</td>
-                                    <td>{{ $report->student->parent_phone }}</td>
+                                    <td><a href="{{route('students.show', $report->student_id)}}">{{ $report->student?->name }} </a></td>
+                                    <td>{{ $report->student?->phone }}</td>
+                                    <td>{{ $report->student?->parent_phone }}</td>
                                     <td>{{ $report->created_at->format('h:i:A') }}</td>
                                     @if ($session->materials)
                                         <td>{{ $report->materials }}</td>
@@ -82,9 +82,9 @@
                     @foreach ($reports as $report)
                         <div class="card mb-3 {{ $report->to_pay > 0 ? 'border-warning bg-warning bg-opacity-10' : '' }}">
                             <div class="card-body">
-                                <h6 class="fw-bold mb-1">{{ $loop->iteration }}. {{ $report->student->name }}</h6>
-                                <p class="mb-1"><strong>Phone:</strong> {{ $report->student->phone }}</p>
-                                <p class="mb-1"><strong>Phone (P):</strong> {{ $report->student->parent_phone }}</p>
+                                <h6 class="fw-bold mb-1">{{ $loop->iteration }}. {{ $report->student?->name }}</h6>
+                                <p class="mb-1"><strong>Phone:</strong> {{ $report->student?->phone }}</p>
+                                <p class="mb-1"><strong>Phone (P):</strong> {{ $report->student?->parent_phone }}</p>
                                 @if ($session->materials)
                                     <p class="mb-1"><strong>Materials:</strong> {{ $report->materials }}</p>
                                 @endif

@@ -34,10 +34,10 @@
                                 <tr class="{{ $student->to_pay > 0 ? 'table-warning' : '' }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td class="fw-bold"><a href="{{ route('students.show', $student->student_id) }}">
-                                            {{ $student->student->name }} </a></td>
-                                    <td>{{ $student->student->code }}</td>
-                                    <td>{{ $student->student->phone }}</td>
-                                    <td>{{ $student->student->parent_phone }}</td>
+                                            {{ $student->student?->name }} </a></td>
+                                    <td>{{ $student->student?->code }}</td>
+                                    <td>{{ $student->student?->phone }}</td>
+                                    <td>{{ $student->student?->parent_phone }}</td>
                                     <td>{{ $student->created_at->format('h:i:A') }}</td>
                                     <td>{{ $student->center_price + $student->professor_price + $student->prinatables + $student->materials }}
                                     </td>
@@ -60,11 +60,11 @@
                         <div class="card mb-3 {{ $student->to_pay > 0 ? 'border-warning bg-warning bg-opacity-10' : '' }}">
                             <div class="card-body">
                                 <h6 class="fw-bold mb-1">{{ $loop->iteration }}. <a
-                                        href="{{ route('students.show', $student->student_id) }}">{{ $student->student->name }}</a>
+                                        href="{{ route('students.show', $student->student_id) }}">{{ $student->student?->name }}</a>
                                 </h6>
-                                <p class="mb-1"><strong>code:</strong> {{ $student->student->code }}</p>
-                                <p class="mb-1"><strong>Phone:</strong> {{ $student->student->phone }}</p>
-                                <p class="mb-1"><strong>Phone (P):</strong> {{ $student->student->parent_phone }}</p>
+                                <p class="mb-1"><strong>code:</strong> {{ $student->student?->code }}</p>
+                                <p class="mb-1"><strong>Phone:</strong> {{ $student->student?->phone }}</p>
+                                <p class="mb-1"><strong>Phone (P):</strong> {{ $student->student?->parent_phone }}</p>
                                 <p class="mb-1"><strong>Attending :</strong> {{ $student->created_at->format('h:i:A') }}
                                 </p>
                                 <p class="mb-1"><strong>Paid:</strong>

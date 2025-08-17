@@ -77,7 +77,7 @@ class ReportController extends Controller
         $reports = $this->reportService->student($request->validated());
 
         $pdf = Pdf::loadView('reports.student-pdf', compact('reports'));
-        $student = $reports?->first()?->student->name;
+        $student = $reports?->first()?->student?->name;
 
         return $pdf->download("$student.pdf");
     }

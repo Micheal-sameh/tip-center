@@ -73,7 +73,7 @@
                                     <tr>
                                         <th class="text-muted ps-0 fw-normal">{{ __('trans.birth_date') }}</th>
                                         <td class="fw-medium">
-                                            {{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->translatedFormat('d M Y') : '-' }}
+                                            {{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)?->translatedFormat('d M Y') : '-' }}
                                         </td>
                                     </tr>
                                     <tr>
