@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Student Report - {{ $reports?->first()?->student->name ?? 'N/A' }}</title>
+    <title>Student Report - {{ $reports?->first()?->student?->name ?? 'N/A' }}</title>
     <style>
         @page {
             size: A4;
@@ -128,8 +128,8 @@
     </div>
 
     <div class="student-info">
-        <strong>{{ $reports?->first()?->student->name ?? 'N/A' }}</strong>
-        (Code: {{ $reports?->first()?->student->code ?? 'N/A' }}) |
+        <strong>{{ $reports?->first()?->student?->name ?? 'N/A' }}</strong>
+        (Code: {{ $reports?->first()?->student?->code ?? 'N/A' }}) |
         Report Date: {{ now()->format('d M Y') }} |
         Total Sessions: {{ count($reports) }}
     </div>

@@ -99,7 +99,7 @@
                                         </td>
                                         <td>{{ $professor->subject }}</td>
                                         <td>{{ $professor->school }}</td>
-                                        <td>{{ $professor->birth_date->format('d-m-Y') }}</td>
+                                        <td>{{ $professor->birth_date?->format('d-m-Y') }}</td>
                                         <td>
                                             <button id="status-btn-{{ $professor->id }}"
                                                 onclick="toggleStatus({{ $professor->id }})"
@@ -199,7 +199,7 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="text-muted">{{ __('trans.birth_date') }}</div>
-                                        <div>{{ $professor->birth_date->format('d-m-Y') }}</div>
+                                        <div>{{ $professor->birth_date?->format('d-m-Y') }}</div>
                                     </div>
                                     {{-- <div class="col-6">
                                         <div class="text-muted">{{ __('trans.type') }}</div>
