@@ -91,7 +91,7 @@
                                     <h6 class="text-muted mb-2 d-flex align-items-center">
                                         <i class="fas fa-birthday-cake me-2 text-primary"></i>{{ __('trans.birth_date') }}
                                     </h6>
-                                    <p class="mb-0 fw-bold text-dark">{{ $professor->birth_date->format('d-m-Y') }}</p>
+                                    <p class="mb-0 fw-bold text-dark">{{ $professor->birth_date?->format('d-m-Y') }}</p>
                                 </div>
                             </div>
                             <div class="col-md-6">

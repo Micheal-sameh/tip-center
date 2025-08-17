@@ -53,7 +53,7 @@
                             ['name' => 'optional_phone', 'label' => 'Optional Phone', 'required' => false],
                             ['name' => 'subject', 'label' => 'Subject', 'required' => true],
                             ['name' => 'school', 'label' => 'School', 'required' => true],
-                            ['name' => 'birth_date', 'label' => 'Birth Date', 'type' => 'date', 'required' => true],
+                            ['name' => 'birth_date', 'label' => 'Birth Date', 'type' => 'date', 'required' => false],
                         ];
                         $weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                     @endphp
@@ -106,11 +106,41 @@
 
                         {{-- Hidden template for cloning --}}
                         <div id="stage-schedule-template" class="d-none">
-                            @include('professors.partial.stage_schedule_row', [
-                                'index' => '__INDEX__',
-                                'data' => [],
-                            ])
+                            <div class="stage-row row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Stage</label>
+                                    <select class="form-select" data-name="stage_schedules[__INDEX__][stage]">
+                                        <option value="">Choose...</option>
+                                        @foreach (App\Enums\StagesEnum::all() as $stage)
+                                            <option value="{{ $stage['value'] }}">{{ $stage['name'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Day</label>
+                                    <select class="form-select" data-name="stage_schedules[__INDEX__][day]">
+                                        <option value="">Choose...</option>
+                                        @foreach ($weekdays as $day)
+                                            <option value="{{ strtolower($day) }}">{{ $day }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">From</label>
+                                    <input type="time" class="form-control" data-name="stage_schedules[__INDEX__][from]">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">To</label>
+                                    <input type="time" class="form-control" data-name="stage_schedules[__INDEX__][to]">
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button type="button" class="btn btn-danger remove-stage-row">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+
 
 
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-stage-row">
@@ -139,13 +169,20 @@
 
                 document.getElementById('add-stage-row').addEventListener('click', function() {
                     const template = document.getElementById('stage-schedule-template').innerHTML;
-                    const newRowHtml = template.replace(/__INDEX__/g, index);
-                    document.getElementById('stage-schedule-wrapper').insertAdjacentHTML('beforeend',
-                        newRowHtml);
+                    const newRow = document.createElement('div');
+                    newRow.innerHTML = template.replace(/__INDEX__/g, index);
+
+                    // Assign real name attributes
+                    newRow.querySelectorAll('[data-name]').forEach(el => {
+                        el.setAttribute('name', el.getAttribute('data-name').replace(/__INDEX__/g,
+                            index));
+                        el.removeAttribute('data-name');
+                    });
+
+                    document.getElementById('stage-schedule-wrapper').appendChild(newRow.firstElementChild);
                     index++;
                 });
 
-                // Delegate remove buttons
                 document.addEventListener('click', function(e) {
                     if (e.target.closest('.remove-stage-row')) {
                         e.target.closest('.stage-row').remove();
@@ -169,11 +206,11 @@
                     const from = row.querySelector('[name^="stage_schedules"][name$="[from]"]');
                     const to = row.querySelector('[name^="stage_schedules"][name$="[to]"]');
 
+                    // If any field is missing → disable the whole row
                     if (!stage?.value || !day?.value || !from?.value || !to?.value) {
-                        stage.disabled = true;
-                        day.disabled = true;
-                        from.disabled = true;
-                        to.disabled = true;
+                        [stage, day, from, to].forEach(el => {
+                            if (el) el.disabled = true;
+                        });
                     }
                 });
             });
