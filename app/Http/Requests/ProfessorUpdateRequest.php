@@ -11,7 +11,7 @@ class ProfessorUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string|unique:professors,name',
+            'name' => 'required|string|unique:professors,name,'.$this->id,
             'phone' => 'string|unique:professors,phone,'.$this->route('id'),
             'optional_phone' => 'string|unique:professors,phone',
             'subject' => 'string',
