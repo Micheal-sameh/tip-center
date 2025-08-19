@@ -73,47 +73,16 @@
                                     <span class="text-muted">N/A</span>
                                 @endif
                             </td>
-                            <td class="text-end pe-4">
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                        id="dropdownMenuButton{{ $student->id }}" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fas fa-ellipsis-h"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end"
-                                        aria-labelledby="dropdownMenuButton{{ $student->id }}">
-                                        <li>
-                                            <a class="dropdown-item"
-                                                href="{{ route('students.show', $student) }}">
-                                                <i class="fas fa-eye me-2"></i>{{ __('View Details') }}
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item"
-                                                href="{{ route('students.edit', $student) }}">
-                                                <i class="fas fa-edit me-2"></i>{{ __('Edit') }}
-                                            </a>
-                                        </li>
-                                        {{-- <li>
-                                            <a class="dropdown-item" href="#">
-                                                <i class="fas fa-file-invoice me-2"></i>{{ __('Reports') }}
-                                            </a>
-                                        </li> --}}
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        {{-- <li>
-                                            <form action="{{ route('students.delete', $student) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger"
-                                                    onclick="return confirm('{{ __('Are you sure you want to delete this student?') }}')">
-                                                    <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
-                                                </button>
-                                            </form>
-                                        </li> --}}
-                                    </ul>
+                            <td>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <a href="{{ route('students.show', $student) }}"
+                                        class="btn btn-sm btn-outline-info" title="{{ __('trans.view') }}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('students.edit', $student) }}" class="btn btn-sm btn-secondary"
+                                        title="{{ __('trans.Edit') }}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -192,8 +161,7 @@
                     </a>
                     <div class="dropdown">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                            id="mobileDropdown{{ $student->id }}" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                            id="mobileDropdown{{ $student->id }}" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end"
@@ -203,16 +171,6 @@
                                     <i class="fas fa-edit me-2"></i>{{ __('Edit') }}
                                 </a>
                             </li>
-                            {{-- <li>
-                                <form action="{{ route('students.delete', $student) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="dropdown-item text-danger"
-                                        onclick="return confirm('{{ __('Are you sure?') }}')">
-                                        <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
-                                    </button>
-                                </form>
-                            </li> --}}
                         </ul>
                     </div>
                 </div>
