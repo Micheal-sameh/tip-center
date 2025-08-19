@@ -67,7 +67,7 @@ class ProfessorController extends Controller
     public function update(ProfessorUpdateRequest $request, $id)
     {
         $input = new professorDTO(...$request->only(
-            'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stage_schedules', 'type'
+            'phone', 'optional_phone', 'birth_date', 'school', 'subject', 'stage_schedules', 'type', 'name'
         ));
 
         $this->professorService->update($input, $id);
