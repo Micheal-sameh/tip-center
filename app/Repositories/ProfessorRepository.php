@@ -83,6 +83,8 @@ class ProfessorRepository extends BaseRepository
             'phone' => $input->phone ?? $professor->phone,
             'school' => $input->school ?? $professor->school,
             'subject' => $input->subject ?? $professor->subject,
+            'birth_date' => $input->birth_date,
+
         ]);
 
         $ids = array_filter(array_column($input->stage_schedules, 'id'));
