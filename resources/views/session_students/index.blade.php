@@ -39,41 +39,42 @@
             </div>
         </div>
         @isset($all_students)
-        <!-- Student Results Section -->
-        <div id="studentResultsContainer" class="mb-4" style="display: none;">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Students</h5>
-                    <span class="badge bg-primary rounded-pill" id="studentCount">{{ $all_students->count() }} students</span>
-                </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush" id="studentResultsList">
-                        @foreach ($all_students as $student)
-                            <a href="{{ route('attendances.index', ['student_id' => $student->id]) }}"
-                                class="list-group-item list-group-item-action student-item">
-                                <div class="d-flex w-100 justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">{{ $student->name }}</h6>
-                                        <div class="d-flex gap-2">
-                                            <small class="text-muted">{{ $student->code ?? '' }}</small>
-                                            <small class="text-muted">{{ $student->phone ?? '' }}</small>
+            <!-- Student Results Section -->
+            <div id="studentResultsContainer" class="mb-4" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Students</h5>
+                        <span class="badge bg-primary rounded-pill" id="studentCount">{{ $all_students->count() }}
+                            students</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush" id="studentResultsList">
+                            @foreach ($all_students as $student)
+                                <a href="{{ route('attendances.index', ['student_id' => $student->id]) }}"
+                                    class="list-group-item list-group-item-action student-item">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ $student->name }}</h6>
+                                            <div class="d-flex gap-2">
+                                                <small class="text-muted">{{ $student->code ?? '' }}</small>
+                                                <small class="text-muted">{{ $student->phone ?? '' }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-light text-dark">
+                                                {{ App\Enums\StagesEnum::getStringValue($student->stage) ?? '' }}
+                                            </span>
+                                            <span class="badge bg-light text-dark ms-2">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </span>
                                         </div>
                                     </div>
-                                    <div class="text-end">
-                                        <span class="badge bg-light text-dark">
-                                            {{ App\Enums\StagesEnum::getStringValue($student->stage) ?? '' }}
-                                        </span>
-                                        <span class="badge bg-light text-dark ms-2">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </a>
-                        @endforeach
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endisset
 
         <!-- Selected Student Section -->
@@ -97,6 +98,13 @@
                                     <i class="fas fa-layer-group me-1"></i>
                                     {{ App\Enums\StagesEnum::getStringValue($selected_student->stage) }}
                                 </span>
+                                @if ($selected_student->note)
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-book me-1"></i>
+                                        {{ $selected_student->note }}
+                                    </span>
+                                @endif
+
                             </div>
                         </div>
                     </div>
@@ -197,7 +205,8 @@
                 searchInput.value = '';
                 resultsContainer.style.display = 'none';
                 studentItems.forEach(item => item.style.display = '');
-                studentCountBadge.textContent = '{{ isset($all_students) ? $all_students->count() : 0 }} students';
+                studentCountBadge.textContent =
+                    '{{ isset($all_students) ? $all_students->count() : 0 }} students';
                 searchInput.focus();
             });
         });
