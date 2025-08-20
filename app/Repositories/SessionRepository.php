@@ -35,7 +35,6 @@ class SessionRepository extends BaseRepository
 
     public function index($input)
     {
-        $this->checkYesterday();
         $this->checkActive();
         $query = $this->model->query()
             ->withCount('sessionStudents')
@@ -174,9 +173,9 @@ class SessionRepository extends BaseRepository
     {
         $professorIds = $this->model
             ->where('stage', $input['stage'])
-            ->whereHas('sessionStudents', fn ($q) => $q->where('student_id', $input['student_id'])
-            )
-            ->where('status', SessionStatus::INACTIVE)
+            // ->whereHas('sessionStudents', fn ($q) => $q->where('student_id', $input['student_id'])
+            // )
+            ->where('status', SessionStatus::ACTIVE)
             ->latest()
             ->get()
             ->unique('professor_id')
@@ -192,7 +191,6 @@ class SessionRepository extends BaseRepository
 
     public function lastSession($session, $student)
     {
-        $this->checkActive();
 
         return $this->model->whereHas('sessionStudents',
             fn ($q) => $q->where('student_id', $student->id)
@@ -241,5 +239,36 @@ class SessionRepository extends BaseRepository
             ->where('type', SessionType::OFFLINE)
             ->whereDate('created_at', '<', Carbon::today())
             ->update(['status' => SessionStatus::FINISHED]);
+    }
+
+    public function automaticCreateSessions($professors): void
+    {
+        $this->checkYesterday();
+
+        foreach ($professors as $professor) {
+            foreach ($professor->stages as $stage) {
+
+                $lastSession = $stage->getLastForProfessorAndStage(
+                    $stage->professor_id,
+                    $stage->stage
+                );
+
+                if (! $lastSession) {
+                    continue; // skip if no previous session
+                }
+
+                $this->model->create([
+                    'professor_id' => $stage->professor_id,
+                    'stage' => $stage->stage,
+                    'start_at' => $stage->from,
+                    'end_at' => $stage->to,
+                    'type' => SessionType::OFFLINE,
+                    'professor_price' => $lastSession->professor_price,
+                    'center_price' => $lastSession->center_price,
+                    'status' => SessionStatus::INACTIVE,
+                    'room' => $lastSession->room,
+                ]);
+            }
+        }
     }
 }

@@ -109,13 +109,13 @@
                     <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Available Sessions</h5>
                 </div>
                 <div class="card-body">
-                    @if ($sessions->isEmpty())
+                    @if ($my_sessions->isEmpty())
                         <div class="alert alert-warning mb-0">
                             <i class="fas fa-info-circle me-2"></i> No available sessions found for this student.
                         </div>
                     @else
                         <div class="row g-3" id="sessions-container">
-                            @foreach ($sessions as $session)
+                            @foreach ($my_sessions as $session)
                                 <div class="col-md-6 col-lg-4">
                                     <a href="{{ route('attendances.create', [
                                         'student_id' => $selected_student->id,
@@ -135,7 +135,9 @@
                                                 <div class="d-flex flex-column gap-2">
                                                     <span class="badge bg-light text-dark text-start">
                                                         <i class="fas fa-layer-group me-1 text-muted"></i>
-                                                        {{ \App\Enums\StagesEnum::getStringValue($session->stage) }}
+                                                        {{ \App\Enums\StagesEnum::getStringValue($session->stage) }} -
+                                                        <i class="fas fas fa-tags me-1 text-muted"></i>
+                                                        {{ \App\Enums\SessionType::getStringValue($session->type) }}
                                                     </span>
                                                     <span class="badge bg-light text-dark text-start">
                                                         <i class="fas fa-clock me-1 text-muted"></i>

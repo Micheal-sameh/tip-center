@@ -169,4 +169,12 @@ class ProfessorRepository extends BaseRepository
             'balance' => 0,
         ]);
     }
+
+    public function todaySessions()
+    {
+        return $this->model
+            ->whereHas('stages', fn ($q) => $q->where('day', now()->format('w')))
+            ->with(['stages' => fn ($q) => $q->where('day', now()->format('w'))])
+            ->get();
+    }
 }

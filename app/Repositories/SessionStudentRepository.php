@@ -87,7 +87,7 @@ class SessionStudentRepository extends BaseRepository
         ]);
         DB::commit();
 
-        return $attendence;
+        return 0;
     }
 
     public function delete($id)

@@ -2,15 +2,18 @@
 
 namespace App\Services;
 
+use App\Repositories\ProfessorRepository;
 use App\Repositories\SessionRepository;
 
 class SessionService
 {
-    public function __construct(protected SessionRepository $sessionRepository) {}
+    public function __construct(
+        protected SessionRepository $sessionRepository,
+        protected ProfessorRepository $professorRepository,
+    ) {}
 
     public function index($input)
     {
-
         $sessions = $this->sessionRepository->index($input);
         if (! isset($input['student_id'])) {
             $onlineSessions = $this->sessionRepository->onlineSessions();
@@ -81,5 +84,11 @@ class SessionService
         $session->load('sessionStudents');
 
         return $session;
+    }
+
+    public function automaticCreateSessions()
+    {
+        $professors = $this->professorRepository->todaySessions();
+        $this->sessionRepository->automaticCreateSessions($professors);
     }
 }
