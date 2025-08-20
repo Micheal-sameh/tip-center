@@ -31,9 +31,10 @@
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Session Details</h4>
-                <a href="{{ route('sessions.index') }}" class="btn btn-light btn-sm">
+                <a href="javascript:history.back()" class="btn btn-light btn-sm">
                     <i class="fas fa-arrow-left me-1"></i> Back
                 </a>
+
             </div>
 
             <div class="card-body">

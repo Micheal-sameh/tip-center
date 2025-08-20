@@ -26,9 +26,9 @@
                         <i class="fas fa-user-circle fa-lg me-3"></i>
                         <h4 class="mb-0">User Details</h4>
                     </div>
-                    {{-- <a href="{{ route('') }}" class="btn btn-sm btn-outline-light">
+                    <a href="javascript:history.back()" class="btn btn-light btn-sm">
                         <i class="fas fa-arrow-left me-1"></i> Back
-                    </a> --}}
+                    </a>
                 </div>
             </div>
 
