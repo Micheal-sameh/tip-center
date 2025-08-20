@@ -60,4 +60,5 @@ return [
     'day' => 'Day',
     'from' => 'From',
     'to' => 'To',
+    'last_login' => 'Last Login',
 ];

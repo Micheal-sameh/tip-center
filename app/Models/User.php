@@ -53,4 +53,14 @@ class User extends Authenticatable implements HasMedia
         'password' => 'hashed',
         'birth_date' => 'datetime',
     ];
+
+    public function logins()
+    {
+        return $this->hasMany(UserLogin::class);
+    }
+
+    public function lastLogin()
+    {
+        return $this->hasOne(UserLogin::class)->latestOfMany();
+    }
 }

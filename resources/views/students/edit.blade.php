@@ -28,7 +28,7 @@
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="text" name="name" class="form-control" id="name"
-                                    placeholder="{{ __('Name') }}" required value="{{ old('name', $student->name) }}" disabled>
+                                    placeholder="{{ __('Name') }}" required value="{{ old('name', $student->name) }}">
                                 <label for="name">{{ __('Name') }}</label>
                             </div>
                         </div>

@@ -7,12 +7,16 @@ use InvalidArgumentException;
 
 class SessionStatus
 {
-    public const PENDING = 1;
-    public const INACTIVE = 2;
+    public const WARNING = 1;
+    public const PENDING = 2;
     public const ACTIVE = 3;
     public const FINISHED = 4;
 
     private static array $translations = [
+        self::WARNING => [
+            'en' => 'Warning',
+            'ar' => 'غير فعال',
+        ],
         self::PENDING => [
             'en' => 'Pending',
             'ar' => 'قيد الانتظار',
@@ -21,11 +25,7 @@ class SessionStatus
             'en' => 'Active',
             'ar' => 'فعال',
         ],
-        self::INACTIVE   => [
-            'en' => 'Inactive',
-            'ar' => 'غير فعال',
-        ],
-        self::FINISHED   => [
+        self::FINISHED => [
             'en' => 'Finished',
             'ar' => 'مكتمل',
         ],
@@ -37,7 +37,7 @@ class SessionStatus
 
         return array_map(
             fn ($value) => [
-                'name'  => self::$translations[$value][$locale],
+                'name' => self::$translations[$value][$locale],
                 'value' => $value,
             ],
             array_keys(self::$translations)

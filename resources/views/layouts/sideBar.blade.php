@@ -309,9 +309,9 @@
             </ul>
         </nav>
 
-        <button class="btn btn-primary rounded-circle language-switcher" id="languageSwitcher">
+        {{-- <button class="btn btn-primary rounded-circle language-switcher" id="languageSwitcher">
             <i class="fas fa-globe"></i>
-        </button>
+        </button> --}}
     </aside>
 
     <!-- Main Content -->

@@ -100,7 +100,7 @@ class SessionStudentRepository extends BaseRepository
     {
         $session = $this->findById($id);
         $session->update([
-            'status' => $session->status == SessionStatus::ACTIVE ? SessionStatus::INACTIVE : SessionStatus::ACTIVE,
+            'status' => $session->status == SessionStatus::ACTIVE ? SessionStatus::PENDING : SessionStatus::ACTIVE,
         ]);
 
         return $session;

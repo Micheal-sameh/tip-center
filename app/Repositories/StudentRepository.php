@@ -100,6 +100,7 @@ class StudentRepository extends BaseRepository
     {
         $student = $this->findById($id);
         $student->update([
+            'name' => $input->name,
             'stage' => $input->stage ?? $student->stage,
             'phone' => $input->phone ?? $student->phone,
             'parent_phone' => $input->parent_phone ?? $student->parent_phone,

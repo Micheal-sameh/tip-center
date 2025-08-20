@@ -120,12 +120,12 @@
                                                 <th class="text-muted ps-0 fw-normal">Joined</th>
                                                 <td class="fw-medium">{{ $user->created_at->format('d M Y') }}</td>
                                             </tr>
-                                            {{-- <tr>
+                                            <tr>
                                                 <th class="text-muted ps-0 fw-normal">Last Login</th>
                                                 <td class="fw-medium">
-                                                    {{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never logged in' }}
+                                                    {{ $user->lastLogin ? $user->lastLogin?->created_at : 'Never logged in' }}
                                                 </td>
-                                            </tr> --}}
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

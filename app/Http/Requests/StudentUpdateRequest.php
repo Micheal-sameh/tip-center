@@ -10,6 +10,7 @@ class StudentUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => 'required|string|unique:students,name,'.$this->id,
             'stage' => 'required|integer|in:'.implode(',', array_column(StagesEnum::all(), 'value')),
             'phone' => 'string',
             'parent_phone' => 'string',
