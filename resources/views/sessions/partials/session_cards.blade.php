@@ -196,13 +196,13 @@
                         <div class="mb-3">
                             <label for="markers" class="form-label">Markers</label>
                             <input type="number" class="form-control" id="markers" name="markers" min="0"
-                                placeholder="Enter number of markers used">
+                                placeholder="Enter markers expenses">
                         </div>
 
                         <div class="mb-3">
                             <label for="copies" class="form-label">Copies</label>
                             <input type="number" class="form-control" id="copies" name="copies" min="0"
-                                placeholder="Enter number of copies used">
+                                placeholder="Enter copies expenses">
                         </div>
 
                         <div class="mb-3">
