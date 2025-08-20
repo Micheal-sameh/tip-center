@@ -145,20 +145,16 @@
                             <input type="number" name="professor_price" step="1" min="0" class="form-control"
                                 value="{{ $session->professor_price }}">
                         </div>
-                        @if ($session->printables)
-                            <div class="col-md-4">
-                                <label>Printables</label>
-                                <input type="number" name="printables" step="1" min="0" class="form-control"
-                                    value="{{ $session->printables ?? 0 }}">
-                            </div>
-                        @endif
-                        @if ($session->materials)
-                            <div class="col-md-4">
-                                <label>Materials</label>
-                                <input type="number" name="materials" step="1" min="0"
-                                    class="form-control" value="{{ $session->materials ?? 0 }}">
-                            </div>
-                        @endif
+                        <div class="col-md-4">
+                            <label>Printables</label>
+                            <input type="number" name="printables" step="1" min="0" class="form-control"
+                                value="{{ $session->printables ?? 0 }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Materials</label>
+                            <input type="number" name="materials" step="1" min="0" class="form-control"
+                                value="{{ $session->materials ?? 0 }}">
+                        </div>
                         <div class="col-md-4">
                             <label>To Pay</label>
                             <input type="number" name="to_pay" step="1" min="0" class="form-control">
