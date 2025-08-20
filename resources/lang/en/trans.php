@@ -61,4 +61,7 @@ return [
     'from' => 'From',
     'to' => 'To',
     'last_login' => 'Last Login',
+    'student_special_cases' => 'Special Cases',
+    'add_special_case' => 'Add Special Case',
+    'no_special_cases' => 'No Special Case',
 ];

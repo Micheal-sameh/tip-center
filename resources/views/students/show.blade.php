@@ -113,15 +113,69 @@
                     </div>
                 </div>
             </div>
+            <!-- Student Special Cases -->
+           
 
-            <!-- Action Buttons -->
-            <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-3 py-3 px-4">
-                @can('students_update')
-                    <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary rounded-pill px-4">
-                        <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
-                    </a>
-                @endcan
-                {{-- @can('students_delete')
+                <div class="card-body p-4">
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
+                        <div
+                            class="bg-gradient-primary text-white px-4 py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold">
+                                <i class="fas fa-exclamation-circle me-2"></i> {{ __('trans.student_special_cases') }}
+                            </h5>
+                            <a href="{{ route('student-special-cases.create', $student->id) }}"
+                                class="btn btn-light btn-sm rounded-pill">
+                                <i class="fas fa-plus me-1"></i> {{ __('trans.add_special_case') }}
+                            </a>
+                        </div>
+                        @if ($student->professors->isNotEmpty())
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>{{ __('trans.professor') }}</th>
+                                            <th>{{ __('trans.professor_price') }}</th>
+                                            <th>{{ __('trans.center_price') }}</th>
+                                            <th>{{ __('trans.note') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($student->professors as $professor)
+                                            <tr>
+                                                <td>
+                                                    <span class="fw-bold">{{ $professor->name }}</span>
+                                                </td>
+                                                <td>{{ $professor->pivot->professor_price ?? '-' }}</td>
+                                                <td>{{ $professor->pivot->center_price ?? '-' }}</td>
+                                                <td>
+                                                    @if (!empty($professor->pivot->note))
+                                                        <span class="badge bg-warning text-dark">
+                                                            <i class="fas fa-sticky-note me-1"></i>
+                                                            {{ $professor->pivot->note }}
+                                                        </span>
+                                                    @else
+                                                        <span class="text-muted">—</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <p class="text-muted mb-0">{{ __('trans.no_special_cases') }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-3 py-3 px-4">
+                    @can('students_update')
+                        <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary rounded-pill px-4">
+                            <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
+                        </a>
+                    @endcan
+                    {{-- @can('students_delete')
                     <form action="{{ route('students.delete', $student->id) }}" method="POST"
                         onsubmit="return confirm('{{ __('trans.delete_confirm') }}')">
                         @csrf
@@ -131,73 +185,73 @@
                         </button>
                     </form>
                 @endcan --}}
-                <a href="{{ route('reports.student', ['search' => $student->code]) }}"
-                    class="btn btn-outline-secondary rounded-pill px-4">
-                    <i class="fas fa-chart-line me-2"></i> {{ __('trans.report') }}
-                </a>
+                    <a href="{{ route('reports.student', ['search' => $student->code]) }}"
+                        class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fas fa-chart-line me-2"></i> {{ __('trans.report') }}
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Avatar Modal -->
-    <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-semibold">{{ __('trans.profile_picture') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="{{ __('Close') }}"></button>
-                </div>
-                <div class="modal-body text-center py-4">
-                    <div class="mb-4">
-                        <div class="avatar-preview mx-auto">
-                            @if ($student->hasMedia('students_images'))
-                                <img src="{{ $student->getFirstMediaUrl('students_images') }}"
-                                    class="img-fluid rounded shadow" id="zoomableImage"
-                                    style="max-height: 500px; cursor: zoom-in;" alt="Student Avatar">
-                            @else
-                                <div class="d-flex align-items-center justify-content-center h-100 w-100 bg-light rounded-circle"
-                                    style="height: 300px;">
-                                    <i class="fas fa-user-graduate fa-5x text-muted"></i>
-                                </div>
-                            @endif
-                        </div>
+        <!-- Avatar Modal -->
+        <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-semibold">{{ __('trans.profile_picture') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('Close') }}"></button>
                     </div>
+                    <div class="modal-body text-center py-4">
+                        <div class="mb-4">
+                            <div class="avatar-preview mx-auto">
+                                @if ($student->hasMedia('students_images'))
+                                    <img src="{{ $student->getFirstMediaUrl('students_images') }}"
+                                        class="img-fluid rounded shadow" id="zoomableImage"
+                                        style="max-height: 500px; cursor: zoom-in;" alt="Student Avatar">
+                                @else
+                                    <div class="d-flex align-items-center justify-content-center h-100 w-100 bg-light rounded-circle"
+                                        style="height: 300px;">
+                                        <i class="fas fa-user-graduate fa-5x text-muted"></i>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
 
-                    @can('students_update')
-                        <form action="{{ route('students.profilePic', $student->id) }}" method="POST"
-                            enctype="multipart/form-data" class="px-3">
-                            @csrf
-                            @method('PUT')
-                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-                                <div class="mb-3 flex-grow-1">
-                                    <input type="file" name="image" id="avatarUpload" accept="image/*"
-                                        class="form-control d-none" required>
-                                    <label for="avatarUpload" class="btn btn-primary rounded-pill px-4 py-2 w-100">
-                                        <i class="fas fa-cloud-upload-alt me-2"></i> {{ __('trans.choose_new_photo') }}
-                                    </label>
-                                    <div id="fileName" class="small text-muted mt-2"></div>
-                                </div>
-                                <button type="submit" class="btn btn-success rounded-pill px-4 py-2 mb-3 mb-md-0"
-                                    id="uploadBtn" disabled>
-                                    <i class="fas fa-check me-2"></i> {{ __('trans.update_photo') }}
-                                </button>
-                                {{-- @if ($student->hasMedia('students_images'))
+                        @can('students_update')
+                            <form action="{{ route('students.profilePic', $student->id) }}" method="POST"
+                                enctype="multipart/form-data" class="px-3">
+                                @csrf
+                                @method('PUT')
+                                <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                                    <div class="mb-3 flex-grow-1">
+                                        <input type="file" name="image" id="avatarUpload" accept="image/*"
+                                            class="form-control d-none" required>
+                                        <label for="avatarUpload" class="btn btn-primary rounded-pill px-4 py-2 w-100">
+                                            <i class="fas fa-cloud-upload-alt me-2"></i> {{ __('trans.choose_new_photo') }}
+                                        </label>
+                                        <div id="fileName" class="small text-muted mt-2"></div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success rounded-pill px-4 py-2 mb-3 mb-md-0"
+                                        id="uploadBtn" disabled>
+                                        <i class="fas fa-check me-2"></i> {{ __('trans.update_photo') }}
+                                    </button>
+                                    {{-- @if ($student->hasMedia('students_images'))
                                     <button type="button" class="btn btn-danger rounded-pill px-4 py-2"
                                         id="removeAvatarBtn">
                                         <i class="fas fa-trash-alt me-2"></i> {{ __('trans.remove_photo') }}
                                     </button>
                                 @endif --}}
-                            </div>
-                        </form>
-                    @endcan
+                                </div>
+                            </form>
+                        @endcan
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Remove Avatar Form (hidden) -->
-    {{-- @can('students_update')
+        <!-- Remove Avatar Form (hidden) -->
+        {{-- @can('students_update')
         <form id="removeAvatarForm" action="{{ route('students.remove.avatar', $student->id) }}" method="POST"
             class="d-none">
             @csrf
@@ -205,140 +259,140 @@
         </form>
     @endcan --}}
 
-    <style>
-        .bg-gradient-primary {
-            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
-        }
+        <style>
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            }
 
-        .info-card {
-            transition: all 0.3s ease;
-            height: 100%;
-            background-color: rgba(248, 249, 250, 0.5);
-        }
+            .info-card {
+                transition: all 0.3s ease;
+                height: 100%;
+                background-color: rgba(248, 249, 250, 0.5);
+            }
 
-        .info-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            background-color: white;
-        }
+            .info-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                background-color: white;
+            }
 
-        .rounded-4 {
-            border-radius: 1rem !important;
-        }
+            .rounded-4 {
+                border-radius: 1rem !important;
+            }
 
-        /* Avatar Styles */
-        .avatar-wrapper {
-            width: 160px;
-            height: 160px;
-            position: relative;
-        }
-
-        .avatar-link {
-            display: block;
-            position: relative;
-        }
-
-        .avatar {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border: 4px solid rgba(var(--bs-primary-rgb), 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .avatar-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .avatar-link:hover .avatar-overlay {
-            opacity: 1;
-        }
-
-        /* Modal Styles */
-        .avatar-preview {
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-        /* Zoom effect */
-        .zoomed {
-            cursor: zoom-out;
-            transform: scale(1.5);
-            transition: transform 0.3s ease;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 767.98px) {
+            /* Avatar Styles */
             .avatar-wrapper {
-                width: 120px;
-                height: 120px;
+                width: 160px;
+                height: 160px;
+                position: relative;
             }
 
-            .col-md-4.border-end {
-                border-right: none !important;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            .avatar-link {
+                display: block;
+                position: relative;
             }
-        }
-    </style>
 
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Show selected file name
-                document.getElementById('avatarUpload')?.addEventListener('change', function(e) {
-                    const fileName = document.getElementById('fileName');
-                    const uploadBtn = document.getElementById('uploadBtn');
+            .avatar {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border: 4px solid rgba(var(--bs-primary-rgb), 0.1);
+                transition: all 0.3s ease;
+            }
 
-                    if (this.files.length > 0) {
-                        fileName.textContent = this.files[0].name;
-                        uploadBtn.disabled = false;
+            .avatar-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
 
-                        // Preview the selected image
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const preview = document.querySelector('.avatar-preview img');
-                            if (preview) {
-                                preview.src = e.target.result;
-                            } else {
-                                const previewDiv = document.querySelector('.avatar-preview');
-                                previewDiv.innerHTML =
-                                    `<img src="${e.target.result}" class="img-fluid rounded shadow" id="zoomableImage" style="max-height: 500px; cursor: zoom-in;" alt="Student Avatar">`;
+            .avatar-link:hover .avatar-overlay {
+                opacity: 1;
+            }
+
+            /* Modal Styles */
+            .avatar-preview {
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            /* Zoom effect */
+            .zoomed {
+                cursor: zoom-out;
+                transform: scale(1.5);
+                transition: transform 0.3s ease;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 767.98px) {
+                .avatar-wrapper {
+                    width: 120px;
+                    height: 120px;
+                }
+
+                .col-md-4.border-end {
+                    border-right: none !important;
+                    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                }
+            }
+        </style>
+
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Show selected file name
+                    document.getElementById('avatarUpload')?.addEventListener('change', function(e) {
+                        const fileName = document.getElementById('fileName');
+                        const uploadBtn = document.getElementById('uploadBtn');
+
+                        if (this.files.length > 0) {
+                            fileName.textContent = this.files[0].name;
+                            uploadBtn.disabled = false;
+
+                            // Preview the selected image
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const preview = document.querySelector('.avatar-preview img');
+                                if (preview) {
+                                    preview.src = e.target.result;
+                                } else {
+                                    const previewDiv = document.querySelector('.avatar-preview');
+                                    previewDiv.innerHTML =
+                                        `<img src="${e.target.result}" class="img-fluid rounded shadow" id="zoomableImage" style="max-height: 500px; cursor: zoom-in;" alt="Student Avatar">`;
+                                }
                             }
-                        }
-                        reader.readAsDataURL(this.files[0]);
-                    } else {
-                        fileName.textContent = '';
-                        uploadBtn.disabled = true;
-                    }
-                });
-
-                // Zoom functionality
-                document.addEventListener('click', function(e) {
-                    if (e.target.id === 'zoomableImage') {
-                        e.target.classList.toggle('zoomed');
-                    }
-                });
-
-                // Remove avatar button
-                const removeAvatarBtn = document.getElementById('removeAvatarBtn');
-                if (removeAvatarBtn) {
-                    removeAvatarBtn.addEventListener('click', function() {
-                        if (confirm('{{ __('trans.confirm_remove_avatar') }}')) {
-                            document.getElementById('removeAvatarForm').submit();
+                            reader.readAsDataURL(this.files[0]);
+                        } else {
+                            fileName.textContent = '';
+                            uploadBtn.disabled = true;
                         }
                     });
-                }
-            });
-        </script>
-    @endpush
-@endsection
+
+                    // Zoom functionality
+                    document.addEventListener('click', function(e) {
+                        if (e.target.id === 'zoomableImage') {
+                            e.target.classList.toggle('zoomed');
+                        }
+                    });
+
+                    // Remove avatar button
+                    const removeAvatarBtn = document.getElementById('removeAvatarBtn');
+                    if (removeAvatarBtn) {
+                        removeAvatarBtn.addEventListener('click', function() {
+                            if (confirm('{{ __('trans.confirm_remove_avatar') }}')) {
+                                document.getElementById('removeAvatarForm').submit();
+                            }
+                        });
+                    }
+                });
+            </script>
+        @endpush
+    @endsection

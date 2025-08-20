@@ -61,4 +61,7 @@ return [
     'from' => 'من',
     'to' => 'إلى',
     'last_login' => 'اخر تسجيل دخول',
+    'student_special_cases' => 'حالات خاصه',
+    'add_special_case' => 'اضافة حالة خاصة',
+    'no_special_cases' => 'لا يوجد حالات خاصة',
 ];

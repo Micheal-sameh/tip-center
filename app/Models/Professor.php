@@ -40,4 +40,11 @@ class Professor extends Model implements HasMedia
     {
         return $this->hasMany(ProfessorStage::class);
     }
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'student_special_cases')
+            ->withPivot(['professor_price', 'center_price'])
+            ->withTimestamps();
+    }
 }

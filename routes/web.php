@@ -121,6 +121,14 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/session-pdf', [ReportController::class, 'downloadSessionReport'])->name('reports.session.pdf');
         });
 
+        Route::prefix('student-special-cases')->group(function () {
+            Route::get('/create', [ReportController::class, 'create'])->name('student-special-cases.create');
+            // Route::get('/session', [ReportController::class, 'session'])->name('reports.session');
+            // Route::get('/students', [ReportController::class, 'student'])->name('reports.student');
+            // Route::get('/student-pdf', [ReportController::class, 'downloadStudentReport'])->name('reports.download.pdf');
+            // Route::get('/session-pdf', [ReportController::class, 'downloadSessionReport'])->name('reports.session.pdf');
+        });
+
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingController::class, 'index'])->name('settings.index');
             Route::put('/', [SettingController::class, 'update'])->name('settings.update');
