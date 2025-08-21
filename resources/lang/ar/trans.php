@@ -69,4 +69,5 @@ return [
     'center_price' => 'سعر السنتر',
     'student' => 'طالب',
     'income' => 'التقرير اليومي',
+    'image' => 'صورة',
 ];

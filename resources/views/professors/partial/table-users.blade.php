@@ -1,6 +1,9 @@
 @extends('layouts.sideBar')
 
 @section('content')
+    @php
+        $logo = App\Models\Setting::where('name', 'logo')->first();
+    @endphp
     <div class="container-fluid px-4" style="max-width: 98%;">
         @can('professors_create')
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -66,6 +69,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th width="40" class="text-center">#</th>
+                                    <th>{{ __('trans.image') }}</th>
                                     <th>{{ __('trans.name') }}</th>
                                     <th>{{ __('trans.phone') }}</th>
                                     <th>{{ __('trans.subject') }}</th>
@@ -83,6 +87,17 @@
                                     <tr id="professor-row-{{ $professor->id }}"
                                         class="{{ $professor->status ? '' : 'text-muted' }}">
                                         <td class="text-center">{{ $index + 1 }}</td>
+                                        <td class="text-center">
+                                            @if ($professor->hasMedia('professors_images'))
+                                                <img src="{{ $professor->getFirstMediaUrl('professors_images') }}"
+                                                    class="rounded-circle shadow-sm"
+                                                    style="width: 45px; height: 45px; object-fit: cover;">
+                                            @else
+                                                <img src="{{ $logo?->getFirstMediaUrl('app_logo') ?? asset('images/default-avatar.png') }}"
+                                                    class="rounded-circle shadow-sm"
+                                                    style="width: 45px; height: 45px; object-fit: cover;">
+                                            @endif
+                                        </td>
                                         <td>
                                             <a href="{{ route('professors.show', $professor) }}"
                                                 class="text-decoration-none">
