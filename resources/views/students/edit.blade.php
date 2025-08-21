@@ -84,7 +84,7 @@
                             <div class="form-floating">
                                 <textarea name="note" class="form-control" id="note" placeholder="{{ __('Note') }}" style="height: 100px">{{ old('note', $student->note) }}</textarea>
                                 <label for="note">{{ __('Note') }}</label>
-                                <div class="form-text">Any additional information about the student (optional)</div>
+                                <div class="form-text">Any additional information about the student</div>
                             </div>
                         </div>
 
@@ -95,12 +95,39 @@
                             <a href="{{ route('students.index') }}" class="btn btn-outline-secondary px-4 py-2 ms-2">
                                 <i class="fas fa-times me-2"></i>{{ __('Cancel') }}
                             </a>
+
+                            {{-- <button type="button" class="btn btn-danger px-4 py-2 ms-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
+                            </button> --}}
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    {{-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">{{ __('Confirm Deletion') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ __('Are you sure you want to delete this student? This action cannot be undone.') }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <form action="{{ route('students.delete', $student) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">{{ __('Delete Student') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> --}}
 
     <style>
         .form-floating label {
@@ -118,8 +145,7 @@
         document.getElementById('student-form').addEventListener('submit', function(e) {
             const inputs = this.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
-                // Allow "note" to be null, do not disable it
-                if (input.name !== 'note' && !input.value.trim()) {
+                if (!input.value.trim()) {
                     input.disabled = true;
                 }
             });
