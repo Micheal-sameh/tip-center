@@ -271,4 +271,18 @@ class SessionRepository extends BaseRepository
             }
         }
     }
+
+    public function income($input)
+    {
+        return $this->model->query()
+            ->whereDate('created_at', today())
+            ->with(['professor' => fn ($q) => $q->select('id', 'name')])
+            ->withCount('sessionStudents')
+            ->withSum('sessionStudents as total_center_price', 'center_price')
+            ->withSum('sessionStudents as total_professor_price', 'professor_price')
+            ->withSum('sessionStudents as total_materials', 'materials')
+            ->withSum('sessionStudents as total_printables', 'printables')
+            ->get();
+
+    }
 }

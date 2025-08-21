@@ -47,4 +47,11 @@ class ReportService
 
         return $reports;
     }
+
+    public function income($input)
+    {
+        $reports = $this->sessionRepository->income($input);
+
+        return $reports;
+    }
 }

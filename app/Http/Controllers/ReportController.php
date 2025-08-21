@@ -13,6 +13,7 @@ use App\Services\SessionService;
 use App\Services\SessionStudentService;
 use App\Services\StudentService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ReportController extends Controller
@@ -92,5 +93,12 @@ class ReportController extends Controller
         $filename = Str::slug($session->professor->name).' - '.StagesEnum::getStringValue($session->stage).'.pdf';
 
         return $pdf->download($filename);
+    }
+
+    public function income(Request $request)
+    {
+        $reports = $this->reportService->income($request);
+
+        return $reports;
     }
 }
