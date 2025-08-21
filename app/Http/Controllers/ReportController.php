@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StagesEnum;
+use App\Http\Requests\incomeFilterRequest;
 use App\Http\Requests\ParentReportRequest;
 use App\Http\Requests\ReportIndexRequest;
 use App\Http\Requests\SessionReportRequest;
@@ -13,7 +14,7 @@ use App\Services\SessionService;
 use App\Services\SessionStudentService;
 use App\Services\StudentService;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class ReportController extends Controller
@@ -95,12 +96,26 @@ class ReportController extends Controller
         return $pdf->download($filename);
     }
 
-    public function income(Request $request)
+    public function income(incomeFilterRequest $request)
     {
         $data = $this->reportService->income($request);
         $sessions = $data['sessions'];
         $totals = $data['totals'];
 
         return view('reports.income', compact('sessions', 'totals'));
+    }
+
+    public function incomePdf(incomeFilterRequest $request)
+    {
+        $data = $this->reportService->income($request->validated());
+        $sessions = $data['sessions'];
+        $totals = $data['totals'];
+        $date_from = Carbon::parse($request->date_from) ?? today();
+        $date_to = Carbon::parse($request->date_to) ?? today();
+
+        $pdf = Pdf::loadView('reports.income-pdf', compact('sessions', 'totals', 'date_from', 'date_to'));
+        $filename = Str::slug('income').'.pdf';
+
+        return $pdf->download($filename);
     }
 }

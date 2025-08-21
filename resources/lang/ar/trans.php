@@ -68,4 +68,5 @@ return [
     'professor_price' => 'سعر المدرس',
     'center_price' => 'سعر السنتر',
     'student' => 'طالب',
+    'income' => 'التقرير اليومي',
 ];

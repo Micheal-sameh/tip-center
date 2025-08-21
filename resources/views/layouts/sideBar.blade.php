@@ -282,6 +282,13 @@
                             <i class="fas fa-user-graduate me-2"></i> {{ __('trans.student_reports') }}
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('reports.income') }}"
+                            class="nav-link {{ request()->routeIs('reports.income') ? 'active' : '' }}">
+                            <i class="fas fa-coins me-2"></i> {{ __('trans.income') }}
+                        </a>
+                    </li>
+
 
                     @can('students_view')
                         <li class="nav-item">

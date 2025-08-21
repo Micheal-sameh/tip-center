@@ -55,7 +55,6 @@ class ReportService
         $totals = [
             'students' => 0,
             'center_price' => 0,
-            'professor_price' => 0,
             'printables' => 0,
             'copies' => 0,
             'markers' => 0,
@@ -65,7 +64,6 @@ class ReportService
         $sessions->each(function ($session) use (&$totals) {
             $totals['students'] += $session->session_students_count;
             $totals['center_price'] += $session->total_center_price;
-            $totals['professor_price'] += $session->total_professor_price;
             $totals['printables'] += $session->sessionExtra?->printables ?? 0;
             $totals['markers'] += $session->sessionExtra?->markers ?? 0;
             $totals['copies'] += $session->sessionExtra?->copies ?? 0;
@@ -73,7 +71,6 @@ class ReportService
 
         $totals['overall_total'] =
             $totals['center_price']
-            + $totals['professor_price']
             + $totals['printables']
             + $totals['markers']
             + $totals['copies'];

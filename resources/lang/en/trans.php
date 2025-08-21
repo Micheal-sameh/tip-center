@@ -68,4 +68,5 @@ return [
     'professor_price' => 'Professor_price',
     'center_price' => 'Center Price',
     'student' => 'Student',
+    'income' => 'Income',
 ];
