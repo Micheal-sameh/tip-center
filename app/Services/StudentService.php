@@ -25,6 +25,7 @@ class StudentService
     public function show($id)
     {
         $student = $this->studentRepository->show($id);
+        $student->load('specialCases');
 
         return $student;
     }
@@ -82,5 +83,15 @@ class StudentService
     public function dropdown()
     {
         return $this->studentRepository->dropdown();
+    }
+
+    public function createSpecial($input)
+    {
+        return $this->studentRepository->createSpecial($input);
+    }
+
+    public function updateSpecialCase($input)
+    {
+        return $this->studentRepository->updateSpecialCase($input);
     }
 }

@@ -144,4 +144,30 @@ class StudentRepository extends BaseRepository
     {
         return $this->model->where('parent_phone', $input['phone'])->where('code', $input['code'])->first();
     }
+
+    public function createSpecial($input)
+    {
+        $student = $this->findById($input->student_id);
+        DB::beginTransaction();
+        foreach ($input['cases'] as $case) {
+            $student->specialCases()->attach($case['professor_id'], [
+                'professor_price' => $case['professor_price'] ?? null,
+                'center_price' => $case['center_price'] ?? null,
+            ]);
+        }
+        DB::commit();
+
+    }
+
+    public function updateSpecialCase($input)
+    {
+        DB::table('student_special_cases')
+            ->where('id', $input['case_id'])
+            ->update([
+                $input['field'] => $input['value'],
+                'updated_at' => now(),
+            ]);
+
+        return back()->with('success', __('trans.updated_successfully'));
+    }
 }

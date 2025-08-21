@@ -64,4 +64,8 @@ return [
     'student_special_cases' => 'Special Cases',
     'add_special_case' => 'Add Special Case',
     'no_special_cases' => 'No Special Case',
+    'choose_professor' => 'Choose Professor',
+    'professor_price' => 'Professor_price',
+    'center_price' => 'Center Price',
+    'student' => 'Student',
 ];

@@ -103,7 +103,7 @@ class SessionRepository extends BaseRepository
             'stage' => $input->stage,
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
-            'status' => $input->type == SessionType::ONLINE ? SessionStatus::ACTIVE : SessionStatus::PEn,
+            'status' => $input->type == SessionType::ONLINE ? SessionStatus::ACTIVE : SessionStatus::PENDING,
             'printables' => $input->printables,
             'materials' => $input->materials,
             'start_at' => $input->start_at,

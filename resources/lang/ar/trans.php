@@ -64,4 +64,8 @@ return [
     'student_special_cases' => 'حالات خاصه',
     'add_special_case' => 'اضافة حالة خاصة',
     'no_special_cases' => 'لا يوجد حالات خاصة',
+    'choose_professor' => 'اختار مدرس',
+    'professor_price' => 'سعر المدرس',
+    'center_price' => 'سعر السنتر',
+    'student' => 'طالب',
 ];

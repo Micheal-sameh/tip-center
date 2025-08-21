@@ -84,10 +84,10 @@ class Student extends Model implements HasMedia
         return $date->isBirthday();
     }
 
-    public function professors()
+    public function specialCases()
     {
         return $this->belongsToMany(Professor::class, 'student_special_cases')
-            ->withPivot(['professor_price', 'center_price'])
+            ->withPivot(['id', 'professor_price', 'center_price'])
             ->withTimestamps();
     }
 }

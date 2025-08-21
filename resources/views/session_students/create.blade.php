@@ -1,5 +1,8 @@
 @extends('layouts.sideBar')
 
+@php
+    $specialCase = $student->specialCases->firstWhere('id', $session->professor_id);
+@endphp
 @section('content')
     @if ($errors->any())
         <div class="alert alert-danger alert-dismissible fade show position-fixed top-50 start-50 translate-middle"
@@ -138,12 +141,12 @@
                         <div class="col-md-4">
                             <label>Center Paid</label>
                             <input type="number" name="center_price" step="1" min="0" class="form-control"
-                                value="{{ $session->center_price }}">
+                                value="{{ $specialCase ? $specialCase->pivot->center_price : $session->center_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Professor Paid</label>
                             <input type="number" name="professor_price" step="1" min="0" class="form-control"
-                                value="{{ $session->professor_price }}">
+                                value="{{ $specialCase ? $specialCase->pivot->professor_price : $session->professor_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Printables</label>
@@ -226,6 +229,15 @@
         </script>
     @endif
 
+    @if (collect($errors->all())->contains(fn($e) => str_contains($e, 'underpaid')) || $specialCase)
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = new bootstrap.Modal(document.getElementById('advancedPaymentModal'));
+                modal.show();
+            });
+        </script>
+    @endif
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const paidInput = document.getElementById('paidAmountInput');
@@ -240,4 +252,5 @@
             });
         });
     </script>
+
 @endpush

@@ -7,6 +7,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SessionStudentController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentSpecialCaseController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -122,11 +123,9 @@ Route::group(['middleware' => ['setlocale']], function () {
         });
 
         Route::prefix('student-special-cases')->group(function () {
-            Route::get('/create', [ReportController::class, 'create'])->name('student-special-cases.create');
-            // Route::get('/session', [ReportController::class, 'session'])->name('reports.session');
-            // Route::get('/students', [ReportController::class, 'student'])->name('reports.student');
-            // Route::get('/student-pdf', [ReportController::class, 'downloadStudentReport'])->name('reports.download.pdf');
-            // Route::get('/session-pdf', [ReportController::class, 'downloadSessionReport'])->name('reports.session.pdf');
+            Route::get('/create', [StudentSpecialCaseController::class, 'create'])->name('student-special-cases.create');
+            Route::post('', [StudentSpecialCaseController::class, 'store'])->name('student-special-cases.store');
+            Route::put('/{id}', [StudentSpecialCaseController::class, 'update'])->name('student-special-cases.update');
         });
 
         Route::prefix('settings')->group(function () {
