@@ -50,8 +50,34 @@ class ReportService
 
     public function income($input)
     {
-        $reports = $this->sessionRepository->income($input);
+        $sessions = $this->sessionRepository->income($input);
 
-        return $reports;
+        $totals = [
+            'students' => 0,
+            'center_price' => 0,
+            'professor_price' => 0,
+            'printables' => 0,
+            'copies' => 0,
+            'markers' => 0,
+            'overall_total' => 0,
+        ];
+
+        $sessions->each(function ($session) use (&$totals) {
+            $totals['students'] += $session->session_students_count;
+            $totals['center_price'] += $session->total_center_price;
+            $totals['professor_price'] += $session->total_professor_price;
+            $totals['printables'] += $session->sessionExtra?->printables ?? 0;
+            $totals['markers'] += $session->sessionExtra?->markers ?? 0;
+            $totals['copies'] += $session->sessionExtra?->copies ?? 0;
+        });
+
+        $totals['overall_total'] =
+            $totals['center_price']
+            + $totals['professor_price']
+            + $totals['printables']
+            + $totals['markers']
+            + $totals['copies'];
+
+        return compact('sessions', 'totals');
     }
 }

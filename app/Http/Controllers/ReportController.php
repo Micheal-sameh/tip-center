@@ -97,8 +97,10 @@ class ReportController extends Controller
 
     public function income(Request $request)
     {
-        $reports = $this->reportService->income($request);
+        $data = $this->reportService->income($request);
+        $sessions = $data['sessions'];
+        $totals = $data['totals'];
 
-        return $reports;
+        return view('reports.income', compact('sessions', 'totals'));
     }
 }

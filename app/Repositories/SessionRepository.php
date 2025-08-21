@@ -276,7 +276,10 @@ class SessionRepository extends BaseRepository
     {
         return $this->model->query()
             ->whereDate('created_at', today())
-            ->with(['professor' => fn ($q) => $q->select('id', 'name')])
+            ->with([
+                'professor' => fn ($q) => $q->select('id', 'name'),
+                'sessionExtra',
+            ])
             ->withCount('sessionStudents')
             ->withSum('sessionStudents as total_center_price', 'center_price')
             ->withSum('sessionStudents as total_professor_price', 'professor_price')

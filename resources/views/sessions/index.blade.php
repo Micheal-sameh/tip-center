@@ -275,7 +275,7 @@
                                 icon: 'success',
                                 title: response.message,
                                 showConfirmButton: false,
-                                timer: 10000
+                                timer: 100000
                             }).then(() => {
                                 reloadSessions();
                             });
