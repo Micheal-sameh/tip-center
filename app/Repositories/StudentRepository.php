@@ -106,7 +106,7 @@ class StudentRepository extends BaseRepository
             'parent_phone' => $input->parent_phone ?? $student->parent_phone,
             'parent_phone_2' => $input->parent_phone_2 ?? $student->parent_phone_2,
             'birth_date' => $input->birth_date ?? $student->birth_date,
-            'note' => $input->note ?? $student->note,
+            'note' => $input->note ?? null,
         ]);
 
         return $student;
