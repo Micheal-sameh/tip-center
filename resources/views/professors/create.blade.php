@@ -199,18 +199,15 @@
                     }
                 });
 
-                // Disable incomplete stage schedule rows
+                // Remove incomplete stage schedule rows completely
                 form.querySelectorAll('.stage-row').forEach(row => {
                     const stage = row.querySelector('[name^="stage_schedules"][name$="[stage]"]');
                     const day = row.querySelector('[name^="stage_schedules"][name$="[day]"]');
                     const from = row.querySelector('[name^="stage_schedules"][name$="[from]"]');
                     const to = row.querySelector('[name^="stage_schedules"][name$="[to]"]');
 
-                    // If any field is missing → disable the whole row
                     if (!stage?.value || !day?.value || !from?.value || !to?.value) {
-                        [stage, day, from, to].forEach(el => {
-                            if (el) el.disabled = true;
-                        });
+                        row.remove(); // 🚀 prevents empty arrays with null values
                     }
                 });
             });
