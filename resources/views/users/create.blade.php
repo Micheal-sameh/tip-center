@@ -17,7 +17,7 @@
         <div class="card border-0 shadow rounded-4 bg-white">
             <div class="card-body px-5 py-4">
 
-                <form method="POST" action="{{ route('users.store') }}">
+                <form id="userForm" method="POST" action="{{ route('users.store') }}">
                     @csrf
 
                     {{-- Name --}}
@@ -26,20 +26,20 @@
                         <div class="col-md-10">
                             <input type="text" name="name"
                                 class="form-control form-control-lg border border-success-subtle shadow-sm rounded-3"
-                                placeholder="{{ __('trans.name') }}" required>
+                                placeholder="{{ __('trans.name') }}" value="{{ old('name') }}" required>
                             @if ($errors->has('name'))
                                 <div class="text-danger small mt-1">{{ $errors->first('name') }}</div>
                             @endif
                         </div>
                     </div>
 
-                    {{-- email --}}
+                    {{-- Email --}}
                     <div class="mb-4 row">
                         <label class="col-md-2 col-form-label fw-medium text-muted">{{ __('trans.email') }}</label>
                         <div class="col-md-10">
                             <input type="email" name="email"
                                 class="form-control form-control-lg border border-primary-subtle shadow-sm rounded-3"
-                                placeholder="{{ __('trans.email') }}" required>
+                                placeholder="{{ __('trans.email') }}" value="{{ old('email') }}" required>
                             @if ($errors->has('email'))
                                 <div class="text-danger small mt-1">{{ $errors->first('email') }}</div>
                             @endif
@@ -52,19 +52,20 @@
                         <div class="col-md-10">
                             <input type="text" name="phone"
                                 class="form-control form-control-lg border border-primary-subtle shadow-sm rounded-3"
-                                placeholder="{{ __('trans.phone') }}" required>
+                                placeholder="{{ __('trans.phone') }}" value="{{ old('phone') }}" required>
                             @if ($errors->has('phone'))
                                 <div class="text-danger small mt-1">{{ $errors->first('phone') }}</div>
                             @endif
                         </div>
                     </div>
 
-                    {{-- Birth Date --}}
+                    {{-- Birth Date (optional, will be removed if empty) --}}
                     <div class="mb-4 row">
                         <label class="col-md-2 col-form-label fw-medium text-muted">{{ __('trans.birth_date') }}</label>
                         <div class="col-md-10">
                             <input type="date" name="birth_date"
-                                class="form-control form-control-lg border border-info-subtle shadow-sm rounded-3">
+                                class="form-control form-control-lg border border-info-subtle shadow-sm rounded-3"
+                                value="{{ old('birth_date') }}">
                             @if ($errors->has('birth_date'))
                                 <div class="text-danger small mt-1">{{ $errors->first('birth_date') }}</div>
                             @endif
@@ -80,7 +81,9 @@
                                 required>
                                 <option value="">{{ __('trans.select_role') }}</option>
                                 @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}">{{ __($role->name) }}</option>
+                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                        {{ __($role->name) }}
+                                    </option>
                                 @endforeach
                             </select>
                             @if ($errors->has('role'))
@@ -103,6 +106,17 @@
             </div>
         </div>
     </div>
+
+    <!-- JS: remove empty fields before submit -->
+    <script>
+        document.getElementById('userForm').addEventListener('submit', function () {
+            this.querySelectorAll('input, select, textarea').forEach(function (el) {
+                if (!el.value) {
+                    el.removeAttribute('name'); // prevents sending empty values
+                }
+            });
+        });
+    </script>
 
     <!-- Optional Gradient Style -->
     <style>
