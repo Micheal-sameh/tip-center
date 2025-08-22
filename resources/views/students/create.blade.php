@@ -84,7 +84,7 @@
                             <div class="form-floating">
                                 <textarea name="note" class="form-control" id="note" placeholder="{{ __('Note') }}" style="height: 100px">{{ old('note') }}</textarea>
                                 <label for="note">{{ __('Note') }}</label>
-                                <div class="form-text">Any additional information about the student</div>
+                                <div class="form-text">Any additional information about the student (optional)</div>
                             </div>
                         </div>
 

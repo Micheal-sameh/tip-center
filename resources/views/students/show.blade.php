@@ -173,7 +173,7 @@
             <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-3 py-3 px-4">
                 @can('students_update')
                     <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary rounded-pill px-4">
-                        <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
+                        <i class="fas fa-edit me-2"></i>
                     </a>
                 @endcan
                 {{-- @can('students_delete')
@@ -182,13 +182,13 @@
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-danger rounded-pill px-4">
-                            <i class="fas fa-trash-alt me-2"></i> {{ __('trans.delete') }}
+                            <i class="fas fa-trash-alt me-2"></i>
                         </button>
                     </form>
                 @endcan --}}
                 <a href="{{ route('reports.student', ['search' => $student->code]) }}"
                     class="btn btn-outline-secondary rounded-pill px-4">
-                    <i class="fas fa-chart-line me-2"></i> {{ __('trans.report') }}
+                    <i class="fas fa-chart-line me-2"></i>
                 </a>
             </div>
         </div>
