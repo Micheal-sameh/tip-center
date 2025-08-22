@@ -4,7 +4,7 @@
     <div class="container" style="max-width: 800px">
         <!-- Header Section -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Attend Student to Session</h4>
+            <h4 class="mb-0">@lang('trans.Attend Student to Session')</h4>
             <div class="badge bg-primary rounded-pill">
                 <i class="fas fa-calendar-check me-1"></i> {{ now()->format('M d, Y') }}
             </div>
@@ -13,7 +13,7 @@
         <!-- Add Student Button -->
         <div class="d-flex justify-content-end mb-3">
             <a href="{{ route('students.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>{{ __('Add Student') }}
+                <i class="fas fa-plus me-2"></i>{{ __('trans.Add Student') }}
             </a>
         </div>
 
@@ -27,12 +27,12 @@
                                 <i class="fas fa-search text-muted"></i>
                             </span>
                             <input type="text" id="studentSearch" class="form-control border-start-0"
-                                placeholder="Search by name, code or phone..." autocomplete="off" autofocus>
+                                placeholder="@lang('trans.Search by name, code or phone...')" autocomplete="off" autofocus>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <button type="button" id="clearSearch" class="btn btn-outline-secondary w-100 shadow-sm">
-                            <i class="fas fa-times me-1"></i> Clear
+                            <i class="fas fa-times me-1"></i> @lang('trans.clear')
                         </button>
                     </div>
                 </div>
@@ -43,9 +43,9 @@
             <div id="studentResultsContainer" class="mb-4" style="display: none;">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Students</h5>
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>@lang('trans.Students')</h5>
                         <span class="badge bg-primary rounded-pill" id="studentCount">{{ $all_students->count() }}
-                            students</span>
+                            @lang('trans.Students')</span>
                     </div>
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush" id="studentResultsList">
@@ -81,7 +81,7 @@
         @isset($selected_student)
             <div class="card shadow-sm mb-4 border-primary">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-user-check me-2"></i>Selected Student</h5>
+                    <h5 class="mb-0"><i class="fas fa-user-check me-2"></i> @lang('trans.Selected Student')</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -114,12 +114,12 @@
             <!-- Sessions Section -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Available Sessions</h5>
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> @lang('trans.Available Sessions')</h5>
                 </div>
                 <div class="card-body">
                     @if ($my_sessions->isEmpty())
                         <div class="alert alert-warning mb-0">
-                            <i class="fas fa-info-circle me-2"></i> No available sessions found for this student.
+                            <i class="fas fa-info-circle me-2"></i>  @lang('messages.No available sessions')'
                         </div>
                     @else
                         <div class="row g-3" id="sessions-container">

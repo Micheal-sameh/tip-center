@@ -70,4 +70,11 @@ return [
     'student' => 'Student',
     'income' => 'Income',
     'image' => 'Image',
+    'Add Student' => 'Add Student',
+    'Attend Student to Session' => 'Attend Student to Session',
+    'Search by name, code or phone...' => 'Search by name, code or phone...',
+    'clear' => 'Clear',
+    'Students' => 'Students',
+    'Selected Student' => 'Selected Student',
+    'Available Sessions' => 'Available Sessions',
 ];
