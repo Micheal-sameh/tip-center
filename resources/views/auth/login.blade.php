@@ -22,13 +22,28 @@
 
             <!-- Logo -->
             <div class="text-center mb-4">
-                <img src="{{ $logo?->getFirstMediaUrl('app_logo') }}" alt="Logo" class="img-fluid" style="max-height: 80px;">
+                <img src="{{ $logo?->getFirstMediaUrl('app_logo') }}" alt="Logo" class="img-fluid"
+                    style="max-height: 80px;">
             </div>
 
-            <!-- Error Message -->
+            <!-- Global Messages -->
             @if (session('error'))
                 <div class="alert alert-danger small">
                     {{ session('error') }}
+                </div>
+            @endif
+            @if (session('success'))
+                <div class="alert alert-success small">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger small">
+                    <ul class="mb-0 ps-3">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
@@ -39,7 +54,7 @@
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
                     <input id="email" type="email" name="email" required autofocus
-                        class="form-control @error('email') is-invalid @enderror">
+                        class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}">
 
                     @error('email')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -79,7 +94,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById("togglePassword").addEventListener("click", function () {
+        document.getElementById("togglePassword").addEventListener("click", function() {
             let password = document.getElementById("password");
             let icon = this.querySelector("i");
             if (password.type === "password") {
@@ -94,4 +109,5 @@
         });
     </script>
 </body>
+
 </html>
