@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\SessionType;
 use App\Enums\StagesEnum;
+use App\Rules\CheckActiveProfessorRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SessionCreateRequest extends FormRequest
@@ -11,7 +12,7 @@ class SessionCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'professor_id' => 'required|integer|exists:professors,id',
+            'professor_id' => ['required', 'integer', 'exists:professors,id', new CheckActiveProfessorRule],
             'stage' => 'required|integer|in:'.implode(',', array_column(StagesEnum::all(), 'value')),
             'professor_price' => 'required|numeric|min:0',
             'center_price' => 'required|numeric|min:0',
