@@ -184,8 +184,18 @@
                         <div class="card mb-3 border-0 shadow-sm rounded-3 mx-2" id="professor-card-{{ $professor->id }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
+                                    @if ($professor->hasMedia('professors_images'))
+                                        <img src="{{ $professor->getFirstMediaUrl('professors_images') }}"
+                                            class="rounded-circle shadow-sm"
+                                            style="width: 45px; height: 45px; object-fit: cover;">
+                                    @else
+                                        <img src="{{ $logo?->getFirstMediaUrl('app_logo') ?? asset('images/default-avatar.png') }}"
+                                            class="rounded-circle shadow-sm"
+                                            style="width: 45px; height: 45px; object-fit: cover;">
+                                    @endif
                                     <h5 class="card-title mb-0">
-                                        <a href="{{ route('professors.show', $professor) }}" class="text-decoration-none">
+                                        <a href="{{ route('professors.show', $professor) }}"
+                                            class="text-decoration-none">
                                             {{ $professor->name }}
                                         </a>
                                     </h5>
