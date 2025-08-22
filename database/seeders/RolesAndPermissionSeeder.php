@@ -92,6 +92,27 @@ class RolesAndPermissionSeeder extends Seeder
             $sessions_changeStatus,
         ]);
 
+        $editor = Role::firstOrCreate(['name' => 'editor']);
+        $editor->givePermissionTo([
+            $professors_view,
+            $professors_update,
+            $professors_create,
+            $professors_view,
+            $professors_changeStatus,
+
+            $students_delete,
+            $students_update,
+            $students_create,
+            $students_view,
+            $students_changeStatus,
+
+            $sessions_delete,
+            $sessions_update,
+            $sessions_create,
+            $sessions_view,
+            $sessions_changeStatus,
+        ]);
+
         $user = Role::firstOrCreate(['name' => 'student']);
         $user->givePermissionTo([
 
