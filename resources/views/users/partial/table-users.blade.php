@@ -38,9 +38,9 @@
                                 <td>{{ $user->birth_date?->format('d-m-Y') }}</td>
                                 <td>
                                     <button onclick="toggleStatus({{ $user->id }})"
-                                        class="status-btn badge border-0 px-3 py-2 rounded-pill {{ $user->status ? 'bg-success' : 'bg-secondary' }}"
+                                        class="status-btn badge border-0 px-3 py-2 rounded-pill {{ $user->status == 1 ? 'bg-success' : 'bg-secondary' }}"
                                         data-user-id="{{ $user->id }}">
-                                        {{ $user->status ? __('trans.active') : __('trans.inactive') }}
+                                        {{ $user->status == 1 ? __('trans.active') : __('trans.inactive') }}
                                     </button>
                                 </td>
                                 <td>
@@ -104,9 +104,9 @@
                         <p class="mb-1"><strong>{{ __('trans.birth_date') }}:</strong> {{ $user->birth_date }}</p>
                         <p class="mb-2"><strong>{{ __('trans.status') }}:</strong>
                             <button onclick="toggleStatus({{ $user->id }})"
-                                class="status-btn badge border-0 px-3 py-2 rounded-pill {{ $user->status ? 'bg-success' : 'bg-secondary' }}"
+                                class="status-btn badge border-0 px-3 py-2 rounded-pill {{ $user->status == 1 ? 'bg-success' : 'bg-secondary' }}"
                                 data-user-id="{{ $user->id }}">
-                                {{ $user->status ? __('trans.active') : __('trans.inactive') }}
+                                {{ $user->status == 1 ? __('trans.active') : __('trans.inactive') }}
                             </button>
                         </p>
                         <div class="d-flex justify-content-end gap-2">
@@ -205,12 +205,12 @@
                     .then(res => res.json())
                     .then(data => {
                         if (!data.success) throw new Error(data.message || 'Failed to update status');
-                        const isActive = data.status == 1;
+                        const isActive = data.status ;
 
                         buttons.forEach(btn => {
                             btn.classList.toggle('bg-success', isActive);
                             btn.classList.toggle('bg-secondary', !isActive);
-                            btn.innerHTML = isActive ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
+                            btn.innerHTML = (isActive == 1) ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
                             btn.disabled = false;
                         });
                     })
