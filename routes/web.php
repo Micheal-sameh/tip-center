@@ -44,7 +44,7 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth', 'check.status'])->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
             Route::get('/profile', [UserController::class, 'profile'])->name('users.profile');
