@@ -70,4 +70,11 @@ return [
     'student' => 'طالب',
     'income' => 'التقرير اليومي',
     'image' => 'صورة',
+    'Add Student' => 'اضافة طالب',
+    'Attend Student to Session' => 'حضور الطلاب في الحصص',
+    'Search by name, code or phone...' => 'البحث بالاسم والكود ورقم التليفون',
+    'clear' => 'محو',
+    'Students' => 'الطلاب',
+    'Selected Student' => 'الطالب',
+    'Available Sessions' => 'الحصص المتاحه',
 ];

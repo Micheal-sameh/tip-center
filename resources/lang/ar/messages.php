@@ -164,4 +164,5 @@ return [
     'no_questions_found' => 'لا توجد اسئلة',
     'edit_competition' => 'تعديل المنافسة',
     'Status updated' => 'تم تحديث الحالة بنجاح',
+    'No available sessions' => 'لا يوجد حصص متاحة للطالب',
 ];

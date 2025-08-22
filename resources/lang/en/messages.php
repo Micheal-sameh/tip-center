@@ -163,4 +163,5 @@ return [
     'no_questions_found' => 'No Questions Found',
     'edit_competition' => 'Edit Competition',
     'Status updated' => 'Status updated successfuly',
+    'No available sessions' => 'No available sessions found for this student.',
 ];
