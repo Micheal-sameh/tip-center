@@ -90,6 +90,19 @@ class SessionStudentRepository extends BaseRepository
         return 0;
     }
 
+    public function update($input, $id)
+    {
+        $attendance = $this->findById($id);
+        $attendance->update([
+            'center_price' => $input->center_price ?? 0,
+            'professor_price' => $input->professor_price ?? 0,
+            'printables' => $input->printables ?? 0,
+            'materials' => $input->materials ?? 0,
+        ]);
+
+        return $attendance;
+    }
+
     public function delete($id)
     {
         $session = $this->findById($id);
