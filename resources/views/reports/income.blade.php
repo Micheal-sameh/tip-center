@@ -92,7 +92,7 @@
                                     </td>
                                     <td>{{ $session->total_printables > 0 ? number_format($session->total_printables, 1) : '-' }}
                                     </td>
-                                    <td>{{ $session->total_materials > 0 ? number_format($session->total_printables, 1) : '-' }}
+                                    <td>{{ $session->total_materials > 0 ? number_format($session->total_materials, 1) : '-' }}
                                     </td>
                                     <td>{{ $session->sessionExtra?->copies > 0 ? number_format($session->sessionExtra?->copies, 1) : '-' }}
                                     </td>
