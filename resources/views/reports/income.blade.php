@@ -9,7 +9,7 @@
         </div>
 
         <!-- Filter Form -->
-        <form action="{{ route('reports.income') }}" method="GET" class="row g-3 mb-4">
+        <form id="filterForm" action="{{ route('reports.income') }}" method="GET" class="row g-3 mb-4">
             <div class="col-md-4">
                 <label for="date_from" class="form-label">From</label>
                 <input type="date" name="date_from" id="date_from" class="form-control"
@@ -23,11 +23,42 @@
                 <button type="submit" class="btn btn-primary w-100 me-1">
                     <i class="fas fa-search me-1"></i> Filter
                 </button>
-                <a href="{{ route('reports.incomePdf', request()->all()) }}" class="btn btn-success w-100">
+                <a href="{{ route('reports.incomePdf', request()->all()) }}" class="btn btn-success w-100" id="exportBtn">
                     <i class="fas fa-file-export me-1"></i> Export
                 </a>
             </div>
         </form>
+
+        @push('scripts')
+            <script>
+                document.getElementById('filterForm').addEventListener('submit', function() {
+                    const dateFrom = this.querySelector('[name="date_from"]');
+                    const dateTo = this.querySelector('[name="date_to"]');
+
+                    if (dateFrom && !dateFrom.value) {
+                        dateFrom.removeAttribute('name'); // not sent
+                    }
+                    if (dateTo && !dateTo.value) {
+                        dateTo.removeAttribute('name'); // not sent
+                    }
+                });
+
+                // Export button should also skip nulls
+                document.getElementById('exportBtn').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const params = new URLSearchParams();
+
+                    const dateFrom = document.querySelector('[name="date_from"]');
+                    const dateTo = document.querySelector('[name="date_to"]');
+
+                    if (dateFrom && dateFrom.value) params.append('date_from', dateFrom.value);
+                    if (dateTo && dateTo.value) params.append('date_to', dateTo.value);
+
+                    window.location.href = "{{ route('reports.incomePdf') }}?" + params.toString();
+                });
+            </script>
+        @endpush
+
 
         <!-- Sessions Table -->
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-4">
@@ -59,11 +90,12 @@
                                     </td>
                                     <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
                                     </td>
-                                    <td>{{ $session->sessionExtra?->copies > 0 ? number_format($session->sessionExtra?->copies, 1) : '-' }}
-                                    </td>
                                     <td>{{ $session->total_printables > 0 ? number_format($session->total_printables, 1) : '-' }}
                                     </td>
-                                    <td>{{ number_format(0, 1) }}</td>
+                                    <td>{{ $session->total_materials > 0 ? number_format($session->total_printables, 1) : '-' }}
+                                    </td>
+                                    <td>{{ $session->sessionExtra?->copies > 0 ? number_format($session->sessionExtra?->copies, 1) : '-' }}
+                                    </td>
                                     <td>{{ number_format(0, 1) }}</td>
                                     <td>{{ $session->sessionExtra?->markers > 0 ? number_format($session->sessionExtra?->markers, 1) : '-' }}
                                     </td>
@@ -94,9 +126,9 @@
                                     <th colspan="2" class="text-end">Totals:</th>
                                     <th>{{ $totals['students'] }}</th>
                                     <th>{{ number_format($totals['center_price'], 1) }}</th>
-                                    <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
                                     <th>{{ number_format($totals['printables'], 1) }}</th>
-                                    <th>{{ number_format(0, 1) }}</th>
+                                    <th>{{ number_format($totals['materials'], 1) }}</th>
+                                    <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
                                     <th>{{ number_format(0, 1) }}</th>
                                     <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
                                     <th>{{ number_format(0, 1) }}</th>

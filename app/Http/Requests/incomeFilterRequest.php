@@ -10,7 +10,7 @@ class incomeFilterRequest extends FormRequest
     {
         return [
             'date_from' => 'date',
-            'date_to' => 'date'.$this->date_from ? '|after_or_equal:date_from' : '',
+            'date_to' => 'date'.($this->date_from) ? '|after_or_equal:date_from' : '',
         ];
     }
 }
