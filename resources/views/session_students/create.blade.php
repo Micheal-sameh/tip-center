@@ -160,7 +160,7 @@
                         </div>
                         <div class="col-md-4">
                             <label>To Pay</label>
-                            <input type="number" name="to_pay" step="1" min="0" class="form-control">
+                            <input type="number" name="to_pay" value="0" step="1" min="0" class="form-control">
                         </div>
                     </div>
 

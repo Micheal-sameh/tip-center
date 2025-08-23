@@ -139,12 +139,8 @@
                 <th>Phone</th>
                 <th>Phone (P)</th>
                 <th>Attending</th>
-                @if ($session->materials)
-                    <th>Materials</th>
-                @endif
-                @if ($session->printables)
-                    <th>Printables</th>
-                @endif
+                <th>Materials</th>
+                <th>Printables</th>
                 <th class="text-end">Payment</th>
                 @if ($reports->contains(fn($r) => $r->to_pay > 0))
                     <th class="text-end">To Pay</th>
@@ -153,18 +149,15 @@
         </thead>
         <tbody>
             @foreach ($reports as $report)
-                <tr class="{{ $report->to_pay > 0 ? 'table-warning' : '' }}">
+                <tr
+                    class=" {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $report->student?->name }}</td>
                     <td>{{ $report->student?->phone }}</td>
                     <td>{{ $report->student?->parent_phone }}</td>
                     <td>{{ $report->created_at->format('h:i:A') }}</td>
-                    @if ($session->materials)
-                        <td>{{ $report->materials }}</td>
-                    @endif
-                    @if ($session->printables)
-                        <td class="text-end">{{ $report->printables }}</td>
-                    @endif
+                    <td>{{ $report->materials }}</td>
+                    <td class="text-end">{{ $report->printables }}</td>
                     <td class="text-end">
                         {{ number_format($report->professor_price + $report->center_price, 2) }}
                     </td>

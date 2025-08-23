@@ -4,11 +4,13 @@ namespace App\Services;
 
 use App\Repositories\ProfessorRepository;
 use App\Repositories\SessionRepository;
+use App\Repositories\SessionStudentRepository;
 
 class SessionService
 {
     public function __construct(
         protected SessionRepository $sessionRepository,
+        protected SessionStudentRepository $sessionStudentRepository,
         protected ProfessorRepository $professorRepository,
     ) {}
 
@@ -60,7 +62,9 @@ class SessionService
 
     public function close($input, $id)
     {
-        return $this->sessionRepository->close($input, $id);
+        $session = $this->sessionRepository->close($input, $id);
+
+        return $session;
     }
 
     public function status($status, $id)

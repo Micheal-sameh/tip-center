@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\DB;
 
 class SessionRepository extends BaseRepository
 {
-    public function __construct(Session $model)
-    {
+    public function __construct(
+        Session $model,
+        protected SessionStudentRepository $sessionStudentRepository,
+    ) {
         $this->model = $model;
     }
 
@@ -154,9 +156,31 @@ class SessionRepository extends BaseRepository
             'other' => $input['other'] ?? 0,
             'notes' => $input['notes'],
         ]);
+        $this->absence($session);
         DB::commit();
 
         return $session;
+    }
+
+    public function absence($session)
+    {
+        $absentStudents = $this->absentStudents($session);
+        $this->sessionStudentRepository->absentStudents($session->id, $absentStudents);
+    }
+
+    public function absentStudents($currentSession)
+    {
+        $lastSession = $this->model->where('id', '<', $currentSession->id)
+            ->where('professor_id', $currentSession->professor_id)
+            ->where('stage', $currentSession->stage)
+            ->where('type', $currentSession->type)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $lastSessionStudents = $lastSession?->sessionStudents->pluck('student_id') ?? collect();
+        $currentStudents = $currentSession->sessionStudents->pluck('student_id');
+
+        return $lastSessionStudents->diff($currentStudents);
     }
 
     public function status($status, $id)
@@ -231,14 +255,19 @@ class SessionRepository extends BaseRepository
 
     public function checkYesterday(): void
     {
-        $this->model->whereIn('status', [
+        $sessions = $this->model->whereIn('status', [
             SessionStatus::ACTIVE,
             SessionStatus::PENDING,
             SessionStatus::WARNING,
         ])
             ->where('type', SessionType::OFFLINE)
             ->whereDate('created_at', '<', Carbon::today())
-            ->update(['status' => SessionStatus::FINISHED]);
+            ->get();
+
+        foreach ($sessions as $session) {
+            $session->update(['status' => SessionStatus::FINISHED]);
+            $this->absence($session);
+        }
     }
 
     public function automaticCreateSessions($professors): void
@@ -282,7 +311,11 @@ class SessionRepository extends BaseRepository
                 'professor' => fn ($q) => $q->select('id', 'name'),
                 'sessionExtra',
             ])
-            ->withCount('sessionStudents')
+            ->withCount(['sessionStudents',
+                'sessionStudents as attended_count' => function ($query) {
+                    $query->where('is_attend', 1);
+                },
+            ])
             ->withSum('sessionStudents as total_center_price', 'center_price')
         // ->withSum('sessionStudents as total_professor_price', 'professor_price')
             ->withSum('sessionStudents as total_materials', 'materials')

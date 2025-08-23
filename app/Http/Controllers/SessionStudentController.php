@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\SessionStudentDTO;
 use App\Http\Requests\AttendanceCreateRequest;
 use App\Http\Requests\StoreSessionStudentRequest;
+use App\Http\Requests\UpdateSessionStudentRequest;
 use App\Services\SessionService;
 use App\Services\SessionStudentService;
 use App\Services\StudentService;
@@ -79,6 +80,16 @@ class SessionStudentController extends Controller
         }
 
         return to_route('attendances.index');
+    }
+
+    public function update(UpdateSessionStudentRequest $request, $id)
+    {
+        $input = new SessionStudentDTO(...$request->only(
+            'professor_price', 'center_price', 'printables', 'materials'
+        ));
+        $attendence = $this->sessionStudentService->update($input, $id);
+
+        return redirect()->route('sessions.students', $attendence->session_id)->with('success', "prices updated to {$attendence->student->name}");
     }
 
     public function delete($id)

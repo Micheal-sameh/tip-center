@@ -109,7 +109,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/show', [SessionStudentController::class, 'show'])->name('attendances.show');
             Route::get('/{id}/edit', [SessionStudentController::class, 'edit'])->name('attendances.edit');
             Route::post('/', [SessionStudentController::class, 'store'])->name('attendances.store');
-            // Route::put('/{id}/status', [SessionStudentController::class, 'changeStatus'])->name('attendances.status');
+            // Route::put('/{id}/update', [SessionStudentController::class, 'update'])->name('attendances.update');
             Route::put('/{id}', [SessionStudentController::class, 'update'])->name('attendances.update');
             Route::delete('/{id}', [SessionStudentController::class, 'delete'])->name('attendances.delete');
         });

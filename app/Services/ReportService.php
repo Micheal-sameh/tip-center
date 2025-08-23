@@ -60,10 +60,12 @@ class ReportService
             'copies' => 0,
             'markers' => 0,
             'overall_total' => 0,
+            'attended_count' => 0,
         ];
 
         $sessions->each(function ($session) use (&$totals) {
             $totals['students'] += $session->session_students_count;
+            $totals['attended_count'] += $session->attended_count;
             $totals['center_price'] += $session->total_center_price;
             $totals['printables'] += $session->sessionExtra?->printables ?? 0;
             $totals['materials'] += $session->materials ?? 0;
