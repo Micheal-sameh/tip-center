@@ -45,8 +45,9 @@ class ReportController extends Controller
         $session = $this->sessionservice->report($request->validated());
         $reports = $this->reportService->session($request->validated());
         $selected_type = $request->type;
+        $attendedCount = $reports->where('is_attend', true)->count();
 
-        return view('reports.session', compact('reports', 'session', 'selected_type'));
+        return view('reports.session', compact('reports', 'session', 'selected_type', 'attendedCount'));
     }
 
     public function student(StudentReportRequest $request)

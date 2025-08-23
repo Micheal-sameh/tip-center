@@ -86,7 +86,7 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $session->professor->name ?? '-' }} -
                                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
-                                    <td>{{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}
+                                    <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}
                                     </td>
                                     <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
                                     </td>
@@ -99,7 +99,8 @@
                                     <td>{{ number_format(0, 1) }}</td>
                                     <td>{{ $session->sessionExtra?->markers > 0 ? number_format($session->sessionExtra?->markers, 1) : '-' }}
                                     </td>
-                                    <td>{{ number_format(0, 1) }}</td>
+                                    <td>{{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}
+                                    </td>
                                     <td class="fw-bold text-primary">
                                         {{ number_format(
                                             $session->total_center_price +
@@ -124,14 +125,14 @@
                             <tfoot class="table-dark">
                                 <tr>
                                     <th colspan="2" class="text-end">Totals:</th>
-                                    <th>{{ $totals['students'] }}</th>
+                                    <th>{{ $totals['attended_count'] }}</th>
                                     <th>{{ number_format($totals['center_price'], 1) }}</th>
                                     <th>{{ number_format($totals['printables'], 1) }}</th>
                                     <th>{{ number_format($totals['materials'], 1) }}</th>
                                     <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
                                     <th>{{ number_format(0, 1) }}</th>
                                     <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
-                                    <th>{{ number_format(0, 1) }}</th>
+                                    <th>{{ $totals['students'] }}</th>
                                     <th class="fw-bold text-primary">
                                         {{ number_format($totals['overall_total'], 1) }}
                                     </th>

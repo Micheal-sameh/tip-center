@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\AttendenceType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Models\Session;
@@ -65,6 +66,7 @@ class SessionStudentRepository extends BaseRepository
             'center_price' => $session->center_price,
             'printables' => $session->printables ?? 0,
             'materials' => $session->materials ?? 0,
+            'is_attend' => AttendenceType::ATTEND,
         ]);
         $required_price = $session->professor_price + $session->center_price + $session->printables + $session->materials;
         $reminder = $input->total_paid - $required_price;
@@ -84,6 +86,7 @@ class SessionStudentRepository extends BaseRepository
             'printables' => $input->printables ?? 0,
             'materials' => $input->materials ?? 0,
             'to_pay' => $input->to_pay ?? 0,
+            'is_attend' => AttendenceType::ATTEND,
         ]);
         DB::commit();
 
@@ -101,6 +104,22 @@ class SessionStudentRepository extends BaseRepository
         ]);
 
         return $attendance;
+    }
+
+    public function absentStudents($session_id, $studentsIds)
+    {
+        foreach ($studentsIds as $student_id) {
+            $this->model->create([
+                'session_id' => $session_id,
+                'student_id' => $student_id,
+                'professor_price' => 0,
+                'center_price' => 0,
+                'printables' => 0,
+                'materials' => 0,
+                'to_pay' => 0,
+                'is_attend' => AttendenceType::ABSENT,
+            ]);
+        }
     }
 
     public function delete($id)
@@ -124,8 +143,8 @@ class SessionStudentRepository extends BaseRepository
         $query = $this->model->where('session_id', $input['session_id']);
         if (isset($input['type'])) {
             match ((int) $input['type']) {
-                ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials'),
-                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay'),
+                ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials', 'is_attend'),
+                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay', 'is_attend'),
                 default => $query,
             };
         }
