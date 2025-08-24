@@ -154,7 +154,8 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($reports as $report)
-                                        <tr>
+                                        <tr
+                                            class=" {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
                                             <td class="ps-3">{{ $loop->iteration }}</td>
                                             <td>
                                                 <span class="badge bg-light text-dark">
