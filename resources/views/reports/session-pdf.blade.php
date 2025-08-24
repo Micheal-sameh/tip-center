@@ -150,12 +150,12 @@
         <tbody>
             @foreach ($reports as $report)
                 <tr
-                    class=" {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
+                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $report->student?->name }}</td>
                     <td>{{ $report->student?->phone }}</td>
                     <td>{{ $report->student?->parent_phone }}</td>
-                    <td>{{ $report->created_at->format('h:i:A') }}</td>
+                    <td>{{ $report->created_at->format('h:i A') }}</td>
                     <td>{{ $report->materials }}</td>
                     <td class="text-end">{{ $report->printables }}</td>
                     <td class="text-end">
@@ -185,44 +185,28 @@
                 <tr>
                     <td>Markers</td>
                     <td class="text-end">
-                        @if ($selected_type == App\Enums\ReportType::PROFESSOR)
-                            {{ $extra->markers > 0 ? -number_format($extra->markers, 2) : 0 }}
-                        @else
-                            {{ number_format($extra->markers ?? 0, 2) }}
-                        @endif
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->markers > 0 ? -number_format($extra->markers, 2) : 0) : number_format($extra->markers ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>Cafeterea</td>
                     <td class="text-end">
-                        @if ($selected_type == App\Enums\ReportType::PROFESSOR)
-                            {{ $extra->cafeterea > 0 ? -number_format($extra->cafeterea, 2) : 0 }}
-                        @else
-                            {{ number_format($extra->cafeterea ?? 0, 2) }}
-                        @endif
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->cafeterea > 0 ? -number_format($extra->cafeterea, 2) : 0) : number_format($extra->cafeterea ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>Copies</td>
                     <td class="text-end">
-                        @if ($selected_type == App\Enums\ReportType::PROFESSOR)
-                            {{ $extra->copies > 0 ? -number_format($extra->copies, 2) : 0 }}
-                        @else
-                            {{ number_format($extra->copies ?? 0, 2) }}
-                        @endif
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->copies > 0 ? -number_format($extra->copies, 2) : 0) : number_format($extra->copies ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>Other</td>
                     <td class="text-end">
-                        @if ($selected_type == App\Enums\ReportType::PROFESSOR)
-                            {{ $extra->other > 0 ? -number_format($extra->other, 2) : 0 }}
-                        @else
-                            {{ number_format($extra->other ?? 0, 2) }}
-                        @endif
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->other > 0 ? -number_format($extra->other, 2) : 0) : number_format($extra->other ?? 0, 2) }}
                     </td>
                 </tr>
-                @if ($session->sessionExtra->notes)
+                @if ($extra->notes)
                     <tr>
                         <td colspan="2"><strong>Notes:</strong> {{ $extra->notes ?? 'N/A' }}</td>
                     </tr>
