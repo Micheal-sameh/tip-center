@@ -16,6 +16,7 @@ use App\Services\StudentService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Mpdf\Mpdf;
 
 class ReportController extends Controller
 {
@@ -91,10 +92,38 @@ class ReportController extends Controller
         $reports = $this->reportService->session($request->validated());
         $selected_type = $request->type;
 
-        $pdf = Pdf::loadView('reports.session-pdf', compact('reports', 'session', 'selected_type'));
-        $filename = Str::slug($session->professor->name).' - '.StagesEnum::getStringValue($session->stage).'.pdf';
+        // إنشاء وتكوين mPDF
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font' => 'tajawal',
+            'direction' => 'rtl',
+            'margin_right' => 15,
+            'margin_left' => 15,
+            'margin_top' => 16,
+            'margin_bottom' => 16,
+            'margin_header' => 9,
+            'margin_footer' => 9,
+        ]);
 
-        return $pdf->download($filename);
+        // تحميل وعرض view مع البيانات
+        $html = view('reports.session-pdf', [
+            'reports' => $reports,
+            'session' => $session,
+            'selected_type' => $selected_type,
+        ])->render();
+
+        // إضافة المحتوى إلى PDF
+        $mpdf->WriteHTML($html);
+
+        // إنشاء اسم الملف
+        $filename = Str::slug($session->professor->name).' - '.
+                   StagesEnum::getStringValue($session->stage).'.pdf';
+
+        // تحميل الملف
+        return response()->streamDownload(function () use ($mpdf) {
+            echo $mpdf->Output('', 'S');
+        }, $filename);
     }
 
     public function income(incomeFilterRequest $request)
