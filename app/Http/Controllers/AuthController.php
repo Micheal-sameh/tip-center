@@ -25,8 +25,8 @@ class AuthController extends Controller
         }
 
         return redirect()->back()
-            ->withInput($request->only('membership_code', 'remember'))
-            ->withErrors(['membership_code' => __('auth.failed')]);
+            ->withInput($request->only('email', 'remember'))
+            ->withErrors(['email' => __('auth.failed')]);
     }
 
     public function logout()

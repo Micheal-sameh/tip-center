@@ -66,7 +66,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         @endcan
-                                        {{-- @can('users_delete')
+                                        @if(auth()->user()->can('users_delete') && !$user->hasRole('admin'))
                                             <form action="{{ route('users.delete', $user) }}" method="POST"
                                                 class="d-inline-block"
                                                 onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
@@ -77,7 +77,7 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                        @endcan --}}
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>
