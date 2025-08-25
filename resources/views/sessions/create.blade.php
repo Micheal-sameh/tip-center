@@ -139,10 +139,10 @@
 
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="integer" step="1" name="room" id="room Number"
-                                        value="{{ old('room Number') }}" placeholder="1"
-                                        class="form-control @error('room Number') is-invalid @enderror">
-                                    <label for="room Number">{{ __('room Number') }}</label>
+                                    <input type="integer" step="1" name="room" id="room"
+                                        value="{{ old('room') }}" placeholder="1"
+                                        class="form-control @error('room') is-invalid @enderror">
+                                    <label for="room Number">{{ __('room') }}</label>
                                     @error('room Number')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
@@ -178,7 +178,7 @@
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="time" name="start_at" id="start_at" value="{{ old('start_at') }}"
-                                        class="form-control @error('start_at') is-invalid @enderror" required>
+                                        class="form-control @error('start_at') is-invalid @enderror">
                                     <label for="start_at">{{ __('Start Time') }}</label>
                                     @error('start_at')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -188,7 +188,7 @@
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="time" name="end_at" id="end_at" value="{{ old('end_at') }}"
-                                        class="form-control @error('end_at') is-invalid @enderror" required>
+                                        class="form-control @error('end_at') is-invalid @enderror">
                                     <label for="end_at">{{ __('End Time') }}</label>
                                     @error('end_at')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
