@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Student Report - {{ $reports?->first()?->student?->name ?? 'N/A' }}</title>
+    <title>Student Report </title>
     <style>
         @page {
             size: A4;
@@ -128,9 +128,10 @@
     </div>
 
     <div class="student-info">
-        <strong>{{ $reports?->first()?->student?->name ?? 'N/A' }}</strong>
+        {{-- <strong>{{ $reports?->first()?->student?->name ?? 'N/A' }}</strong> --}}
         (Code: {{ $reports?->first()?->student?->code ?? 'N/A' }}) |
         Report Date: {{ now()->format('d M Y') }} |
+        Total Sessions attend: {{ count($reports->where('is_attend')) }} -
         Total Sessions: {{ count($reports) }}
     </div>
 
@@ -155,7 +156,8 @@
         </thead>
         <tbody>
             @foreach ($reports as $report)
-                <tr>
+                <tr
+                    class=" {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td class="date">{{ \Carbon\Carbon::parse($report->session->created_at)->format('d M Y') }}</td>
                     <td>{{ $report->session->professor->name ?? 'N/A' }}</td>
@@ -169,7 +171,7 @@
                     <td class="text-center fw-bold">
                         {{ number_format($report->professor_price + $report->center_price, 2) }}
                     </td>
-                   @if ($reports->contains(fn($r) => $r->to_pay > 0))
+                    @if ($reports->contains(fn($r) => $r->to_pay > 0))
                         <td class="text-center">{{ $report->to_pay ?? 'N/A' }}</td>
                     @endif
                 </tr>

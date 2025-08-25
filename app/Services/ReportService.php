@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\ChargeRepository;
 use App\Repositories\SessionRepository;
 use App\Repositories\SessionStudentRepository;
 use App\Repositories\StudentRepository;
@@ -12,6 +13,7 @@ class ReportService
         protected SessionStudentRepository $sessionStudentRepository,
         protected SessionRepository $sessionRepository,
         protected StudentRepository $studentRepository,
+        protected ChargeRepository $chargeRepository,
     ) {}
 
     public function index($input)
@@ -46,5 +48,42 @@ class ReportService
         $reports->load('session.sessionExtra');
 
         return $reports;
+    }
+
+    public function income($input)
+    {
+        $sessions = $this->sessionRepository->income($input);
+        $charges = $this->chargeRepository->income($input);
+        $gap = $this->chargeRepository->incomeGap($input);
+
+        $totals = [
+            'students' => 0,
+            'center_price' => 0,
+            'printables' => 0,
+            'materials' => 0,
+            'copies' => 0,
+            'markers' => 0,
+            'overall_total' => 0,
+            'attended_count' => 0,
+        ];
+
+        $sessions->each(function ($session) use (&$totals) {
+            $totals['students'] += $session->session_students_count;
+            $totals['attended_count'] += $session->attended_count;
+            $totals['center_price'] += $session->total_center_price;
+            $totals['printables'] += $session->sessionExtra?->printables ?? 0;
+            $totals['materials'] += $session->materials ?? 0;
+            $totals['markers'] += $session->sessionExtra?->markers ?? 0;
+            $totals['copies'] += $session->sessionExtra?->copies ?? 0;
+        });
+
+        $totals['overall_total'] =
+            $totals['center_price']
+            + $totals['printables']
+            + $totals['materials']
+            + $totals['markers']
+            + $totals['copies'];
+
+        return compact('sessions', 'totals', 'charges', 'gap');
     }
 }

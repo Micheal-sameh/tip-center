@@ -4,7 +4,7 @@
     <div class="container" style="max-width: 800px">
         <!-- Header Section -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Attend Student to Session</h4>
+            <h4 class="mb-0">@lang('trans.Attend Student to Session')</h4>
             <div class="badge bg-primary rounded-pill">
                 <i class="fas fa-calendar-check me-1"></i> {{ now()->format('M d, Y') }}
             </div>
@@ -13,7 +13,7 @@
         <!-- Add Student Button -->
         <div class="d-flex justify-content-end mb-3">
             <a href="{{ route('students.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>{{ __('Add Student') }}
+                <i class="fas fa-plus me-2"></i>{{ __('trans.Add Student') }}
             </a>
         </div>
 
@@ -27,60 +27,61 @@
                                 <i class="fas fa-search text-muted"></i>
                             </span>
                             <input type="text" id="studentSearch" class="form-control border-start-0"
-                                placeholder="Search by name, code or phone..." autocomplete="off" autofocus>
+                                placeholder="@lang('trans.Search by name, code or phone...')" autocomplete="off" autofocus>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <button type="button" id="clearSearch" class="btn btn-outline-secondary w-100 shadow-sm">
-                            <i class="fas fa-times me-1"></i> Clear
+                            <i class="fas fa-times me-1"></i> @lang('trans.clear')
                         </button>
                     </div>
                 </div>
             </div>
         </div>
         @isset($all_students)
-        <!-- Student Results Section -->
-        <div id="studentResultsContainer" class="mb-4" style="display: none;">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Students</h5>
-                    <span class="badge bg-primary rounded-pill" id="studentCount">{{ $all_students->count() }} students</span>
-                </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush" id="studentResultsList">
-                        @foreach ($all_students as $student)
-                            <a href="{{ route('attendances.index', ['student_id' => $student->id]) }}"
-                                class="list-group-item list-group-item-action student-item">
-                                <div class="d-flex w-100 justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">{{ $student->name }}</h6>
-                                        <div class="d-flex gap-2">
-                                            <small class="text-muted">{{ $student->code ?? '' }}</small>
-                                            <small class="text-muted">{{ $student->phone ?? '' }}</small>
+            <!-- Student Results Section -->
+            <div id="studentResultsContainer" class="mb-4" style="display: none;">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>@lang('trans.Students')</h5>
+                        <span class="badge bg-primary rounded-pill" id="studentCount">{{ $all_students->count() }}
+                            @lang('trans.Students')</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush" id="studentResultsList">
+                            @foreach ($all_students as $student)
+                                <a href="{{ route('attendances.index', ['student_id' => $student->id]) }}"
+                                    class="list-group-item list-group-item-action student-item">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ $student->name }}</h6>
+                                            <div class="d-flex gap-2">
+                                                <small class="text-muted">{{ $student->code ?? '' }}</small>
+                                                <small class="text-muted">{{ $student->phone ?? '' }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-light text-dark">
+                                                {{ App\Enums\StagesEnum::getStringValue($student->stage) ?? '' }}
+                                            </span>
+                                            <span class="badge bg-light text-dark ms-2">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </span>
                                         </div>
                                     </div>
-                                    <div class="text-end">
-                                        <span class="badge bg-light text-dark">
-                                            {{ App\Enums\StagesEnum::getStringValue($student->stage) ?? '' }}
-                                        </span>
-                                        <span class="badge bg-light text-dark ms-2">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </a>
-                        @endforeach
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endisset
 
         <!-- Selected Student Section -->
         @isset($selected_student)
             <div class="card shadow-sm mb-4 border-primary">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-user-check me-2"></i>Selected Student</h5>
+                    <h5 class="mb-0"><i class="fas fa-user-check me-2"></i> @lang('trans.Selected Student')</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -97,6 +98,13 @@
                                     <i class="fas fa-layer-group me-1"></i>
                                     {{ App\Enums\StagesEnum::getStringValue($selected_student->stage) }}
                                 </span>
+                                @if ($selected_student->note)
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-book me-1"></i>
+                                        {{ $selected_student->note }}
+                                    </span>
+                                @endif
+
                             </div>
                         </div>
                     </div>
@@ -106,16 +114,16 @@
             <!-- Sessions Section -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Available Sessions</h5>
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i> @lang('trans.Available Sessions')</h5>
                 </div>
                 <div class="card-body">
-                    @if ($sessions->isEmpty())
+                    @if ($my_sessions->isEmpty())
                         <div class="alert alert-warning mb-0">
-                            <i class="fas fa-info-circle me-2"></i> No available sessions found for this student.
+                            <i class="fas fa-info-circle me-2"></i>  @lang('messages.No available sessions')'
                         </div>
                     @else
                         <div class="row g-3" id="sessions-container">
-                            @foreach ($sessions as $session)
+                            @foreach ($my_sessions as $session)
                                 <div class="col-md-6 col-lg-4">
                                     <a href="{{ route('attendances.create', [
                                         'student_id' => $selected_student->id,
@@ -135,7 +143,9 @@
                                                 <div class="d-flex flex-column gap-2">
                                                     <span class="badge bg-light text-dark text-start">
                                                         <i class="fas fa-layer-group me-1 text-muted"></i>
-                                                        {{ \App\Enums\StagesEnum::getStringValue($session->stage) }}
+                                                        {{ \App\Enums\StagesEnum::getStringValue($session->stage) }} -
+                                                        <i class="fas fas fa-tags me-1 text-muted"></i>
+                                                        {{ \App\Enums\SessionType::getStringValue($session->type) }}
                                                     </span>
                                                     <span class="badge bg-light text-dark text-start">
                                                         <i class="fas fa-clock me-1 text-muted"></i>
@@ -195,7 +205,8 @@
                 searchInput.value = '';
                 resultsContainer.style.display = 'none';
                 studentItems.forEach(item => item.style.display = '');
-                studentCountBadge.textContent = '{{ isset($all_students) ? $all_students->count() : 0 }} students';
+                studentCountBadge.textContent =
+                    '{{ isset($all_students) ? $all_students->count() : 0 }} students';
                 searchInput.focus();
             });
         });

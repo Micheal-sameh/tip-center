@@ -37,6 +37,11 @@ class SessionStudentService
 
     }
 
+    public function update($input, $id)
+    {
+        return $this->sessionStudentRepository->update($input, $id);
+    }
+
     public function delete($id)
     {
         return $this->sessionStudentRepository->delete($id);

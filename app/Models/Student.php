@@ -81,6 +81,13 @@ class Student extends Model implements HasMedia
 
         $date = Carbon::parse($this->birth_date);
 
-        return $date->isBirthday(); // Laravel helper since Carbon 2
+        return $date->isBirthday();
+    }
+
+    public function specialCases()
+    {
+        return $this->belongsToMany(Professor::class, 'student_special_cases')
+            ->withPivot(['id', 'professor_price', 'center_price'])
+            ->withTimestamps();
     }
 }

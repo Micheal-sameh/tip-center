@@ -113,12 +113,67 @@
                     </div>
                 </div>
             </div>
+            <!-- Student Special Cases -->
+
+
+            <div class="card-body p-4">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
+                    <div class="bg-gradient-primary text-white px-4 py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-exclamation-circle me-2"></i> {{ __('trans.student_special_cases') }}
+                        </h5>
+                        <a href="{{ route('student-special-cases.create', ['student_id' => $student->id]) }}"
+                            class="btn btn-light btn-sm rounded-pill">
+                            <i class="fas fa-plus me-1"></i> {{ __('trans.add_special_case') }}
+                        </a>
+                    </div>
+                    @if ($student->specialCases->isNotEmpty())
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>{{ __('trans.professor') }}</th>
+                                        <th>{{ __('trans.professor_price') }}</th>
+                                        <th>{{ __('trans.center_price') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($student->specialCases as $case)
+                                        <tr>
+                                            <td>
+                                                <span class="fw-bold">{{ $case->name }}</span>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="editable" data-type="professor_price"
+                                                    data-case-id="{{ $case->pivot->id }}"
+                                                    data-value="{{ $case->pivot->professor_price }}">
+                                                    {{ $case->pivot->professor_price ?? '-' }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="editable" data-type="center_price"
+                                                    data-case-id="{{ $case->pivot->id }}"
+                                                    data-value="{{ $case->pivot->center_price }}">
+                                                    {{ $case->pivot->center_price ?? '-' }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">{{ __('trans.no_special_cases') }}</p>
+                    @endif
+                </div>
+            </div>
 
             <!-- Action Buttons -->
             <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-3 py-3 px-4">
                 @can('students_update')
                     <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary rounded-pill px-4">
-                        <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
+                        <i class="fas fa-edit me-2"></i>
                     </a>
                 @endcan
                 {{-- @can('students_delete')
@@ -127,17 +182,48 @@
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-danger rounded-pill px-4">
-                            <i class="fas fa-trash-alt me-2"></i> {{ __('trans.delete') }}
+                            <i class="fas fa-trash-alt me-2"></i>
                         </button>
                     </form>
                 @endcan --}}
                 <a href="{{ route('reports.student', ['search' => $student->code]) }}"
                     class="btn btn-outline-secondary rounded-pill px-4">
-                    <i class="fas fa-chart-line me-2"></i> {{ __('trans.report') }}
+                    <i class="fas fa-chart-line me-2"></i>
                 </a>
             </div>
         </div>
     </div>
+
+    <!-- Edit Special Case Modal -->
+    <div class="modal fade" id="editSpecialCaseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-3 shadow-lg">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('trans.edit_special_case') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editSpecialCaseForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <input type="hidden" name="case_id" id="case_id">
+                        <input type="hidden" name="field" id="field">
+
+                        <div class="mb-3">
+                            <label id="fieldLabel" class="form-label"></label>
+                            <input type="text" class="form-control" name="value" id="fieldValue">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">{{ __('trans.cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ __('trans.save_changes') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Avatar Modal -->
     <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
@@ -338,6 +424,42 @@
                         }
                     });
                 }
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const editModal = new bootstrap.Modal(document.getElementById('editSpecialCaseModal'));
+
+                document.querySelectorAll('.editable').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        e.preventDefault();
+
+                        let field = this.dataset.type;
+                        let value = this.dataset.value || '';
+                        let caseId = this.dataset.caseId;
+
+                        if (!caseId) {
+                            console.error("caseId missing on editable link!");
+                            return;
+                        }
+
+                        document.getElementById('field').value = field;
+                        document.getElementById('fieldValue').value = value;
+                        document.getElementById('case_id').value = caseId;
+
+                        let label = '';
+                        if (field === 'professor_price') label = "{{ __('trans.professor_price') }}";
+                        if (field === 'center_price') label = "{{ __('trans.center_price') }}";
+
+                        document.getElementById('fieldLabel').textContent = label;
+
+                        document.getElementById('editSpecialCaseForm').action =
+                            `/student-special-cases/${caseId}`;
+
+                        editModal.show();
+                    });
+                });
             });
         </script>
     @endpush

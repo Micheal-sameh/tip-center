@@ -12,10 +12,10 @@
             <div class="col">
                 @php
                     switch ($session->status) {
-                        case \App\Enums\SessionStatus::PENDING:
+                        case \App\Enums\SessionStatus::WARNING:
                             $btnClass = 'danger'; // red
                             break;
-                        case \App\Enums\SessionStatus::INACTIVE:
+                        case \App\Enums\SessionStatus::PENDING:
                             $btnClass = 'secondary'; // grey
                             break;
                         case \App\Enums\SessionStatus::ACTIVE:
@@ -102,9 +102,9 @@
                                 </button>
                             @else
                                 <span
-                                    class="badge bg-{{ $session->status === App\Enums\SessionStatus::PENDING ? 'warning' : 'secondary' }}">
+                                    class="badge bg-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'warning' : 'secondary' }}">
                                     <i
-                                        class="fas fa-{{ $session->status === App\Enums\SessionStatus::PENDING ? 'clock' : 'times-circle' }} me-1"></i>
+                                        class="fas fa-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'clock' : 'times-circle' }} me-1"></i>
                                     {{ App\Enums\SessionStatus::getStringValue($session->status) }}
                                 </span>
                             @endif

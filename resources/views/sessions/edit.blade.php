@@ -107,14 +107,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mt-2">
                             <div class="form-floating">
                                 <select id="type" name="type"
                                     class="form-select @error('type') is-invalid @enderror" required>
                                     <option value="" disabled selected>{{ __('Select type') }}</option>
                                     @foreach (App\Enums\SessionType::all() as $type)
                                         <option value="{{ $type['value'] }}"
-                                            {{ old('type') == $type['value'] ? 'selected' : '' }}>
+                                            {{ old('type', $session->type) == $type['value'] ? 'selected' : '' }}>
                                             {{ $type['name'] }}
                                         </option>
                                     @endforeach

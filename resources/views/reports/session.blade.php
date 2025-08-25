@@ -24,7 +24,8 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-md-3"><strong>Professor:</strong> {{ $session->professor->name }}</div>
-                    <div class="col-md-3"><strong>Stage:</strong> {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</div>
+                    <div class="col-md-3"><strong>Stage:</strong>
+                        {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</div>
                 </div>
 
                 <h5 class="mt-4 mb-3">Students Attendance</h5>
@@ -39,12 +40,8 @@
                                 <th>Phone</th>
                                 <th>Phone (P)</th>
                                 <th>Attend</th>
-                                @if ($session->materials)
-                                    <th>Materials</th>
-                                @endif
-                                @if ($session->printables)
-                                    <th>Printables</th>
-                                @endif
+                                <th>Materials</th>
+                                <th>Printables</th>
                                 <th class="text-end">Payment</th>
                                 @if ($reports->contains(fn($r) => $r->to_pay > 0))
                                     <th class="text-end">To Pay</th>
@@ -53,19 +50,19 @@
                         </thead>
                         <tbody>
                             @foreach ($reports as $report)
-                                <tr class="{{ $report->to_pay > 0 ? 'table-warning' : '' }}">
+                                <tr
+                                    class=" {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
                                     <td>{{ $loop->iteration }}</td>
-                                    <td><a href="{{route('students.show', $report->student_id)}}">{{ $report->student?->name }} </a></td>
+                                    <td><a href="{{ route('students.show', $report->student_id) }}">{{ $report->student?->name }}
+                                        </a></td>
                                     <td>{{ $report->student?->phone }}</td>
                                     <td>{{ $report->student?->parent_phone }}</td>
-                                    <td>{{ $report->created_at->format('h:i:A') }}</td>
-                                    @if ($session->materials)
-                                        <td>{{ $report->materials }}</td>
-                                    @endif
-                                    @if ($session->printables)
-                                        <td class="text-end">{{ $report->printables }}</td>
-                                    @endif
-                                    <td class="text-end">{{ number_format($report->professor_price + $report->center_price, 2) }}</td>
+                                    <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
+                                    </td>
+                                    <td>{{ $report->materials }}</td>
+                                    <td class="text-end">{{ $report->printables }}</td>
+                                    <td class="text-end">
+                                        {{ number_format($report->professor_price + $report->center_price, 2) }}</td>
                                     @if ($report->to_pay)
                                         <td class="text-end fw-bold {{ $report->to_pay > 0 ? 'text-danger' : '' }}">
                                             {{ number_format($report->to_pay, 2) }}
@@ -80,7 +77,8 @@
                 <!-- Mobile Cards -->
                 <div class="d-md-none">
                     @foreach ($reports as $report)
-                        <div class="card mb-3 {{ $report->to_pay > 0 ? 'border-warning bg-warning bg-opacity-10' : '' }}">
+                        <div
+                            class="card mb-3 {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'border-danger bg-danger bg-opacity-10' : ($report->to_pay > 0 ? 'border-warning bg-warning bg-opacity-10' : '') }}">
                             <div class="card-body">
                                 <h6 class="fw-bold mb-1">{{ $loop->iteration }}. {{ $report->student?->name }}</h6>
                                 <p class="mb-1"><strong>Phone:</strong> {{ $report->student?->phone }}</p>
@@ -91,7 +89,8 @@
                                 @if ($session->printables)
                                     <p class="mb-1"><strong>Printables:</strong> {{ $report->printables }}</p>
                                 @endif
-                                <p class="mb-1"><strong>Payment:</strong> {{ number_format($report->professor_price + $report->center_price, 2) }}</p>
+                                <p class="mb-1"><strong>Payment:</strong>
+                                    {{ number_format($report->professor_price + $report->center_price, 2) }}</p>
                                 @if ($report->to_pay)
                                     <p class="mb-0 text-danger fw-bold">
                                         <strong>To Pay:</strong> {{ number_format($report->to_pay, 2) }}
@@ -107,8 +106,8 @@
                     <div class="col-md-2 col-6 mb-3">
                         <div class="card h-100">
                             <div class="card-body text-center">
-                                <h6 class="card-subtitle mb-2 text-muted">Total Students</h6>
-                                <p class="card-text fs-4 fw-bold">{{ $reports->count() }}</p>
+                                <h6 class="card-subtitle mb-2 text-muted">Attended Students</h6>
+                                <p class="card-text fs-4 fw-bold">{{ $attendedCount }}</p>
                             </div>
                         </div>
                     </div>
@@ -118,7 +117,8 @@
                             <div class="card h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Professor</h6>
-                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('professor_price'), 2) }}</p>
+                                    <p class="card-text fs-4 fw-bold">
+                                        {{ number_format($reports->sum('professor_price'), 2) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -129,7 +129,8 @@
                             <div class="card h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Materials</h6>
-                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('materials'), 2) }}</p>
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('materials'), 2) }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -140,7 +141,8 @@
                             <div class="card h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Center</h6>
-                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('center_price'), 2) }}</p>
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('center_price'), 2) }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -152,15 +154,20 @@
                                 <h6 class="card-subtitle mb-2 text-muted">Total Value</h6>
                                 <p class="card-text fs-4 fw-bold text-primary">
                                     @php
-                                        $total = $reports->sum(fn($r) =>
-                                            $r->professor_price +
-                                            $r->center_price +
-                                            $r->printables +
-                                            $r->materials);
+                                        $total = $reports->sum(
+                                            fn($r) => $r->professor_price +
+                                                $r->center_price +
+                                                $r->printables +
+                                                $r->materials,
+                                        );
                                         if ($session->sessionExtra) {
                                             $extra = $session->sessionExtra;
-                                            $adjustment = $extra->markers + $extra->copies + $extra->other + $extra->cafeterea;
-                                            $total += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adjustment : $adjustment;
+                                            $adjustment =
+                                                $extra->markers + $extra->copies + $extra->other + $extra->cafeterea;
+                                            $total +=
+                                                $selected_type == App\Enums\ReportType::PROFESSOR
+                                                    ? -$adjustment
+                                                    : $adjustment;
                                         }
                                     @endphp
                                     {{ number_format($total, 2) }}
@@ -202,7 +209,7 @@
                             </div>
                         @endforeach
 
-                        @if($extra->notes)
+                        @if ($extra->notes)
                             <div class="col-md-3 col-6">
                                 <div class="card h-100">
                                     <div class="card-body text-center">

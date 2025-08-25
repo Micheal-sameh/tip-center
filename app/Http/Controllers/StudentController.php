@@ -73,9 +73,10 @@ class StudentController extends Controller
             'name', 'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
         ));
 
-        $this->studentservice->store($input);
+        $student = $this->studentservice->store($input);
 
-        return to_route('students.index');
+        return to_route('students.index')
+            ->with('success', "Student {$student->name} ({$student->code}) created successfully.");
     }
 
     public function edit($id)
@@ -88,7 +89,7 @@ class StudentController extends Controller
     public function update(StudentUpdateRequest $request, $id)
     {
         $input = new StudentDTO(...$request->only(
-            'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
+            'name', 'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
         ));
 
         $this->studentservice->update($input, $id);

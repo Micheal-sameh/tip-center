@@ -16,7 +16,7 @@ class ProfessorCreateRequest extends FormRequest
             'subject' => 'required|string',
             'school' => 'required|string',
             'birth_date' => 'nullable|date',
-            'stage_schedules' => 'array|min:1',
+            'stage_schedules' => 'array',
             'stage_schedules.*.stage' => 'required|integer|in:'.implode(',', array_column(StagesEnum::all(), 'value')),
             'stage_schedules.*.day' => 'required|integer|in:0,1,2,3,4,5,6,7',
             'stage_schedules.*.from' => 'required|date_format:H:i|before:stage_schedules.*.to',

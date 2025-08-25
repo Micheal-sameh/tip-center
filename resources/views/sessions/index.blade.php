@@ -62,7 +62,7 @@
                         popup.classList.remove('show'); // Bootstrap fade-out
                         setTimeout(() => popup.remove(), 500); // Remove after fade
                     }
-                }, 5000);
+                }, 1000);
             </script>
         @endif
 
@@ -275,7 +275,7 @@
                                 icon: 'success',
                                 title: response.message,
                                 showConfirmButton: false,
-                                timer: 3000
+                                timer: 100000
                             }).then(() => {
                                 reloadSessions();
                             });
@@ -311,7 +311,7 @@
                     clearInterval(refreshInterval);
                 }
                 refreshInterval = setInterval(reloadSessions, 300000);
-                setTimeout(reloadSessions, 1000); // Initial load after 1 second
+                setTimeout(reloadSessions, 10000); // Initial load after 1 second
             }
 
             // Initialize

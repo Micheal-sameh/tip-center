@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SessionStudentController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentSpecialCaseController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return auth()->check() ? to_route('attendances.index') : view('welcome.index');
-});
+})->name('home');
 Route::get('/professors/stage-row', function () {
     $index = request('index', 0);
 
@@ -43,7 +45,7 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth', 'check.status'])->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
             Route::get('/profile', [UserController::class, 'profile'])->name('users.profile');
@@ -108,7 +110,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/show', [SessionStudentController::class, 'show'])->name('attendances.show');
             Route::get('/{id}/edit', [SessionStudentController::class, 'edit'])->name('attendances.edit');
             Route::post('/', [SessionStudentController::class, 'store'])->name('attendances.store');
-            // Route::put('/{id}/status', [SessionStudentController::class, 'changeStatus'])->name('attendances.status');
+            // Route::put('/{id}/update', [SessionStudentController::class, 'update'])->name('attendances.update');
             Route::put('/{id}', [SessionStudentController::class, 'update'])->name('attendances.update');
             Route::delete('/{id}', [SessionStudentController::class, 'delete'])->name('attendances.delete');
         });
@@ -119,11 +121,26 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/students', [ReportController::class, 'student'])->name('reports.student');
             Route::get('/student-pdf', [ReportController::class, 'downloadStudentReport'])->name('reports.download.pdf');
             Route::get('/session-pdf', [ReportController::class, 'downloadSessionReport'])->name('reports.session.pdf');
+            Route::get('/income', [ReportController::class, 'income'])->name('reports.income');
+            Route::get('/income-pdf', [ReportController::class, 'incomePdf'])->name('reports.incomePdf');
+        });
+
+        Route::prefix('student-special-cases')->group(function () {
+            Route::get('/create', [StudentSpecialCaseController::class, 'create'])->name('student-special-cases.create');
+            Route::post('', [StudentSpecialCaseController::class, 'store'])->name('student-special-cases.store');
+            Route::put('/{id}', [StudentSpecialCaseController::class, 'update'])->name('student-special-cases.update');
         });
 
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingController::class, 'index'])->name('settings.index');
             Route::put('/', [SettingController::class, 'update'])->name('settings.update');
+        });
+
+        Route::prefix('charges')->group(function () {
+            Route::get('/', [ChargeController::class, 'index'])->name('charges.index');
+            Route::get('/create', [ChargeController::class, 'create'])->name('charges.create');
+            Route::post('/', [ChargeController::class, 'store'])->name('charges.store');
+            Route::delete('/{id}', [ChargeController::class, 'delete'])->name('charges.destroy');
         });
     });
 

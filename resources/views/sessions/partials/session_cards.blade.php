@@ -12,10 +12,10 @@
             <div class="col">
                 @php
                     switch ($session->status) {
-                        case \App\Enums\SessionStatus::PENDING:
+                        case \App\Enums\SessionStatus::WARNING:
                             $btnClass = 'danger'; // red
                             break;
-                        case \App\Enums\SessionStatus::INACTIVE:
+                        case \App\Enums\SessionStatus::PENDING:
                             $btnClass = 'secondary'; // grey
                             break;
                         case \App\Enums\SessionStatus::ACTIVE:
@@ -108,9 +108,9 @@
                                 </button>
                             @else
                                 <span
-                                    class="badge bg-{{ $session->status === App\Enums\SessionStatus::PENDING ? 'warning' : 'secondary' }}">
+                                    class="badge bg-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'warning' : 'secondary' }}">
                                     <i
-                                        class="fas fa-{{ $session->status === App\Enums\SessionStatus::PENDING ? 'clock' : 'times-circle' }} me-1"></i>
+                                        class="fas fa-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'clock' : 'times-circle' }} me-1"></i>
                                     {{ App\Enums\SessionStatus::getStringValue($session->status) }}
                                 </span>
                             @endif
@@ -196,13 +196,13 @@
                         <div class="mb-3">
                             <label for="markers" class="form-label">Markers</label>
                             <input type="number" class="form-control" id="markers" name="markers" min="0"
-                                placeholder="Enter number of markers used">
+                                placeholder="Enter markers expenses">
                         </div>
 
                         <div class="mb-3">
                             <label for="copies" class="form-label">Copies</label>
                             <input type="number" class="form-control" id="copies" name="copies" min="0"
-                                placeholder="Enter number of copies used">
+                                placeholder="Enter copies expenses">
                         </div>
 
                         <div class="mb-3">

@@ -13,7 +13,7 @@ class UserCreateRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'phone' => ['required', 'regex:/^[0-9]{11}$/', 'unique:users,phone'],
             'role_id' => 'required|integer|exists:roles,id',
-            'birth_date' => 'required|date',
+            'birth_date' => 'date',
         ];
     }
 }

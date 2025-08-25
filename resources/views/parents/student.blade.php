@@ -173,6 +173,7 @@
         <strong>{{ $reports?->first()?->student?->name ?? 'N/A' }}</strong>
         (Code: {{ $reports?->first()?->student?->code ?? 'N/A' }}) |
         Report Date: {{ now()->format('d M Y') }} |
+        Total Sessions Attend: {{ count($reports->where('is_attend')) }} -
         Total Sessions: {{ count($reports) }}
     </div>
 
@@ -197,7 +198,7 @@
                         <td class="date">{{ \Carbon\Carbon::parse($report->session->created_at)->format('d M Y') }}
                         </td>
                         <td>{{ $report->session->professor->name ?? 'N/A' }}</td>
-                        <td class="text-center">{{ \Carbon\Carbon::parse($report->created_at)->format('h:i A') }}</td>
+                        <td class="text-center">{{ $report->is_attend == App\Enums\AttendenceType::ATTEND ? \Carbon\Carbon::parse($report->created_at)->format('h:i A') : 'Absent' }}</td>
                         <td class="fw-bold">
                             {{ number_format($report->professor_price + $report->center_price + $report->printables + $report->materials, 2) }}
                         </td>

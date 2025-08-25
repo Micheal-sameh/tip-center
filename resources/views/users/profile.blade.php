@@ -26,9 +26,9 @@
                         <i class="fas fa-user-circle fa-lg me-3"></i>
                         <h4 class="mb-0">User Details</h4>
                     </div>
-                    {{-- <a href="{{ route('') }}" class="btn btn-sm btn-outline-light">
+                    <a href="javascript:history.back()" class="btn btn-light btn-sm">
                         <i class="fas fa-arrow-left me-1"></i> Back
-                    </a> --}}
+                    </a>
                 </div>
             </div>
 
@@ -120,12 +120,12 @@
                                                 <th class="text-muted ps-0 fw-normal">Joined</th>
                                                 <td class="fw-medium">{{ $user->created_at->format('d M Y') }}</td>
                                             </tr>
-                                            {{-- <tr>
+                                            <tr>
                                                 <th class="text-muted ps-0 fw-normal">Last Login</th>
                                                 <td class="fw-medium">
-                                                    {{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never logged in' }}
+                                                    {{ $user->lastLogin ? $user->lastLogin?->created_at : 'Never logged in' }}
                                                 </td>
-                                            </tr> --}}
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

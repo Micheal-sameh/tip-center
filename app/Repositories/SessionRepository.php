@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\DB;
 
 class SessionRepository extends BaseRepository
 {
-    public function __construct(Session $model)
-    {
+    public function __construct(
+        Session $model,
+        protected SessionStudentRepository $sessionStudentRepository,
+    ) {
         $this->model = $model;
     }
 
@@ -35,7 +37,6 @@ class SessionRepository extends BaseRepository
 
     public function index($input)
     {
-        $this->checkYesterday();
         $this->checkActive();
         $query = $this->model->query()
             ->withCount('sessionStudents')
@@ -104,7 +105,7 @@ class SessionRepository extends BaseRepository
             'stage' => $input->stage,
             'professor_price' => $input->professor_price,
             'center_price' => $input->center_price,
-            'status' => $input->type == SessionType::ONLINE ? SessionStatus::ACTIVE : SessionStatus::INACTIVE,
+            'status' => $input->type == SessionType::ONLINE ? SessionStatus::ACTIVE : SessionStatus::PENDING,
             'printables' => $input->printables,
             'materials' => $input->materials,
             'start_at' => $input->start_at,
@@ -155,9 +156,31 @@ class SessionRepository extends BaseRepository
             'other' => $input['other'] ?? 0,
             'notes' => $input['notes'],
         ]);
+        $this->absence($session);
         DB::commit();
 
         return $session;
+    }
+
+    public function absence($session)
+    {
+        $absentStudents = $this->absentStudents($session);
+        $this->sessionStudentRepository->absentStudents($session->id, $absentStudents);
+    }
+
+    public function absentStudents($currentSession)
+    {
+        $lastSession = $this->model->where('id', '<', $currentSession->id)
+            ->where('professor_id', $currentSession->professor_id)
+            ->where('stage', $currentSession->stage)
+            ->where('type', $currentSession->type)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $lastSessionStudents = $lastSession?->sessionStudents->pluck('student_id') ?? collect();
+        $currentStudents = $currentSession->sessionStudents->pluck('student_id');
+
+        return $lastSessionStudents->diff($currentStudents);
     }
 
     public function status($status, $id)
@@ -174,9 +197,9 @@ class SessionRepository extends BaseRepository
     {
         $professorIds = $this->model
             ->where('stage', $input['stage'])
-            ->whereHas('sessionStudents', fn ($q) => $q->where('student_id', $input['student_id'])
-            )
-            ->where('status', SessionStatus::INACTIVE)
+            // ->whereHas('sessionStudents', fn ($q) => $q->where('student_id', $input['student_id'])
+            // )
+            ->where('status', SessionStatus::ACTIVE)
             ->latest()
             ->get()
             ->unique('professor_id')
@@ -192,12 +215,11 @@ class SessionRepository extends BaseRepository
 
     public function lastSession($session, $student)
     {
-        $this->checkActive();
 
         return $this->model->whereHas('sessionStudents',
             fn ($q) => $q->where('student_id', $student->id)
         )->where('stage', $session->stage)->where('professor_id', $session->professor_id)
-            ->where('status', SessionStatus::INACTIVE)->latest()->first();
+            ->where('status', SessionStatus::PENDING)->latest()->first();
     }
 
     public function reports($input)
@@ -216,7 +238,7 @@ class SessionRepository extends BaseRepository
     public function checkActive(): void
     {
         // Sessions that started and not yet ended → make ACTIVE
-        $this->model->where('status', SessionStatus::INACTIVE)
+        $this->model->where('status', SessionStatus::PENDING)
             ->where('type', SessionType::OFFLINE)
             ->whereDate('created_at', Carbon::today())
             ->where('start_at', '<=', now())
@@ -224,22 +246,81 @@ class SessionRepository extends BaseRepository
             ->update(['status' => SessionStatus::ACTIVE]);
 
         // Sessions already ended → make PENDING
-        $this->model->whereIn('status', [SessionStatus::ACTIVE, SessionStatus::INACTIVE])
+        $this->model->whereIn('status', [SessionStatus::ACTIVE, SessionStatus::PENDING])
             ->where('type', SessionType::OFFLINE)
             ->whereDate('created_at', Carbon::today())
             ->where('end_at', '<=', now())
-            ->update(['status' => SessionStatus::PENDING]);
+            ->update(['status' => SessionStatus::WARNING]);
     }
 
     public function checkYesterday(): void
     {
-        $this->model->whereIn('status', [
+        $sessions = $this->model->whereIn('status', [
             SessionStatus::ACTIVE,
-            SessionStatus::INACTIVE,
             SessionStatus::PENDING,
+            SessionStatus::WARNING,
         ])
             ->where('type', SessionType::OFFLINE)
             ->whereDate('created_at', '<', Carbon::today())
-            ->update(['status' => SessionStatus::FINISHED]);
+            ->get();
+
+        foreach ($sessions as $session) {
+            $session->update(['status' => SessionStatus::FINISHED]);
+            $this->absence($session);
+        }
+    }
+
+    public function automaticCreateSessions($professors): void
+    {
+        $this->checkYesterday();
+
+        foreach ($professors as $professor) {
+            foreach ($professor->stages as $stage) {
+
+                $lastSession = $stage->getLastForProfessorAndStage(
+                    $stage->professor_id,
+                    $stage->stage
+                );
+
+                if (! $lastSession) {
+                    continue; // skip if no previous session
+                }
+
+                $this->model->create([
+                    'professor_id' => $stage->professor_id,
+                    'stage' => $stage->stage,
+                    'start_at' => $stage->from,
+                    'end_at' => $stage->to,
+                    'type' => SessionType::OFFLINE,
+                    'professor_price' => $lastSession->professor_price,
+                    'center_price' => $lastSession->center_price,
+                    'status' => SessionStatus::PENDING,
+                    'room' => $lastSession->room,
+                ]);
+            }
+        }
+    }
+
+    public function income($input)
+    {
+        return $this->model->query()
+            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
+            ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()))
+            ->with([
+                'professor' => fn ($q) => $q->select('id', 'name'),
+                'sessionExtra',
+            ])
+            ->withCount(['sessionStudents',
+                'sessionStudents as attended_count' => function ($query) {
+                    $query->where('is_attend', 1);
+                },
+            ])
+            ->withSum('sessionStudents as total_center_price', 'center_price')
+        // ->withSum('sessionStudents as total_professor_price', 'professor_price')
+            ->withSum('sessionStudents as total_materials', 'materials')
+            ->withSum('sessionStudents as total_printables', 'printables')
+            ->get();
+
     }
 }

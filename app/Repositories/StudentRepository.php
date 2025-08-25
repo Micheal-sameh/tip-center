@@ -100,12 +100,13 @@ class StudentRepository extends BaseRepository
     {
         $student = $this->findById($id);
         $student->update([
+            'name' => $input->name,
             'stage' => $input->stage ?? $student->stage,
             'phone' => $input->phone ?? $student->phone,
             'parent_phone' => $input->parent_phone ?? $student->parent_phone,
             'parent_phone_2' => $input->parent_phone_2 ?? $student->parent_phone_2,
             'birth_date' => $input->birth_date ?? $student->birth_date,
-            'note' => $input->note ?? $student->note,
+            'note' => $input->note ?? null,
         ]);
 
         return $student;
@@ -142,5 +143,31 @@ class StudentRepository extends BaseRepository
     public function parent($input)
     {
         return $this->model->where('parent_phone', $input['phone'])->where('code', $input['code'])->first();
+    }
+
+    public function createSpecial($input)
+    {
+        $student = $this->findById($input->student_id);
+        DB::beginTransaction();
+        foreach ($input['cases'] as $case) {
+            $student->specialCases()->attach($case['professor_id'], [
+                'professor_price' => $case['professor_price'] ?? null,
+                'center_price' => $case['center_price'] ?? null,
+            ]);
+        }
+        DB::commit();
+
+    }
+
+    public function updateSpecialCase($input)
+    {
+        DB::table('student_special_cases')
+            ->where('id', $input['case_id'])
+            ->update([
+                $input['field'] => $input['value'],
+                'updated_at' => now(),
+            ]);
+
+        return back()->with('success', __('trans.updated_successfully'));
     }
 }

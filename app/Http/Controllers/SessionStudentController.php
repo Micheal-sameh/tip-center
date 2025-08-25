@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\SessionStudentDTO;
 use App\Http\Requests\AttendanceCreateRequest;
 use App\Http\Requests\StoreSessionStudentRequest;
+use App\Http\Requests\UpdateSessionStudentRequest;
 use App\Services\SessionService;
 use App\Services\SessionStudentService;
 use App\Services\StudentService;
@@ -72,12 +73,23 @@ class SessionStudentController extends Controller
         $input = new SessionStudentDTO(...$request->only(
             'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables', 'materials', 'to_pay'
         ));
+        $student = $this->studentService->show($input->student_id);
         $reminder = $this->sessionStudentService->store($input);
         if ($reminder > 0) {
-            return redirect()->route('attendances.index')->with('success', "Reminder $reminder EGP");
+            return redirect()->route('attendances.index')->with('success', " $student->name: Reminder $reminder EGP");
         }
 
         return to_route('attendances.index');
+    }
+
+    public function update(UpdateSessionStudentRequest $request, $id)
+    {
+        $input = new SessionStudentDTO(...$request->only(
+            'professor_price', 'center_price', 'printables', 'materials'
+        ));
+        $attendence = $this->sessionStudentService->update($input, $id);
+
+        return redirect()->route('sessions.students', $attendence->session_id)->with('success', "prices updated to {$attendence->student->name}");
     }
 
     public function delete($id)

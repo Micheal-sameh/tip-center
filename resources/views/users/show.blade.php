@@ -92,7 +92,7 @@
                                     <tr>
                                         <th class="text-muted ps-0 fw-normal">{{ __('trans.last_login') }}</th>
                                         <td class="fw-medium">
-                                            {{ $user->last_login_at ? $user->last_login_at->diffForHumans() : __('trans.never_logged_in') }}
+                                            {{ $user->lastLogin ? $user->lastLogin?->created_at : 'Never logged in' }}
                                         </td>
                                     </tr>
                                 </tbody>

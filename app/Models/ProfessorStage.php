@@ -21,4 +21,12 @@ class ProfessorStage extends Model
         'from' => 'datetime',
         'to' => 'datetime',
     ];
+
+    public static function getLastForProfessorAndStage($professorId, $stage)
+    {
+        return Session::where('professor_id', $professorId)
+            ->where('stage', $stage)
+            ->latest('id')
+            ->first();
+    }
 }
