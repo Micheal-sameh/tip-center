@@ -78,7 +78,7 @@
                         <label for="birth_date" class="form-label fw-semibold">Birth Date</label>
                         <input type="date" name="birth_date" id="birth_date"
                             class="form-control shadow-sm @error('birth_date') is-invalid @enderror"
-                            value="{{ old('birth_date', isset($professor) ? \Carbon\Carbon::parse($professor->birth_date)?->format('Y-m-d') : '') }}"
+                            value="{{ old('birth_date', isset($professor->birth_date) ? \Carbon\Carbon::parse($professor->birth_date)?->format('Y-m-d') : '') }}"
                             required>
                         @error('birth_date')
                             <small class="text-danger">{{ $message }}</small>
