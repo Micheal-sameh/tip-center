@@ -128,7 +128,6 @@
                                     <th>{{ number_format($totals['printables'], 1) }}</th>
                                     <th>{{ number_format($totals['materials'], 1) }}</th>
                                     <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
-                                    <th>{{ number_format(0, 1) }}</th>
                                     <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
                                     <th>{{ $totals['students'] }}</th>
                                     <th class="fw-bold text-primary">
