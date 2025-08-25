@@ -256,7 +256,7 @@
                         </div>
                     </div>
 
-                    @can('users_update')
+                    @can('users_profile_pic')
                         <form action="{{ route('users.pic_upload', $user->id) }}" method="POST"
                             enctype="multipart/form-data" class="px-3">
                             @csrf

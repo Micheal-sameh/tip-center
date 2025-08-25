@@ -72,6 +72,7 @@ class UserRepository extends BaseRepository
             'email' => $input->email ?? $user->email,
             'phone' => $input->phone ?? $user->phone,
             'status' => $input->status ?? $user->status,
+            'birth_date' => $input->birth_date ?? null,
         ]);
         $currentRole = $user->roles->first();
         if ($currentRole->id != $input->role_id) {

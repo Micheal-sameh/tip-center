@@ -79,4 +79,7 @@ return [
     'Available Sessions' => 'Available Sessions',
     'reports' => 'Reports',
     'charges' => 'Charges',
+    'choose_photo' => 'Choose Photo',
+    'upload' => 'Upload',
+    'profile_picture' => 'Profile Picture',
 ];

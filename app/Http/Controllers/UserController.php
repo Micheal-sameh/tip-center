@@ -21,6 +21,7 @@ class UserController extends Controller
         $this->middleware('permission:users_delete')->only('delete');
         $this->middleware('permission:users_changeStatus')->only('changeStatus');
         $this->middleware('permission:users_resetPassword')->only('resetPassword');
+        $this->middleware('permission:users_profile_pic')->only('profilePic');
     }
 
     public function index()
