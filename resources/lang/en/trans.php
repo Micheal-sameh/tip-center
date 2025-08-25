@@ -77,4 +77,5 @@ return [
     'Students' => 'Students',
     'Selected Student' => 'Selected Student',
     'Available Sessions' => 'Available Sessions',
+    'reports' => 'Reports',
 ];

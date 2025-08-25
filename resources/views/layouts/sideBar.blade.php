@@ -271,23 +271,34 @@
                         </li>
                     @endcan
 
-                    <li class="nav-item">
-                        <a href="{{ route('reports.index') }}" class="nav-link">
-                            <i class="fas fa-file-alt me-2"></i> {{ __('trans.session_reports') }}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('reports.*') ? 'active' : '' }}"
+                            href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fas fa-file-alt me-2"></i> {{ __('trans.reports') }}
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('reports.index') ? 'active' : '' }}"
+                                    href="{{ route('reports.index') }}">
+                                    <i class="fas fa-file-alt me-2"></i> {{ __('trans.session_reports') }}
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('reports.student') ? 'active' : '' }}"
+                                    href="{{ route('reports.student') }}">
+                                    <i class="fas fa-user-graduate me-2"></i> {{ __('trans.student_reports') }}
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
+                                    href="{{ route('reports.income') }}">
+                                    <i class="fas fa-coins me-2"></i> {{ __('trans.income') }}
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('reports.student') }}" class="nav-link">
-                            <i class="fas fa-user-graduate me-2"></i> {{ __('trans.student_reports') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('reports.income') }}"
-                            class="nav-link {{ request()->routeIs('reports.income') ? 'active' : '' }}">
-                            <i class="fas fa-coins me-2"></i> {{ __('trans.income') }}
-                        </a>
-                    </li>
 
 
                     @can('students_view')
