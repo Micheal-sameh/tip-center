@@ -45,7 +45,9 @@
                                 <th>Amount</th>
                                 <th>Gap</th>
                                 <th>Date</th>
-                                <th>Actions</th>
+                                @can('charges_delete')
+                                    <th>Actions</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
@@ -60,17 +62,18 @@
                                         </span>
                                     </td>
                                     <td>{{ $charge->created_at->format('d-m-Y') }}</td>
-                                    <td>
-                                        <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
+                                    @can('charges_delete')
+                                        <td>
+                                            <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    @endcan
                                 </tr>
                             @empty
                                 <tr>
@@ -100,8 +103,7 @@
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure?')">
+                                        <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </form>
