@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\ChargeRepository;
 use App\Repositories\SessionRepository;
 use App\Repositories\SessionStudentRepository;
 use App\Repositories\StudentRepository;
@@ -12,6 +13,7 @@ class ReportService
         protected SessionStudentRepository $sessionStudentRepository,
         protected SessionRepository $sessionRepository,
         protected StudentRepository $studentRepository,
+        protected ChargeRepository $chargeRepository,
     ) {}
 
     public function index($input)
@@ -51,6 +53,8 @@ class ReportService
     public function income($input)
     {
         $sessions = $this->sessionRepository->income($input);
+        $charges = $this->chargeRepository->income($input);
+        $gap = $this->chargeRepository->income($input);
 
         $totals = [
             'students' => 0,
@@ -80,6 +84,6 @@ class ReportService
             + $totals['markers']
             + $totals['copies'];
 
-        return compact('sessions', 'totals');
+        return compact('sessions', 'totals', 'charges', 'gap');
     }
 }

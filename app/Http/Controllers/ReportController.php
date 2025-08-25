@@ -128,11 +128,13 @@ class ReportController extends Controller
 
     public function income(incomeFilterRequest $request)
     {
-        $data = $this->reportService->income($request);
+        $data = $this->reportService->income($request->validated());
         $sessions = $data['sessions'];
         $totals = $data['totals'];
+        $charges = $data['charges'];
+        $gap = $data['gap'];
 
-        return view('reports.income', compact('sessions', 'totals'));
+        return view('reports.income', compact('sessions', 'totals', 'charges', 'gap'));
     }
 
     public function incomePdf(incomeFilterRequest $request)
@@ -140,10 +142,11 @@ class ReportController extends Controller
         $data = $this->reportService->income($request->validated());
         $sessions = $data['sessions'];
         $totals = $data['totals'];
+        $charges = $data['charges'];
         $date_from = Carbon::parse($request->date_from) ?? today();
         $date_to = Carbon::parse($request->date_to) ?? today();
 
-        $pdf = Pdf::loadView('reports.income-pdf', compact('sessions', 'totals', 'date_from', 'date_to'));
+        $pdf = Pdf::loadView('reports.income-pdf', compact('sessions', 'totals', 'date_from', 'date_to', 'charges', 'gap'));
         $filename = Str::slug('income').'.pdf';
 
         return $pdf->download($filename);

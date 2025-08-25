@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SessionController;
@@ -133,6 +134,13 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingController::class, 'index'])->name('settings.index');
             Route::put('/', [SettingController::class, 'update'])->name('settings.update');
+        });
+
+        Route::prefix('charges')->group(function () {
+            Route::get('/', [ChargeController::class, 'index'])->name('charges.index');
+            Route::get('/create', [ChargeController::class, 'create'])->name('charges.create');
+            Route::post('/', [ChargeController::class, 'store'])->name('charges.store');
+            Route::delete('/{id}', [ChargeController::class, 'delete'])->name('charges.destroy');
         });
     });
 

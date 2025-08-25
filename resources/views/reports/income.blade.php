@@ -134,9 +134,32 @@
                                         {{ number_format($totals['overall_total'], 1) }}
                                     </th>
                                 </tr>
+
                             </tfoot>
                         @endif
                     </table>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow border-0 rounded-4 mb-4">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-md-6 text-end fw-bold">Gap:</div>
+                    <div class="col-md-6 fw-bold text-danger">
+                        {{ number_format($gap ?? 0, 1) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-end fw-bold">Charges Total:</div>
+                    <div class="col-md-6 fw-bold text-danger">
+                        {{ number_format(-$charges ?? 0, 1) }}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6 text-end fw-bold">Final Total:</div>
+                    <div class="col-md-6 fw-bold text-success">
+                        {{ number_format(($totals['overall_total'] - $charges + $gap ?? 0) - ($totals['charges_total'] ?? 0), 1) }}
+                    </div>
                 </div>
             </div>
         </div>

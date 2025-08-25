@@ -299,8 +299,6 @@
                         </ul>
                     </li>
 
-
-
                     @can('students_view')
                         <li class="nav-item">
                             <a href="{{ route('students.index') }}" class="nav-link">
@@ -308,6 +306,11 @@
                             </a>
                         </li>
                     @endcan
+                    <li class="nav-item">
+                        <a href="{{ route('charges.index') }}" class="nav-link">
+                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.charges') }}
+                        </a>
+                    </li>
 
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
