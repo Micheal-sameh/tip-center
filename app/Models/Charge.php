@@ -12,6 +12,6 @@ class Charge extends Model
     protected $fillable = [
         'title',
         'amount',
-        'is_gap',
+        'type',
     ];
 }

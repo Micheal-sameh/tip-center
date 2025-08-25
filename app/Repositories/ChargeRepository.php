@@ -44,7 +44,7 @@ class ChargeRepository extends BaseRepository
         $charge = $this->model->create([
             'title' => $input['title'],
             'amount' => $input['amount'],
-            'is_gap' => $input['is_gap'] ?? 0,
+            'type' => $input['type'],
         ]);
         DB::commit();
 
