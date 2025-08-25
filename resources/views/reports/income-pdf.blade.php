@@ -177,7 +177,6 @@
                     <th>FP</th>
                     <th>LP</th>
                     <th>FE</th>
-                    <th>LE</th>
                     <th>M</th>
                     <th>NP</th>
                     <th>Session Total</th>
@@ -191,7 +190,7 @@
                             {{ $session->professor->name ?? '-' }}
                             ({{ App\Enums\StagesEnum::getStringValue($session->stage) }})
                         </td>
-                        <td>{{ $session->session_students_count ?: '-' }}</td>
+                        <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}</td>
                         <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
                         </td>
                         <td>{{ $session->total_printables > 0 ? number_format($session->total_printables, 1) : '-' }}
@@ -200,10 +199,9 @@
                         </td>
                         <td>{{ $session->sessionExtra?->copies > 0 ? number_format($session->sessionExtra?->copies, 1) : '-' }}
                         </td>
-                        <td>{{ number_format(0, 1) }}</td>
                         <td>{{ $session->sessionExtra?->markers > 0 ? number_format($session->sessionExtra?->markers, 1) : '-' }}
                         </td>
-                        <td>{{ number_format(0, 1) }}</td>
+                        <td>{{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}</td>
                         <td class="text-primary">
                             {{ number_format(
                                 $session->total_center_price +
