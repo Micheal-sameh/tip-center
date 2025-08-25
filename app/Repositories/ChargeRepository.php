@@ -74,7 +74,7 @@ class ChargeRepository extends BaseRepository
     private function incomeQuery($input)
     {
         return $this->model
-            ->when($input['date_from'], fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
-            ->when($input['date_to'], fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']));
+            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']));
     }
 }

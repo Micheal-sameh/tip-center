@@ -54,7 +54,7 @@ class ReportService
     {
         $sessions = $this->sessionRepository->income($input);
         $charges = $this->chargeRepository->income($input);
-        $gap = $this->chargeRepository->income($input);
+        $gap = $this->chargeRepository->incomeGap($input);
 
         $totals = [
             'students' => 0,

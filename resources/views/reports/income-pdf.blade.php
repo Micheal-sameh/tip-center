@@ -19,6 +19,7 @@
             background: #fff;
             border: 1px solid #dee2e6;
             padding: 20px;
+            box-sizing: border-box;
         }
 
         .header {
@@ -26,20 +27,19 @@
             margin-bottom: 20px;
             border-bottom: 1px solid #dee2e6;
             padding-bottom: 10px;
+            display: flex;
+            align-items: center;
         }
 
         .header img {
             height: 50px;
-            vertical-align: middle;
             margin-right: 10px;
         }
 
         .header h1 {
-            display: inline-block;
             font-size: 20px;
             color: #2c6fbb;
             margin: 0;
-            vertical-align: middle;
         }
 
         .report-info {
@@ -48,12 +48,13 @@
             border: 1px solid #dee2e6;
             background: #e9f2fb;
             padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
         }
 
         .info-item {
-            display: inline-block;
-            width: 32%;
-            vertical-align: top;
+            flex: 1;
         }
 
         .info-item strong {
@@ -102,51 +103,105 @@
             font-weight: bold;
         }
 
+        .summary-section {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .summary-card {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 50%;
+            margin-right: auto;
+        }
+
+        .summary-row {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #dee2e6;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-size: 14px;
+        }
+
+        .summary-label {
+            flex: 1;
+            text-align: left;
+            font-weight: bold;
+            padding-right: 15px;
+            color: #495057;
+        }
+
+        .summary-value {
+            flex: 1;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .text-danger {
+            color: #dc3545;
+        }
+
+        .text-success {
+            color: #28a745;
+        }
+
         .summary {
-            margin-top: 15px;
+            margin-top: 20px;
             text-align: right;
         }
 
         .total-box {
             display: inline-block;
-            border: 1px solid #2c6fbb;
+            border: 2px solid #2c6fbb;
             background: #e9f2fb;
-            padding: 10px 15px;
+            padding: 12px 20px;
             text-align: right;
+            border-radius: 6px;
         }
 
         .total-label {
             font-size: 12px;
             color: #6c757d;
+            margin-bottom: 5px;
         }
 
         .total-amount {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             color: #2c6fbb;
         }
 
         .footer {
-            margin-top: 20px;
+            margin-top: 30px;
             text-align: center;
             font-size: 10px;
             color: #6c757d;
             border-top: 1px solid #dee2e6;
             padding-top: 10px;
         }
+
+        .final-total {
+            background-color: #e9f2fb;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
     <div class="report-container">
-        {{-- <!-- Header -->
-        @php
-            $logo = App\Models\Setting::where('name', 'logo')->first();
-            $faviconUrl = $logo?->getFirstMediaUrl('app_logo');
-        @endphp --}}
         <div class="header">
-
-            {{-- <img src="{{ $faviconUrl }}" alt="Logo"> --}}
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iNTAiIGZpbGw9IiMyYzZmYmIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+TG9nbzwvdGV4dD48L3N2Zz4=" alt="Logo">
             <h1>Sessions Income Report</h1>
         </div>
 
@@ -216,7 +271,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="11">No sessions found for the selected period</td>
+                        <td colspan="10" style="text-align: center;">No sessions found for the selected period</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -237,13 +292,37 @@
             @endif
         </table>
 
+        <!-- Summary Section -->
         @if (count($sessions))
-            <div class="summary">
-                <div class="total-box">
-                    <div class="total-label">Grand Total</div>
-                    <div class="total-amount">{{ number_format($totals['overall_total'], 1) }} EGP</div>
+            <div class="summary-section">
+                <div class="summary-card">
+                    <div class="summary-row">
+                        <div class="summary-label">Gap:</div>
+                        <div class="summary-value text-danger">
+                            {{ number_format($gap ?? 0, 1) }} EGP
+                        </div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">Charges Total:</div>
+                        <div class="summary-value text-danger">
+                            -{{ number_format($charges ?? 0, 1) }} EGP
+                        </div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">Final Total:</div>
+                        <div class="summary-value text-success final-total">
+                            {{ number_format(($totals['overall_total'] - $charges + $gap ?? 0) - ($totals['charges_total'] ?? 0), 1) }} EGP
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            {{-- <div class="summary">
+                <div class="total-box">
+                    <div class="total-label">Grand Total</div>
+                    <div class="total-amount"> {{ number_format(($totals['overall_total'] - $charges + $gap ?? 0) - ($totals['charges_total'] ?? 0), 1) }} EGP</div>
+                </div>
+            </div> --}}
         @endif
 
         <div class="footer">

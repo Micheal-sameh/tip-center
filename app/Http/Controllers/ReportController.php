@@ -143,6 +143,7 @@ class ReportController extends Controller
         $sessions = $data['sessions'];
         $totals = $data['totals'];
         $charges = $data['charges'];
+        $gap = $data['gap'];
         $date_from = Carbon::parse($request->date_from) ?? today();
         $date_to = Carbon::parse($request->date_to) ?? today();
 
