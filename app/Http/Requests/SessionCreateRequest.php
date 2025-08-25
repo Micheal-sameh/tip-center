@@ -18,10 +18,10 @@ class SessionCreateRequest extends FormRequest
             'center_price' => 'required|numeric|min:0',
             'printables' => 'numeric|min:0',
             'materials' => 'numeric|min:0',
-            'room' => 'numeric|min:1',
-            'start_at' => 'date_format:H:i',
-            'end_at' => 'date_format:H:i|after:start_at',
-            'type' => 'in:'.implode(',', array_column(SessionType::all(), 'value')),
+            'room' => 'numeric|min:1'.($this->type == SessionType::OFFLINE ? '|required' : ''),
+            'start_at' => 'date_format:H:i'.($this->type == SessionType::OFFLINE ? '|required' : ''),
+            'end_at' => 'date_format:H:i|after:start_at'.($this->type == SessionType::OFFLINE ? '|required' : ''),
+            'type' => 'required|in:'.implode(',', array_column(SessionType::all(), 'value')),
         ];
     }
 }
