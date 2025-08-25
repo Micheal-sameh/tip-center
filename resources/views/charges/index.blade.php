@@ -33,10 +33,10 @@
             </div>
         </form>
 
-        <!-- Table -->
         <div class="card shadow border-0 rounded-4">
             <div class="card-body">
-                <div class="table-responsive">
+                <!-- Desktop Table -->
+                <div class="table-responsive d-none d-md-block">
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
@@ -60,19 +60,17 @@
                                         </span>
                                     </td>
                                     <td>{{ $charge->created_at->format('d-m-Y') }}</td>
-                                    @if ($charge->created_at->isToday())
-                                        <td>
-                                            <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
-                                                class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Are you sure?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    @endif
+                                    <td>
+                                        <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Are you sure?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -83,43 +81,41 @@
                     </table>
                 </div>
 
+                <!-- Mobile Cards -->
+                <div class="d-md-none">
+                    @forelse ($charges as $charge)
+                        <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-1">{{ $charge->title }}</h5>
+                                <p class="mb-1"><strong>Amount:</strong> {{ $charge->amount }}</p>
+                                <p class="mb-1">
+                                    <strong>Gap:</strong>
+                                    <span class="badge {{ $charge->is_gap ? 'bg-success' : 'bg-secondary' }}">
+                                        {{ $charge->is_gap ? 'Yes' : 'No' }}
+                                    </span>
+                                </p>
+                                <p class="mb-2"><strong>Date:</strong> {{ $charge->created_at->format('d-m-Y') }}</p>
+                                <div class="d-flex justify-content-end">
+                                    <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
+                                        class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Are you sure?')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center text-muted">No records found.</p>
+                    @endforelse
+                </div>
+
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center">
-                    @if ($charges->hasPages())
-                        <nav>
-                            <ul class="pagination">
-                                {{-- Previous Page Link --}}
-                                @if ($charges->onFirstPage())
-                                    <li class="page-item disabled">
-                                        <span class="page-link">&laquo;</span>
-                                    </li>
-                                @else
-                                    <li class="page-item">
-                                        <a class="page-link" href="{{ $charges->previousPageUrl() }}"
-                                            rel="prev">&laquo;</a>
-                                    </li>
-                                @endif
-
-                                {{-- Pagination Elements --}}
-                                @foreach ($charges->getUrlRange(1, $charges->lastPage()) as $page => $url)
-                                    <li class="page-item {{ $charges->currentPage() === $page ? 'active' : '' }}">
-                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                    </li>
-                                @endforeach
-
-                                {{-- Next Page Link --}}
-                                @if ($charges->hasMorePages())
-                                    <li class="page-item">
-                                        <a class="page-link" href="{{ $charges->nextPageUrl() }}" rel="next">&raquo;</a>
-                                    </li>
-                                @else
-                                    <li class="page-item disabled">
-                                        <span class="page-link">&raquo;</span>
-                                    </li>
-                                @endif
-                            </ul>
-                        </nav>
-                    @endif
+                    {{ $charges->links() }}
                 </div>
             </div>
         </div>
