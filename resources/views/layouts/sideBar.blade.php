@@ -270,7 +270,7 @@
                             </a>
                         </li>
                     @endcan
-                    @canany(['sessions_report', 'students_report', 'income_report'])
+                    @canany(['sessions_report', 'students_report', 'income_report', 'monthly_income'])
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ request()->routeIs('reports.*') ? 'active' : '' }}"
                                 href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown"
@@ -299,6 +299,14 @@
                                         <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
                                             href="{{ route('reports.income') }}">
                                             <i class="fas fa-coins me-2"></i> {{ __('trans.income') }}
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('monthly_income')
+                                    <li>
+                                        <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
+                                            href="{{ route('reports.monthly-income') }}">
+                                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.monthly_income') }}
                                         </a>
                                     </li>
                                 @endcan

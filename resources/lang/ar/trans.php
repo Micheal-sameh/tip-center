@@ -82,4 +82,5 @@ return [
     'choose_photo' => 'اختار صوره',
     'upload' => 'رفع الصورة',
     'profile_picture' => 'الصورة الشخصية',
+    'monthly_income' => 'التقرير الشهري',
 ];

@@ -82,4 +82,5 @@ return [
     'choose_photo' => 'Choose Photo',
     'upload' => 'Upload',
     'profile_picture' => 'Profile Picture',
+    'monthly_income' => 'Monthly Report',
 ];

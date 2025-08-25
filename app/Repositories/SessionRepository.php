@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ChargeType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Enums\SessionType;
@@ -317,9 +318,82 @@ class SessionRepository extends BaseRepository
                 },
             ])
             ->withSum('sessionStudents as total_center_price', 'center_price')
-        // ->withSum('sessionStudents as total_professor_price', 'professor_price')
             ->withSum('sessionStudents as total_materials', 'materials')
             ->withSum('sessionStudents as total_printables', 'printables')
+            ->get();
+    }
+
+    public function monthlyIncome($month)
+    {
+
+        return DB::table('sessions as s')
+            ->selectRaw('
+        DATE(s.created_at) as day,
+        COALESCE(SUM(ss.center_price), 0) as center,
+        COALESCE(SUM(ss.printables), 0) as print,
+        COALESCE(SUM(e.markers), 0) as markers,
+        COALESCE(SUM(e.copies), 0) as copies,
+        COALESCE(MAX(c.charges_gap), 0) as charges_gap,
+        COALESCE(MAX(c.charges_center), 0) as charges_center,
+        COALESCE(MAX(c.charges_markers), 0) as charges_markers,
+        COALESCE(MAX(c.charges_others), 0) as charges_others,
+        COALESCE(MAX(c.charges_copies), 0) as charges_copies,
+
+        -- income
+        (
+            COALESCE(SUM(ss.center_price), 0) +
+            COALESCE(SUM(ss.printables), 0) +
+            COALESCE(SUM(e.copies), 0) +
+            COALESCE(MAX(c.charges_gap), 0)
+        ) as income_total,
+
+        -- charges total
+        (
+            COALESCE(MAX(c.charges_center), 0) +
+            COALESCE(MAX(c.charges_copies), 0) +
+            COALESCE(MAX(c.charges_markers), 0) +
+            COALESCE(MAX(c.charges_others), 0)
+        ) as charges_total,
+
+        -- difference
+        (
+            (
+                COALESCE(SUM(ss.center_price), 0) +
+                COALESCE(SUM(ss.printables), 0) +
+                COALESCE(SUM(e.copies), 0) +
+                COALESCE(MAX(c.charges_gap), 0)
+            ) -
+            (
+                COALESCE(MAX(c.charges_center), 0) +
+                COALESCE(MAX(c.charges_copies), 0) +
+                COALESCE(MAX(c.charges_markers), 0) +
+                COALESCE(MAX(c.charges_others), 0)
+            )
+        ) as difference_total,
+
+        -- net values
+        (COALESCE(SUM(ss.center_price), 0) - COALESCE(MAX(c.charges_center), 0)) as net_center,
+        ((COALESCE(SUM(e.copies), 0) + COALESCE(SUM(ss.printables), 0)) - COALESCE(MAX(c.charges_copies), 0)) as net_copies,
+        (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
+        (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
+    ')
+            ->leftJoin('session_students as ss', 's.id', '=', 'ss.session_id')
+            ->leftJoin('session_extras as e', 's.id', '=', 'e.session_id')
+            ->leftJoin(DB::raw('(
+        SELECT
+            DATE(created_at) as charge_day,
+            SUM(CASE WHEN type = '.(int) ChargeType::CENTER.' THEN amount ELSE 0 END) as charges_center,
+            SUM(CASE WHEN type = '.(int) ChargeType::COPIES.' THEN amount ELSE 0 END) as charges_copies,
+            SUM(CASE WHEN type = '.(int) ChargeType::MARKERS.' THEN amount ELSE 0 END) as charges_markers,
+            SUM(CASE WHEN type = '.(int) ChargeType::OTHERS.' THEN amount ELSE 0 END) as charges_others,
+            SUM(CASE WHEN type = '.(int) ChargeType::GAP.' THEN amount ELSE 0 END) as charges_gap
+        FROM charges
+        GROUP BY charge_day
+    ) c'), DB::raw('DATE(s.created_at)'), '=', 'c.charge_day')
+            ->whereMonth('s.created_at', carbon::parse($month)->month)
+            ->whereYear('s.created_at', carbon::parse($month)->year)
+            ->groupBy(DB::raw('DATE(s.created_at)'))
+            ->orderBy('day')
             ->get();
 
     }
