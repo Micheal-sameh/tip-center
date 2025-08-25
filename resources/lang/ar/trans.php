@@ -78,4 +78,5 @@ return [
     'Selected Student' => 'الطالب',
     'Available Sessions' => 'الحصص المتاحه',
     'reports' => 'التقارير',
+    'charges' => 'مصروفات',
 ];
