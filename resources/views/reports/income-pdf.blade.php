@@ -224,14 +224,13 @@
                 <tfoot>
                     <tr>
                         <th colspan="2" class="text-start">Totals:</th>
-                        <th>{{ $totals['students'] }}</th>
+                        <th>{{ $totals['attended_count'] }}</th>
                         <th>{{ number_format($totals['center_price'], 1) }}</th>
                         <th>{{ number_format($totals['printables'], 1) }}</th>
                         <th>{{ number_format($totals['materials'], 1) }}</th>
                         <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
-                        <th>{{ number_format(0, 1) }}</th>
                         <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
-                        <th>{{ number_format(0, 1) }}</th>
+                        <th>{{ $totals['students'] }}</th>
                         <th class="text-primary">{{ number_format($totals['overall_total'], 1) }}</th>
                     </tr>
                 </tfoot>
