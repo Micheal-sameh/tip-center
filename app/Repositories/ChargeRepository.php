@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ChargeType;
 use App\Models\Charge;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -44,7 +45,7 @@ class ChargeRepository extends BaseRepository
         $charge = $this->model->create([
             'title' => $input['title'],
             'amount' => $input['amount'],
-            'is_gap' => $input['is_gap'] ?? 0,
+            'type' => $input['type'],
         ]);
         DB::commit();
 
@@ -54,14 +55,14 @@ class ChargeRepository extends BaseRepository
     public function income($input)
     {
         return $this->incomeQuery($input)
-            ->where('is_gap', 0)
+            ->where('type', '!=', ChargeType::GAP)
             ->sum('amount');
     }
 
     public function incomeGap($input)
     {
         return $this->incomeQuery($input)
-            ->where('is_gap', 1)
+            ->where('type', ChargeType::GAP)
             ->sum('amount');
     }
 

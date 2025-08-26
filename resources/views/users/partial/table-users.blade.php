@@ -56,7 +56,7 @@
                                                 class="d-inline">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-link p-0 m-0 align-baseline"
+                                                <button type="submit" class="btn btn-link p-0 m-0 align-baseline me-3"
                                                     title="{{ __('trans.reset_password') }}">
                                                     <i class="fas fa-key text-primary"></i>
                                                 </button>
@@ -66,7 +66,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         @endcan
-                                        @if(auth()->user()->can('users_delete') && !$user->hasRole('admin'))
+                                        @if (auth()->user()->can('users_delete') && !$user->hasRole('admin'))
                                             <form action="{{ route('users.delete', $user) }}" method="POST"
                                                 class="d-inline-block"
                                                 onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
@@ -78,47 +78,47 @@
                                                 </button>
                                             </form>
                                         @endcan
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center text-muted py-4">{{ __('trans.no_users_found') }}
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">{{ __('trans.no_users_found') }}
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        {{-- Mobile Cards --}}
-        <div class="d-md-none">
-            @forelse ($users as $user)
-                <div class="card shadow-sm mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold text-primary">{{ $user->name }}</h5>
-                        <p class="mb-1"><strong>{{ __('trans.phone') }}:</strong> {{ $user->phone }}</p>
-                        <p class="mb-1"><strong>{{ __('trans.role') }}:</strong> <span
-                                class="badge bg-info text-dark">{{ $user->roles->first()?->name ?? '-' }}</span></p>
-                        <p class="mb-1"><strong>{{ __('trans.birth_date') }}:</strong> {{ $user->birth_date }}</p>
-                        <p class="mb-2"><strong>{{ __('trans.status') }}:</strong>
-                            <button onclick="toggleStatus({{ $user->id }})"
-                                class="status-btn badge border-0 px-3 py-2 rounded-pill {{ $user->status == 1 ? 'bg-success' : 'bg-secondary' }}"
-                                data-user-id="{{ $user->id }}">
-                                {{ $user->status == 1 ? __('trans.active') : __('trans.inactive') }}
-                            </button>
-                        </p>
-                        <div class="d-flex justify-content-end gap-2">
-                            @can('users_view')
-                                <a href="{{ route('users.show', $user) }}" class="btn btn-sm btn-outline-info"><i
-                                        class="fas fa-eye"></i></a>
-                            @endcan
-                            @can('users_update')
-                                <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-warning"><i
-                                        class="fas fa-edit"></i></a>
-                            @endcan
-                            {{-- @can('users_delete')
+    {{-- Mobile Cards --}}
+    <div class="d-md-none">
+        @forelse ($users as $user)
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-primary">{{ $user->name }}</h5>
+                    <p class="mb-1"><strong>{{ __('trans.phone') }}:</strong> {{ $user->phone }}</p>
+                    <p class="mb-1"><strong>{{ __('trans.role') }}:</strong> <span
+                            class="badge bg-info text-dark">{{ $user->roles->first()?->name ?? '-' }}</span></p>
+                    <p class="mb-1"><strong>{{ __('trans.birth_date') }}:</strong> {{ $user->birth_date }}</p>
+                    <p class="mb-2"><strong>{{ __('trans.status') }}:</strong>
+                        <button onclick="toggleStatus({{ $user->id }})"
+                            class="status-btn badge border-0 px-3 py-2 rounded-pill {{ $user->status == 1 ? 'bg-success' : 'bg-secondary' }}"
+                            data-user-id="{{ $user->id }}">
+                            {{ $user->status == 1 ? __('trans.active') : __('trans.inactive') }}
+                        </button>
+                    </p>
+                    <div class="d-flex justify-content-end gap-2">
+                        @can('users_view')
+                            <a href="{{ route('users.show', $user) }}" class="btn btn-sm btn-outline-info"><i
+                                    class="fas fa-eye"></i></a>
+                        @endcan
+                        @can('users_update')
+                            <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-warning"><i
+                                    class="fas fa-edit"></i></a>
+                        @endcan
+                        {{-- @can('users_delete')
                                 <form action="{{ route('users.delete', $user) }}" method="POST"
                                     onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
                                     @csrf
@@ -127,100 +127,101 @@
                                             class="fas fa-trash"></i></button>
                                 </form>
                             @endcan --}}
-                        </div>
                     </div>
                 </div>
-            @empty
-                <p class="text-muted text-center">{{ __('trans.no_users_found') }}</p>
-            @endforelse
-        </div>
+            </div>
+        @empty
+            <p class="text-muted text-center">{{ __('trans.no_users_found') }}</p>
+        @endforelse
+    </div>
 
-        {{-- Pagination --}}
-        <div class="d-flex justify-content-center pt-2">
-            @if ($users->hasPages())
-                <nav>
-                    <ul class="pagination">
-                        {{-- Previous Page Link --}}
-                        @if ($users->onFirstPage())
-                            <li class="page-item disabled">
-                                <span class="page-link">&laquo;</span>
-                            </li>
-                        @else
-                            <li class="page-item">
-                                <a class="page-link" href="{{ $users->previousPageUrl() }}" rel="prev">&laquo;</a>
-                            </li>
-                        @endif
+    {{-- Pagination --}}
+    <div class="d-flex justify-content-center pt-2">
+        @if ($users->hasPages())
+            <nav>
+                <ul class="pagination">
+                    {{-- Previous Page Link --}}
+                    @if ($users->onFirstPage())
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;</span>
+                        </li>
+                    @else
+                        <li class="page-item">
+                            <a class="page-link" href="{{ $users->previousPageUrl() }}" rel="prev">&laquo;</a>
+                        </li>
+                    @endif
 
-                        {{-- Pagination Elements --}}
-                        @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
-                            <li class="page-item {{ $users->currentPage() === $page ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                            </li>
-                        @endforeach
+                    {{-- Pagination Elements --}}
+                    @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
+                        <li class="page-item {{ $users->currentPage() === $page ? 'active' : '' }}">
+                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                        </li>
+                    @endforeach
 
-                        {{-- Next Page Link --}}
-                        @if ($users->hasMorePages())
-                            <li class="page-item">
-                                <a class="page-link" href="{{ $users->nextPageUrl() }}" rel="next">&raquo;</a>
-                            </li>
-                        @else
-                            <li class="page-item disabled">
-                                <span class="page-link">&raquo;</span>
-                            </li>
-                        @endif
-                    </ul>
-                </nav>
-            @endif
-        </div>
+                    {{-- Next Page Link --}}
+                    @if ($users->hasMorePages())
+                        <li class="page-item">
+                            <a class="page-link" href="{{ $users->nextPageUrl() }}" rel="next">&raquo;</a>
+                        </li>
+                    @else
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;</span>
+                        </li>
+                    @endif
+                </ul>
+            </nav>
+        @endif
+    </div>
 
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        {{-- Status Toggle Script --}}
-        <script>
-            function toggleStatus(userId) {
-                const buttons = document.querySelectorAll(`.status-btn[data-user-id="${userId}"]`);
-                let currentStatus = null;
+    {{-- Status Toggle Script --}}
+    <script>
+        function toggleStatus(userId) {
+            const buttons = document.querySelectorAll(`.status-btn[data-user-id="${userId}"]`);
+            let currentStatus = null;
 
-                buttons.forEach(btn => {
-                    if (currentStatus === null) {
-                        currentStatus = btn.classList.contains('bg-success');
-                    }
-                    btn.disabled = true;
-                    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
-                });
+            buttons.forEach(btn => {
+                if (currentStatus === null) {
+                    currentStatus = btn.classList.contains('bg-success');
+                }
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+            });
 
-                const newStatus = !currentStatus;
+            const newStatus = !currentStatus;
 
-                fetch(`/users/${userId}/status`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            status: newStatus
-                        })
+            fetch(`/users/${userId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: newStatus
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (!data.success) throw new Error(data.message || 'Failed to update status');
-                        const isActive = data.status ;
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.message || 'Failed to update status');
+                    const isActive = data.status;
 
-                        buttons.forEach(btn => {
-                            btn.classList.toggle('bg-success', isActive);
-                            btn.classList.toggle('bg-secondary', !isActive);
-                            btn.innerHTML = (isActive == 1) ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
-                            btn.disabled = false;
-                        });
-                    })
-                    .catch(err => {
-                        buttons.forEach(btn => {
-                            btn.innerHTML = '{{ __('trans.status') }}';
-                            btn.disabled = false;
-                        });
-                        alert("{{ __('trans.failed_to_update_status') }}: " + err.message);
+                    buttons.forEach(btn => {
+                        btn.classList.toggle('bg-success', isActive);
+                        btn.classList.toggle('bg-secondary', !isActive);
+                        btn.innerHTML = (isActive == 1) ? '{{ __('trans.active') }}' :
+                            '{{ __('trans.inactive') }}';
+                        btn.disabled = false;
                     });
-            }
-        </script>
-    @endsection
+                })
+                .catch(err => {
+                    buttons.forEach(btn => {
+                        btn.innerHTML = '{{ __('trans.status') }}';
+                        btn.disabled = false;
+                    });
+                    alert("{{ __('trans.failed_to_update_status') }}: " + err.message);
+                });
+        }
+    </script>
+@endsection

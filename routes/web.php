@@ -123,6 +123,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/session-pdf', [ReportController::class, 'downloadSessionReport'])->name('reports.session.pdf');
             Route::get('/income', [ReportController::class, 'income'])->name('reports.income');
             Route::get('/income-pdf', [ReportController::class, 'incomePdf'])->name('reports.incomePdf');
+            Route::get('/monthly-income', [ReportController::class, 'monthlyIncome'])->name('reports.monthly-income');
         });
 
         Route::prefix('student-special-cases')->group(function () {

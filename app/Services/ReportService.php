@@ -86,4 +86,30 @@ class ReportService
 
         return compact('sessions', 'totals', 'charges', 'gap');
     }
+
+    public function monthlyIncome($month)
+    {
+        $reports = $this->sessionRepository->monthlyIncome($month);
+        $center = $reports->sum('center');
+        $copies = $reports->sum(function ($item) {
+            return $item->print + $item->copies;
+        });
+        $markers = $reports->sum('markers');
+        $total_income = $reports->sum('income_total');
+        $gap = $reports->sum('charges_gap');
+        $charges_center = $reports->sum('charges_center');
+        $charges_markers = $reports->sum('charges_markers');
+        $charges_others = $reports->sum('charges_others');
+        $charges_copies = $reports->sum('charges_copies');
+        $total_charges = $reports->sum('charges_total');
+        $total_difference = $reports->sum('difference_total');
+        $net_center = $reports->sum('net_center');
+        $net_copies = $reports->sum('net_copies');
+        $net_markers = $reports->sum('net_markers');
+        $net_others = $reports->sum('net_others');
+
+        return compact('reports', 'center', 'copies', 'markers', 'total_income', 'gap', 'charges_center',
+            'charges_markers', 'charges_others', 'charges_copies', 'total_charges', 'total_difference',
+            'net_center', 'net_copies', 'net_markers', 'net_others');
+    }
 }

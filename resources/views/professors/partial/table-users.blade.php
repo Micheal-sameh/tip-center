@@ -59,6 +59,9 @@
             </div>
         </div>
 
+        @php
+            $has_balance = $professors->contains(fn($professor) => $professor->balance > 0);
+        @endphp
         <!-- Main Content Card -->
         <div class="card shadow-sm">
             <div class="card-body p-0">
@@ -78,7 +81,9 @@
                                     <th>{{ __('trans.status') }}</th>
                                     {{-- <th>{{ __('trans.type') }}</th> --}}
                                     <th width="120">{{ __('trans.stages') }}</th>
-                                    <th width="80">{{ __('trans.balance') }}</th>
+                                    @if ($has_balance)
+                                        <th width="80">{{ __('trans.balance') }}</th>
+                                    @endif
                                     <th width="120">{{ __('trans.actions') }}</th>
                                 </tr>
                             </thead>
@@ -133,7 +138,9 @@
                                                 @endforeach
                                             </div>
                                         </td>
-                                        <td class="text-center">{{ $professor->balance }}</td>
+                                        @if ($has_balance)
+                                            <td class="text-center">{{ $professor->balance }}</td>
+                                        @endif
                                         <td>
                                             <div class="d-flex gap-1">
                                                 @can('professors_update')

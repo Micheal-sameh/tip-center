@@ -1,6 +1,9 @@
 @extends('layouts.sideBar')
 
 @section('content')
+@php
+    use App\Enums\ChargeType;
+@endphp
     <div class="container-fluid px-4 mt-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -43,9 +46,12 @@
                                 <th>#</th>
                                 <th>Title</th>
                                 <th>Amount</th>
+                                <th>Type</th>
                                 <th>Gap</th>
                                 <th>Date</th>
-                                <th>Actions</th>
+                                @can('charges_delete')
+                                    <th>Actions</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
@@ -54,23 +60,25 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $charge->title }}</td>
                                     <td>{{ $charge->amount }}</td>
+                                    <td>{{ ChargeType::getStringValue($charge->type) }}</td>
                                     <td>
-                                        <span class="badge {{ $charge->is_gap ? 'bg-success' : 'bg-secondary' }}">
-                                            {{ $charge->is_gap ? 'Yes' : 'No' }}
+                                        <span class="badge {{ $charge->type == ChargeType::GAP ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ $charge->type == ChargeType::GAP ? 'Yes' : 'No' }}
                                         </span>
                                     </td>
                                     <td>{{ $charge->created_at->format('d-m-Y') }}</td>
-                                    <td>
-                                        <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
+                                    @can('charges_delete')
+                                        <td>
+                                            <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    @endcan
                                 </tr>
                             @empty
                                 <tr>
@@ -88,24 +96,26 @@
                             <div class="card-body">
                                 <h5 class="fw-bold mb-1">{{ $charge->title }}</h5>
                                 <p class="mb-1"><strong>Amount:</strong> {{ $charge->amount }}</p>
+                                <p class="mb-1"><strong>Type:</strong> {{ ChargeType::getStringValue($charge->type) }}</p>
                                 <p class="mb-1">
                                     <strong>Gap:</strong>
-                                    <span class="badge {{ $charge->is_gap ? 'bg-success' : 'bg-secondary' }}">
-                                        {{ $charge->is_gap ? 'Yes' : 'No' }}
+                                    <span class="badge {{ $charge->type == ChargeType::GAP ? 'bg-success' : 'bg-secondary' }}">
+                                        {{ $charge->type == ChargeType::GAP ? 'Yes' : 'No' }}
                                     </span>
                                 </p>
                                 <p class="mb-2"><strong>Date:</strong> {{ $charge->created_at->format('d-m-Y') }}</p>
+                                @can('charges_delete')
                                 <div class="d-flex justify-content-end">
                                     <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure?')">
+                                        <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
                                     </form>
                                 </div>
+                                @endcan
                             </div>
                         </div>
                     @empty

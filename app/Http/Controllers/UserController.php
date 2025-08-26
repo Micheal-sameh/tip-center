@@ -21,6 +21,7 @@ class UserController extends Controller
         $this->middleware('permission:users_delete')->only('delete');
         $this->middleware('permission:users_changeStatus')->only('changeStatus');
         $this->middleware('permission:users_resetPassword')->only('resetPassword');
+        $this->middleware('permission:users_profile_pic')->only('profilePic');
     }
 
     public function index()
@@ -94,7 +95,7 @@ class UserController extends Controller
     {
         $user = $this->userService->profilePic($request->image, $id);
 
-        return to_route('users.show', $id)->with('success', 'Profile picture updated successfully');
+        return redirect()->back()->with('success', 'Profile picture updated successfully');
     }
 
     public function profile()

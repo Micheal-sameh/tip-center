@@ -79,4 +79,8 @@ return [
     'Available Sessions' => 'الحصص المتاحه',
     'reports' => 'التقارير',
     'charges' => 'مصروفات',
+    'choose_photo' => 'اختار صوره',
+    'upload' => 'رفع الصورة',
+    'profile_picture' => 'الصورة الشخصية',
+    'monthly_income' => 'التقرير الشهري',
 ];

@@ -21,6 +21,7 @@ class RolesAndPermissionSeeder extends Seeder
         $users_view = Permission::firstOrCreate(['name' => 'users_view']);
         $users_resetPassword = Permission::firstOrCreate(['name' => 'users_resetPassword']);
         $users_changeStatus = Permission::firstOrCreate(['name' => 'users_changeStatus']);
+        $users_profile_pic = Permission::firstOrCreate(['name' => 'users_profile_pic']);
 
         // professors
         $professors_delete = Permission::firstOrCreate(['name' => 'professors_delete']);
@@ -45,6 +46,18 @@ class RolesAndPermissionSeeder extends Seeder
         // settings
         $settings_update = Permission::firstOrCreate(['name' => 'settings_update']);
 
+        // reports
+        $students_report = Permission::firstOrCreate(['name' => 'students_report']);
+        $sessions_report = Permission::firstOrCreate(['name' => 'sessions_report']);
+        $income_report = Permission::firstOrCreate(['name' => 'income_report']);
+        $special_room_report = Permission::firstOrCreate(['name' => 'special_room_report']);
+        $monthly_income = Permission::firstOrCreate(['name' => 'monthly_income']);
+
+        // charges
+        $charges_create = Permission::firstOrCreate(['name' => 'charges_create']);
+        $charges_index = Permission::firstOrCreate(['name' => 'charges_index']);
+        $charges_delete = Permission::firstOrCreate(['name' => 'charges_delete']);
+
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $admin->givePermissionTo([
             $users_delete,
@@ -53,6 +66,7 @@ class RolesAndPermissionSeeder extends Seeder
             $users_view,
             $users_resetPassword,
             $users_changeStatus,
+            $users_profile_pic,
 
             $professors_delete,
             $professors_update,
@@ -73,6 +87,11 @@ class RolesAndPermissionSeeder extends Seeder
             $sessions_changeStatus,
 
             $settings_update,
+            $students_report,
+            $sessions_report,
+            $income_report,
+            $special_room_report,
+            $monthly_income,
         ]);
 
         $staff = Role::firstOrCreate(['name' => 'staff']);
@@ -84,16 +103,21 @@ class RolesAndPermissionSeeder extends Seeder
             $students_create,
             $students_view,
             $students_changeStatus,
+            $users_profile_pic,
 
             $sessions_delete,
             $sessions_update,
             $sessions_create,
             $sessions_view,
             $sessions_changeStatus,
+
+            $students_report,
+            $sessions_report,
         ]);
 
         $editor = Role::firstOrCreate(['name' => 'editor']);
         $editor->givePermissionTo([
+            $users_profile_pic,
             $professors_view,
             $professors_update,
             $professors_create,
@@ -111,6 +135,48 @@ class RolesAndPermissionSeeder extends Seeder
             $sessions_create,
             $sessions_view,
             $sessions_changeStatus,
+
+            $students_report,
+            $sessions_report,
+            $special_room_report,
+        ]);
+
+        $finance = Role::firstOrCreate(['name' => 'finance']);
+        $finance->givePermissionTo([
+            $income_report,
+            $charges_create,
+            $charges_index,
+            $users_profile_pic,
+            $professors_view,
+            $professors_update,
+            $professors_create,
+            $professors_view,
+            $professors_changeStatus,
+
+            $students_delete,
+            $students_update,
+            $students_create,
+            $students_view,
+            $students_changeStatus,
+
+            $sessions_delete,
+            $sessions_update,
+            $sessions_create,
+            $sessions_view,
+            $sessions_changeStatus,
+
+            $students_report,
+            $sessions_report,
+            $special_room_report,
+            $charges_delete,
+            $monthly_income,
+
+        ]);
+
+        $finance_employee = Role::firstOrCreate(['name' => 'finance_employee']);
+        $finance_employee->givePermissionTo([
+            $charges_create,
+            $charges_index,
         ]);
 
         $user = Role::firstOrCreate(['name' => 'student']);

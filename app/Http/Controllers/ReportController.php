@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\StagesEnum;
 use App\Http\Requests\incomeFilterRequest;
+use App\Http\Requests\MonthlyIncomeRequest;
 use App\Http\Requests\ParentReportRequest;
 use App\Http\Requests\ReportIndexRequest;
 use App\Http\Requests\SessionReportRequest;
@@ -151,5 +152,31 @@ class ReportController extends Controller
         $filename = Str::slug('income').'.pdf';
 
         return $pdf->download($filename);
+    }
+
+    public function monthlyIncome(MonthlyIncomeRequest $request)
+    {
+        $month = $request->month;
+        $data = $this->reportService->monthlyIncome($month);
+        $reports = $data['reports'];
+        $totals = [
+            'center' => $data['center'],
+            'copies' => $data['copies'],
+            'markers' => $data['markers'],
+            'total_income' => $data['total_income'],
+            'gap' => $data['gap'],
+            'charges_center' => $data['charges_center'],
+            'charges_markers' => $data['charges_markers'],
+            'charges_others' => $data['charges_others'],
+            'charges_copies' => $data['charges_copies'],
+            'total_charges' => $data['total_charges'],
+            'total_difference' => $data['total_difference'],
+            'net_center' => $data['net_center'],
+            'net_copies' => $data['net_copies'],
+            'net_markers' => $data['net_markers'],
+            'net_others' => $data['net_others'],
+        ];
+
+        return view('reports.monthly-income', compact('reports', 'totals', 'month'));
     }
 }
