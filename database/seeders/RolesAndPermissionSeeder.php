@@ -92,6 +92,10 @@ class RolesAndPermissionSeeder extends Seeder
             $income_report,
             $special_room_report,
             $monthly_income,
+
+            $charges_index,
+            $charges_create,
+            $charges_delete,
         ]);
 
         $staff = Role::firstOrCreate(['name' => 'staff']);
@@ -115,8 +119,8 @@ class RolesAndPermissionSeeder extends Seeder
             $sessions_report,
         ]);
 
-        $editor = Role::firstOrCreate(['name' => 'editor']);
-        $editor->givePermissionTo([
+        $partener = Role::firstOrCreate(['name' => 'partener']);
+        $partener->givePermissionTo([
             $users_profile_pic,
             $professors_view,
             $professors_update,
@@ -141,8 +145,8 @@ class RolesAndPermissionSeeder extends Seeder
             $special_room_report,
         ]);
 
-        $finance = Role::firstOrCreate(['name' => 'finance']);
-        $finance->givePermissionTo([
+        $manager = Role::firstOrCreate(['name' => 'manager']);
+        $manager->givePermissionTo([
             $income_report,
             $charges_create,
             $charges_index,
@@ -173,15 +177,5 @@ class RolesAndPermissionSeeder extends Seeder
 
         ]);
 
-        $finance_employee = Role::firstOrCreate(['name' => 'finance_employee']);
-        $finance_employee->givePermissionTo([
-            $charges_create,
-            $charges_index,
-        ]);
-
-        $user = Role::firstOrCreate(['name' => 'student']);
-        $user->givePermissionTo([
-
-        ]);
     }
 }

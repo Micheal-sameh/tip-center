@@ -83,4 +83,5 @@ return [
     'upload' => 'رفع الصورة',
     'profile_picture' => 'الصورة الشخصية',
     'monthly_income' => 'التقرير الشهري',
+    'charges_reports' => 'مصروفات وتقارير',
 ];
