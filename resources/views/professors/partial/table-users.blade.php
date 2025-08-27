@@ -363,6 +363,9 @@
     <!-- Status Toggle Script -->
     <script>
         function toggleStatus(professorId) {
+            if (!confirm("Are you sure you want to change this professor's status?")) {
+                return; // stop if user presses Cancel
+            }
             const buttons = document.querySelectorAll(`#status-btn-${professorId}`);
             const current = buttons[0].classList.contains('bg-success');
             const newStatus = !current;
@@ -383,7 +386,10 @@
                         status: newStatus
                     })
                 })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
                     if (data.success) {
                         buttons.forEach(button => {
