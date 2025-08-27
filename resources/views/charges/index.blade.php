@@ -44,7 +44,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
-                                <th>Title</th>
+                                <th>Description</th>
                                 <th>Amount</th>
                                 <th>Type</th>
                                 <th>Gap</th>
