@@ -28,11 +28,11 @@ class ReportController extends Controller
         protected ReportService $reportService,
         protected SessionStudentService $sessionStudentService,
     ) {
-        //     $this->middleware('permission:sessions_view')->only(['index', 'show']);
-        //     $this->middleware('permission:sessions_create')->only(['create', 'store']);
-        //     $this->middleware('permission:sessions_update')->only(['edit', 'update']);
-        //     $this->middleware('permission:sessions_delete')->only('destroy');
-        //     $this->middleware('permission:sessions_resetPassword')->only('resetPassword');
+        $this->middleware('permission:students_report')->only(['student', 'downloadStudentReport']);
+        $this->middleware('permission:sessions_report')->only(['session', 'index', 'downloadSessionReport']);
+        $this->middleware('permission:income_report')->only(['income']);
+        $this->middleware('permission:monthly_income')->only(['monthlyIncome']);
+        // $this->middleware('permission:sessions_resetPassword')->only('resetPassword');
     }
 
     public function index(ReportIndexRequest $request)
@@ -178,5 +178,14 @@ class ReportController extends Controller
         ];
 
         return view('reports.monthly-income', compact('reports', 'totals', 'month'));
+    }
+
+    public function specialRooms(incomeFilterRequest $request)
+    {
+        $data = $this->reportService->specialRooms($request);
+        $sessions = $data['sessions'];
+        $totals = $data['totals'];
+
+        return view('reports.special-rooms', compact('sessions', 'totals'));
     }
 }

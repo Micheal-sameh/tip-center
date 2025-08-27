@@ -124,6 +124,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/income', [ReportController::class, 'income'])->name('reports.income');
             Route::get('/income-pdf', [ReportController::class, 'incomePdf'])->name('reports.incomePdf');
             Route::get('/monthly-income', [ReportController::class, 'monthlyIncome'])->name('reports.monthly-income');
+            Route::get('/special-rooms', [ReportController::class, 'specialRooms'])->name('reports.special-rooms');
         });
 
         Route::prefix('student-special-cases')->group(function () {

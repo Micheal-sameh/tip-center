@@ -83,4 +83,6 @@ return [
     'upload' => 'Upload',
     'profile_picture' => 'Profile Picture',
     'monthly_income' => 'Monthly Report',
+    'charges_reports' => 'Charges & Reports',
+    'room 10 & 11' => 'Room 10 & 11',
 ];

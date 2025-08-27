@@ -178,6 +178,11 @@
     {{-- Status Toggle Script --}}
     <script>
         function toggleStatus(userId) {
+            // show confirm dialog
+            if (!confirm("Are you sure you want to change this user's status?")) {
+                return; // stop if user presses Cancel
+            }
+
             const buttons = document.querySelectorAll(`.status-btn[data-user-id="${userId}"]`);
             let currentStatus = null;
 
@@ -202,7 +207,10 @@
                         status: newStatus
                     })
                 })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
                     if (!data.success) throw new Error(data.message || 'Failed to update status');
                     const isActive = data.status;

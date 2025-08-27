@@ -270,7 +270,7 @@
                             </a>
                         </li>
                     @endcan
-                    @canany(['sessions_report', 'students_report', 'income_report', 'monthly_income'])
+                    @canany(['sessions_report', 'students_report'])
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ request()->routeIs('reports.*') ? 'active' : '' }}"
                                 href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown"
@@ -294,6 +294,39 @@
                                         </a>
                                     </li>
                                 @endcan
+                            </ul>
+                        </li>
+                    @endcanany
+
+                    @can('students_view')
+                        <li class="nav-item">
+                            <a href="{{ route('students.index') }}" class="nav-link">
+                                <i class="fas fa-user-friends me-2"></i> {{ __('trans.students') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('special_room_report')
+                        <li class="nav-item">
+                            <a href="{{ route('reports.special-rooms') }}" class="nav-link">
+                                <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.room 10 & 11') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @canany(['charges_index', 'income_report', 'monthly_income'])
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="chargesDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.charges_reports') }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="chargesDropdown">
+                                @can('charges_index')
+                                    <li>
+                                        <a href="{{ route('charges.index') }}"
+                                            class="dropdown-item {{ request()->routeIs('charges.index') ? 'active' : '' }}">
+                                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.charges') }}
+                                        </a>
+                                    </li>
+                                @endcan
                                 @can('income_report')
                                     <li>
                                         <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
@@ -314,18 +347,6 @@
                         </li>
                     @endcanany
 
-                    @can('students_view')
-                        <li class="nav-item">
-                            <a href="{{ route('students.index') }}" class="nav-link">
-                                <i class="fas fa-user-friends me-2"></i> {{ __('trans.students') }}
-                            </a>
-                        </li>
-                    @endcan
-                    <li class="nav-item">
-                        <a href="{{ route('charges.index') }}" class="nav-link">
-                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.charges') }}
-                        </a>
-                    </li>
 
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
