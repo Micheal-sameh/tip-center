@@ -18,7 +18,7 @@
 
                     <!-- Title -->
                     <div class="mb-3">
-                        <label class="form-label">Title</label>
+                        <label class="form-label">Discription</label>
                         <input type="text" name="title" value="{{ old('title') }}"
                             class="form-control @error('title') is-invalid @enderror" placeholder="Enter title">
                         @error('title')
