@@ -179,4 +179,13 @@ class ReportController extends Controller
 
         return view('reports.monthly-income', compact('reports', 'totals', 'month'));
     }
+
+    public function specialRooms(incomeFilterRequest $request)
+    {
+        $data = $this->reportService->specialRooms($request);
+        $sessions = $data['sessions'];
+        $totals = $data['totals'];
+
+        return view('reports.special-rooms', compact('sessions', 'totals'));
+    }
 }

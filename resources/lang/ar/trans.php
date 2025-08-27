@@ -84,4 +84,5 @@ return [
     'profile_picture' => 'الصورة الشخصية',
     'monthly_income' => 'التقرير الشهري',
     'charges_reports' => 'مصروفات وتقارير',
+    'room 10 & 11' => '10 & 11',
 ];

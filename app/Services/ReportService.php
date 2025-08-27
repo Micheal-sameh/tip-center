@@ -55,7 +55,6 @@ class ReportService
         $sessions = $this->sessionRepository->income($input);
         $charges = $this->chargeRepository->income($input);
         $gap = $this->chargeRepository->incomeGap($input);
-
         $totals = [
             'students' => 0,
             'center_price' => 0,
@@ -111,5 +110,23 @@ class ReportService
         return compact('reports', 'center', 'copies', 'markers', 'total_income', 'gap', 'charges_center',
             'charges_markers', 'charges_others', 'charges_copies', 'total_charges', 'total_difference',
             'net_center', 'net_copies', 'net_markers', 'net_others');
+    }
+
+    public function specialRooms($input)
+    {
+        $sessions = $this->sessionRepository->specialRooms($input);
+        $totals = [
+            'attended_count' => 0,
+            'students' => 0,
+            'center_price' => 0,
+        ];
+
+        $sessions->each(function ($session) use (&$totals) {
+            $totals['students'] += $session->session_students_count;
+            $totals['attended_count'] += $session->attended_count;
+            $totals['center_price'] += $session->center;
+        });
+
+        return compact('sessions', 'totals');
     }
 }

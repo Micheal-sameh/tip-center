@@ -305,6 +305,13 @@
                             </a>
                         </li>
                     @endcan
+                    @can('special_room_report')
+                        <li class="nav-item">
+                            <a href="{{ route('reports.special-rooms') }}" class="nav-link">
+                                <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.room 10 & 11') }}
+                            </a>
+                        </li>
+                    @endcan
                     @canany(['charges_index', 'income_report', 'monthly_income'])
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="chargesDropdown" role="button"

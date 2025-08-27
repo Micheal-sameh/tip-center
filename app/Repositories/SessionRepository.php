@@ -316,8 +316,16 @@ class SessionRepository extends BaseRepository
                 'sessionStudents as attended_count' => function ($query) {
                     $query->where('is_attend', 1);
                 },
-            ])
-            ->withSum('sessionStudents as total_center_price', 'center_price')
+            ])->when(true, function ($query) {
+                $query->withSum([
+                    'sessionStudents as total_center_price' => function ($q) {
+                        $q->whereHas('session', function ($session) {
+                            $session->whereNotIn('room', [10, 11]);
+                        });
+                    },
+                ], 'center_price');
+            })
+            // ->withSum('sessionStudents as total_center_price', 'center_price')
             ->withSum('sessionStudents as total_materials', 'materials')
             ->withSum('sessionStudents as total_printables', 'printables')
             ->get();
@@ -325,58 +333,61 @@ class SessionRepository extends BaseRepository
 
     public function monthlyIncome($month)
     {
-
         return DB::table('sessions as s')
             ->selectRaw('
-        DATE(s.created_at) as day,
-        COALESCE(SUM(ss.center_price), 0) as center,
-        COALESCE(SUM(ss.printables), 0) as print,
-        COALESCE(SUM(e.markers), 0) as markers,
-        COALESCE(SUM(e.copies), 0) as copies,
-        COALESCE(MAX(c.charges_gap), 0) as charges_gap,
-        COALESCE(MAX(c.charges_center), 0) as charges_center,
-        COALESCE(MAX(c.charges_markers), 0) as charges_markers,
-        COALESCE(MAX(c.charges_others), 0) as charges_others,
-        COALESCE(MAX(c.charges_copies), 0) as charges_copies,
+                DATE(s.created_at) as day,
 
-        -- income
-        (
-            COALESCE(SUM(ss.center_price), 0) +
-            COALESCE(SUM(ss.printables), 0) +
-            COALESCE(SUM(e.copies), 0) +
-            COALESCE(MAX(c.charges_gap), 0)
-        ) as income_total,
+                -- exclude center price for rooms 10 and 11
+                COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) as center,
 
-        -- charges total
-        (
-            COALESCE(MAX(c.charges_center), 0) +
-            COALESCE(MAX(c.charges_copies), 0) +
-            COALESCE(MAX(c.charges_markers), 0) +
-            COALESCE(MAX(c.charges_others), 0)
-        ) as charges_total,
+                COALESCE(SUM(ss.printables), 0) as print,
+                COALESCE(SUM(e.markers), 0) as markers,
+                COALESCE(SUM(e.copies), 0) as copies,
 
-        -- difference
-        (
-            (
-                COALESCE(SUM(ss.center_price), 0) +
-                COALESCE(SUM(ss.printables), 0) +
-                COALESCE(SUM(e.copies), 0) +
-                COALESCE(MAX(c.charges_gap), 0)
-            ) -
-            (
-                COALESCE(MAX(c.charges_center), 0) +
-                COALESCE(MAX(c.charges_copies), 0) +
-                COALESCE(MAX(c.charges_markers), 0) +
-                COALESCE(MAX(c.charges_others), 0)
-            )
-        ) as difference_total,
+                COALESCE(MAX(c.charges_gap), 0) as charges_gap,
+                COALESCE(MAX(c.charges_center), 0) as charges_center,
+                COALESCE(MAX(c.charges_markers), 0) as charges_markers,
+                COALESCE(MAX(c.charges_others), 0) as charges_others,
+                COALESCE(MAX(c.charges_copies), 0) as charges_copies,
 
-        -- net values
-        (COALESCE(SUM(ss.center_price), 0) - COALESCE(MAX(c.charges_center), 0)) as net_center,
-        ((COALESCE(SUM(e.copies), 0) + COALESCE(SUM(ss.printables), 0)) - COALESCE(MAX(c.charges_copies), 0)) as net_copies,
-        (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
-        (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
-    ')
+                -- income
+                (
+                    COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
+                    COALESCE(SUM(ss.printables), 0) +
+                    COALESCE(SUM(e.copies), 0) +
+                    COALESCE(MAX(c.charges_gap), 0)
+                ) as income_total,
+
+                -- charges total
+                (
+                    COALESCE(MAX(c.charges_center), 0) +
+                    COALESCE(MAX(c.charges_copies), 0) +
+                    COALESCE(MAX(c.charges_markers), 0) +
+                    COALESCE(MAX(c.charges_others), 0)
+                ) as charges_total,
+
+                -- difference
+                (
+                    (
+                        COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
+                        COALESCE(SUM(ss.printables), 0) +
+                        COALESCE(SUM(e.copies), 0) +
+                        COALESCE(MAX(c.charges_gap), 0)
+                    ) -
+                    (
+                        COALESCE(MAX(c.charges_center), 0) +
+                        COALESCE(MAX(c.charges_copies), 0) +
+                        COALESCE(MAX(c.charges_markers), 0) +
+                        COALESCE(MAX(c.charges_others), 0)
+                    )
+                ) as difference_total,
+
+                -- net values
+                (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(c.charges_center), 0)) as net_center,
+                ((COALESCE(SUM(e.copies), 0) + COALESCE(SUM(ss.printables), 0)) - COALESCE(MAX(c.charges_copies), 0)) as net_copies,
+                (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
+                (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
+            ')
             ->leftJoin('session_students as ss', 's.id', '=', 'ss.session_id')
             ->leftJoin('session_extras as e', 's.id', '=', 'e.session_id')
             ->leftJoin(DB::raw('(
@@ -395,6 +406,23 @@ class SessionRepository extends BaseRepository
             ->groupBy(DB::raw('DATE(s.created_at)'))
             ->orderBy('day')
             ->get();
+    }
 
+    public function specialRooms($input)
+    {
+        return $this->model->query()
+            ->when(isset($input['date_from']), fn ($q) => $q->where('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->where('created_at', '<=', $input['date_to']))
+            ->whereIn('room', [10, 11])
+            ->with([
+                'professor' => fn ($q) => $q->select('id', 'name'),
+            ])
+            ->withSum('sessionStudents as center', 'center_price')
+            ->withCount(['sessionStudents',
+                'sessionStudents as attended_count' => function ($query) {
+                    $query->where('is_attend', 1);
+                },
+            ])
+            ->get();
     }
 }
