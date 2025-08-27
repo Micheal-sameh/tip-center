@@ -93,11 +93,14 @@ class UserRepository extends BaseRepository
     public function changeStatus($id)
     {
         $user = $this->findById($id);
+        if ($user->hasRole('admin')) {
+            return false;
+        }
         $user->update([
             'status' => $user->status == UserStatus::ACTIVE ? UserStatus::INACTIVE : UserStatus::ACTIVE,
         ]);
 
-        return $user;
+        return true;
     }
 
     public function profilePic($image, $id)

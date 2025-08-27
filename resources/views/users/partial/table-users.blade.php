@@ -178,9 +178,9 @@
     {{-- Status Toggle Script --}}
     <script>
         function toggleStatus(userId) {
-            // show confirm dialog
+            // confirm dialog
             if (!confirm("Are you sure you want to change this user's status?")) {
-                return; // stop if user presses Cancel
+                return;
             }
 
             const buttons = document.querySelectorAll(`.status-btn[data-user-id="${userId}"]`);
@@ -208,26 +208,36 @@
                     })
                 })
                 .then(res => {
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    if (!res.ok) {
+                        // server-side error (403, 500, etc.)
+                        return res.json().then(err => {
+                            throw new Error(err.message || `HTTP ${res.status}`);
+                        });
+                    }
                     return res.json();
                 })
                 .then(data => {
                     if (!data.success) throw new Error(data.message || 'Failed to update status');
-                    const isActive = data.status;
+
+                    const isActive = data.status == 1;
 
                     buttons.forEach(btn => {
                         btn.classList.toggle('bg-success', isActive);
                         btn.classList.toggle('bg-secondary', !isActive);
-                        btn.innerHTML = (isActive == 1) ? '{{ __('trans.active') }}' :
-                            '{{ __('trans.inactive') }}';
+                        btn.innerHTML = isActive ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
                         btn.disabled = false;
                     });
                 })
                 .catch(err => {
+                    // reset buttons back to old state if failed
                     buttons.forEach(btn => {
-                        btn.innerHTML = '{{ __('trans.status') }}';
+                        btn.classList.toggle('bg-success', currentStatus);
+                        btn.classList.toggle('bg-secondary', !currentStatus);
+                        btn.innerHTML = currentStatus ? '{{ __('trans.active') }}' :
+                            '{{ __('trans.inactive') }}';
                         btn.disabled = false;
                     });
+
                     alert("{{ __('trans.failed_to_update_status') }}: " + err.message);
                 });
         }

@@ -83,11 +83,11 @@ class UserController extends Controller
 
     public function changeStatus($id)
     {
-        $user = $this->userService->changeStatus($id);
+        $bool = $this->userService->changeStatus($id);
 
         return response()->json([
-            'success' => true,
-            'message' => __('messages.Status updated'),
+            'success' => $bool ? true : false,
+            'message' => $bool ? __('messages.Status updated') : 'cannot update for admin',
         ]);
     }
 
