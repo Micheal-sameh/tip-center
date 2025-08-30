@@ -4,6 +4,11 @@
     $specialCase = $student->specialCases->firstWhere('id', $session->professor_id);
 @endphp
 @section('content')
+    @if ($message)
+        <div class="alert alert-warning">
+            {{ $message }}
+        </div>
+    @endif
     @if ($errors->any())
         <div class="alert alert-danger alert-dismissible fade show position-fixed top-50 start-50 translate-middle"
             style="z-index: 9999; min-width: 300px; max-width: 500px; text-align: center;" role="alert" id="error-popup">
@@ -13,6 +18,7 @@
                 @endforeach
             </ul>
         </div>
+
 
         <script>
             // Auto-hide after 5 seconds
@@ -160,7 +166,8 @@
                         </div>
                         <div class="col-md-4">
                             <label>To Pay</label>
-                            <input type="number" name="to_pay" value="0" step="1" min="0" class="form-control">
+                            <input type="number" name="to_pay" value="0" step="1" min="0"
+                                class="form-control">
                         </div>
                     </div>
 

@@ -11,7 +11,7 @@
             </div>
 
             <div class="card-body">
-                <form method="POST" action="{{ route('sessions.update', $session->id) }}">
+                <form id="sessionForm" method="POST" action="{{ route('sessions.update', $session->id) }}">
                     @csrf
                     @method('PUT')
 
@@ -157,7 +157,6 @@
                         </div>
                     </div>
 
-
                     <!-- Form Actions -->
                     <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                         <a href="{{ route('sessions.index') }}" class="btn btn-outline-secondary">
@@ -171,4 +170,18 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            document.getElementById('sessionForm').addEventListener('submit', function(e) {
+                const form = e.target;
+
+                form.querySelectorAll('input, select, textarea').forEach(el => {
+                    if (el.value.trim() === '') {
+                        el.removeAttribute('name');
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

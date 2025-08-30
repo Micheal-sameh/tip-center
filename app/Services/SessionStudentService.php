@@ -29,6 +29,18 @@ class SessionStudentService
     public function store($input)
     {
         $session = $this->sessionRepository->findById($input->session_id);
+        $attend = $this->sessionStudentRepository->alreadyAttend($input->session_id, $input->student_id);
+        if ($attend) {
+            if ($input->has('total_paid')) {
+                $input->center_price = $session->center_price;
+                $input->professor_price = $session->professor_price;
+                $input->printables = $session->printables;
+                $input->materials = $session->materials;
+            }
+            $attendance = $this->update($input, $attend->id);
+
+            return $attendance->to_pay;
+        }
         if ($input->total_paid) {
             return $this->sessionStudentRepository->simplePay($input, $session);
         }
