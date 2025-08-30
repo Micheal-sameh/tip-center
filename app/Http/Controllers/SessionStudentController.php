@@ -6,6 +6,7 @@ use App\DTOs\SessionStudentDTO;
 use App\Http\Requests\AttendanceCreateRequest;
 use App\Http\Requests\StoreSessionStudentRequest;
 use App\Http\Requests\UpdateSessionStudentRequest;
+use App\Models\SessionStudent;
 use App\Services\SessionService;
 use App\Services\SessionStudentService;
 use App\Services\StudentService;
@@ -53,8 +54,15 @@ class SessionStudentController extends Controller
         $student = $this->studentService->show($request->student_id);
         $session = $this->sessionservice->show($request->session_id);
         $to_pay = $student->toPay()->sum('to_pay');
+        $attend = SessionStudent::where('session_id', $request->session_id)
+            ->where('student_id', $request->student_id)->exists();
 
-        return view('session_students.create', compact('student', 'session', 'to_pay'));
+        $message = null;
+        if ($attend) {
+            $message = 'Student already attended this session.';
+        }
+
+        return view('session_students.create', compact('student', 'session', 'to_pay', 'message'));
     }
 
     public function selectStudent(Request $request)
@@ -96,6 +104,6 @@ class SessionStudentController extends Controller
     {
         $this->sessionStudentService->delete($id);
 
-        return to_route('attendances.index');
+        return redirect()->back()->With('success', 'removed successful');
     }
 }

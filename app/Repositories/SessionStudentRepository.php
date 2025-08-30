@@ -101,6 +101,7 @@ class SessionStudentRepository extends BaseRepository
             'professor_price' => $input->professor_price ?? 0,
             'printables' => $input->printables ?? 0,
             'materials' => $input->materials ?? 0,
+            'to_pay' => $input->to_pay ?? 0,
         ]);
 
         return $attendance;
@@ -215,5 +216,11 @@ class SessionStudentRepository extends BaseRepository
     public function parent($student)
     {
         return $this->model->where('student_id', $student->id)->get();
+    }
+
+    public function alreadyAttend($session_id, $student_id)
+    {
+        return SessionStudent::where('session_id', $session_id)
+            ->where('student_id', $student_id)->first();
     }
 }

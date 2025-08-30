@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Rules\ActiveSessionRule;
 use App\Rules\CanAttendPrice;
-use App\Rules\CanAttendRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSessionStudentRequest extends FormRequest
@@ -13,7 +12,7 @@ class StoreSessionStudentRequest extends FormRequest
     {
         return [
             'session_id' => ['required', 'integer', 'exists:sessions,id', new ActiveSessionRule],
-            'student_id' => ['required', 'integer', 'exists:students,id', new CanAttendRule($this->session_id)],
+            'student_id' => ['required', 'integer', 'exists:students,id'],
             'total_paid' => ['integer', 'gte:0', new CanAttendPrice($this->session_id)],
             'professor_price' => 'numeric|gte:0',
             'center_price' => 'numeric|gte:0',
