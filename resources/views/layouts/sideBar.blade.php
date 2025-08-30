@@ -310,7 +310,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="chargesDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.finance') }}
+                                <i class="fas fa-wallet me-2"></i> {{ __('trans.finance') }}
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="chargesDropdown">
                                 @can('charges_index')
@@ -321,15 +321,16 @@
                                         </a>
                                     </li>
                                 @endcan
+
                                 @can('special_room_report')
                                     <li>
                                         <a class="dropdown-item {{ request()->routeIs('reports.special-rooms') ? 'active' : '' }}"
-
-                                        href="{{ route('reports.special-rooms') }}">
-                                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.room 10 & 11') }}
+                                            href="{{ route('reports.special-rooms') }}">
+                                            <i class="fas fa-door-open me-2"></i> {{ __('trans.room 10 & 11') }}
                                         </a>
                                     </li>
                                 @endcan
+
                                 @can('income_report')
                                     <li>
                                         <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
@@ -338,18 +339,18 @@
                                         </a>
                                     </li>
                                 @endcan
+
                                 @can('monthly_income')
                                     <li>
-                                        <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
+                                        <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
                                             href="{{ route('reports.monthly-income') }}">
-                                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.monthly_income') }}
+                                            <i class="fas fa-calendar-alt me-2"></i> {{ __('trans.monthly_income') }}
                                         </a>
                                     </li>
                                 @endcan
                             </ul>
                         </li>
                     @endcanany
-
 
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
