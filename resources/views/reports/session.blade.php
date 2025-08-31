@@ -40,8 +40,12 @@
                                 <th>Phone</th>
                                 <th>Phone (P)</th>
                                 <th>Attend</th>
+                                @if ($reports->contains(fn($r) => $r->materials > 0))
                                 <th>Materials</th>
+                                @endif
+                                @if ($reports->contains(fn($r) => $r->printables > 0))
                                 <th>Printables</th>
+                                @endif
                                 <th class="text-end">Payment</th>
                                 @if ($reports->contains(fn($r) => $r->to_pay > 0))
                                     <th class="text-end">To Pay</th>
@@ -59,8 +63,12 @@
                                     <td>{{ $report->student?->parent_phone }}</td>
                                     <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
                                     </td>
+                                    @if ($report->materials > 0))
                                     <td>{{ $report->materials }}</td>
+                                    @endif
+                                     @if ($report->printables > 0)
                                     <td class="text-end">{{ $report->printables }}</td>
+                                    @endif
                                     <td class="text-end">
                                         {{ number_format($report->professor_price + $report->center_price, 2) }}</td>
                                     @if ($report->to_pay)
@@ -142,6 +150,28 @@
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Center</h6>
                                     <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('center_price'), 2) }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    @if ($reports->contains(fn($r) => $r->printables > 0))
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-2 text-muted">Printables</h6>
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('printables'), 2) }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    @if ($reports->contains(fn($r) => $r->materials > 0))
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-2 text-muted">Materials</h6>
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('materials'), 2) }}
                                     </p>
                                 </div>
                             </div>

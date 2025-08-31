@@ -275,7 +275,6 @@
                                 icon: 'success',
                                 title: response.message,
                                 showConfirmButton: false,
-                                timer: 100000
                             }).then(() => {
                                 reloadSessions();
                             });
@@ -311,7 +310,7 @@
                     clearInterval(refreshInterval);
                 }
                 refreshInterval = setInterval(reloadSessions, 300000);
-                setTimeout(reloadSessions, 10000); // Initial load after 1 second
+                setTimeout(reloadSessions, 1000); // Initial load after 1 second
             }
 
             // Initialize

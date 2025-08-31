@@ -70,7 +70,7 @@ class ReportService
             $totals['students'] += $session->session_students_count;
             $totals['attended_count'] += $session->attended_count;
             $totals['center_price'] += $session->total_center_price;
-            $totals['printables'] += $session->sessionExtra?->printables ?? 0;
+            $totals['printables'] += $session->total_printables ?? 0;
             $totals['materials'] += $session->materials ?? 0;
             $totals['markers'] += $session->sessionExtra?->markers ?? 0;
             $totals['copies'] += $session->sessionExtra?->copies ?? 0;
