@@ -108,20 +108,20 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th class="text-muted ps-0 fw-normal">Role</th>
-                                                <td>
+                                                {{-- <th class="text-muted ps-0 fw-normal">Role</th> --}}
+                                                {{-- <td>
                                                     <span
                                                         class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill">
                                                         {{ $user->roles->first()?->name ?? 'No Role' }}
                                                     </span>
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                             <tr>
                                                 <th class="text-muted ps-0 fw-normal">Joined</th>
                                                 <td class="fw-medium">{{ $user->created_at->format('d M Y') }}</td>
                                             </tr>
                                             <tr>
-                                                <th class="text-muted ps-0 fw-normal">Last Login</th>
+                                                <th class="text-muted ps-0 fw-normal">Today Login</th>
                                                 <td class="fw-medium">
                                                     {{ $user->lastLogin ? $user->lastLogin?->created_at : 'Never logged in' }}
                                                 </td>

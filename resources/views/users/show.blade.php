@@ -90,7 +90,7 @@
                                         <td class="fw-medium">{{ $user->created_at->translatedFormat('d M Y') }}</td>
                                     </tr>
                                     <tr>
-                                        <th class="text-muted ps-0 fw-normal">{{ __('trans.last_login') }}</th>
+                                        <th class="text-muted ps-0 fw-normal">{{ __('trans.ptrans') }}</th>
                                         <td class="fw-medium">
                                             {{ $user->lastLogin ? $user->lastLogin?->created_at : 'Never logged in' }}
                                         </td>
