@@ -201,7 +201,8 @@
 <body>
     <div class="report-container">
         <div class="header">
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iNTAiIGZpbGw9IiMyYzZmYmIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+TG9nbzwvdGV4dD48L3N2Zz4=" alt="Logo">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjUwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iNTAiIGZpbGw9IiMyYzZmYmIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+TG9nbzwvdGV4dD48L3N2Zz4="
+                alt="Logo">
             <h1>Sessions Income Report</h1>
         </div>
 
@@ -227,13 +228,13 @@
                 <tr>
                     <th>#</th>
                     <th class="text-start">Professor</th>
-                    <th>NA</th>
-                    <th>C</th>
-                    <th>FP</th>
-                    <th>LP</th>
-                    <th>FE</th>
-                    <th>M</th>
-                    <th>NP</th>
+                    <th>Nombre Actual</th>
+                    <th>Centre</th>
+                    <th>Fiche prof</th>
+                    <th>Livre Prof</th>
+                    <th>Fiche Eleve</th>
+                    <th>Markers</th>
+                    <th>Nombre Present</th>
                     <th>Session Total</th>
                 </tr>
             </thead>
@@ -311,7 +312,8 @@
                     <div class="summary-row">
                         <div class="summary-label">Final Total:</div>
                         <div class="summary-value text-success final-total">
-                            {{ number_format(($totals['overall_total'] - $charges + $gap ?? 0) - ($totals['charges_total'] ?? 0), 1) }} EGP
+                            {{ number_format(($totals['overall_total'] - $charges + $gap ?? 0) - ($totals['charges_total'] ?? 0), 1) }}
+                            EGP
                         </div>
                     </div>
                 </div>

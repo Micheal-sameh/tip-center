@@ -69,13 +69,13 @@
                             <tr>
                                 <th>#</th>
                                 <th>Professor</th>
-                                <th>NA</th>
-                                <th>C</th>
-                                <th>FP</th>
-                                <th>LP</th>
-                                <th>FE</th>
-                                <th>M</th>
-                                <th>NP</th>
+                                <th>Nombre Actual</th>
+                                <th>Centre</th>
+                                <th>Fiche prof</th>
+                                <th>Livre Prof</th>
+                                <th>Fiche Eleve</th>
+                                <th>Markers</th>
+                                <th>Nombre Present</th>
                                 <th>Session Total</th>
                             </tr>
                         </thead>

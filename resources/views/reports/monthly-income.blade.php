@@ -36,19 +36,19 @@
                     <thead class="table-dark sticky-top">
                         <tr>
                             <th>Day</th>
-                            <th>C</th>
-                            <th>Co</th>
-                            <th>M</th>
+                            <th>Centre</th>
+                            <th>Copies</th>
+                            <th>Markers</th>
                             <th>Gap</th>
                             <th class="text-success">Income Total</th>
-                            <th>Ex C</th>
-                            <th>Ex Co</th>
-                            <th>Ex M</th>
-                            <th>Ex Others</th>
+                            <th>Exp Centre</th>
+                            <th>Exp Copies</th>
+                            <th>Exp Markers</th>
+                            <th>Exp Others</th>
                             <th class="text-danger">Ex Total</th>
-                            <th>Net C</th>
-                            <th>Net Co</th>
-                            <th>Net M</th>
+                            <th>Net Centre</th>
+                            <th>Net Copies</th>
+                            <th>Net Markers</th>
                             <th>Net Other</th>
                             <th>Difference</th>
                         </tr>
