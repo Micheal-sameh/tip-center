@@ -146,30 +146,37 @@
                     <div class="modal-body row g-3">
                         <div class="col-md-4">
                             <label>Center Paid</label>
-                            <input type="number" name="center_price" step="1" min="0" class="form-control"
+                            <input type="number" name="center_price" id="center_price" step="1" min="0"
+                                class="form-control"
                                 value="{{ $specialCase ? $specialCase->pivot->center_price : $session->center_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Professor Paid</label>
-                            <input type="number" name="professor_price" step="1" min="0" class="form-control"
+                            <input type="number" name="professor_price" id="professor_price" step="1" min="0"
+                                class="form-control"
                                 value="{{ $specialCase ? $specialCase->pivot->professor_price : $session->professor_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Printables</label>
-                            <input type="number" name="printables" step="1" min="0" class="form-control"
-                                value="{{ $session->printables ?? 0 }}">
+                            <input type="number" name="printables" id="printables" step="1" min="0"
+                                class="form-control" value="{{ $session->printables ?? 0 }}">
                         </div>
                         <div class="col-md-4">
                             <label>Materials</label>
-                            <input type="number" name="materials" step="1" min="0" class="form-control"
-                                value="{{ $session->materials ?? 0 }}">
+                            <input type="number" name="materials" id="materials" step="1" min="0"
+                                class="form-control" value="{{ $session->materials ?? 0 }}">
                         </div>
                         <div class="col-md-4">
                             <label>To Pay</label>
-                            <input type="number" name="to_pay" value="0" step="1" min="0"
-                                class="form-control">
+                            <input type="number" name="to_pay" id="to_pay" value="0" step="1"
+                                min="0" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Remaining</label>
+                            <input type="text" id="remaining" class="form-control bg-light" readonly>
                         </div>
                     </div>
+
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
@@ -179,6 +186,43 @@
             </div>
         </div>
     </div>
+
+    {{-- Script to calculate automatically --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const center_price = document.getElementById("center_price");
+            const professor_price = document.getElementById("professor_price");
+            const printables = document.getElementById("printables");
+            const materials = document.getElementById("materials");
+            const to_pay = document.getElementById("to_pay");
+            const remaining = document.getElementById("remaining");
+
+            // Total session cost from backend
+            const total =
+                {{ ($specialCase ? $specialCase->pivot->center_price : $session->center_price ?? 0) +
+                    ($specialCase ? $specialCase->pivot->professor_price : $session->professor_price ?? 0) +
+                    ($session->printables ?? 0) +
+                    ($session->materials ?? 0) }};
+
+            function calculateRemaining() {
+                let paid =
+                    (parseFloat(center_price.value) || 0) +
+                    (parseFloat(professor_price.value) || 0) +
+                    (parseFloat(printables.value) || 0) +
+                    (parseFloat(materials.value) || 0) +
+                    (parseFloat(to_pay.value) || 0);
+
+                remaining.value = total - paid;
+            }
+
+            [center_price, professor_price, printables, materials, to_pay].forEach(input => {
+                input.addEventListener("input", calculateRemaining);
+            });
+
+            // Initialize when modal opens
+            calculateRemaining();
+        });
+    </script>
 
     @if ($to_pay && $to_pay > 0)
         <!-- Settle Due Modal -->
