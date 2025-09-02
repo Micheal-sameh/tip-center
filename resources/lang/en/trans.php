@@ -86,4 +86,5 @@ return [
     'charges_reports' => 'Charges & Reports',
     'room 10 & 11' => 'Room 10 & 11',
     'finance' => 'Finance',
+    'Today Login' => 'Today Login',
 ];
