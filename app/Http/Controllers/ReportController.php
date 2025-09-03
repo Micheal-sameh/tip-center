@@ -188,4 +188,16 @@ class ReportController extends Controller
 
         return view('reports.special-rooms', compact('sessions', 'totals'));
     }
+
+    public function downloadSpecialRooms(incomeFilterRequest $request)
+    {
+        $data = $this->reportService->specialRooms($request);
+        $sessions = $data['sessions'];
+        $totals = $data['totals'];
+
+        $pdf = Pdf::loadView('reports.special-rooms-pdf', compact('sessions', 'totals'));
+        $filename = Str::slug('Room 10 & 11').'.pdf';
+
+        return $pdf->download($filename);
+    }
 }

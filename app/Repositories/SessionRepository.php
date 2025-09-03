@@ -428,6 +428,9 @@ class SessionRepository extends BaseRepository
                     $query->where('is_attend', 1);
                 },
             ])
+            ->withCount(['sessionStudents as total_paid_students' => function ($q) {
+                $q->whereColumn('center_price', 'sessions.center_price');
+            }], 'center_price')
             ->get();
     }
 }

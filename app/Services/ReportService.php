@@ -117,12 +117,12 @@ class ReportService
         $sessions = $this->sessionRepository->specialRooms($input);
         $totals = [
             'attended_count' => 0,
-            'students' => 0,
+            'paid_students' => 0,
             'center_price' => 0,
         ];
 
         $sessions->each(function ($session) use (&$totals) {
-            $totals['students'] += $session->session_students_count;
+            $totals['paid_students'] += $session->total_paid_students;
             $totals['attended_count'] += $session->attended_count;
             $totals['center_price'] += $session->center;
         });

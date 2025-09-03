@@ -23,7 +23,7 @@
                 <button type="submit" class="btn btn-primary w-100 me-1">
                     <i class="fas fa-search me-1"></i> Filter
                 </button>
-                <a href="{{ route('reports.incomePdf', request()->all()) }}" class="btn btn-success w-100" id="exportBtn">
+                <a href="{{ route('reports.special-rooms-pdf', request()->all()) }}" class="btn btn-success w-100" id="exportBtn">
                     <i class="fas fa-file-export me-1"></i> Export
                 </a>
             </div>
@@ -54,7 +54,7 @@
                     if (dateFrom && dateFrom.value) params.append('date_from', dateFrom.value);
                     if (dateTo && dateTo.value) params.append('date_to', dateTo.value);
 
-                    window.location.href = "{{ route('reports.incomePdf') }}?" + params.toString();
+                    window.location.href = "{{ route('reports.special-rooms-pdf') }}?" + params.toString();
                 });
             </script>
         @endpush
@@ -69,6 +69,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Professor</th>
+                                <th class="text-center">Session Date</th>
                                 <th class="text-center">students Attends</th>
                                 <th class="text-center">Center</th>
                                 <th class="text-center">students Total</th>
@@ -80,7 +81,8 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $session->professor->name ?? '-' }} -
                                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
-                                    <td class="text-center">{{ $session->attended_count > 0 ? $session->attended_count : '-' }}
+                                    <td class="text-center">{{ $session->created_at->format('d-m-Y') ?? '-' }} </td>
+                                    <td class="text-center">{{ $session->total_paid_students > 0 ? $session->total_paid_students : '-' }}
                                     </td>
                                     <td class="text-center">{{ $session->center > 0 ? number_format($session->center, 1) : '-' }}
                                     </td>
@@ -99,9 +101,10 @@
                             <tfoot class="table-dark">
                                 <tr>
                                     <th colspan="2" class="text-end">Totals:</th>
-                                    <th class="text-center">{{ $totals['attended_count'] }}</th>
+                                    <th class="text-center">{{ $sessions->count() }}</th>
+                                    <th class="text-center">{{ $totals['paid_students'] }}</th>
                                     <th class="text-center">{{ number_format($totals['center_price'], 1) }}</th>
-                                    <th class="text-center">{{ $totals['students'] }}</th>
+                                    <th class="text-center">{{ $totals['attended_count'] }}</th>
                                 </tr>
 
                             </tfoot>
