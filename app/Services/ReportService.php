@@ -56,7 +56,7 @@ class ReportService
         $charges = $this->chargeRepository->income($input);
         $gap = $this->chargeRepository->incomeGap($input);
         $totals = [
-            'students' => 0,
+            'paid_students' => 0,
             'center_price' => 0,
             'printables' => 0,
             'materials' => 0,
@@ -67,7 +67,7 @@ class ReportService
         ];
 
         $sessions->each(function ($session) use (&$totals) {
-            $totals['students'] += $session->session_students_count;
+            $totals['paid_students'] += $session->total_paid_students;
             $totals['attended_count'] += $session->attended_count;
             $totals['center_price'] += $session->total_center_price;
             $totals['printables'] += $session->total_printables ?? 0;
