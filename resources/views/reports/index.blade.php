@@ -89,9 +89,10 @@
                                 </td>
                                 <td class="text-end">
                                     <button type="button" class="btn btn-sm btn-outline-warning"
-                                        onclick="openReportModal({{ $session->id }})">
+                                        onclick="openReport({{ $session->id }})">
                                         <i class="fas fa-file-alt me-1"></i> View Report
                                     </button>
+
                                 </td>
                             </tr>
                         @empty
@@ -121,9 +122,11 @@
                             </span>
                         </p>
                         <div class="d-grid mt-2">
-                            <button onclick="openReportModal({{ $session->id }})" class="btn btn-outline-warning btn-sm">
+                            <button type="button" class="btn btn-sm btn-outline-warning"
+                                onclick="openReport({{ $session->id }})">
                                 <i class="fas fa-file-alt me-1"></i> View Report
                             </button>
+
                         </div>
                     </div>
                 </div>
@@ -172,7 +175,7 @@
     </div>
 
     {{-- Report Type Modal --}}
-    <div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="reportTypeForm" method="GET" action="{{ route('reports.session') }}" target="_blank">
                 <div class="modal-content">
@@ -200,20 +203,14 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
 @endsection
 
 @push('scripts')
     <script>
-        function openReportModal(sessionId) {
-            const form = document.getElementById('reportTypeForm');
-            document.getElementById('reportSessionId').value = sessionId;
-
-            // Mobile-safe modal show
-            setTimeout(() => {
-                const modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
-                modal.show();
-            }, 200);
+        function openReport(sessionId) {
+            const url = `{{ route('reports.session') }}?session_id=${sessionId}&type=1`;
+            window.open(url, '_blank');
         }
     </script>
 @endpush

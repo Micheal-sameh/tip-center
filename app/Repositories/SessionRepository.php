@@ -225,12 +225,14 @@ class SessionRepository extends BaseRepository
 
     public function reports($input)
     {
+        $from = $input['from'] ?? today();
+        $to = $input['to'] ?? today();
         $query = $this->model->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
             ->when(isset($input['professor']), function ($query) use ($input) {
                 $query->whereHas('professor', fn ($q) => $q->where('name', 'like', '%'.$input['professor'].'%'));
             })
-            ->when(isset($input['from']), fn ($q) => $q->whereDate('created_at', '>=', $input['from']))
-            ->when(isset($input['to']), fn ($q) => $q->whereDate('created_at', '<=', $input['to']))
+            ->when(isset($from), fn ($q) => $q->whereDate('created_at', '>=', $from))
+            ->when(isset($to), fn ($q) => $q->whereDate('created_at', '<=', $to))
             ->latest();
 
         return $this->execute($query);
