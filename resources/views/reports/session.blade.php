@@ -8,12 +8,19 @@
                 <form method="GET" action="{{ route('reports.session.pdf') }}" target="_blank" class="form-inline">
                     <input type="hidden" name="session_id" value="{{ $session->id }}">
                     <div class="input-group input-group-sm">
-                        <select name="type" class="form-select" required>
+                        <label class="form-check-label me-2" for="withPhones">With Phones</label>
+                        <input class="form-check-input me-3" type="checkbox" name="with_phones" id="withPhones"
+                            value="1">
+                        <select name="type" class="form-select me-2">
                             <option value="" disabled selected>Export Format</option>
                             @foreach (App\Enums\ReportType::all() as $type)
                                 <option value="{{ $type['value'] }}">{{ $type['name'] }}</option>
                             @endforeach
                         </select>
+                        <button type="submit" formaction="{{ route('reports.session') }}" formtarget="_self"
+                            class="btn btn-info btn-sm me-2">
+                            <i class="fas fa-eye me-1"></i> Show
+                        </button>
                         <button type="submit" class="btn btn-danger btn-sm">
                             <i class="fas fa-file-pdf me-1"></i> Export
                         </button>
@@ -31,83 +38,73 @@
                 <h5 class="mt-4 mb-3">Students Attendance</h5>
 
                 <!-- Desktop Table -->
-                <div class="table-responsive d-none d-md-block">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Student Name</th>
-                                <th>Phone</th>
-                                <th>Phone (P)</th>
-                                <th>Attend</th>
-                                @if ($reports->contains(fn($r) => $r->materials > 0))
-                                <th>Materials</th>
-                                @endif
-                                @if ($reports->contains(fn($r) => $r->printables > 0))
-                                <th>Printables</th>
-                                @endif
-                                <th class="text-end">Payment</th>
-                                @if ($reports->contains(fn($r) => $r->to_pay > 0))
-                                    <th class="text-end">To Pay</th>
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($reports as $report)
-                                <tr
-                                    class=" {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td><a href="{{ route('students.show', $report->student_id) }}">{{ $report->student?->name }}
-                                        </a></td>
-                                    <td>{{ $report->student?->phone }}</td>
-                                    <td>{{ $report->student?->parent_phone }}</td>
-                                    <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
-                                    </td>
-                                    @if ($report->materials > 0))
-                                    <td>{{ $report->materials }}</td>
-                                    @endif
-                                     @if ($report->printables > 0)
-                                    <td class="text-end">{{ $report->printables }}</td>
-                                    @endif
-                                    <td class="text-end">
-                                        {{ number_format($report->professor_price + $report->center_price, 2) }}</td>
-                                    @if ($report->to_pay)
-                                        <td class="text-end fw-bold {{ $report->to_pay > 0 ? 'text-danger' : '' }}">
-                                            {{ number_format($report->to_pay, 2) }}
-                                        </td>
-                                    @endif
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                <!-- Responsive Table (works for both desktop and mobile) -->
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Student Name</th>
+                @if ($reports->contains(fn($r) => $r->student?->phone > 0))
+                    <th>Phone</th>
+                @endif
+                @if ($reports->contains(fn($r) => $r->student?->parent_phone > 0))
+                    <th>Parent Phone</th>
+                @endif
+                <th>Attend</th>
+                @if ($reports->contains(fn($r) => $r->materials > 0))
+                    <th>Materials</th>
+                @endif
+                @if ($reports->contains(fn($r) => $r->printables > 0))
+                    <th>Printables</th>
+                @endif
+                <th class="text-end">Payment</th>
+                @if ($reports->contains(fn($r) => $r->to_pay > 0))
+                    <th class="text-end">To Pay</th>
+                @endif
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($reports as $report)
+                <tr
+                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
+                    <td>{{ $loop->iteration }}</td>
+                    <td><a href="{{ route('students.show', $report->student_id) }}">{{ $report->student?->name }}</a></td>
 
-                <!-- Mobile Cards -->
-                <div class="d-md-none">
-                    @foreach ($reports as $report)
-                        <div
-                            class="card mb-3 {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'border-danger bg-danger bg-opacity-10' : ($report->to_pay > 0 ? 'border-warning bg-warning bg-opacity-10' : '') }}">
-                            <div class="card-body">
-                                <h6 class="fw-bold mb-1">{{ $loop->iteration }}. {{ $report->student?->name }}</h6>
-                                <p class="mb-1"><strong>Phone:</strong> {{ $report->student?->phone }}</p>
-                                <p class="mb-1"><strong>Phone (P):</strong> {{ $report->student?->parent_phone }}</p>
-                                @if ($session->materials)
-                                    <p class="mb-1"><strong>Materials:</strong> {{ $report->materials }}</p>
-                                @endif
-                                @if ($session->printables)
-                                    <p class="mb-1"><strong>Printables:</strong> {{ $report->printables }}</p>
-                                @endif
-                                <p class="mb-1"><strong>Payment:</strong>
-                                    {{ number_format($report->professor_price + $report->center_price, 2) }}</p>
-                                @if ($report->to_pay)
-                                    <p class="mb-0 text-danger fw-bold">
-                                        <strong>To Pay:</strong> {{ number_format($report->to_pay, 2) }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+                    @if ($report->student?->phone)
+                        <td>{{ $report->student?->phone }}</td>
+                    @endif
+                    @if ($report->student?->parent_phone)
+                        <td>{{ $report->student?->parent_phone }}</td>
+                    @endif
+
+                    <td>
+                        {{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
+                    </td>
+
+                    @if ($report->materials > 0)
+                        <td>{{ $report->materials }}</td>
+                    @endif
+                    @if ($report->printables > 0)
+                        <td class="text-end">{{ $report->printables }}</td>
+                    @endif
+
+                    <td class="text-end">
+                        {{ number_format($report->professor_price + $report->center_price, 2) }}
+                    </td>
+
+                    @if ($report->to_pay)
+                        <td class="text-end fw-bold {{ $report->to_pay > 0 ? 'text-danger' : '' }}">
+                            {{ number_format($report->to_pay, 2) }}
+                        </td>
+                    @endif
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+                
 
                 {{-- Summary (totals) --}}
                 <div class="row mt-4">
