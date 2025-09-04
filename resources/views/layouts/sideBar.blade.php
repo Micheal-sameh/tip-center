@@ -320,9 +320,7 @@
                                             <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.charges') }}
                                         </a>
                                     </li>
-                                @endcan
-
-                                @can('charges_salary')
+                                
                                     <li>
                                         <a href="{{ route('charges.gap') }}"
                                             class="dropdown-item {{ request()->routeIs('charges.gap') ? 'active' : '' }}">
