@@ -51,7 +51,8 @@
                                     <td>{{ $student->materials }}</td>
                                     <td>{{ $student->createdBy?->name }}</td>
                                     <td>
-                                        <form action="{{ route('attendances.delete', $student->id) }}" method="POST">
+                                        <form action="{{ route('attendances.delete', $student->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete {{$student->student?->name}} attendance?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
@@ -59,6 +60,7 @@
                                             </button>
                                         </form>
                                     </td>
+
                                 </tr>
                             @endforeach
                         </tbody>

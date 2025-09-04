@@ -11,26 +11,49 @@
                 <i class="fas fa-list me-2 text-primary"></i> {{ $title }}
             </h4>
             <a href="{{ route('charges.create') }}" class="btn btn-sm btn-primary">
-                <i class="fas fa-plus me-1"></i> Add Charge
+                <i class="fas fa-plus me-1"></i> Add {{$title}}
             </a>
         </div>
 
         <!-- Filter Form -->
         <form id="filter-form" method="GET" action="{{ route('charges.' . $route) }}" class="row g-3 mb-4">
-            <div class="col-md-3">
+            <!-- Name -->
+            <div class="col-md-2">
                 <label for="name" class="form-label">Search by Name</label>
                 <input type="text" name="name" id="name" class="form-control" placeholder="Enter charge name"
                     value="{{ request('name') }}">
             </div>
-            <div class="col-md-3">
+
+            <!-- Type -->
+            @if ($route != 'gap')
+                <div class="col-md-2">
+                    <label for="type" class="form-label">Type</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="">Charge type</option>
+                        @foreach (App\Enums\ChargeType::all() as $charge)
+                            <option value="{{ $charge['value'] }}"
+                                {{ request('type') == $charge['value'] ? 'selected' : '' }}>
+                                {{ $charge['name'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+
+            <!-- Date From -->
+            <div class="col-md-2">
                 <label for="date_from" class="form-label">From</label>
                 <input type="date" name="date_from" id="date_from" class="form-control"
                     value="{{ request('date_from') }}">
             </div>
-            <div class="col-md-3">
+
+            <!-- Date To -->
+            <div class="col-md-2">
                 <label for="date_to" class="form-label">To</label>
                 <input type="date" name="date_to" id="date_to" class="form-control" value="{{ request('date_to') }}">
             </div>
+
+            <!-- Actions -->
             <div class="col-md-3 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2 w-100">
                     <i class="fas fa-search me-1"></i> Filter
@@ -40,6 +63,7 @@
                 </a>
             </div>
         </form>
+
 
         <div class="card shadow border-0 rounded-4">
             <div class="card-body">
@@ -76,7 +100,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('Are you sure?')">
+                                                        onclick="return confirm('Are you sure you want to delete {{ $charge->title }} as {{ App\Enums\ChargeType::getStringValue($charge->type) }} with amount {{ $charge->amount }} EGP?');">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
