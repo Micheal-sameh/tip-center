@@ -141,6 +141,7 @@ Route::group(['middleware' => ['setlocale']], function () {
 
         Route::prefix('charges')->group(function () {
             Route::get('/', [ChargeController::class, 'index'])->name('charges.index');
+            Route::get('/gap', [ChargeController::class, 'gap'])->name('charges.gap');
             Route::get('/create', [ChargeController::class, 'create'])->name('charges.create');
             Route::post('/', [ChargeController::class, 'store'])->name('charges.store');
             Route::delete('/{id}', [ChargeController::class, 'delete'])->name('charges.destroy');

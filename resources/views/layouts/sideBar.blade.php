@@ -322,6 +322,15 @@
                                     </li>
                                 @endcan
 
+                                @can('charges_salary')
+                                    <li>
+                                        <a href="{{ route('charges.gap') }}"
+                                            class="dropdown-item {{ request()->routeIs('charges.gap') ? 'active' : '' }}">
+                                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.gap') }}
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 @can('special_room_report')
                                     <li>
                                         <a class="dropdown-item {{ request()->routeIs('reports.special-rooms') ? 'active' : '' }}"

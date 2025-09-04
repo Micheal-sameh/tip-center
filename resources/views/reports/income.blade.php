@@ -6,6 +6,16 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="mb-0">Sessions Income Report</h4>
+            <form action="{{ route('charges.store') }}" method="POST" class="d-flex align-items-center ms-3">
+                @csrf
+                <input type="hidden" value="{{auth()->user()->name}}" name="title">
+                <input type="hidden" value="{{App\Enums\chargeType::GAP}}" name="type">
+                <input type="number" step="0.1" name="amount" class="form-control form-control-sm me-2"
+                    placeholder="Enter Gap" required>
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-save me-1"></i> Save
+                </button>
+            </form>
         </div>
 
         <!-- Filter Form -->

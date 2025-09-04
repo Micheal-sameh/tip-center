@@ -32,11 +32,33 @@ class ChargeRepository extends BaseRepository
 
     public function index($input)
     {
-        $query = $this->model->query()
-            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
-            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']));
+        $user = auth()->user();
+        $query = $this->chargesFilter($input)
+            ->when($user->can('charges_salary'), fn ($q) => $q->whereNot('type', ChargeType::GAP))
+            ->when(! $user->can('charges_salary'), fn ($q) => $q->whereNotIn('type', [ChargeType::GAP, ChargeType::SALARY, ChargeType::RENT]));
 
         return $this->execute($query);
+    }
+
+    public function gap($input)
+    {
+        $query = $this->chargesFilter($input)
+            ->where('type', ChargeType::GAP);
+
+        return $this->execute($query);
+    }
+
+    protected function chargesFilter($input)
+    {
+        if(!isset($input['date_from']) && !isset($input['date_to'])){
+            $input['date_from'] = today();
+            $input['date_to'] = today();
+        }
+
+        return $this->model->query()
+            ->when(isset($input['name']), fn ($q) => $q->where('title', 'like', '%'.$input['name'].'%'))
+            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']));
     }
 
     public function store($input)

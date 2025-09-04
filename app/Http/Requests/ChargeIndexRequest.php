@@ -11,6 +11,7 @@ class ChargeIndexRequest extends FormRequest
         return [
             'date_from' => 'date',
             'date_to' => 'date'.($this->from ? '|after_or_equal:from' : ''),
+            'name' => 'string',
         ];
     }
 }
