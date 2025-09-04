@@ -13,5 +13,6 @@ class Charge extends Model
         'title',
         'amount',
         'type',
+        'created_by',
     ];
 }

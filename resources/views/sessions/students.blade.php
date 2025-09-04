@@ -29,6 +29,7 @@
                                 <th>Professor</th>
                                 <th>Student Paper</th>
                                 <th>Prof Books</th>
+                                <th>Attended By</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -48,6 +49,7 @@
                                     <td>{{ $student->professor_price }}</td>
                                     <td>{{ $student->printables }}</td>
                                     <td>{{ $student->materials }}</td>
+                                    <td>{{ $student->createdBy?->name }}</td>
                                     <td>
                                         <form action="{{ route('attendances.delete', $student->id) }}" method="POST">
                                             @csrf

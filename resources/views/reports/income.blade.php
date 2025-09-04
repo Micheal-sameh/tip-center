@@ -10,10 +10,10 @@
                 @csrf
                 <input type="hidden" value="{{auth()->user()->name}}" name="title">
                 <input type="hidden" value="{{App\Enums\chargeType::GAP}}" name="type">
-                <input type="number" step="0.1" name="amount" class="form-control form-control-sm me-2"
+                <input type="number" step="1" name="amount" class="form-control form-control-sm me-2"
                     placeholder="Enter Gap" required>
                 <button type="submit" class="btn btn-sm btn-outline-danger">
-                    <i class="fas fa-save me-1"></i> Save
+                    Save
                 </button>
             </form>
         </div>
