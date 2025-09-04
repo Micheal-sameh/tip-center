@@ -36,21 +36,21 @@
                     <thead class="table-dark sticky-top">
                         <tr>
                             <th>Day</th>
-                            <th>Centre</th>
+                            <th>Center</th>
                             <th>Copies</th>
                             <th>Markers</th>
                             <th>Gap</th>
-                            <th class="text-success">Income Total</th>
+                            <th class="text-success">Total Income</th>
                             <th>Exp Centre</th>
                             <th>Exp Copies</th>
                             <th>Exp Markers</th>
                             <th>Exp Others</th>
                             <th class="text-danger">Ex Total</th>
-                            <th>Net Centre</th>
-                            <th>Net Copies</th>
-                            <th>Net Markers</th>
-                            <th>Net Other</th>
-                            <th>Difference</th>
+                            <th>Total Centre</th>
+                            <th>Total Copies</th>
+                            <th>Total Markers</th>
+                            <th>Total Other</th>
+                            <th>NET</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,7 +58,7 @@
                             <tr>
                                 <td class="fw-semibold">{{ \Carbon\Carbon::parse($report->day)->format('d M Y') }}</td>
                                 <td>{{ number_format($report->center, 2) }}</td>
-                                <td>{{ number_format($report->copies, 2) }}</td>
+                                <td>{{ number_format($report->copies + $report->print, 2) }}</td>
                                 <td>{{ number_format($report->markers, 2) }}</td>
                                 <td>{{ number_format($report->charges_gap, 2) }}</td>
                                 <td class="fw-bold text-success">{{ number_format($report->income_total, 2) }}</td>
