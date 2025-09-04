@@ -9,6 +9,7 @@ use App\Http\Requests\CloseSessionRequesst;
 use App\Http\Requests\SessionCreateRequest;
 use App\Http\Requests\SessionIndexRequest;
 use App\Http\Requests\SessionUpdateRequest;
+use App\Repositories\SessionRepository;
 use App\Services\ProfessorService;
 use App\Services\SessionService;
 
@@ -16,6 +17,7 @@ class SessionController extends Controller
 {
     public function __construct(
         protected SessionService $sessionservice,
+        protected SessionRepository $sessionRepository,
         protected ProfessorService $professorService,
     ) {
         $this->middleware('permission:sessions_view')->only(['index', 'show']);
@@ -104,6 +106,10 @@ class SessionController extends Controller
 
     public function active($id)
     {
+        $session = $this->sessionRepository->findById($id);
+        if ($session->status == SessionStatus::FINISHED && ! auth()->user()->hasAnyRole(['admin', 'manager'])) {
+            return redirect()->back()->with('error', 'session is already closed please refer to admin');
+        }
         $session = $this->sessionservice->status(SessionStatus::ACTIVE, $id);
 
         return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');

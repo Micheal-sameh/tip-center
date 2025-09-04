@@ -53,6 +53,7 @@
                                 <th>Amount</th>
                                 <th>Type</th>
                                 <th>Date</th>
+                                <th>Created By</th>
                                 @can('charges_delete')
                                     <th>Actions</th>
                                 @endcan
@@ -66,6 +67,7 @@
                                     <td>{{ $charge->amount }}</td>
                                     <td>{{ ChargeType::getStringValue($charge->type) }}</td>
                                     <td>{{ $charge->created_at->format('d-m-Y') }}</td>
+                                    <td>{{ $charge->createdBy?->name }}</td>
                                     @can('charges_delete')
                                         @if (!$charge->created_at->lt(today()))
                                             <td>
