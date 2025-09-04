@@ -53,7 +53,7 @@ class ChargeType
 
         $values = array_keys(self::$translations);
 
-        if (! Auth::user()?->hasRole('admin')) {
+        if (! Auth::user()?->can('charges_salary')) {
             $values = array_diff($values, [self::RENT, self::SALARY, self::GAP]);
         }
 
@@ -79,7 +79,7 @@ class ChargeType
     {
         $values = array_keys(self::$translations);
 
-        if (! Auth::user()?->hasRole('admin')) {
+        if (! Auth::user()?->can('charges_salary')) {
             $values = array_diff($values, [self::RENT, self::SALARY, self::GAP]);
         }
 
