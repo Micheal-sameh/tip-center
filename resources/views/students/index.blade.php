@@ -103,23 +103,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Birthdays -->
-            <div class="col-6 col-md-3">
-                <div class="card bg-warning bg-opacity-10 border-warning border-opacity-25 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-warning mb-0">{{ __('Birthdays') }}</h6>
-                                <h3 class="mb-0">{{ App\Models\student::hasBirthdayToday() }}</h3>
-                            </div>
-                            <div class="bg-warning bg-opacity-25 p-2 p-md-3 rounded">
-                                <i class="fas fa-birthday-cake text-warning"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Student List Section (Will be loaded via AJAX) -->

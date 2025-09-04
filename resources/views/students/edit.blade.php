@@ -72,14 +72,6 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="date" name="birth_date" class="form-control" id="birth_date"
-                                    value="{{ old('birth_date', $student->birth_date ?: '') }}">
-                                <label for="birth_date">{{ __('Birth Date') }}</label>
-                            </div>
-                        </div>
-
                         <div class="col-12">
                             <div class="form-floating">
                                 <textarea name="note" class="form-control" id="note" placeholder="{{ __('Note') }}" style="height: 100px">{{ old('note', $student->note) }}</textarea>

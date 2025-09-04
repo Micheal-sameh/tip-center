@@ -73,14 +73,7 @@
                                     <p class="mb-0 fw-bold text-dark">{{ $student->phone ?? 'N/A' }}</p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="info-card p-3 rounded-3 bg-light bg-opacity-10 border border-light">
-                                    <h6 class="text-muted mb-2 d-flex align-items-center">
-                                        <i class="fas fa-birthday-cake me-2 text-primary"></i>{{ __('trans.birth_date') }}
-                                    </h6>
-                                    <p class="mb-0 fw-bold text-dark">{{ $student->birth_date?->format('d-m-Y') }}</p>
-                                </div>
-                            </div>
+                           
                             <div class="col-md-6">
                                 <div class="info-card p-3 rounded-3 bg-light bg-opacity-10 border border-light">
                                     <h6 class="text-muted mb-2 d-flex align-items-center">
@@ -224,73 +217,6 @@
         </div>
     </div>
 
-
-    <!-- Avatar Modal -->
-    <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-semibold">{{ __('trans.profile_picture') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="{{ __('Close') }}"></button>
-                </div>
-                <div class="modal-body text-center py-4">
-                    <div class="mb-4">
-                        <div class="avatar-preview mx-auto">
-                            @if ($student->hasMedia('students_images'))
-                                <img src="{{ $student->getFirstMediaUrl('students_images') }}"
-                                    class="img-fluid rounded shadow" id="zoomableImage"
-                                    style="max-height: 500px; cursor: zoom-in;" alt="Student Avatar">
-                            @else
-                                <div class="d-flex align-items-center justify-content-center h-100 w-100 bg-light rounded-circle"
-                                    style="height: 300px;">
-                                    <i class="fas fa-user-graduate fa-5x text-muted"></i>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    @can('students_update')
-                        <form action="{{ route('students.profilePic', $student->id) }}" method="POST"
-                            enctype="multipart/form-data" class="px-3">
-                            @csrf
-                            @method('PUT')
-                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-                                <div class="mb-3 flex-grow-1">
-                                    <input type="file" name="image" id="avatarUpload" accept="image/*"
-                                        class="form-control d-none" required>
-                                    <label for="avatarUpload" class="btn btn-primary rounded-pill px-4 py-2 w-100">
-                                        <i class="fas fa-cloud-upload-alt me-2"></i> {{ __('trans.choose_new_photo') }}
-                                    </label>
-                                    <div id="fileName" class="small text-muted mt-2"></div>
-                                </div>
-                                <button type="submit" class="btn btn-success rounded-pill px-4 py-2 mb-3 mb-md-0"
-                                    id="uploadBtn" disabled>
-                                    <i class="fas fa-check me-2"></i> {{ __('trans.update_photo') }}
-                                </button>
-                                {{-- @if ($student->hasMedia('students_images'))
-                                    <button type="button" class="btn btn-danger rounded-pill px-4 py-2"
-                                        id="removeAvatarBtn">
-                                        <i class="fas fa-trash-alt me-2"></i> {{ __('trans.remove_photo') }}
-                                    </button>
-                                @endif --}}
-                            </div>
-                        </form>
-                    @endcan
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Remove Avatar Form (hidden) -->
-    {{-- @can('students_update')
-        <form id="removeAvatarForm" action="{{ route('students.remove.avatar', $student->id) }}" method="POST"
-            class="d-none">
-            @csrf
-            @method('DELETE')
-        </form>
-    @endcan --}}
-
     <style>
         .bg-gradient-primary {
             background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
@@ -346,15 +272,8 @@
             transition: opacity 0.3s ease;
         }
 
-        .avatar-link:hover .avatar-overlay {
-            opacity: 1;
-        }
-
         /* Modal Styles */
-        .avatar-preview {
-            max-width: 100%;
-            overflow: hidden;
-        }
+
 
         /* Zoom effect */
         .zoomed {

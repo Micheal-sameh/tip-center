@@ -15,7 +15,6 @@ class StudentCreateRequest extends FormRequest
             'phone' => 'required_without:parent_phone|string|min:11|max:11|unique:students,phone,',
             'parent_phone' => 'required_without:phone|min:11|max:11|string',
             'parent_phone_2' => 'string|min:11|max:11',
-            'birth_date' => 'date',
             'note' => 'string',
         ];
     }
@@ -45,8 +44,6 @@ class StudentCreateRequest extends FormRequest
             'parent_phone_2.string' => 'Parent second phone must be a valid string.',
             'parent_phone_2.min' => 'Parent second phone must be exactly 11 digits.',
             'parent_phone_2.max' => 'Parent second phone must be exactly 11 digits.',
-
-            'birth_date.date' => 'Birth date must be a valid date.',
 
             'note.string' => 'Note must be a valid string.',
         ];
