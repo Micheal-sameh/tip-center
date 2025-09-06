@@ -37,11 +37,11 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="cafeteria" class="form-label fw-bold">
-                                <i class="fas fa-coffee me-1 text-secondary"></i> Cafeteria
+                            <label for="cafeterea" class="form-label fw-bold">
+                                <i class="fas fa-coffee me-1 text-secondary"></i> cafeterea
                             </label>
-                            <input type="number" class="form-control" id="cafeteria" name="cafeteria" min="0"
-                                value="{{ old('cafeteria') }}" placeholder="{{ $session->sessionExtra->cafeteria ?? 0 }}">
+                            <input type="number" class="form-control" id="cafeterea" name="cafeterea" min="0"
+                                value="{{ old('cafeterea') }}" placeholder="{{ $session->sessionExtra->cafeterea ?? 0 }}">
                         </div>
 
                         <div class="col-md-6">
