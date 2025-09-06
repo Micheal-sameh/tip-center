@@ -163,9 +163,9 @@
                     @if ($report->student?->parent_phone)
                         <td>{{ $report->student?->parent_phone }}</td>
                     @endif
-                    <td>{{ $report->created_at->format('h:i A') }}</td>
+                    <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}</td>
                     <td>{{ $report->materials }}</td>
-                    <td class="text-end">{{ $report->printables }}</td>
+                    <td class="text-end">{{ $report->printables ?? 0 }}</td>
                     <td class="text-end">
                         {{ number_format($report->professor_price + $report->center_price, 2) }}
                     </td>
