@@ -221,22 +221,20 @@
             // Initialize event handlers
             function initializeEventHandlers() {
                 // Status modal handler
-                $(document).off('click', '.status-toggle').on('click', '.status-toggle', function(e) {
+                $(document).off('click', '.extras').on('click', '.extras', function(e) {
                     e.preventDefault();
                     const button = $(this);
                     const sessionId = button.data('id');
                     const modal = $('#statusChangeModal');
 
                     // Update the form action URL
-                    modal.find('form').attr('action', '/sessions/' + sessionId + '/close');
+                    modal.find('form').attr('action', '/sessions/' + sessionId + '/extras');
 
                     // Clear any previous hidden inputs
-                    modal.find('input[name="status"]').remove();
+
 
                     // Add the status input
-                    modal.find('form').append('<input type="hidden" name="status" value="inactive">');
-
-                    // Reset form and show modal
+                                       // Reset form and show modal
                     modal.find('form')[0].reset();
                     modal.modal('show');
                 });

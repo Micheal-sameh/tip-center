@@ -82,7 +82,9 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/show', [SessionController::class, 'show'])->name('sessions.show');
             Route::get('/{id}/edit', [SessionController::class, 'edit'])->name('sessions.edit');
             Route::get('/{id}/students', [SessionController::class, 'students'])->name('sessions.students');
+            Route::get('/{id}/extras', [SessionController::class, 'extrasForm'])->name('sessions.extras-form');
             Route::post('/', [SessionController::class, 'store'])->name('sessions.store');
+            Route::put('/{id}/extras', [SessionController::class, 'extras'])->name('sessions.extras');
             Route::put('/{id}/close', [SessionController::class, 'close'])->name('sessions.close');
             Route::put('/{id}/active', [SessionController::class, 'active'])->name('sessions.active');
             Route::put('/{id}', [SessionController::class, 'update'])->name('sessions.update');
@@ -97,8 +99,6 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
             Route::post('/', [StudentController::class, 'store'])->name('students.store');
             Route::put('/{id}/settle', [StudentController::class, 'settleDue'])->name('students.settle_due');
-            // Route::put('/{id}/status', [StudentController::class, 'changeStatus'])->name('students.status');
-            // Route::put('/{id}/profile-pic', [StudentController::class, 'profilePic'])->name('students.profilePic');
             Route::put('/{id}', [StudentController::class, 'update'])->name('students.update');
             Route::delete('/{id}', [StudentController::class, 'delete'])->name('students.delete');
         });

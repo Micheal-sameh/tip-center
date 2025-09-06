@@ -114,6 +114,7 @@ class SessionRepository extends BaseRepository
             'room' => $input->room,
             'type' => $input->type,
         ]);
+        $session->sessionExtra()->create();
         DB::commit();
 
         return $session;
@@ -143,19 +144,18 @@ class SessionRepository extends BaseRepository
         $session->delete();
     }
 
-    public function close($input, $id)
+    public function extras($input, $id)
     {
         DB::beginTransaction();
         $session = $this->findById($id);
-        $session->update([
-            'status' => SessionStatus::FINISHED,
-        ]);
-        $session->sessionExtra()->create([
-            'copies' => $input['copies'] ?? 0,
-            'markers' => $input['markers'] ?? 0,
-            'cafeterea' => $input['cafeterea'] ?? 0,
-            'other' => $input['other'] ?? 0,
-            'notes' => $input['notes'],
+        $extras = $session->sessionExtra;
+
+        $session->sessionExtra()->update([
+            'copies' => $extras->copies + ($input['copies'] ?? 0),
+            'markers' => $extras->markers + ($input['markers'] ?? 0),
+            'cafeterea' => $extras->cafeterea + ($input['cafeterea'] ?? 0),
+            'other' => $extras->other + ($input['other'] ?? 0),
+            'notes' => $input['notes'] ?? $extras->notes,
         ]);
         $this->absence($session);
         DB::commit();
@@ -225,7 +225,7 @@ class SessionRepository extends BaseRepository
 
     public function reports($input)
     {
-        if(!isset($input['from']) && !isset($input['to'])){
+        if (! isset($input['from']) && ! isset($input['to'])) {
             $input['from'] = today();
             $input['to'] = today();
         }

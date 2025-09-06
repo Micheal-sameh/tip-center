@@ -17,6 +17,7 @@ class SessionService
     public function index($input)
     {
         $sessions = $this->sessionRepository->index($input);
+        $sessions->load('sessionExtra');
         if (! isset($input['student_id'])) {
             $onlineSessions = $this->sessionRepository->onlineSessions();
 
@@ -60,9 +61,9 @@ class SessionService
         return $this->sessionRepository->delete($id);
     }
 
-    public function close($input, $id)
+    public function extras($input, $id)
     {
-        $session = $this->sessionRepository->close($input, $id);
+        $session = $this->sessionRepository->extras($input, $id);
 
         return $session;
     }
