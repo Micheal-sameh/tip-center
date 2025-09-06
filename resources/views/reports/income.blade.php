@@ -97,7 +97,7 @@
                                     <td>{{ $session->professor->name ?? '-' }} -
                                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
                                     <td>{{ $session->created_at->format('d-m-Y') }}
-                                    <td>{{ $session->paid_students > 0 ? $session->paid_students : '-' }}
+                                    <td>{{ $session->total_paid_students  }}
                                     </td>
                                     <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
                                     </td>
