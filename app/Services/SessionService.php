@@ -86,7 +86,9 @@ class SessionService
     public function students($id)
     {
         $session = $this->sessionRepository->show($id);
-        $session->load('sessionStudents');
+        $session->load(['sessionStudents' => function ($q) {
+            $q->orderBy('is_attend', 'desc');
+        }]);
 
         return $session;
     }
