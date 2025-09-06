@@ -111,7 +111,7 @@ class SessionController extends Controller
     {
         $session = $this->sessionservice->extras($request->validated(), $id);
 
-        return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
+        return to_route('sessions.index')->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Extras updated successfully');
     }
 
     public function close($id)
