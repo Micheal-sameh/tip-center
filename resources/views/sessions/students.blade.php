@@ -30,6 +30,7 @@
                                 <th>Student Paper</th>
                                 <th>Prof Books</th>
                                 <th>Attended By</th>
+                                <th>Updated By</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -50,6 +51,7 @@
                                     <td>{{ $student->printables }}</td>
                                     <td>{{ $student->materials }}</td>
                                     <td>{{ $student->createdBy?->name }}</td>
+                                    <td>{{ $student->updatedBy?->name }}</td>
                                     <td>
                                         <form action="{{ route('attendances.delete', $student->id) }}" method="POST"
                                             onsubmit="return confirm('Are you sure you want to delete {{$student->student?->name}} attendance?');">
