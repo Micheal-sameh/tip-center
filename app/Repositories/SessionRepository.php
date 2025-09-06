@@ -40,7 +40,11 @@ class SessionRepository extends BaseRepository
     {
         $this->checkActive();
         $query = $this->model->query()
-            ->withCount('sessionStudents')
+            ->withCount(['sessionStudents',
+                'sessionStudents as attended_count' => function ($query) {
+                    $query->where('is_attend', 1);
+                },
+            ])
             ->when(isset($input['professor_id']), fn ($q) => $q->where('professor_id', $input['professor_id']))
             ->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
             ->when(isset($input['status']), fn ($q) => $q->where('status', $input['status']))

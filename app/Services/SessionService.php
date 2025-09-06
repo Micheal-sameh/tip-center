@@ -37,7 +37,7 @@ class SessionService
     public function report($input)
     {
         $session = $this->sessionRepository->report($input);
-        $session->load('sessionExtra', 'sessionStudent.createdBy');
+        $session->load('sessionExtra', 'sessionStudents.createdBy');
 
         return $session;
     }

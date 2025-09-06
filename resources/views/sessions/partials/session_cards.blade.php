@@ -72,7 +72,7 @@
                             @endif
                             <div class="d-flex justify-content-between">
                                 <a class="fw-bold" href="{{ route('sessions.students', $session->id) }}">Students:</a>
-                                <span class="fw-bold">{{ $session->session_students_count }}</span>
+                                <span class="fw-bold">{{ $session->attended_count }}</span>
                             </div>
                             @if ($session->room)
                                 <div class="d-flex justify-content-between">
