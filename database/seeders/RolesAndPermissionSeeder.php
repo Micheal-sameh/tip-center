@@ -175,8 +175,6 @@ class RolesAndPermissionSeeder extends Seeder
             $sessions_report,
             $special_room_report,
             $charges_delete,
-            $monthly_income,
-
         ]);
 
     }
