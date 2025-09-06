@@ -228,7 +228,7 @@
         <tbody>
             <tr>
                 <th>Total Students</th>
-                <td class="text-end">{{ $reports->count() }}</td>
+                <td class="text-end">{{ $reports->where('is_attend', 1)->count() }}</td>
             </tr>
             @if ($session->professor_price)
                 <tr>
