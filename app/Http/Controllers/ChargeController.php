@@ -14,7 +14,6 @@ class ChargeController extends Controller
         $this->middleware('permission:charges_create')->only(['create', 'store']);
         $this->middleware('permission:charges_index')->only(['index', 'gap']);
         $this->middleware('permission:charges_delete')->only(['delete']);
-        // $this->middleware('permission:monthly_income')->only(['monthlyIncome']);
     }
 
     public function index(ChargeIndexRequest $request)
