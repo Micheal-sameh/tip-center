@@ -163,7 +163,7 @@ class SessionStudentRepository extends BaseRepository
             };
         }
 
-        return $query->get();
+        return $query->orderBy('is_attend', 'desc')->get();
     }
 
     public function student($input)
