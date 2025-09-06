@@ -88,7 +88,6 @@ class StudentRepository extends BaseRepository
             'phone' => $input->phone,
             'parent_phone' => $input->parent_phone,
             'parent_phone_2' => $input->parent_phone_2,
-            // 'birth_date' => $input->birth_date,
             'note' => $input->note,
         ]);
         DB::commit();
@@ -105,7 +104,6 @@ class StudentRepository extends BaseRepository
             'phone' => $input->phone ?? $student->phone,
             'parent_phone' => $input->parent_phone ?? $student->parent_phone,
             'parent_phone_2' => $input->parent_phone_2 ?? $student->parent_phone_2,
-            // 'birth_date' => $input->birth_date ?? $student->birth_date,
             'note' => $input->note ?? null,
         ]);
 
