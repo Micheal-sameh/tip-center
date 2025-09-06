@@ -72,14 +72,6 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="date" name="birth_date" class="form-control" id="birth_date"
-                                    value="{{ old('birth_date', $student->birth_date ?: '') }}">
-                                <label for="birth_date">{{ __('Birth Date') }}</label>
-                            </div>
-                        </div>
-
                         <div class="col-12">
                             <div class="form-floating">
                                 <textarea name="note" class="form-control" id="note" placeholder="{{ __('Note') }}" style="height: 100px">{{ old('note', $student->note) }}</textarea>
@@ -105,29 +97,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    {{-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">{{ __('Confirm Deletion') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ __('Are you sure you want to delete this student? This action cannot be undone.') }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
-                    <form action="{{ route('students.delete', $student) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">{{ __('Delete Student') }}</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 
     <style>
         .form-floating label {

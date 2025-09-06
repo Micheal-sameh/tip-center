@@ -18,6 +18,8 @@ class SessionStudent extends Model
         'to_pay',
         'materials',
         'is_attend',
+        'created_by',
+        'updated_by',
     ];
 
     public function session()
@@ -28,5 +30,15 @@ class SessionStudent extends Model
     public function student()
     {
         return $this->belongsTo(Student::class, 'student_id');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

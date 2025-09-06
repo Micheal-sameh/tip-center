@@ -10,6 +10,7 @@ use App\Models\SessionStudent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SessionStudentRepository extends BaseRepository
@@ -67,6 +68,7 @@ class SessionStudentRepository extends BaseRepository
             'printables' => $session->printables ?? 0,
             'materials' => $session->materials ?? 0,
             'is_attend' => AttendenceType::ATTEND,
+            'created_by' => Auth::id(),
         ]);
         $required_price = $session->professor_price + $session->center_price + $session->printables + $session->materials;
         $reminder = $input->total_paid - $required_price;
@@ -87,6 +89,7 @@ class SessionStudentRepository extends BaseRepository
             'materials' => $input->materials ?? 0,
             'to_pay' => $input->to_pay ?? 0,
             'is_attend' => AttendenceType::ATTEND,
+            'created_by' => Auth::id(),
         ]);
         DB::commit();
 
@@ -102,6 +105,7 @@ class SessionStudentRepository extends BaseRepository
             'printables' => $input->printables ?? 0,
             'materials' => $input->materials ?? 0,
             'to_pay' => $input->to_pay ?? 0,
+            'updated_by' => Auth::id(),
         ]);
 
         return $attendance;
@@ -141,7 +145,15 @@ class SessionStudentRepository extends BaseRepository
 
     public function session($input)
     {
-        $query = $this->model->where('session_id', $input['session_id']);
+        $query = $this->model
+            ->with([
+                'student' => function ($query) use ($input) {
+                    isset($input['with_phones'])
+                     ? $query->select('id', 'name', 'phone', 'parent_phone')
+                     : $query->select('id', 'name');
+                },
+            ])
+            ->where('session_id', $input['session_id']);
         if (isset($input['type'])) {
             match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials', 'is_attend'),

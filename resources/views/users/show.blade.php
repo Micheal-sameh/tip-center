@@ -26,10 +26,16 @@
                             <div class="avatar-wrapper mx-auto mb-3 position-relative">
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#avatarModal" class="avatar-link">
                                     @if ($user->hasMedia('profile_pic'))
-                                        <img src="{{ $user->getFirstMediaUrl('profile_pic') }}"
-                                            class="avatar img-fluid rounded-circle shadow-sm" alt="User Avatar">
-                                        <div class="avatar-overlay rounded-circle">
-                                            <i class="fas fa-camera text-white"></i>
+                                        <div class="position-relative d-inline-block">
+                                            <img src="{{ $user->getFirstMediaUrl('profile_pic') }}"
+                                                class="avatar img-fluid rounded-circle shadow-sm" alt="User Avatar"
+                                                style="width: 200px; height: 200px; object-fit: cover;">
+
+                                            <div class="avatar-overlay rounded-circle position-absolute top-50 start-50 translate-middle
+                d-flex align-items-center justify-content-center"
+                                                style="width: 100px; height: 100px; background: rgba(0,0,0,0.4); opacity: 0; transition: .3s;">
+                                                <i class="fas fa-camera text-white"></i>
+                                            </div>
                                         </div>
                                     @else
                                         @php

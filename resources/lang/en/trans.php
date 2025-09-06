@@ -87,4 +87,5 @@ return [
     'room 10 & 11' => 'Room 10 & 11',
     'finance' => 'Finance',
     'Today Login' => 'Today Login',
+    'gap' => 'Gap',
 ];

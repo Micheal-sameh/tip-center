@@ -55,6 +55,7 @@ class RolesAndPermissionSeeder extends Seeder
 
         // charges
         $charges_create = Permission::firstOrCreate(['name' => 'charges_create']);
+        $charges_salary = Permission::firstOrCreate(['name' => 'charges_salary']);
         $charges_index = Permission::firstOrCreate(['name' => 'charges_index']);
         $charges_delete = Permission::firstOrCreate(['name' => 'charges_delete']);
 
@@ -95,6 +96,7 @@ class RolesAndPermissionSeeder extends Seeder
 
             $charges_index,
             $charges_create,
+            $charges_salary,
             $charges_delete,
         ]);
 

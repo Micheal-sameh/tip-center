@@ -14,21 +14,22 @@
 
                 <h5 class="mt-4 mb-3">Students Attendance</h5>
 
-                <!-- Desktop Table -->
-                <div class="table-responsive d-none d-md-block">
-                    <table class="table table-bordered table-hover">
+                <!-- Responsive Table (works for all screen sizes) -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
                         <thead class="table-dark">
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Code</th>
                                 <th>Phone</th>
-                                <th>PP</th>
+                                <th>Parent Phone</th>
                                 <th>Attend at</th>
-                                <th>C</th>
-                                <th>P</th>
-                                <th>Print</th>
-                                <th>PL</th>
+                                <th>Center</th>
+                                <th>Professor</th>
+                                <th>Student Paper</th>
+                                <th>Prof Books</th>
+                                <th>Attended By</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -39,21 +40,19 @@
                                     data-professor="{{ $student->professor_price }}"
                                     data-materials="{{ $student->materials }}" data-printables="{{ $student->printables }}">
                                     <td>{{ $loop->iteration }}</td>
-                                    {{-- <td class="fw-bold"><a href="{{ route('students.show', $student->student_id) }}">
-                                            {{ $student->student?->name }} </a></td> --}}
                                     <td>{{ $student->student?->name }}</td>
                                     <td>{{ $student->student?->code }}</td>
                                     <td>{{ $student->student?->phone }}</td>
                                     <td>{{ $student->student?->parent_phone }}</td>
                                     <td>{{ $student->created_at->format('h:i:A') }}</td>
-                                    {{-- <td>{{ $student->center_price + $student->professor_price + $student->printables + $student->materials }} --}}
-                                    {{-- </td> --}}
                                     <td>{{ $student->center_price }}</td>
                                     <td>{{ $student->professor_price }}</td>
                                     <td>{{ $student->printables }}</td>
                                     <td>{{ $student->materials }}</td>
+                                    <td>{{ $student->createdBy?->name }}</td>
                                     <td>
-                                        <form action="{{ route('attendances.delete', $student->id) }}" method="POST">
+                                        <form action="{{ route('attendances.delete', $student->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete {{$student->student?->name}} attendance?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
@@ -61,41 +60,11 @@
                                             </button>
                                         </form>
                                     </td>
+
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-                </div>
-
-                <!-- Mobile Cards -->
-                <div class="d-md-none">
-                    @foreach ($session->sessionStudents as $student)
-                        <div class="card mb-3 student-row {{ $student->to_pay > 0 ? 'border-warning bg-warning bg-opacity-10' : '' }}"
-                            data-id="{{ $student->id }}" data-center="{{ $student->center_price }}"
-                            data-professor="{{ $student->professor_price }}" data-materials="{{ $student->materials }}"
-                            data-printables="{{ $student->printables }}">
-                            <div class="card-body">
-                                {{-- <h6 class="fw-bold mb-1">{{ $loop->iteration }}. <a
-                                        href="{{ route('students.show', $student->student_id) }}">{{ $student->student?->name }}</a>
-                                </h6> --}}
-                                <h6 class="fw-bold mb-1">{{ $loop->iteration }}. {{ $student->student?->name }}
-                                </h6>
-                                <p class="mb-1"><strong>Code:</strong> {{ $student->student?->code }}</p>
-                                <p class="mb-1"><strong>Phone:</strong> {{ $student->student?->phone }}</p>
-                                <p class="mb-1"><strong>Phone (P):</strong> {{ $student->student?->parent_phone }}</p>
-                                <p class="mb-1"><strong>Attending:</strong> {{ $student->created_at->format('h:i:A') }}
-                                </p>
-                                <p class="mb-1"><strong>Paid:</strong>
-                                    {{ $student->center_price + $student->professor_price + $student->printables + $student->materials }}
-                                </p>
-                                <form action="{{ route('attendances.delete', $student->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger"> <i class="fas fa-trash"> </i> </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endforeach
                 </div>
             </div>
         </div>

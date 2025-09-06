@@ -136,8 +136,12 @@
             <tr>
                 <th>#</th>
                 <th>Student Name</th>
+                @if ($reports->contains(fn($r) => $r->student?->phone > 0))
                 <th>Phone</th>
-                <th>Phone (P)</th>
+                @endif
+                @if ($reports->contains(fn($r) => $r->student?->parent_phone > 0))
+                <th>parent Phone</th>
+                @endif
                 <th>Attending</th>
                 <th>Materials</th>
                 <th>Printables</th>
@@ -153,8 +157,12 @@
                     class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $report->student?->name }}</td>
-                    <td>{{ $report->student?->phone }}</td>
-                    <td>{{ $report->student?->parent_phone }}</td>
+                    @if ($report->student?->phone)
+                        <td>{{ $report->student?->phone }}</td>
+                    @endif
+                    @if ($report->student?->parent_phone)
+                        <td>{{ $report->student?->parent_phone }}</td>
+                    @endif
                     <td>{{ $report->created_at->format('h:i A') }}</td>
                     <td>{{ $report->materials }}</td>
                     <td class="text-end">{{ $report->printables }}</td>

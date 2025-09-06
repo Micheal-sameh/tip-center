@@ -74,15 +74,15 @@
                             </div>
                             @if ($session->room)
                                 <div class="d-flex justify-content-between">
-                                    <span class="fw-bold"
-                                        >Room: </span>
+                                    <span class="fw-bold">Room: </span>
                                     <span class="fw-bold">{{ $session->room }} </span>
                                 </div>
                             @endif
                             @if ($session->type)
                                 <div class="d-flex justify-content-between">
                                     <span class="fw-bold">Session Type: </span>
-                                    <span class="fw-bold">{{ App\Enums\SessionType::getStringValue($session->type) }} </span>
+                                    <span class="fw-bold">{{ App\Enums\SessionType::getStringValue($session->type) }}
+                                    </span>
                                 </div>
                             @endif
                         </div>
@@ -108,31 +108,38 @@
                                 </button>
                             @else
                                 <span
-                                    class="badge bg-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'warning' : 'secondary' }}">
+                                    class="badge bg-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'warning' : 'secondary' }} me-1">
                                     <i
                                         class="fas fa-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'clock' : 'times-circle' }} me-1"></i>
                                     {{ App\Enums\SessionStatus::getStringValue($session->status) }}
                                 </span>
                             @endif
-                            <form action="{{ route('sessions.active', $session->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn btn-sm btn-success" data-id="{{ $session->id }}">
-                                    <i class="fas fa-check-circle me-1"></i>
-                                    Activate
-                                </button>
-                            </form>
+                            @if (
+                                $session->status == App\Enums\SessionStatus::PENDING ||
+                                    auth()->user()->hasAnyRole(['admin', 'manager']))
+                                <form action="{{ route('sessions.active', $session->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-sm btn-success me-1"
+                                        data-id="{{ $session->id }}">
+                                        {{-- <i class="fas fa-check-circle me-1"></i> --}}
+                                        Activate
+                                    </button>
+                                </form>
+                            @endif
 
                             <div class="btn-group">
                                 <a href="{{ route('sessions.show', $session->id) }}"
-                                    class="btn btn-sm btn-outline-info" title="View">
+                                    class="btn btn-sm btn-outline-info me-1" title="View">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 @can('sessions_update')
-                                    <a href="{{ route('sessions.edit', $session->id) }}"
-                                        class="btn btn-sm btn-outline-primary" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                    @if (auth()->user()->hasAnyRole(['admin', 'manager']))
+                                        <a href="{{ route('sessions.edit', $session->id) }}"
+                                            class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    @endif
                                 @endcan
                             </div>
                         </div>

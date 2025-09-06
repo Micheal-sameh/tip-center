@@ -6,6 +6,16 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="mb-0">Sessions Income Report</h4>
+            <form action="{{ route('charges.store') }}" method="POST" class="d-flex align-items-center ms-3">
+                @csrf
+                <input type="hidden" value="{{auth()->user()->name}}" name="title">
+                <input type="hidden" value="{{App\Enums\chargeType::GAP}}" name="type">
+                <input type="number" step="1" name="amount" class="form-control form-control-sm me-2"
+                    placeholder="Enter Gap" required>
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    Save
+                </button>
+            </form>
         </div>
 
         <!-- Filter Form -->
@@ -69,13 +79,14 @@
                             <tr>
                                 <th>#</th>
                                 <th>Professor</th>
-                                <th>Nombre Actual</th>
+                                <th>Session Date</th>
+                                <th>paid Students</th>
                                 <th>Centre</th>
-                                <th>Fiche prof</th>
-                                <th>Livre Prof</th>
-                                <th>Fiche Eleve</th>
+                                <th>prof Papper</th>
+                                <th>Prof Books</th>
+                                <th>Student Papper</th>
                                 <th>Markers</th>
-                                <th>Nombre Present</th>
+                                <th>Attended Student</th>
                                 <th>Session Total</th>
                             </tr>
                         </thead>
@@ -85,7 +96,8 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $session->professor->name ?? '-' }} -
                                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
-                                    <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}
+                                    <td>{{ $session->created_at->format('d-m-Y') }}
+                                    <td>{{ $session->paid_students > 0 ? $session->paid_students : '-' }}
                                     </td>
                                     <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
                                     </td>
@@ -123,13 +135,14 @@
                             <tfoot class="table-dark">
                                 <tr>
                                     <th colspan="2" class="text-end">Totals:</th>
-                                    <th>{{ $totals['attended_count'] }}</th>
+                                    <th>{{ $sessions->count() }}</th>
+                                    <th>{{ $totals['paid_students'] }}</th>
                                     <th>{{ number_format($totals['center_price'], 1) }}</th>
                                     <th>{{ number_format($totals['printables'], 1) }}</th>
                                     <th>{{ number_format($totals['materials'], 1) }}</th>
                                     <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
                                     <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
-                                    <th>{{ $totals['students'] }}</th>
+                                    <th>{{ $totals['attended_count'] }}</th>
                                     <th class="fw-bold text-primary">
                                         {{ number_format($totals['overall_total'], 1) }}
                                     </th>

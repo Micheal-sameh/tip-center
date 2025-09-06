@@ -264,17 +264,7 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     @endcan
-                                    {{-- @can('professors_delete')
-                                        <form action="{{ route('professors.delete', $professor) }}" method="POST"
-                                            onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                title="{{ __('trans.delete') }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    @endcan --}}
+                                    
                                     @can('sessions_create')
                                         <form action="{{ route('sessions.create', $professor->id) }}" method="GET"
                                             class="d-inline">

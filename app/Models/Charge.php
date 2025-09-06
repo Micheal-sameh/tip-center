@@ -13,5 +13,11 @@ class Charge extends Model
         'title',
         'amount',
         'type',
+        'created_by',
     ];
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

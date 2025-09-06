@@ -225,6 +225,10 @@ class SessionRepository extends BaseRepository
 
     public function reports($input)
     {
+        if(!isset($input['from']) && !isset($input['to'])){
+            $input['from'] = today();
+            $input['to'] = today();
+        }
         $query = $this->model->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
             ->when(isset($input['professor']), function ($query) use ($input) {
                 $query->whereHas('professor', fn ($q) => $q->where('name', 'like', '%'.$input['professor'].'%'));
@@ -325,7 +329,10 @@ class SessionRepository extends BaseRepository
                     },
                 ], 'center_price');
             })
-            // ->withSum('sessionStudents as total_center_price', 'center_price')
+            ->withCount(['sessionStudents as total_paid_students' => function ($q) {
+                $q->whereColumn('center_price', 'sessions.center_price');
+            }], 'center_price')
+            ->withSum('sessionStudents as total_center_price', 'center_price')
             ->withSum('sessionStudents as total_materials', 'materials')
             ->withSum('sessionStudents as total_printables', 'printables')
             ->get();
@@ -423,6 +430,9 @@ class SessionRepository extends BaseRepository
                     $query->where('is_attend', 1);
                 },
             ])
+            ->withCount(['sessionStudents as total_paid_students' => function ($q) {
+                $q->whereColumn('center_price', 'sessions.center_price');
+            }], 'center_price')
             ->get();
     }
 }

@@ -98,7 +98,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::post('/', [StudentController::class, 'store'])->name('students.store');
             Route::put('/{id}/settle', [StudentController::class, 'settleDue'])->name('students.settle_due');
             // Route::put('/{id}/status', [StudentController::class, 'changeStatus'])->name('students.status');
-            Route::put('/{id}/profile-pic', [StudentController::class, 'profilePic'])->name('students.profilePic');
+            // Route::put('/{id}/profile-pic', [StudentController::class, 'profilePic'])->name('students.profilePic');
             Route::put('/{id}', [StudentController::class, 'update'])->name('students.update');
             Route::delete('/{id}', [StudentController::class, 'delete'])->name('students.delete');
         });
@@ -125,6 +125,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/income-pdf', [ReportController::class, 'incomePdf'])->name('reports.incomePdf');
             Route::get('/monthly-income', [ReportController::class, 'monthlyIncome'])->name('reports.monthly-income');
             Route::get('/special-rooms', [ReportController::class, 'specialRooms'])->name('reports.special-rooms');
+            Route::get('/special-rooms-pdf', [ReportController::class, 'downloadSpecialRooms'])->name('reports.special-rooms-pdf');
         });
 
         Route::prefix('student-special-cases')->group(function () {
@@ -140,6 +141,7 @@ Route::group(['middleware' => ['setlocale']], function () {
 
         Route::prefix('charges')->group(function () {
             Route::get('/', [ChargeController::class, 'index'])->name('charges.index');
+            Route::get('/gap', [ChargeController::class, 'gap'])->name('charges.gap');
             Route::get('/create', [ChargeController::class, 'create'])->name('charges.create');
             Route::post('/', [ChargeController::class, 'store'])->name('charges.store');
             Route::delete('/{id}', [ChargeController::class, 'delete'])->name('charges.destroy');

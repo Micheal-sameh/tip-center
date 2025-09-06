@@ -7,6 +7,7 @@ use App\Models\Charge;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ChargeRepository extends BaseRepository
@@ -32,11 +33,36 @@ class ChargeRepository extends BaseRepository
 
     public function index($input)
     {
-        $query = $this->model->query()
-            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
-            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']));
+        $user = auth()->user();
+        $query = $this->chargesFilter($input)
+            ->when($user->can('charges_salary'), fn ($q) => $q->whereNot('type', ChargeType::GAP))
+            ->when(! $user->can('charges_salary'), fn ($q) => $q->whereNotIn('type', [ChargeType::GAP, ChargeType::SALARY, ChargeType::RENT]))
+            ->latest();
 
         return $this->execute($query);
+    }
+
+    public function gap($input)
+    {
+        $query = $this->chargesFilter($input)
+            ->where('type', ChargeType::GAP)
+            ->latest();
+
+        return $this->execute($query);
+    }
+
+    protected function chargesFilter($input)
+    {
+        if (! isset($input['date_from']) && ! isset($input['date_to'])) {
+            $input['date_from'] = today();
+            $input['date_to'] = today();
+        }
+
+        return $this->model->query()
+            ->when(isset($input['name']), fn ($q) => $q->where('title', 'like', '%'.$input['name'].'%'))
+            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
+            ->when(isset($input['type']), fn ($q) => $q->where('type', $input['type']));
     }
 
     public function store($input)
@@ -46,6 +72,7 @@ class ChargeRepository extends BaseRepository
             'title' => $input['title'],
             'amount' => $input['amount'],
             'type' => $input['type'],
+            'created_by' => Auth::id(),
         ]);
         DB::commit();
 
@@ -74,9 +101,13 @@ class ChargeRepository extends BaseRepository
 
     private function incomeQuery($input)
     {
+        if (! isset($input['date_from']) && ! isset($input['date_to'])) {
+            $input['date_from'] = today();
+            $input['date_to'] = today();
+        }
+
         return $this->model
             ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
-            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
-            ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()));
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']));
     }
 }

@@ -11,7 +11,8 @@ class SessionReportRequest extends FormRequest
     {
         return [
             'session_id' => 'required|integer|exists:sessions,id',
-            'type' => 'required|integer|in:'.implode(',', array_column(ReportType::all(), 'value')),
+            'type' => 'integer|in:'.implode(',', array_column(ReportType::all(), 'value')),
+            'with_phones' => 'in:1',
         ];
     }
 }

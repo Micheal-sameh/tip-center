@@ -9,7 +9,7 @@
                         <th>{{ __('Stage') }}</th>
                         <th>{{ __('Contact') }}</th>
                         <th>{{ __('Parent') }}</th>
-                        <th>{{ __('Birth Date') }}</th>
+                        <th>{{ __('Note') }}</th>
                         <th class="text-end pe-4">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -18,11 +18,11 @@
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-sm me-3">
+                                    {{-- <div class="avatar avatar-sm me-3">
                                         <span class="avatar-text bg-primary rounded-circle">
                                             {{ strtoupper(substr($student->name, 0, 1)) }}
                                         </span>
-                                    </div>
+                                    </div> --}}
                                     <a href="{{ route('students.show', $student) }}"
                                         class="d-block text-dark text-hover-primary fw-semibold">
                                         <div>
@@ -61,18 +61,14 @@
                                     <span class="text-muted">N/A</span>
                                 @endif
                             </td>
-                            <td>
-                                @if ($student->birth_date)
-                                    {{ $student->birth_date->format('d-m-Y') }}
-                                    @if ($student->isBirthdayToday())
-                                        <span class="badge bg-warning text-dark ms-2">
-                                            <i class="fas fa-cake-candles me-1"></i> Today
-                                        </span>
-                                    @endif
+                            <td class="text-wrap text-break" style="max-width: 250px; white-space: normal;">
+                                @if ($student->note)
+                                    {{ $student->note }}
                                 @else
                                     <span class="text-muted">N/A</span>
                                 @endif
                             </td>
+
                             <td>
                                 <div class="d-flex justify-content-center gap-1">
                                     <a href="{{ route('students.show', $student) }}"
@@ -111,20 +107,15 @@
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
                     <div class="avatar avatar-lg me-3">
-                        <span class="avatar-text bg-primary rounded-circle">
+                        {{-- <span class="avatar-text bg-primary rounded-circle">
                             {{ strtoupper(substr($student->name, 0, 1)) }}
-                        </span>
+                        </span> --}}
                     </div>
                     <div>
                         <h5 class="card-title mb-0">{{ $student->name }}</h5>
                         <span class="badge bg-primary bg-opacity-10 text-primary">
                             {{ App\Enums\StagesEnum::getStringValue($student->stage) }}
                         </span>
-                        @if ($student->isBirthdayToday())
-                            <span class="badge bg-warning text-dark ms-2">
-                                <i class="fas fa-cake-candles me-1"></i> Today
-                            </span>
-                        @endif
                     </div>
                 </div>
 
@@ -149,10 +140,12 @@
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center text-muted">
-                            <i class="fas fa-birthday-cake me-2"></i>
-                            <small>{{ $student->birth_date ? $student->birth_date->format('d-m-Y') : 'N/A' }}</small>
+                            <small class="text-wrap text-break" style="word-break: break-word; white-space: normal;">
+                                {{ $student->note ?: 'N/A' }}
+                            </small>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="d-flex justify-content-between">
