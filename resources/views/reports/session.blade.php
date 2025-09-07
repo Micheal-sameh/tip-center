@@ -83,10 +83,10 @@
                                         {{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
                                     </td>
 
-                                    @if ($report->materials > 0)
+                                    @if ($reports->contains(fn($r) => $r->materials > 0))
                                         <td>{{ $report->materials }}</td>
                                     @endif
-                                    @if ($report->printables > 0)
+                                    @if ($reports->contains(fn($r) => $r->printables > 0))
                                         <td class="text-end">{{ $report->printables }}</td>
                                     @endif
 
