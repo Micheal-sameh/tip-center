@@ -295,7 +295,7 @@ class SessionRepository extends BaseRepository
                     continue; // skip if no previous session
                 }
 
-                $this->model->create([
+                $session = $this->model->create([
                     'professor_id' => $stage->professor_id,
                     'stage' => $stage->stage,
                     'start_at' => $stage->from,
@@ -306,6 +306,7 @@ class SessionRepository extends BaseRepository
                     'status' => SessionStatus::PENDING,
                     'room' => $lastSession->room,
                 ]);
+                $session->sessionExtra()->create();
             }
         }
     }
