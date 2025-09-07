@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Enums\ChargeType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Enums\SessionType;
@@ -347,77 +346,89 @@ class SessionRepository extends BaseRepository
     {
         return DB::table('sessions as s')
             ->selectRaw('
-                DATE(s.created_at) as day,
+        DATE(s.created_at) as day,
 
-                -- exclude center price for rooms 10 and 11
-                COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) as center,
+        -- exclude center price for rooms 10 and 11
+        COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) as center,
+        COALESCE(SUM(ss.printables), 0) as print,
+        COALESCE(SUM(e.markers), 0) as markers,
+        COALESCE(SUM(e.copies), 0) as copies,
 
-                COALESCE(SUM(ss.printables), 0) as print,
-                COALESCE(SUM(e.markers), 0) as markers,
-                COALESCE(SUM(e.copies), 0) as copies,
+        COALESCE(MAX(c.charges_gap), 0) as charges_gap,
+        COALESCE(MAX(c.charges_center), 0) as charges_center,
+        COALESCE(MAX(c.charges_markers), 0) as charges_markers,
+        COALESCE(MAX(c.charges_others), 0) as charges_others,
+        COALESCE(MAX(c.charges_copies), 0) as charges_copies,
 
-                COALESCE(MAX(c.charges_gap), 0) as charges_gap,
-                COALESCE(MAX(c.charges_center), 0) as charges_center,
-                COALESCE(MAX(c.charges_markers), 0) as charges_markers,
-                COALESCE(MAX(c.charges_others), 0) as charges_others,
-                COALESCE(MAX(c.charges_copies), 0) as charges_copies,
+        -- income
+        (
+            COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
+            COALESCE(SUM(ss.printables), 0) +
+            COALESCE(SUM(e.copies), 0) +
+            COALESCE(MAX(c.charges_gap), 0)
+        ) as income_total,
 
-                -- income
-                (
-                    COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
-                    COALESCE(SUM(ss.printables), 0) +
-                    COALESCE(SUM(e.copies), 0) +
-                    COALESCE(MAX(c.charges_gap), 0)
-                ) as income_total,
+        -- charges total
+        (
+            COALESCE(MAX(c.charges_center), 0) +
+            COALESCE(MAX(c.charges_copies), 0) +
+            COALESCE(MAX(c.charges_markers), 0) +
+            COALESCE(MAX(c.charges_others), 0)
+        ) as charges_total,
 
-                -- charges total
-                (
-                    COALESCE(MAX(c.charges_center), 0) +
-                    COALESCE(MAX(c.charges_copies), 0) +
-                    COALESCE(MAX(c.charges_markers), 0) +
-                    COALESCE(MAX(c.charges_others), 0)
-                ) as charges_total,
+        -- difference
+        (
+            (
+                COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
+                COALESCE(SUM(ss.printables), 0) +
+                COALESCE(SUM(e.copies), 0) +
+                COALESCE(MAX(c.charges_gap), 0)
+            ) -
+            (
+                COALESCE(MAX(c.charges_center), 0) +
+                COALESCE(MAX(c.charges_copies), 0) +
+                COALESCE(MAX(c.charges_markers), 0) +
+                COALESCE(MAX(c.charges_others), 0)
+            )
+        ) as difference_total,
 
-                -- difference
-                (
-                    (
-                        COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
-                        COALESCE(SUM(ss.printables), 0) +
-                        COALESCE(SUM(e.copies), 0) +
-                        COALESCE(MAX(c.charges_gap), 0)
-                    ) -
-                    (
-                        COALESCE(MAX(c.charges_center), 0) +
-                        COALESCE(MAX(c.charges_copies), 0) +
-                        COALESCE(MAX(c.charges_markers), 0) +
-                        COALESCE(MAX(c.charges_others), 0)
-                    )
-                ) as difference_total,
-
-                -- net values
-                (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(c.charges_center), 0)) as net_center,
-                ((COALESCE(SUM(e.copies), 0) + COALESCE(SUM(ss.printables), 0)) - COALESCE(MAX(c.charges_copies), 0)) as net_copies,
-                (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
-                (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
-            ')
-            ->leftJoin('session_students as ss', 's.id', '=', 'ss.session_id')
-            ->leftJoin('session_extras as e', 's.id', '=', 'e.session_id')
+        -- net values
+        (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(c.charges_center), 0)) as net_center,
+        ((COALESCE(SUM(e.copies), 0) + COALESCE(SUM(ss.printables), 0)) - COALESCE(MAX(c.charges_copies), 0)) as net_copies,
+        (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
+        (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
+    ')
+            ->leftJoin(DB::raw('(
+        SELECT session_id,
+                SUM(center_price) as center_price,
+                SUM(printables) as printables
+        FROM session_students
+        GROUP BY session_id
+    ) ss'), 's.id', '=', 'ss.session_id')
+            ->leftJoin(DB::raw('(
+        SELECT session_id,
+                SUM(markers) as markers,
+                SUM(copies) as copies
+        FROM session_extras
+        GROUP BY session_id
+    ) e'), 's.id', '=', 'e.session_id')
             ->leftJoin(DB::raw('(
         SELECT
             DATE(created_at) as charge_day,
-            SUM(CASE WHEN type = '.(int) ChargeType::CENTER.' THEN amount ELSE 0 END) as charges_center,
-            SUM(CASE WHEN type = '.(int) ChargeType::COPIES.' THEN amount ELSE 0 END) as charges_copies,
-            SUM(CASE WHEN type = '.(int) ChargeType::MARKERS.' THEN amount ELSE 0 END) as charges_markers,
-            SUM(CASE WHEN type = '.(int) ChargeType::OTHERS.' THEN amount ELSE 0 END) as charges_others,
-            SUM(CASE WHEN type = '.(int) ChargeType::GAP.' THEN amount ELSE 0 END) as charges_gap
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::CENTER.' THEN amount ELSE 0 END) as charges_center,
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::COPIES.' THEN amount ELSE 0 END) as charges_copies,
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::MARKERS.' THEN amount ELSE 0 END) as charges_markers,
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::OTHERS.' THEN amount ELSE 0 END) as charges_others,
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::GAP.' THEN amount ELSE 0 END) as charges_gap
         FROM charges
-        GROUP BY charge_day
+        GROUP BY DATE(created_at)
     ) c'), DB::raw('DATE(s.created_at)'), '=', 'c.charge_day')
-            ->whereMonth('s.created_at', carbon::parse($month)->month)
-            ->whereYear('s.created_at', carbon::parse($month)->year)
+            ->whereMonth('s.created_at', Carbon::parse($month)->month)
+            ->whereYear('s.created_at', Carbon::parse($month)->year)
             ->groupBy(DB::raw('DATE(s.created_at)'))
             ->orderBy('day')
             ->get();
+
     }
 
     public function specialRooms($input)
