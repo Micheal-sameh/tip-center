@@ -104,7 +104,7 @@
     </table>
 </div>
 
-                
+
 
                 {{-- Summary (totals) --}}
                 <div class="row mt-4">
@@ -124,18 +124,6 @@
                                     <h6 class="card-subtitle mb-2 text-muted">Professor</h6>
                                     <p class="card-text fs-4 fw-bold">
                                         {{ number_format($reports->sum('professor_price'), 2) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if ($session->materials)
-                        <div class="col-md-2 col-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <h6 class="card-subtitle mb-2 text-muted">Materials</h6>
-                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('materials'), 2) }}
-                                    </p>
                                 </div>
                             </div>
                         </div>
