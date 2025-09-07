@@ -72,10 +72,10 @@
                                             href="{{ route('students.show', $report->student_id) }}">{{ $report->student?->name }}</a>
                                     </td>
 
-                                    @if ($report->student?->phone)
+                                    @if ($reports->contains(fn($r) => $r->student?->phone > 0))
                                         <td>{{ $report->student?->phone }}</td>
                                     @endif
-                                    @if ($report->student?->parent_phone)
+                                    @if ($reports->contains(fn($r) => $r->student?->parent_phone > 0))
                                         <td>{{ $report->student?->parent_phone }}</td>
                                     @endif
 
