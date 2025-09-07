@@ -67,13 +67,13 @@
                     </div>
                     @if ($session->printables)
                         <div class="col-md-4">
-                            <h6>Printables</h6>
+                            <h6>Printables (Center)</h6>
                             <p>{{ number_format($session->printables ?? 0, 2) }} EGP</p>
                         </div>
                     @endif
                     @if ($session->materials)
                         <div class="col-md-4">
-                            <h6>Materials</h6>
+                            <h6>Materials (prof)</h6>
                             <p>{{ number_format($session->materials ?? 0, 2) }} EGP</p>
                         </div>
                     @endif
@@ -157,12 +157,12 @@
                                 value="{{ $specialCase ? $specialCase->pivot->professor_price : $session->professor_price }}">
                         </div>
                         <div class="col-md-4">
-                            <label>Printables</label>
+                            <label>Printables (Center)</label>
                             <input type="number" name="printables" id="printables" step="1" min="0"
                                 class="form-control" value="{{ $session->printables ?? 0 }}">
                         </div>
                         <div class="col-md-4">
-                            <label>Materials</label>
+                            <label>Materials (Prof)</label>
                             <input type="number" name="materials" id="materials" step="1" min="0"
                                 class="form-control" value="{{ $session->materials ?? 0 }}">
                         </div>

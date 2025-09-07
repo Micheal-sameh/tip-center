@@ -292,7 +292,7 @@ class SessionRepository extends BaseRepository
                 );
 
                 if (! $lastSession) {
-                    continue; // skip if no previous session
+                    continue;
                 }
 
                 $session = $this->model->create([

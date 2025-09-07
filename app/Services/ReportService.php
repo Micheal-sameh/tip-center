@@ -59,7 +59,6 @@ class ReportService
             'paid_students' => 0,
             'center_price' => 0,
             'printables' => 0,
-            'materials' => 0,
             'copies' => 0,
             'markers' => 0,
             'overall_total' => 0,
@@ -71,7 +70,6 @@ class ReportService
             $totals['attended_count'] += $session->attended_count;
             $totals['center_price'] += $session->total_center_price;
             $totals['printables'] += $session->total_printables ?? 0;
-            $totals['materials'] += $session->materials ?? 0;
             $totals['markers'] += $session->sessionExtra?->markers ?? 0;
             $totals['copies'] += $session->sessionExtra?->copies ?? 0;
         });
@@ -79,7 +77,6 @@ class ReportService
         $totals['overall_total'] =
             $totals['center_price']
             + $totals['printables']
-            + $totals['materials']
             + $totals['markers']
             + $totals['copies'];
 
