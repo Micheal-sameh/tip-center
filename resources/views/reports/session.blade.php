@@ -51,13 +51,13 @@
                                     <th>Parent Phone</th>
                                 @endif
                                 <th>Attend</th>
+                                <th class="text-end">Payment</th>
                                 @if ($reports->contains(fn($r) => $r->materials > 0))
                                     <th>Materials</th>
                                 @endif
                                 @if ($reports->contains(fn($r) => $r->printables > 0))
                                     <th>Printables</th>
                                 @endif
-                                <th class="text-end">Payment</th>
                                 @if ($reports->contains(fn($r) => $r->to_pay > 0))
                                     <th class="text-end">To Pay</th>
                                 @endif
@@ -82,6 +82,9 @@
                                     <td>
                                         {{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
                                     </td>
+                                    <td class="text-end">
+                                        {{ number_format($report->professor_price + $report->center_price, 2) }}
+                                    </td>
 
                                     @if ($reports->contains(fn($r) => $r->materials > 0))
                                         <td>{{ $report->materials }}</td>
@@ -90,9 +93,6 @@
                                         <td class="text-end">{{ $report->printables }}</td>
                                     @endif
 
-                                    <td class="text-end">
-                                        {{ number_format($report->professor_price + $report->center_price, 2) }}
-                                    </td>
 
                                     @if ($report->to_pay)
                                         <td class="text-end fw-bold {{ $report->to_pay > 0 ? 'text-danger' : '' }}">

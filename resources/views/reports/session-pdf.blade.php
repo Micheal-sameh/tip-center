@@ -143,9 +143,9 @@
                 <th>parent Phone</th>
                 @endif
                 <th>Attending</th>
+                <th class="text-end">Payment</th>
                 <th>Materials</th>
                 <th>Printables</th>
-                <th class="text-end">Payment</th>
                 @if ($reports->contains(fn($r) => $r->to_pay > 0))
                     <th class="text-end">To Pay</th>
                 @endif
@@ -164,11 +164,11 @@
                         <td>{{ $report->student?->parent_phone }}</td>
                     @endif
                     <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}</td>
-                    <td>{{ $report->materials }}</td>
-                    <td class="text-end">{{ $report->printables ?? 0 }}</td>
                     <td class="text-end">
                         {{ number_format($report->professor_price + $report->center_price, 2) }}
                     </td>
+                    <td>{{ $report->materials }}</td>
+                    <td class="text-end">{{ $report->printables ?? 0 }}</td>
                     @if ($report->to_pay)
                         <td class="text-end fw-bold {{ $report->to_pay > 0 ? 'text-danger' : '' }}">
                             {{ number_format($report->to_pay, 2) }}
