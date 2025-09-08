@@ -20,6 +20,7 @@ class SessionStudent extends Model
         'is_attend',
         'created_by',
         'updated_by',
+        'to_pay_center',
     ];
 
     public function session()

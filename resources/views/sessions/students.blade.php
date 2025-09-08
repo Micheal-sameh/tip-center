@@ -44,7 +44,7 @@
                                         $student->student->specialCases->contains('id', $session->professor_id)
                                     ) {
                                         $rowClass = 'table-info';
-                                    } elseif ($student->to_pay > 0) {
+                                    } elseif ($student->to_pay + $student->to_pay_center > 0) {
                                         $rowClass = 'table-warning';
                                     }
                                 @endphp

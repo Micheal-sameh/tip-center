@@ -58,7 +58,7 @@
                                 @if ($reports->contains(fn($r) => $r->printables > 0))
                                     <th>Printables</th>
                                 @endif
-                                @if ($reports->contains(fn($r) => $r->to_pay > 0))
+                                @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center > 0))
                                     <th class="text-end">To Pay</th>
                                 @endif
                             </tr>
@@ -66,7 +66,7 @@
                         <tbody>
                             @foreach ($reports as $report)
                                 <tr
-                                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
+                                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center > 0 ? 'table-warning' : '') }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td><a
                                             href="{{ route('students.show', $report->student_id) }}">{{ $report->student?->name }}</a>
@@ -94,9 +94,9 @@
                                     @endif
 
 
-                                    @if ($report->to_pay)
-                                        <td class="text-end fw-bold {{ $report->to_pay > 0 ? 'text-danger' : '' }}">
-                                            {{ number_format($report->to_pay, 2) }}
+                                    @if ($report->to_pay || $report->to_pay_center)
+                                        <td class="text-end fw-bold {{ $report->to_pay + $report->to_pay_center > 0 ? 'text-danger' : '' }}">
+                                            {{ number_format($report->to_pay + $report->to_pay_center, 2) }}
                                         </td>
                                     @endif
                                 </tr>
@@ -193,11 +193,11 @@
                     </div>
 
                     <div class="col-md-3 col-6 mb-3">
-                        <div class="card h-100 {{ $reports->sum('to_pay') > 0 ? 'bg-warning bg-opacity-10' : '' }}">
+                        <div class="card h-100 {{ $reports->sum('to_pay') + $reports->sum('to_pay_center') > 0 ? 'bg-warning bg-opacity-10' : '' }}">
                             <div class="card-body text-center">
                                 <h6 class="card-subtitle mb-2 text-muted">To Collect</h6>
-                                <p class="card-text fs-4 fw-bold {{ $reports->sum('to_pay') > 0 ? 'text-danger' : '' }}">
-                                    {{ number_format($reports->sum('to_pay'), 2) }}
+                                <p class="card-text fs-4 fw-bold {{ $reports->sum('to_pay') + $reports->sum('to_pay_center') > 0 ? 'text-danger' : '' }}">
+                                    {{ number_format($reports->sum('to_pay') + $reports->sum('to_pay_center'), 2) }}
                                 </p>
                             </div>
                         </div>

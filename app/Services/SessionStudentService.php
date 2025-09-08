@@ -39,7 +39,7 @@ class SessionStudentService
             }
             $attendance = $this->update($input, $attend->id);
 
-            return $attendance->to_pay;
+            return $attendance->to_pay + $attendance->to_pay_center;
         }
         if ($input->total_paid) {
             return $this->sessionStudentRepository->simplePay($input, $session);
