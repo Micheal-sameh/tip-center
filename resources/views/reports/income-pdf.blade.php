@@ -256,7 +256,7 @@
                         </td>
                         <td>{{ $session->sessionExtra?->markers > 0 ? number_format($session->sessionExtra?->markers, 1) : '-' }}
                         </td>
-                        <td>{{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}</td>
+                        <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}</td>
                         <td class="text-primary">
                             {{ number_format(
                                 $session->total_center_price +

@@ -147,21 +147,26 @@
                             </li>
                         @else
                             <li class="page-item">
-                                <a class="page-link" href="{{ $sessions->previousPageUrl() }}" rel="prev">&laquo;</a>
+                                <a class="page-link"
+                                    href="{{ $sessions->previousPageUrl() . '&' . http_build_query(request()->except('page')) }}"
+                                    rel="prev">&laquo;</a>
                             </li>
                         @endif
 
                         {{-- Pagination Elements --}}
                         @foreach ($sessions->getUrlRange(1, $sessions->lastPage()) as $page => $url)
                             <li class="page-item {{ $sessions->currentPage() === $page ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                <a class="page-link"
+                                    href="{{ $url . '&' . http_build_query(request()->except('page')) }}">{{ $page }}</a>
                             </li>
                         @endforeach
 
                         {{-- Next Page Link --}}
                         @if ($sessions->hasMorePages())
                             <li class="page-item">
-                                <a class="page-link" href="{{ $sessions->nextPageUrl() }}" rel="next">&raquo;</a>
+                                <a class="page-link"
+                                    href="{{ $sessions->nextPageUrl() . '&' . http_build_query(request()->except('page')) }}"
+                                    rel="next">&raquo;</a>
                             </li>
                         @else
                             <li class="page-item disabled">
@@ -172,10 +177,9 @@
                 </nav>
             @endif
         </div>
-    </div>
 
-    {{-- Report Type Modal --}}
-    {{-- <div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
+        {{-- Report Type Modal --}}
+        {{-- <div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form id="reportTypeForm" method="GET" action="{{ route('reports.session') }}" target="_blank">
                 <div class="modal-content">
@@ -204,13 +208,13 @@
             </form>
         </div>
     </div> --}}
-@endsection
+    @endsection
 
-@push('scripts')
-    <script>
-        function openReport(sessionId) {
-            const url = `{{ route('reports.session') }}?session_id=${sessionId}&type=1`;
-            window.open(url, '_blank');
-        }
-    </script>
-@endpush
+    @push('scripts')
+        <script>
+            function openReport(sessionId) {
+                const url = `{{ route('reports.session') }}?session_id=${sessionId}&type=1`;
+                window.open(url, '_blank');
+            }
+        </script>
+    @endpush
