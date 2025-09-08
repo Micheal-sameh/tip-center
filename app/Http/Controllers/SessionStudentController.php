@@ -104,7 +104,7 @@ class SessionStudentController extends Controller
     {
         $pay = $this->sessionStudentService->pay($id);
 
-        return redirect()->back()->with('success', "settle pay to {$pay->student->name} EGP on session {$pay->session->professor->name}");
+        return redirect()->back()->with('success', "settle pay to {$pay->student->name} on session {$pay->session->professor->name}");
     }
 
     public function delete($id)

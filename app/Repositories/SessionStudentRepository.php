@@ -117,9 +117,20 @@ class SessionStudentRepository extends BaseRepository
     public function pay($id)
     {
         $pay = $this->findById($id);
-        $pay->update([
-            'to_pay' => 0,
-        ]);
+        if ($pay->to_pay) {
+            $professor = $pay->session->professor;
+            $professor->update(['balance' => $pay->to_pay]);
+            $pay->update([
+                'professor_price' => $pay->professor_price + $pay->to_pay,
+                'to_pay' => 0,
+            ]);
+        }
+        if ($pay->to_pay_center) {
+            $pay->update([
+                'center_price' => $pay->center_price + $pay->to_pay_center,
+                'to_pay_center' => 0,
+            ]);
+        }
 
         return $pay;
 
