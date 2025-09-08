@@ -93,7 +93,7 @@ class SessionStudentController extends Controller
     public function update(UpdateSessionStudentRequest $request, $id)
     {
         $input = new SessionStudentDTO(...$request->only(
-            'professor_price', 'center_price', 'printables', 'materials'
+            'professor_price', 'center_price', 'printables', 'materials', 'to_pay', 'to_pay_center'
         ));
         $attendence = $this->sessionStudentService->update($input, $id);
 

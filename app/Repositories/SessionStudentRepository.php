@@ -105,8 +105,8 @@ class SessionStudentRepository extends BaseRepository
             'professor_price' => $input->professor_price ?? 0,
             'printables' => $input->printables ?? 0,
             'materials' => $input->materials ?? 0,
-            // 'to_pay' => $input->to_pay ?? 0,
-            // 'to_pay_center' => $input->to_pay_center ?? 0,
+            'to_pay' => $input->to_pay ?? 0,
+            'to_pay_center' => $input->to_pay_center ?? 0,
             'is_attend' => AttendenceType::ATTEND,
             'updated_by' => Auth::id(),
         ]);
