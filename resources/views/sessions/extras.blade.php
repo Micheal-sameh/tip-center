@@ -26,6 +26,13 @@
                             </label>
                             <input type="number" class="form-control" id="markers" name="markers" min="0"
                                 value="{{ old('markers') }}" placeholder="{{ $session->sessionExtra->markers }}">
+                            <style>
+                                #extra-form ::placeholder {
+                                    color: #0dcaf0;
+                                    /* Bootstrap info color */
+                                    opacity: 1;
+                                }
+                            </style>
                         </div>
 
                         <div class="col-md-6">
@@ -34,14 +41,28 @@
                             </label>
                             <input type="number" class="form-control" id="copies" name="copies" min="0"
                                 value="{{ old('copies') }}" placeholder="{{ $session->sessionExtra->copies }}">
+                            <style>
+                                #extra-form ::placeholder {
+                                    color: #0dcaf0;
+                                    /* Bootstrap info color */
+                                    opacity: 1;
+                                }
+                            </style>
                         </div>
 
                         <div class="col-md-6">
                             <label for="cafeterea" class="form-label fw-bold">
-                                <i class="fas fa-coffee me-1 text-secondary"></i> cafeterea
+                                <i class="fas fa-coffee me-1 text-secondary"></i> Cafeterea
                             </label>
                             <input type="number" class="form-control" id="cafeterea" name="cafeterea" min="0"
                                 value="{{ old('cafeterea') }}" placeholder="{{ $session->sessionExtra->cafeterea ?? 0 }}">
+                            <style>
+                                #extra-form ::placeholder {
+                                    color: #0dcaf0;
+                                    /* Bootstrap info color */
+                                    opacity: 1;
+                                }
+                            </style>
                         </div>
 
                         <div class="col-md-6">
@@ -50,6 +71,13 @@
                             </label>
                             <input type="number" class="form-control" id="other" name="other" min="0"
                                 value="{{ old('other') }}" placeholder="{{ $session->sessionExtra->other }}">
+                            <style>
+                                #extra-form ::placeholder {
+                                    color: #0dcaf0;
+                                    /* Bootstrap info color */
+                                    opacity: 1;
+                                }
+                            </style>
                         </div>
 
                         <div class="col-12">
@@ -58,6 +86,13 @@
                             </label>
                             <textarea class="form-control" id="notes" name="notes" rows="3"
                                 placeholder="{{ $session->sessionExtra->notes }}">{{ old('notes', $session->sessionExtra->notes ?? '') }}</textarea>
+                            <style>
+                                #extra-form ::placeholder {
+                                    color: #0dcaf0;
+                                    /* Bootstrap info color */
+                                    opacity: 1;
+                                }
+                            </style>
                         </div>
                     </div>
 
@@ -74,6 +109,7 @@
         </div>
     </div>
 @endsection
+
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
