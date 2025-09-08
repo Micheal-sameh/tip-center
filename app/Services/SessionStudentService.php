@@ -54,6 +54,11 @@ class SessionStudentService
         return $this->sessionStudentRepository->update($input, $id);
     }
 
+    public function pay($id)
+    {
+        return $this->sessionStudentRepository->pay($id);
+    }
+
     public function delete($id)
     {
         return $this->sessionStudentRepository->delete($id);

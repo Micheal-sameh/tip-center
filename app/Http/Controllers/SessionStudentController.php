@@ -53,7 +53,7 @@ class SessionStudentController extends Controller
     {
         $student = $this->studentService->show($request->student_id);
         $session = $this->sessionservice->show($request->session_id);
-        $to_pay = $student->toPay()->sum('to_pay');
+        $to_pay = $student->toPay()->get();
         $attend = SessionStudent::where('session_id', $request->session_id)
             ->where('student_id', $request->student_id)->exists();
 
@@ -98,6 +98,13 @@ class SessionStudentController extends Controller
         $attendence = $this->sessionStudentService->update($input, $id);
 
         return redirect()->route('sessions.students', $attendence->session_id)->with('success', "prices updated to {$attendence->student->name}");
+    }
+
+    public function pay($id)
+    {
+        $pay = $this->sessionStudentService->pay($id);
+
+        return redirect()->back()->with('success', "settle pay to {$pay->student->name} EGP on session {$pay->session->professor->name}");
     }
 
     public function delete($id)

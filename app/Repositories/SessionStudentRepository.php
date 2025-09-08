@@ -112,6 +112,17 @@ class SessionStudentRepository extends BaseRepository
         return $attendance;
     }
 
+    public function pay($id)
+    {
+        $pay = $this->findById($id);
+        $pay->update([
+            'to_pay' => 0,
+        ]);
+
+        return $pay;
+
+    }
+
     public function absentStudents($session_id, $studentsIds)
     {
         foreach ($studentsIds as $student_id) {
