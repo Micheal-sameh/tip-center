@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Enums\AttendenceType;
+use App\Enums\ChargeType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Models\Session;
@@ -15,8 +16,10 @@ use Illuminate\Support\Facades\DB;
 
 class SessionStudentRepository extends BaseRepository
 {
-    public function __construct(SessionStudent $model)
-    {
+    public function __construct(
+        SessionStudent $model,
+        protected ChargeRepository $chargeRepository,
+    ) {
         $this->model = $model;
     }
 
@@ -117,6 +120,7 @@ class SessionStudentRepository extends BaseRepository
     public function pay($id)
     {
         $pay = $this->findById($id);
+        DB::beginTransaction();
         if ($pay->to_pay) {
             $professor = $pay->session->professor;
             $professor->update(['balance' => $pay->to_pay]);
@@ -126,11 +130,18 @@ class SessionStudentRepository extends BaseRepository
             ]);
         }
         if ($pay->to_pay_center) {
+            $input = [
+                'title' => $pay->student->name.' session '.$pay->session->professor->name.$pay->session->created_at->format('d-m'),
+                'amount' => $pay->to_pay_center,
+                'type' => ChargeType::GAP,
+            ];
+            $this->chargeRepository->store($input);
             $pay->update([
                 'center_price' => $pay->center_price + $pay->to_pay_center,
                 'to_pay_center' => 0,
             ]);
         }
+        DB::commit();
 
         return $pay;
 
