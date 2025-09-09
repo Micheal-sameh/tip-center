@@ -219,7 +219,7 @@
                     (parseFloat(professor_price.value) || 0) +
                     (parseFloat(printables.value) || 0) +
                     (parseFloat(materials.value) || 0) +
-                    (parseFloat(to_pay.value) || 0);
+                    (parseFloat(to_pay.value) || 0) +
                     (parseFloat(to_pay_center.value) || 0);
 
                 remaining.value = total - paid;

@@ -131,7 +131,7 @@ class SessionStudentRepository extends BaseRepository
         }
         if ($pay->to_pay_center) {
             $input = [
-                'title' => $pay->student->name.' session '.$pay->session->professor->name.$pay->session->created_at->format('d-m'),
+                'title' => $pay->student->name.' session '.$pay->session->professor->name.' '.$pay->session->created_at->format('d-m'),
                 'amount' => $pay->to_pay_center,
                 'type' => ChargeType::GAP,
             ];
