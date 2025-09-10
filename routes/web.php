@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SessionStudentController;
 use App\Http\Controllers\SettingController;
@@ -146,6 +147,10 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/create', [ChargeController::class, 'create'])->name('charges.create');
             Route::post('/', [ChargeController::class, 'store'])->name('charges.store');
             Route::delete('/{id}', [ChargeController::class, 'delete'])->name('charges.destroy');
+        });
+
+        Route::prefix('reset')->group(function () {
+            Route::post('/', [ResetController::class, 'resetYearly'])->name('reset.year');
         });
     });
 

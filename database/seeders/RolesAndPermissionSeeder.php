@@ -59,6 +59,9 @@ class RolesAndPermissionSeeder extends Seeder
         $charges_index = Permission::firstOrCreate(['name' => 'charges_index']);
         $charges_delete = Permission::firstOrCreate(['name' => 'charges_delete']);
 
+        // reset
+        $reset_year = Permission::firstOrCreate(['name' => 'reset_year']);
+
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $admin->givePermissionTo([
             $users_delete,
@@ -98,6 +101,8 @@ class RolesAndPermissionSeeder extends Seeder
             $charges_create,
             $charges_salary,
             $charges_delete,
+
+            $reset_year,
         ]);
 
         $staff = Role::firstOrCreate(['name' => 'staff']);
