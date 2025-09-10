@@ -70,11 +70,15 @@
         </form>
         <!-- Reset Button -->
         @can('reset_year')
-            <!-- Reset Year Button (triggers modal) -->
-            <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#confirmResetModal">
-                <i class="fas fa-sync-alt me-1"></i> Reset Year
-            </button>
+            @if (now()->month == 8 )
+                {{-- 7 = July --}}
+                <!-- Reset Year Button (triggers modal) -->
+                <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#confirmResetModal">
+                    <i class="fas fa-sync-alt me-1"></i> Reset Year
+                </button>
+            @endif
         @endcan
+
 
         <!-- Modal -->
         <div class="modal fade" id="confirmResetModal" tabindex="-1" aria-labelledby="confirmResetModalLabel"
