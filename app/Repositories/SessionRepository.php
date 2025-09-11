@@ -344,23 +344,39 @@ class SessionRepository extends BaseRepository
 
     public function monthlyIncome($month)
     {
-        return DB::table('sessions as s')
-            ->selectRaw('
-        DATE(s.created_at) as day,
+        $carbonMonth = Carbon::parse($month)->startOfMonth();
+        $start = $carbonMonth->copy()->startOfMonth()->toDateString();
+        $end = $carbonMonth->copy()->endOfMonth()->toDateString();
 
-        -- exclude center price for rooms 10 and 11
+        return DB::table(DB::raw("
+            (
+                SELECT DATE('$start' + INTERVAL seq DAY) as day
+                FROM (
+                    SELECT a.N + b.N * 10 as seq
+                    FROM (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                        UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
+                    CROSS JOIN (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2) b -- supports up to 30 days
+                ) numbers
+                WHERE DATE('$start' + INTERVAL seq DAY) <= '$end'
+            ) days
+        "))
+            ->selectRaw('
+            days.day,
+
+        -- session income
         COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) as center,
         COALESCE(SUM(ss.printables), 0) as print,
         COALESCE(SUM(e.markers), 0) as markers,
         COALESCE(SUM(e.copies), 0) as copies,
 
+        -- charges
         COALESCE(MAX(c.charges_gap), 0) as charges_gap,
         COALESCE(MAX(c.charges_center), 0) as charges_center,
         COALESCE(MAX(c.charges_markers), 0) as charges_markers,
         COALESCE(MAX(c.charges_others), 0) as charges_others,
         COALESCE(MAX(c.charges_copies), 0) as charges_copies,
 
-        -- income
+        -- income total
         (
             COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
             COALESCE(SUM(ss.printables), 0) +
@@ -398,6 +414,7 @@ class SessionRepository extends BaseRepository
         (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
         (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
     ')
+            ->leftJoin('sessions as s', DB::raw('DATE(s.created_at)'), '=', 'days.day')
             ->leftJoin(DB::raw('(
         SELECT session_id,
                 SUM(center_price) as center_price,
@@ -418,17 +435,15 @@ class SessionRepository extends BaseRepository
             SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::CENTER.' THEN amount ELSE 0 END) as charges_center,
             SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::COPIES.' THEN amount ELSE 0 END) as charges_copies,
             SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::MARKERS.' THEN amount ELSE 0 END) as charges_markers,
-            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::OTHERS.' THEN amount ELSE 0 END) as charges_others,
+            SUM(CASE WHEN type IN ('.(int) \App\Enums\ChargeType::OTHERS.', '.(int) \App\Enums\ChargeType::RENT.', '.(int) \App\Enums\ChargeType::SALARY.')
+                     THEN amount ELSE 0 END) as charges_others,
             SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::GAP.' THEN amount ELSE 0 END) as charges_gap
         FROM charges
         GROUP BY DATE(created_at)
-    ) c'), DB::raw('DATE(s.created_at)'), '=', 'c.charge_day')
-            ->whereMonth('s.created_at', Carbon::parse($month)->month)
-            ->whereYear('s.created_at', Carbon::parse($month)->year)
-            ->groupBy(DB::raw('DATE(s.created_at)'))
-            ->orderBy('day')
+        ) c'), 'days.day', '=', 'c.charge_day')
+            ->groupBy('days.day')
+            ->orderBy('days.day')
             ->get();
-
     }
 
     public function specialRooms($input)
