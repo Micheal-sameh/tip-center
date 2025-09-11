@@ -70,7 +70,7 @@
         </form>
         <!-- Reset Button -->
         @can('reset_year')
-            @if (now()->month == 8 )
+            @if (now()->month == 8)
                 {{-- 7 = July --}}
                 <!-- Reset Year Button (triggers modal) -->
                 <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#confirmResetModal">

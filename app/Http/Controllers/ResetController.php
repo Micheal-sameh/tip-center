@@ -17,6 +17,9 @@ class ResetController extends Controller
 
     public function resetYearly(ResetYearRequest $request)
     {
+        if (! auth()->user()->hasRole('admin')) {
+            return back()->withErrors(['password' => 'you are not admin']);
+        }
         if (! Hash::check($request->password, auth()->user()->password)) {
             return back()->withErrors(['password' => 'Incorrect password.']);
         }
@@ -24,7 +27,6 @@ class ResetController extends Controller
         info('Yearly reset triggered by: '.auth()->user()->name);
 
         try {
-            // Disable FK checks
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
             DB::table('session_extras')->truncate();
@@ -33,7 +35,6 @@ class ResetController extends Controller
 
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-            // Students handling
             Student::query()->where('stage', StagesEnum::SEC_THREE)->delete();
 
             Student::query()
