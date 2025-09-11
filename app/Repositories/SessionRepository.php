@@ -346,7 +346,13 @@ class SessionRepository extends BaseRepository
     {
         $carbonMonth = Carbon::parse($month)->startOfMonth();
         $start = $carbonMonth->copy()->startOfMonth()->toDateString();
-        $end = $carbonMonth->copy()->endOfMonth()->toDateString();
+
+        // if selected month is current month → stop at today
+        if ($carbonMonth->isSameMonth(Carbon::now())) {
+            $end = Carbon::now()->toDateString();
+        } else {
+            $end = $carbonMonth->copy()->endOfMonth()->toDateString();
+        }
 
         return DB::table(DB::raw("
             (
