@@ -12,10 +12,10 @@ class StudentCreateRequest extends FormRequest
         return [
             'name' => 'required|string|unique:students,name',
             'stage' => 'required|integer|in:'.implode(',', array_column(StagesEnum::all(), 'value')),
-            'phone' => 'required_without:parent_phone|string|min:11|max:11|unique:students,phone,',
-            'parent_phone' => 'required_without:phone|min:11|max:11|string',
-            'parent_phone_2' => 'string|min:11|max:11',
-            'note' => 'string',
+            'phone' => 'string|min:11|max:11|unique:students,phone|'.(isset($this->parent_phone) ? 'nullable' : 'required'),
+            'parent_phone' => 'min:11|max:11|string|'.(isset($this->phone) ? 'nullable' : 'required'),
+            'parent_phone_2' => 'nullable|string|min:11|max:11',
+            'note' => 'nullable|string',
         ];
     }
 

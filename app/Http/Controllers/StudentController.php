@@ -69,11 +69,11 @@ class StudentController extends Controller
 
     public function store(StudentCreateRequest $request)
     {
-        $input = new StudentDTO(...$request->only(
-            'name', 'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
-        ));
+        // $input = new StudentDTO(...$request->only(
+        //     'name', 'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
+        // ));
 
-        $student = $this->studentservice->store($input);
+        $student = $this->studentservice->store($request->validated());
 
         return to_route('students.index')
             ->with('success', "Student {$student->name} ({$student->code}) created successfully.");
