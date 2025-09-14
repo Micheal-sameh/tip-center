@@ -93,10 +93,20 @@
                                         <td class="text-end">{{ $report->printables }}</td>
                                     @endif
 
-
-                                    @if ($report->to_pay || $report->to_pay_center)
-                                        <td class="text-end fw-bold {{ $report->to_pay + $report->to_pay_center > 0 ? 'text-danger' : '' }}">
-                                            {{ number_format($report->to_pay + $report->to_pay_center, 2) }}
+                                    @if (isset($report->student->toPay))
+                                        @php
+                                            $total = $report->student->toPay->sum(function ($pay) use ($selected_type) {
+                                                if ($selected_type == App\Enums\ReportType::PROFESSOR) {
+                                                    return $pay->to_pay;
+                                                } elseif ($selected_type == App\Enums\ReportType::CENTER) {
+                                                    return $pay->to_pay_center;
+                                                } else {
+                                                    return $pay->to_pay_center;
+                                                }
+                                            });
+                                        @endphp
+                                        <td class="text-end fw-bold {{ $total > 0 ? 'text-danger' : '' }}">
+                                            {{ number_format($total, 2) }}
                                         </td>
                                     @endif
                                 </tr>
@@ -141,6 +151,17 @@
                             </div>
                         </div>
                     @endif
+                    @if ($session->professor->balance)
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h6 class="card-subtitle mb-2 text-muted">balance</h6>
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($session->professor->balance, 2) }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     @if ($reports->contains(fn($r) => $r->printables > 0))
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
@@ -170,12 +191,13 @@
                                 <h6 class="card-subtitle mb-2 text-muted">Total Value</h6>
                                 <p class="card-text fs-4 fw-bold text-primary">
                                     @php
-                                        $total = $reports->sum(
-                                            fn($r) => $r->professor_price +
-                                                $r->center_price +
-                                                $r->printables +
-                                                $r->materials,
-                                        );
+                                        $total =
+                                            $reports->sum(
+                                                fn($r) => $r->professor_price +
+                                                    $r->center_price +
+                                                    $r->printables +
+                                                    $r->materials,
+                                            ) + $session->professor->balance;
                                         if ($session->sessionExtra) {
                                             $extra = $session->sessionExtra;
                                             $adjustment =
@@ -191,13 +213,33 @@
                             </div>
                         </div>
                     </div>
+                    @php
+
+                        $total = $reports->sum(function ($report) use ($selected_type) {
+                            if (!isset($report->student->toPay)) {
+                                return 0;
+                            }
+
+                            return $report->student->toPay->sum(function ($pay) use ($selected_type) {
+                                if ($selected_type == App\Enums\ReportType::PROFESSOR) {
+                                    return $pay->to_pay;
+                                } elseif ($selected_type == App\Enums\ReportType::CENTER) {
+                                    return $pay->to_pay_center;
+                                } else {
+                                    // default/fallback
+                                    return $pay->to_pay_center;
+                                }
+                            });
+                        });
+                    @endphp
+
 
                     <div class="col-md-3 col-6 mb-3">
-                        <div class="card h-100 {{ $reports->sum('to_pay') + $reports->sum('to_pay_center') > 0 ? 'bg-warning bg-opacity-10' : '' }}">
+                        <div class="card h-100 {{ $total > 0 ? 'bg-warning bg-opacity-10' : '' }}">
                             <div class="card-body text-center">
                                 <h6 class="card-subtitle mb-2 text-muted">To Collect</h6>
-                                <p class="card-text fs-4 fw-bold {{ $reports->sum('to_pay') + $reports->sum('to_pay_center') > 0 ? 'text-danger' : '' }}">
-                                    {{ number_format($reports->sum('to_pay') + $reports->sum('to_pay_center'), 2) }}
+                                <p class="card-text fs-4 fw-bold {{ $total > 0 ? 'text-danger' : '' }}">
+                                    {{ number_format($total, 2) }}
                                 </p>
                             </div>
                         </div>
