@@ -82,14 +82,7 @@ class StudentRepository extends BaseRepository
     public function store($input)
     {
         DB::beginTransaction();
-        $student = $this->model->create([
-            'name' => $input->name,
-            'stage' => $input->stage,
-            'phone' => $input->phone,
-            'parent_phone' => $input->parent_phone,
-            'parent_phone_2' => $input->parent_phone_2,
-            'note' => $input->note,
-        ]);
+        $student = $this->model->create($input);
         DB::commit();
 
         return $student;
