@@ -107,9 +107,8 @@
         }
     </style>
     <script>
-        document.getElementById('student-form').addEventListener('submit', function(e) {
-            const inputs = this.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
+        document.getElementById('student-form').addEventListener('submit', function() {
+            this.querySelectorAll('input[type="text"], input[type="tel"], textarea').forEach(input => {
                 if (!input.value.trim()) {
                     input.disabled = true;
                 }
