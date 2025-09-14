@@ -186,7 +186,7 @@
                     <th>Professor</th>
                     <th class="text-center">Attend Time</th>
                     <th>Amount Paid</th>
-                    @if ($reports->contains(fn($r) => $r->to_pay > 0))
+                    @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center > 0))
                         <th>To Pay</th>
                     @endif
                 </tr>
@@ -202,8 +202,8 @@
                         <td class="fw-bold">
                             {{ number_format($report->professor_price + $report->center_price + $report->printables + $report->materials, 2) }}
                         </td>
-                        @if ($reports->contains(fn($r) => $r->to_pay > 0))
-                            <td class="text-center">{{ $report->to_pay ?? 'N/A' }}</td>
+                        @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center > 0))
+                            <td class="text-center">{{ $report->to_pay + $report->to_pay_center ?? 'N/A' }}</td>
                         @endif
                     </tr>
                 @endforeach

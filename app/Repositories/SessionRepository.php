@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Enums\ChargeType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Enums\SessionType;
@@ -40,7 +39,11 @@ class SessionRepository extends BaseRepository
     {
         $this->checkActive();
         $query = $this->model->query()
-            ->withCount('sessionStudents')
+            ->withCount(['sessionStudents',
+                'sessionStudents as attended_count' => function ($query) {
+                    $query->where('is_attend', 1);
+                },
+            ])
             ->when(isset($input['professor_id']), fn ($q) => $q->where('professor_id', $input['professor_id']))
             ->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
             ->when(isset($input['status']), fn ($q) => $q->where('status', $input['status']))
@@ -114,6 +117,7 @@ class SessionRepository extends BaseRepository
             'room' => $input->room,
             'type' => $input->type,
         ]);
+        $session->sessionExtra()->create();
         DB::commit();
 
         return $session;
@@ -143,19 +147,18 @@ class SessionRepository extends BaseRepository
         $session->delete();
     }
 
-    public function close($input, $id)
+    public function extras($input, $id)
     {
         DB::beginTransaction();
         $session = $this->findById($id);
-        $session->update([
-            'status' => SessionStatus::FINISHED,
-        ]);
-        $session->sessionExtra()->create([
-            'copies' => $input['copies'] ?? 0,
-            'markers' => $input['markers'] ?? 0,
-            'cafeterea' => $input['cafeterea'] ?? 0,
-            'other' => $input['other'] ?? 0,
-            'notes' => $input['notes'],
+        $extras = $session->sessionExtra;
+
+        $session->sessionExtra()->update([
+            'copies' => $extras->copies + ($input['copies'] ?? 0),
+            'markers' => $extras->markers + ($input['markers'] ?? 0),
+            'cafeterea' => $extras->cafeterea + ($input['cafeterea'] ?? 0),
+            'other' => $extras->other + ($input['other'] ?? 0),
+            'notes' => $input['notes'] ?? $extras->notes,
         ]);
         $this->absence($session);
         DB::commit();
@@ -225,7 +228,7 @@ class SessionRepository extends BaseRepository
 
     public function reports($input)
     {
-        if(!isset($input['from']) && !isset($input['to'])){
+        if (! isset($input['from']) && ! isset($input['to'])) {
             $input['from'] = today();
             $input['to'] = today();
         }
@@ -288,10 +291,10 @@ class SessionRepository extends BaseRepository
                 );
 
                 if (! $lastSession) {
-                    continue; // skip if no previous session
+                    continue;
                 }
 
-                $this->model->create([
+                $session = $this->model->create([
                     'professor_id' => $stage->professor_id,
                     'stage' => $stage->stage,
                     'start_at' => $stage->from,
@@ -302,6 +305,7 @@ class SessionRepository extends BaseRepository
                     'status' => SessionStatus::PENDING,
                     'room' => $lastSession->room,
                 ]);
+                $session->sessionExtra()->create();
             }
         }
     }
@@ -340,78 +344,111 @@ class SessionRepository extends BaseRepository
 
     public function monthlyIncome($month)
     {
-        return DB::table('sessions as s')
+        $carbonMonth = Carbon::parse($month)->startOfMonth();
+        $start = $carbonMonth->copy()->startOfMonth()->toDateString();
+
+        // if selected month is current month → stop at today
+        if ($carbonMonth->isSameMonth(Carbon::now())) {
+            $end = Carbon::now()->toDateString();
+        } else {
+            $end = $carbonMonth->copy()->endOfMonth()->toDateString();
+        }
+
+        return DB::table(DB::raw("
+            (
+                SELECT DATE('$start' + INTERVAL seq DAY) as day
+                FROM (
+                    SELECT a.N + b.N * 10 as seq
+                    FROM (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                        UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
+                    CROSS JOIN (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2) b -- supports up to 30 days
+                ) numbers
+                WHERE DATE('$start' + INTERVAL seq DAY) <= '$end'
+            ) days
+        "))
             ->selectRaw('
-                DATE(s.created_at) as day,
+            days.day,
 
-                -- exclude center price for rooms 10 and 11
-                COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) as center,
+        -- session income
+        COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) as center,
+        COALESCE(SUM(ss.printables), 0) as print,
+        COALESCE(SUM(e.markers), 0) as markers,
+        COALESCE(SUM(e.copies), 0) as copies,
 
-                COALESCE(SUM(ss.printables), 0) as print,
-                COALESCE(SUM(e.markers), 0) as markers,
-                COALESCE(SUM(e.copies), 0) as copies,
+        -- charges
+        COALESCE(MAX(c.charges_gap), 0) as charges_gap,
+        COALESCE(MAX(c.charges_center), 0) as charges_center,
+        COALESCE(MAX(c.charges_markers), 0) as charges_markers,
+        COALESCE(MAX(c.charges_others), 0) as charges_others,
+        COALESCE(MAX(c.charges_copies), 0) as charges_copies,
 
-                COALESCE(MAX(c.charges_gap), 0) as charges_gap,
-                COALESCE(MAX(c.charges_center), 0) as charges_center,
-                COALESCE(MAX(c.charges_markers), 0) as charges_markers,
-                COALESCE(MAX(c.charges_others), 0) as charges_others,
-                COALESCE(MAX(c.charges_copies), 0) as charges_copies,
+        -- income total
+        (
+            COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
+            COALESCE(SUM(ss.printables), 0) +
+            COALESCE(SUM(e.copies), 0) +
+            COALESCE(MAX(c.charges_gap), 0)
+        ) as income_total,
 
-                -- income
-                (
-                    COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
-                    COALESCE(SUM(ss.printables), 0) +
-                    COALESCE(SUM(e.copies), 0) +
-                    COALESCE(MAX(c.charges_gap), 0)
-                ) as income_total,
+        -- charges total
+        (
+            COALESCE(MAX(c.charges_center), 0) +
+            COALESCE(MAX(c.charges_copies), 0) +
+            COALESCE(MAX(c.charges_markers), 0) +
+            COALESCE(MAX(c.charges_others), 0)
+        ) as charges_total,
 
-                -- charges total
-                (
-                    COALESCE(MAX(c.charges_center), 0) +
-                    COALESCE(MAX(c.charges_copies), 0) +
-                    COALESCE(MAX(c.charges_markers), 0) +
-                    COALESCE(MAX(c.charges_others), 0)
-                ) as charges_total,
+        -- difference
+        (
+            (
+                COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
+                COALESCE(SUM(ss.printables), 0) +
+                COALESCE(SUM(e.copies), 0) +
+                COALESCE(MAX(c.charges_gap), 0)
+            ) -
+            (
+                COALESCE(MAX(c.charges_center), 0) +
+                COALESCE(MAX(c.charges_copies), 0) +
+                COALESCE(MAX(c.charges_markers), 0) +
+                COALESCE(MAX(c.charges_others), 0)
+            )
+        ) as difference_total,
 
-                -- difference
-                (
-                    (
-                        COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
-                        COALESCE(SUM(ss.printables), 0) +
-                        COALESCE(SUM(e.copies), 0) +
-                        COALESCE(MAX(c.charges_gap), 0)
-                    ) -
-                    (
-                        COALESCE(MAX(c.charges_center), 0) +
-                        COALESCE(MAX(c.charges_copies), 0) +
-                        COALESCE(MAX(c.charges_markers), 0) +
-                        COALESCE(MAX(c.charges_others), 0)
-                    )
-                ) as difference_total,
-
-                -- net values
-                (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(c.charges_center), 0)) as net_center,
-                ((COALESCE(SUM(e.copies), 0) + COALESCE(SUM(ss.printables), 0)) - COALESCE(MAX(c.charges_copies), 0)) as net_copies,
-                (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
-                (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
-            ')
-            ->leftJoin('session_students as ss', 's.id', '=', 'ss.session_id')
-            ->leftJoin('session_extras as e', 's.id', '=', 'e.session_id')
+        -- net values
+        (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(c.charges_center), 0)) as net_center,
+        ((COALESCE(SUM(e.copies), 0) + COALESCE(SUM(ss.printables), 0)) - COALESCE(MAX(c.charges_copies), 0)) as net_copies,
+        (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
+        (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
+    ')
+            ->leftJoin('sessions as s', DB::raw('DATE(s.created_at)'), '=', 'days.day')
+            ->leftJoin(DB::raw('(
+        SELECT session_id,
+                SUM(center_price) as center_price,
+                SUM(printables) as printables
+        FROM session_students
+        GROUP BY session_id
+    ) ss'), 's.id', '=', 'ss.session_id')
+            ->leftJoin(DB::raw('(
+        SELECT session_id,
+                SUM(markers) as markers,
+                SUM(copies) as copies
+        FROM session_extras
+        GROUP BY session_id
+    ) e'), 's.id', '=', 'e.session_id')
             ->leftJoin(DB::raw('(
         SELECT
             DATE(created_at) as charge_day,
-            SUM(CASE WHEN type = '.(int) ChargeType::CENTER.' THEN amount ELSE 0 END) as charges_center,
-            SUM(CASE WHEN type = '.(int) ChargeType::COPIES.' THEN amount ELSE 0 END) as charges_copies,
-            SUM(CASE WHEN type = '.(int) ChargeType::MARKERS.' THEN amount ELSE 0 END) as charges_markers,
-            SUM(CASE WHEN type = '.(int) ChargeType::OTHERS.' THEN amount ELSE 0 END) as charges_others,
-            SUM(CASE WHEN type = '.(int) ChargeType::GAP.' THEN amount ELSE 0 END) as charges_gap
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::CENTER.' THEN amount ELSE 0 END) as charges_center,
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::COPIES.' THEN amount ELSE 0 END) as charges_copies,
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::MARKERS.' THEN amount ELSE 0 END) as charges_markers,
+            SUM(CASE WHEN type IN ('.(int) \App\Enums\ChargeType::OTHERS.', '.(int) \App\Enums\ChargeType::RENT.', '.(int) \App\Enums\ChargeType::SALARY.')
+                     THEN amount ELSE 0 END) as charges_others,
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::GAP.' THEN amount ELSE 0 END) as charges_gap
         FROM charges
-        GROUP BY charge_day
-    ) c'), DB::raw('DATE(s.created_at)'), '=', 'c.charge_day')
-            ->whereMonth('s.created_at', carbon::parse($month)->month)
-            ->whereYear('s.created_at', carbon::parse($month)->year)
-            ->groupBy(DB::raw('DATE(s.created_at)'))
-            ->orderBy('day')
+        GROUP BY DATE(created_at)
+        ) c'), 'days.day', '=', 'c.charge_day')
+            ->groupBy('days.day')
+            ->orderBy('days.day')
             ->get();
     }
 

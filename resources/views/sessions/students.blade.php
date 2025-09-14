@@ -14,7 +14,6 @@
 
                 <h5 class="mt-4 mb-3">Students Attendance</h5>
 
-                <!-- Responsive Table (works for all screen sizes) -->
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover align-middle">
                         <thead class="table-dark">
@@ -30,29 +29,47 @@
                                 <th>Student Paper</th>
                                 <th>Prof Books</th>
                                 <th>Attended By</th>
+                                <th>Updated By</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($session->sessionStudents as $student)
-                                <tr class="student-row {{ $student->to_pay > 0 ? 'table-warning' : '' }}"
-                                    data-id="{{ $student->id }}" data-center="{{ $student->center_price }}"
+                                @php
+                                    $rowClass = '';
+                                    if (!$student->is_attend) {
+                                        $rowClass = 'table-danger';
+                                    } elseif (
+                                        $student->student &&
+                                        $student->student->specialCases->contains('id', $session->professor_id)
+                                    ) {
+                                        $rowClass = 'table-info';
+                                    } elseif ($student->to_pay + $student->to_pay_center > 0) {
+                                        $rowClass = 'table-warning';
+                                    }
+                                @endphp
+
+                                <tr class="student-row {{ $rowClass }}" data-id="{{ $student->id }}"
+                                    data-center="{{ $student->center_price }}"
                                     data-professor="{{ $student->professor_price }}"
+                                    data-to_pay="{{ $student->to_pay }}"
+                                    data-to_pay_center="{{ $student->to_pay_center }}"
                                     data-materials="{{ $student->materials }}" data-printables="{{ $student->printables }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $student->student?->name }}</td>
                                     <td>{{ $student->student?->code }}</td>
                                     <td>{{ $student->student?->phone }}</td>
                                     <td>{{ $student->student?->parent_phone }}</td>
-                                    <td>{{ $student->created_at->format('h:i:A') }}</td>
+                                    <td>{{ $student->is_attend ? $student->created_at->format('h:i A') : 'Absent' }}</td>
                                     <td>{{ $student->center_price }}</td>
                                     <td>{{ $student->professor_price }}</td>
                                     <td>{{ $student->printables }}</td>
                                     <td>{{ $student->materials }}</td>
                                     <td>{{ $student->createdBy?->name }}</td>
+                                    <td>{{ $student->updatedBy?->name }}</td>
                                     <td>
                                         <form action="{{ route('attendances.delete', $student->id) }}" method="POST"
-                                            onsubmit="return confirm('Are you sure you want to delete {{$student->student?->name}} attendance?');">
+                                            onsubmit="return confirm('Are you sure you want to delete {{ $student->student?->name }} attendance?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
@@ -60,7 +77,6 @@
                                             </button>
                                         </form>
                                     </td>
-
                                 </tr>
                             @endforeach
                         </tbody>
@@ -99,6 +115,14 @@
                             <label class="form-label">Printables</label>
                             <input type="number" class="form-control" name="printables" id="printables">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">To Pay (Prof)</label>
+                            <input type="number" class="form-control" name="to_pay" id="to_pay">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">To Pay (Center)</label>
+                            <input type="number" class="form-control" name="to_pay_center" id="to_pay_center">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save</button>
@@ -112,19 +136,16 @@
     <script>
         document.querySelectorAll('.student-row').forEach(row => {
             row.addEventListener('click', function(e) {
-                if (e.target.closest('form')) return; // don’t trigger when clicking delete
+                if (e.target.closest('form')) return;
 
                 let id = this.dataset.id;
-                let center = this.dataset.center;
-                let professor = this.dataset.professor;
-                let materials = this.dataset.materials;
-                let printables = this.dataset.printables;
-
                 document.getElementById('studentId').value = id;
-                document.getElementById('centerPrice').value = center;
-                document.getElementById('professorPrice').value = professor;
-                document.getElementById('materials').value = materials;
-                document.getElementById('printables').value = printables;
+                document.getElementById('centerPrice').value = this.dataset.center;
+                document.getElementById('professorPrice').value = this.dataset.professor;
+                document.getElementById('materials').value = this.dataset.materials;
+                document.getElementById('printables').value = this.dataset.printables;
+                document.getElementById('to_pay').value = this.dataset.to_pay;
+                document.getElementById('to_pay_center').value = this.dataset.to_pay_center;
 
                 document.getElementById('updatePricesForm').action = `/session-students/${id}`;
 
@@ -133,3 +154,11 @@
         });
     </script>
 @endsection
+
+@push('styles')
+    <style>
+        .table-pink {
+            background-color: #f8d7f0 !important;
+        }
+    </style>
+@endpush

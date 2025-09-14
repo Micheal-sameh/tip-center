@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Enums\AttendenceType;
+use App\Enums\ChargeType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Models\Session;
@@ -15,8 +16,10 @@ use Illuminate\Support\Facades\DB;
 
 class SessionStudentRepository extends BaseRepository
 {
-    public function __construct(SessionStudent $model)
-    {
+    public function __construct(
+        SessionStudent $model,
+        protected ChargeRepository $chargeRepository,
+    ) {
         $this->model = $model;
     }
 
@@ -88,6 +91,7 @@ class SessionStudentRepository extends BaseRepository
             'printables' => $input->printables ?? 0,
             'materials' => $input->materials ?? 0,
             'to_pay' => $input->to_pay ?? 0,
+            'to_pay_center' => $input->to_pay_center ?? 0,
             'is_attend' => AttendenceType::ATTEND,
             'created_by' => Auth::id(),
         ]);
@@ -105,10 +109,42 @@ class SessionStudentRepository extends BaseRepository
             'printables' => $input->printables ?? 0,
             'materials' => $input->materials ?? 0,
             'to_pay' => $input->to_pay ?? 0,
+            'to_pay_center' => $input->to_pay_center ?? 0,
+            'is_attend' => AttendenceType::ATTEND,
             'updated_by' => Auth::id(),
         ]);
 
         return $attendance;
+    }
+
+    public function pay($id)
+    {
+        $pay = $this->findById($id);
+        DB::beginTransaction();
+        if ($pay->to_pay) {
+            $professor = $pay->session->professor;
+            $professor->update(['balance' => $pay->to_pay]);
+            $pay->update([
+                'professor_price' => $pay->professor_price + $pay->to_pay,
+                'to_pay' => 0,
+            ]);
+        }
+        if ($pay->to_pay_center) {
+            $input = [
+                'title' => $pay->student->name.' session '.$pay->session->professor->name.' '.$pay->session->created_at->format('d-m'),
+                'amount' => $pay->to_pay_center,
+                'type' => ChargeType::GAP,
+            ];
+            $this->chargeRepository->store($input);
+            $pay->update([
+                'center_price' => $pay->center_price + $pay->to_pay_center,
+                'to_pay_center' => 0,
+            ]);
+        }
+        DB::commit();
+
+        return $pay;
+
     }
 
     public function absentStudents($session_id, $studentsIds)
@@ -157,12 +193,12 @@ class SessionStudentRepository extends BaseRepository
         if (isset($input['type'])) {
             match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials', 'is_attend'),
-                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay', 'is_attend'),
+                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay_center', 'is_attend'),
                 default => $query,
             };
         }
 
-        return $query->get();
+        return $query->orderBy('is_attend', 'desc')->get();
     }
 
     public function student($input)

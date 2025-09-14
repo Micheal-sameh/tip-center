@@ -70,7 +70,11 @@ class Student extends Model implements HasMedia
     public function toPay()
     {
         return $this->hasMany(SessionStudent::class, 'student_id', 'id')
-            ->where('to_pay', '>', 0);
+            ->where(function ($q) {
+                $q->where('to_pay', '>', 0)
+                    ->orWhere('to_pay_center', '>', 0);
+            });
+
     }
 
     public function isBirthdayToday()

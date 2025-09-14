@@ -32,12 +32,15 @@
         </script>
     @endif
 
-    @if ($to_pay && $to_pay > 0)
+    @if (!$to_pay->isEmpty())
         <div class="alert alert-warning d-flex align-items-center" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
             <div>
-                <strong>Warning:</strong> This student has a pending payment of
-                <strong>{{ number_format($to_pay, 2) }} EGP</strong> from a previous sessions.
+                <strong>Warning:</strong> This student has a pending payment of <br>
+                @foreach ($to_pay as $pay)
+                    <strong>{{ number_format($pay->to_pay + $pay->to_pay_center, 2) }} EGP</strong> from session
+                    {{ $pay->session->professor->name }} - {{ $pay->created_at->format('d-m-Y') }}. <br>
+                @endforeach
             </div>
         </div>
     @endif
@@ -67,13 +70,13 @@
                     </div>
                     @if ($session->printables)
                         <div class="col-md-4">
-                            <h6>Printables</h6>
+                            <h6>Printables (Center)</h6>
                             <p>{{ number_format($session->printables ?? 0, 2) }} EGP</p>
                         </div>
                     @endif
                     @if ($session->materials)
                         <div class="col-md-4">
-                            <h6>Materials</h6>
+                            <h6>Materials (prof)</h6>
                             <p>{{ number_format($session->materials ?? 0, 2) }} EGP</p>
                         </div>
                     @endif
@@ -104,7 +107,7 @@
                             </div>
                         </div>
                     </form>
-                    @if ($to_pay && $to_pay > 0)
+                    @if (!$to_pay->isEmpty())
                         <button class="btn btn-warning mb-3" data-bs-toggle="modal" data-bs-target="#settleDueModal">
                             <i class="fas fa-wallet me-1"></i> Settle Previous Dues
                         </button>
@@ -148,27 +151,32 @@
                             <label>Center Paid</label>
                             <input type="number" name="center_price" id="center_price" step="1" min="0"
                                 class="form-control"
-                                value="{{ $specialCase ? $specialCase->pivot->center_price : $session->center_price }}">
+                                value="{{ $specialCase  && $specialCase->pivot->center_price > 0 ? $specialCase->pivot->center_price : $session->center_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Professor Paid</label>
                             <input type="number" name="professor_price" id="professor_price" step="1" min="0"
                                 class="form-control"
-                                value="{{ $specialCase ? $specialCase->pivot->professor_price : $session->professor_price }}">
+                                value="{{ $specialCase && $specialCase->pivot->professor_price > 0 ? $specialCase->pivot->professor_price : $session->professor_price }}">
                         </div>
                         <div class="col-md-4">
-                            <label>Printables</label>
+                            <label>Printables (Center)</label>
                             <input type="number" name="printables" id="printables" step="1" min="0"
                                 class="form-control" value="{{ $session->printables ?? 0 }}">
                         </div>
                         <div class="col-md-4">
-                            <label>Materials</label>
+                            <label>Materials (Prof)</label>
                             <input type="number" name="materials" id="materials" step="1" min="0"
                                 class="form-control" value="{{ $session->materials ?? 0 }}">
                         </div>
                         <div class="col-md-4">
-                            <label>To Pay</label>
+                            <label>To Pay (Prof)</label>
                             <input type="number" name="to_pay" id="to_pay" value="0" step="1"
+                                min="0" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label>To Pay (Center)</label>
+                            <input type="number" name="to_pay_center" id="to_pay_center" value="0" step="1"
                                 min="0" class="form-control">
                         </div>
                         <div class="col-md-4">
@@ -195,12 +203,13 @@
             const printables = document.getElementById("printables");
             const materials = document.getElementById("materials");
             const to_pay = document.getElementById("to_pay");
+            const to_pay_center = document.getElementById("to_pay_center");
             const remaining = document.getElementById("remaining");
 
             // Total session cost from backend
             const total =
-                {{ ($specialCase ? $specialCase->pivot->center_price : $session->center_price ?? 0) +
-                    ($specialCase ? $specialCase->pivot->professor_price : $session->professor_price ?? 0) +
+                {{ ($specialCase && $specialCase->pivot->center_price > 0 ? $specialCase->pivot->center_price : $session->center_price ?? 0) +
+                    ($specialCase && $specialCase->pivot->professor_price > 0 ? $specialCase->pivot->professor_price : $session->professor_price ?? 0) +
                     ($session->printables ?? 0) +
                     ($session->materials ?? 0) }};
 
@@ -210,12 +219,13 @@
                     (parseFloat(professor_price.value) || 0) +
                     (parseFloat(printables.value) || 0) +
                     (parseFloat(materials.value) || 0) +
-                    (parseFloat(to_pay.value) || 0);
+                    (parseFloat(to_pay.value) || 0) +
+                    (parseFloat(to_pay_center.value) || 0);
 
                 remaining.value = total - paid;
             }
 
-            [center_price, professor_price, printables, materials, to_pay].forEach(input => {
+            [center_price, professor_price, printables, materials, to_pay, to_pay_center].forEach(input => {
                 input.addEventListener("input", calculateRemaining);
             });
 
@@ -224,44 +234,42 @@
         });
     </script>
 
-    @if ($to_pay && $to_pay > 0)
+    @if (!$to_pay->isEmpty())
         <!-- Settle Due Modal -->
         <div class="modal fade" id="settleDueModal" tabindex="-1" aria-labelledby="settleDueModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form action="{{ route('students.settle_due', $student->id) }}" method="POST">
-                        @csrf
-                        @method('put')
-                        <input type="hidden" name="student_id" value="{{ $student->id }}">
-                        <input type="hidden" name="previous_to_pay_id" value="{{ $to_pay_id ?? '' }}">
+                    <div class="modal-body">
+                        <p class="mb-3">
+                            This student has <strong>{{ number_format($to_pay->sum('to_pay'), 2) }} EGP</strong> in
+                            unpaid dues.
+                        </p>
 
-                        <div class="modal-header bg-warning text-dark">
-                            <h5 class="modal-title" id="settleDueModalLabel">
-                                <i class="fas fa-wallet me-2"></i>Settle Previous Dues
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <p>
-                                This student has <strong>{{ number_format($to_pay, 2) }} EGP</strong> in unpaid dues.
-                            </p>
-
-                            <div class="mb-3">
-                                <label for="settled_to_pay" class="form-label">Amount to Pay Now</label>
-                                <input type="number" class="form-control" name="paid" id="settled_to_pay"
-                                    step="1" min="0" max="{{ $to_pay }}" required>
+                        @forelse($to_pay as $payment)
+                            <div class="border rounded p-3 mb-2 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Due:</strong> {{ number_format($payment->to_pay + $payment->to_pay_center, 2) }} EGP
+                                    <br>
+                                    <small class="text-muted">Date:
+                                        {{ $payment->created_at->format('M d, Y') }}</small>
+                                </div>
+                                <form action="{{ route('payments.pay', $payment->id) }}" method="POST" class="ms-2">
+                                    @csrf
+                                    @method('put')
+                                    <input type="hidden" name="amount" value="{{ $payment->to_pay + $payment->to_pay_center }}">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-money-bill-wave me-1"></i> Pay
+                                    </button>
+                                </form>
                             </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-warning">
-                                <i class="fas fa-check-circle me-1"></i> Settle
-                            </button>
-                        </div>
+                        @empty
+                            <p class="text-muted">No unpaid dues found.</p>
+                        @endforelse
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                     </form>
                 </div>
             </div>

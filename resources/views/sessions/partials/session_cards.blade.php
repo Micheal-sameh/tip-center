@@ -13,21 +13,22 @@
                 @php
                     switch ($session->status) {
                         case \App\Enums\SessionStatus::WARNING:
-                            $btnClass = 'danger'; // red
+                            $btnClass = 'danger';
                             break;
                         case \App\Enums\SessionStatus::PENDING:
-                            $btnClass = 'secondary'; // grey
+                            $btnClass = 'secondary';
                             break;
                         case \App\Enums\SessionStatus::ACTIVE:
-                            $btnClass = 'success'; // green
+                            $btnClass = 'success';
                             break;
                         case \App\Enums\SessionStatus::FINISHED:
-                            $btnClass = 'primary'; // blue
+                            $btnClass = 'primary';
                             break;
                         default:
-                            $btnClass = 'light'; // fallback
+                            $btnClass = 'light';
                     }
                 @endphp
+
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-{{ $btnClass }} text-white py-2">
                         <div class="d-flex justify-content-between align-items-center">
@@ -41,7 +42,8 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ $session->professor->name }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">
-                            {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</h6>
+                            {{ App\Enums\StagesEnum::getStringValue($session->stage) }}
+                        </h6>
 
                         <div class="my-3">
                             <div class="d-flex justify-content-between mb-2">
@@ -69,20 +71,20 @@
                                 </div>
                             @endif
                             <div class="d-flex justify-content-between">
-                                <a class="fw-bold" href='{{ route('sessions.students', $session->id) }}'>Students:</a>
-                                <span class="fw-bold">{{ $session->session_students_count }} </span>
+                                <a class="fw-bold" href="{{ route('sessions.students', $session->id) }}">Students:</a>
+                                <span class="fw-bold">{{ $session->attended_count }}</span>
                             </div>
                             @if ($session->room)
                                 <div class="d-flex justify-content-between">
-                                    <span class="fw-bold">Room: </span>
-                                    <span class="fw-bold">{{ $session->room }} </span>
+                                    <span class="fw-bold">Room:</span>
+                                    <span class="fw-bold">{{ $session->room }}</span>
                                 </div>
                             @endif
                             @if ($session->type)
                                 <div class="d-flex justify-content-between">
-                                    <span class="fw-bold">Session Type: </span>
-                                    <span class="fw-bold">{{ App\Enums\SessionType::getStringValue($session->type) }}
-                                    </span>
+                                    <span class="fw-bold">Session Type:</span>
+                                    <span
+                                        class="fw-bold">{{ App\Enums\SessionType::getStringValue($session->type) }}</span>
                                 </div>
                             @endif
                         </div>
@@ -96,16 +98,26 @@
                                 </small>
                             </div>
                         @endif
+
+                        {{-- Extras Button (data-* always present/safe) --}}
+                        <a href="{{route('sessions.extras-form', $session->id)}}" type="button" class="btn btn-sm btn-primary mt-2" >
+                            Extras
+                        </a>
+
                     </div>
 
                     <div class="card-footer bg-white border-top-0">
                         <div class="d-flex justify-content-between align-items-center">
-
                             @if ($session->status != App\Enums\SessionStatus::FINISHED)
-                                <button type="button"class="btn btn-sm btn-primary status-toggle"
-                                    data-id="{{ $session->id }}">
-                                    Close
-                                </button>
+                                <form action="{{ route('sessions.close', $session->id) }}" method="POST"
+                                    class="d-inline">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-sm btn-primary"
+                                        onclick="return confirm('Are you sure you want to close this session?');">
+                                        Close
+                                    </button>
+                                </form>
                             @else
                                 <span
                                     class="badge bg-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'warning' : 'secondary' }} me-1">
@@ -114,17 +126,14 @@
                                     {{ App\Enums\SessionStatus::getStringValue($session->status) }}
                                 </span>
                             @endif
+
                             @if (
                                 $session->status == App\Enums\SessionStatus::PENDING ||
                                     auth()->user()->hasAnyRole(['admin', 'manager']))
                                 <form action="{{ route('sessions.active', $session->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
-                                    <button type="submit" class="btn btn-sm btn-success me-1"
-                                        data-id="{{ $session->id }}">
-                                        {{-- <i class="fas fa-check-circle me-1"></i> --}}
-                                        Activate
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-success me-1">Activate</button>
                                 </form>
                             @endif
 
@@ -187,54 +196,83 @@
         @endif
     </div>
 
-    <!-- Status Change Modal -->
-    <div class="modal fade" id="statusChangeModal" tabindex="-1" aria-labelledby="statusChangeModalLabel"
-        aria-hidden="true">
+    {{-- Modal --}}
+    <div class="modal fade" id="statusChangeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="statusChangeModalLabel">Change Session Status</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Update Session Extras</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+
                 <form id="statusChangeForm" method="POST" action="">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
+
                         <div class="mb-3">
-                            <label for="markers" class="form-label">Markers</label>
-                            <input type="number" class="form-control" id="markers" name="markers" min="0"
-                                placeholder="Enter markers expenses">
+                            <label class="form-label">Markers</label>
+                            <input type="number" class="form-control" id="markers" name="markers" placeholder="">
                         </div>
 
                         <div class="mb-3">
-                            <label for="copies" class="form-label">Copies</label>
-                            <input type="number" class="form-control" id="copies" name="copies" min="0"
-                                placeholder="Enter copies expenses">
+                            <label class="form-label">Copies</label>
+                            <input type="number" class="form-control" id="copies" name="copies"
+                                placeholder="Enter copies">
                         </div>
 
                         <div class="mb-3">
-                            <label for="cafeteria" class="form-label">Cafeteria</label>
+                            <label class="form-label">Cafeteria</label>
                             <input type="number" class="form-control" id="cafeteria" name="cafeteria"
-                                min="0" placeholder="Enter cafeteria expenses">
+                                placeholder="Enter cafeteria">
                         </div>
 
                         <div class="mb-3">
-                            <label for="other" class="form-label">Other Expenses</label>
-                            <input type="number" class="form-control" id="other" name="other" min="0"
+                            <label class="form-label">Other Expenses</label>
+                            <input type="number" class="form-control" id="other" name="other"
                                 placeholder="Enter other expenses">
                         </div>
 
                         <div class="mb-3">
-                            <label for="notes" class="form-label">Notes</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Any additional notes"></textarea>
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" placeholder="Enter notes"></textarea>
                         </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">End Session</button>
+                        <button type="submit" class="btn btn-danger">Save Extras</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 @endif
+
+@push('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('statusChangeModal');
+
+            modal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                if (!button) return;
+
+                // Parse JSON string (fix escaped quotes)
+                const raw = button.getAttribute('data-session');
+                const session = JSON.parse(raw.replace(/&quot;/g, '"'));
+
+                const form = modal.querySelector('#statusChangeForm');
+                form.action = `/sessions/${session.id}/extras`;
+
+                // ✅ Set placeholders only (light gray text)
+                form.querySelector('#markers').placeholder = session.session_extra?.markers ?? '0';
+                form.querySelector('#copies').placeholder = session.session_extra?.copies ?? '0';
+                form.querySelector('#cafeteria').placeholder = session.session_extra?.cafeteria ?? '0';
+                form.querySelector('#other').placeholder = session.session_extra?.other ?? '0';
+                form.querySelector('#notes').placeholder = session.session_extra?.notes ?? '';
+            });
+
+        });
+    </script>
+@endpush

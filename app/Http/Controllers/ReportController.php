@@ -30,9 +30,9 @@ class ReportController extends Controller
     ) {
         $this->middleware('permission:students_report')->only(['student', 'downloadStudentReport']);
         $this->middleware('permission:sessions_report')->only(['session', 'index', 'downloadSessionReport']);
-        $this->middleware('permission:income_report')->only(['income']);
+        $this->middleware('permission:income_report')->only(['income', 'incomePdf']);
         $this->middleware('permission:monthly_income')->only(['monthlyIncome']);
-        // $this->middleware('permission:sessions_resetPassword')->only('resetPassword');
+        $this->middleware('permission:special_room_report')->only('specialRooms', 'downloadSpecialRooms');
     }
 
     public function index(ReportIndexRequest $request)

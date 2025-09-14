@@ -232,7 +232,6 @@
                     <th>paid Students</th>
                     <th>Centre</th>
                     <th>prof Papper</th>
-                    <th>Prof Books</th>
                     <th>Student Papper</th>
                     <th>Markers</th>
                     <th>Attended Student</th>
@@ -253,18 +252,15 @@
                         </td>
                         <td>{{ $session->total_printables > 0 ? number_format($session->total_printables, 1) : '-' }}
                         </td>
-                        <td>{{ $session->total_materials > 0 ? number_format($session->total_materials, 1) : '-' }}
-                        </td>
                         <td>{{ $session->sessionExtra?->copies > 0 ? number_format($session->sessionExtra?->copies, 1) : '-' }}
                         </td>
                         <td>{{ $session->sessionExtra?->markers > 0 ? number_format($session->sessionExtra?->markers, 1) : '-' }}
                         </td>
-                        <td>{{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}</td>
+                        <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}</td>
                         <td class="text-primary">
                             {{ number_format(
                                 $session->total_center_price +
                                     $session->total_professor_price +
-                                    $session->total_materials +
                                     $session->total_printables +
                                     ($session->sessionExtra?->markers ?? 0) +
                                     ($session->sessionExtra?->copies ?? 0),
@@ -286,7 +282,6 @@
                         <th>{{ $totals['paid_students'] }}</th>
                         <th>{{ number_format($totals['center_price'], 1) }}</th>
                         <th>{{ number_format($totals['printables'], 1) }}</th>
-                        <th>{{ number_format($totals['materials'], 1) }}</th>
                         <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
                         <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
                         <th>{{ $totals['attended_count'] }}</th>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\SessionDTO;
 use App\Enums\SessionStatus;
 use App\Enums\StagesEnum;
-use App\Http\Requests\CloseSessionRequesst;
+use App\Http\Requests\CloseSessionRequest;
 use App\Http\Requests\SessionCreateRequest;
 use App\Http\Requests\SessionIndexRequest;
 use App\Http\Requests\SessionUpdateRequest;
@@ -31,6 +31,8 @@ class SessionController extends Controller
     {
         $data = $this->sessionservice->index($request->validated());
         $sessions = $data['sessions'];
+        // dd($sessions->first()->sessionExtra);
+        // return $sessions;
         $totalsessions = $sessions->total();
         $online_sessions = $data['onlineSessions'];
         $professors = $this->professorService->dropdown();
@@ -97,9 +99,24 @@ class SessionController extends Controller
         return to_route('sessions.index');
     }
 
-    public function close(CloseSessionRequesst $request, $id)
+    public function extrasForm($id)
     {
-        $session = $this->sessionservice->close($request->validated(), $id);
+        $session = $this->sessionRepository->findById($id);
+        $session->load('sessionExtra', 'professor');
+
+        return view('sessions.extras', compact('session'));
+    }
+
+    public function extras(CloseSessionRequest $request, $id)
+    {
+        $session = $this->sessionservice->extras($request->validated(), $id);
+
+        return to_route('sessions.index')->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Extras updated successfully');
+    }
+
+    public function close($id)
+    {
+        $session = $this->sessionservice->status(SessionStatus::FINISHED, $id);
 
         return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
     }

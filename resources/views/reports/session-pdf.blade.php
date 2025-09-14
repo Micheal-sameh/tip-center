@@ -137,16 +137,16 @@
                 <th>#</th>
                 <th>Student Name</th>
                 @if ($reports->contains(fn($r) => $r->student?->phone > 0))
-                <th>Phone</th>
+                    <th>Phone</th>
                 @endif
                 @if ($reports->contains(fn($r) => $r->student?->parent_phone > 0))
-                <th>parent Phone</th>
+                    <th>parent Phone</th>
                 @endif
                 <th>Attending</th>
+                <th class="text-end">Payment</th>
                 <th>Materials</th>
                 <th>Printables</th>
-                <th class="text-end">Payment</th>
-                @if ($reports->contains(fn($r) => $r->to_pay > 0))
+                @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center > 0))
                     <th class="text-end">To Pay</th>
                 @endif
             </tr>
@@ -154,7 +154,7 @@
         <tbody>
             @foreach ($reports as $report)
                 <tr
-                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay > 0 ? 'table-warning' : '') }}">
+                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center > 0 ? 'table-warning' : '') }}">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $report->student?->name }}</td>
                     @if ($report->student?->phone)
@@ -163,15 +163,17 @@
                     @if ($report->student?->parent_phone)
                         <td>{{ $report->student?->parent_phone }}</td>
                     @endif
-                    <td>{{ $report->created_at->format('h:i A') }}</td>
-                    <td>{{ $report->materials }}</td>
-                    <td class="text-end">{{ $report->printables }}</td>
+                    <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
+                    </td>
                     <td class="text-end">
                         {{ number_format($report->professor_price + $report->center_price, 2) }}
                     </td>
-                    @if ($report->to_pay)
-                        <td class="text-end fw-bold {{ $report->to_pay > 0 ? 'text-danger' : '' }}">
-                            {{ number_format($report->to_pay, 2) }}
+                    <td>{{ $report->materials }}</td>
+                    <td class="text-end">{{ $report->printables ?? 0 }}</td>
+                    @if ($report->to_pay || $report->to_pay_center)
+                        <td
+                            class="text-end fw-bold {{ $report->to_pay + $report->to_pay_center > 0 ? 'text-danger' : '' }}">
+                            {{ number_format($report->to_pay + $report->to_pay_center, 2) }}
                         </td>
                     @endif
                 </tr>
@@ -228,7 +230,7 @@
         <tbody>
             <tr>
                 <th>Total Students</th>
-                <td class="text-end">{{ $reports->count() }}</td>
+                <td class="text-end">{{ $reports->where('is_attend', 1)->count() }}</td>
             </tr>
             @if ($session->professor_price)
                 <tr>
@@ -263,12 +265,13 @@
                     {{ number_format($total, 2) }}
                 </td>
             </tr>
-            <tr class="{{ $reports->sum('to_pay') > 0 ? 'bg-warning' : '' }}">
-                <th>Amount To Collect</th>
-                <td class="text-end {{ $reports->sum('to_pay') > 0 ? 'text-danger' : '' }} total-value">
-                    {{ number_format($reports->sum('to_pay'), 2) }}
+            <tr class="{{ $reports->sum('to_pay') + $reports->sum('to_pay_center') > 0 ? 'bg-warning' : '' }}">
+                <th> To Collect</th>
+                <td class="text-end {{ $reports->sum('to_pay') + $reports->sum('to_pay_center') > 0 ? 'text-danger' : '' }} total-value">
+                    {{ number_format($reports->sum('to_pay') + $reports->sum('to_pay_center'), 2) }}
                 </td>
             </tr>
+
         </tbody>
     </table>
 </body>
