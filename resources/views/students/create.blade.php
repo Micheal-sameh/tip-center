@@ -106,14 +106,5 @@
             transform: scale(0.85) translateY(-0.8rem) translateX(0.15rem);
         }
     </style>
-    <script>
-        document.getElementById('student-form').addEventListener('submit', function() {
-            this.querySelectorAll('input[type="text"], input[type="tel"], textarea').forEach(input => {
-                if (!input.value.trim()) {
-                    input.disabled = true;
-                }
-            });
-        });
-    </script>
-
+ 
 @endsection
