@@ -146,9 +146,7 @@
                 <th class="text-end">Payment</th>
                 <th>Materials</th>
                 <th>Printables</th>
-                @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center > 0))
-                    <th class="text-end">To Pay</th>
-                @endif
+                <th class="text-end">To Pay</th>
             </tr>
         </thead>
         <tbody>
@@ -170,10 +168,20 @@
                     </td>
                     <td>{{ $report->materials }}</td>
                     <td class="text-end">{{ $report->printables ?? 0 }}</td>
-                    @if ($report->to_pay || $report->to_pay_center)
-                        <td
-                            class="text-end fw-bold {{ $report->to_pay + $report->to_pay_center > 0 ? 'text-danger' : '' }}">
-                            {{ number_format($report->to_pay + $report->to_pay_center, 2) }}
+                    @php
+                        $total = $report->student->toPay->sum(function ($pay) use ($selected_type) {
+                            if ($selected_type == App\Enums\ReportType::PROFESSOR) {
+                                return $pay->to_pay;
+                            } elseif ($selected_type == App\Enums\ReportType::CENTER) {
+                                return $pay->to_pay_center;
+                            } else {
+                                return $pay->to_pay_center + $pay->to_pay;
+                            }
+                        });
+                    @endphp
+                    @if ($total > 0)
+                        <td class="text-end fw-bold {{ $total > 0 ? 'text-danger' : '' }}">
+                            {{ number_format($total, 2) }}
                         </td>
                     @endif
                 </tr>
@@ -262,13 +270,32 @@
                             $total += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adjustment : $adjustment;
                         }
                     @endphp
-                    {{ number_format($total, 2) }}
+                    {{ number_format($total + $session->professor->balance, 2) }}
                 </td>
             </tr>
-            <tr class="{{ $reports->sum('to_pay') + $reports->sum('to_pay_center') > 0 ? 'bg-warning' : '' }}">
+            @php
+
+                $total = $reports->sum(function ($report) use ($selected_type) {
+                    if (!isset($report->student->toPay)) {
+                        return 0;
+                    }
+
+                    return $report->student->toPay->sum(function ($pay) use ($selected_type) {
+                        if ($selected_type == App\Enums\ReportType::PROFESSOR) {
+                            return $pay->to_pay;
+                        } elseif ($selected_type == App\Enums\ReportType::CENTER) {
+                            return $pay->to_pay_center;
+                        } else {
+                            return $pay->to_pay_center + $pay->to_pay;
+                        }
+                    });
+                });
+            @endphp
+            <tr class="{{ $total > 0 ? 'bg-warning' : '' }}">
                 <th> To Collect</th>
-                <td class="text-end {{ $reports->sum('to_pay') + $reports->sum('to_pay_center') > 0 ? 'text-danger' : '' }} total-value">
-                    {{ number_format($reports->sum('to_pay') + $reports->sum('to_pay_center'), 2) }}
+                <td
+                    class="text-end {{ $total > 0 ? 'text-danger' : '' }} total-value">
+                    {{ number_format($total, 2) }}
                 </td>
             </tr>
 

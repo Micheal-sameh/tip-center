@@ -58,9 +58,7 @@
                                 @if ($reports->contains(fn($r) => $r->printables > 0))
                                     <th>Printables</th>
                                 @endif
-                                @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center > 0))
                                     <th class="text-end">To Pay</th>
-                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -101,7 +99,7 @@
                                                 } elseif ($selected_type == App\Enums\ReportType::CENTER) {
                                                     return $pay->to_pay_center;
                                                 } else {
-                                                    return $pay->to_pay_center;
+                                                    return $pay->to_pay_center + $pay->to_pay;
                                                 }
                                             });
                                         @endphp
@@ -226,8 +224,7 @@
                                 } elseif ($selected_type == App\Enums\ReportType::CENTER) {
                                     return $pay->to_pay_center;
                                 } else {
-                                    // default/fallback
-                                    return $pay->to_pay_center;
+                                    return $pay->to_pay_center + $pay->to_pay;
                                 }
                             });
                         });
