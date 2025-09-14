@@ -136,10 +136,10 @@ class SessionStudentRepository extends BaseRepository
                 'type' => ChargeType::GAP,
             ];
             $this->chargeRepository->store($input);
-            $pay->update([
-                'center_price' => $pay->center_price + $pay->to_pay_center,
-                'to_pay_center' => 0,
-            ]);
+            // $pay->update([
+            //     'center_price' => $pay->center_price + $pay->to_pay_center,
+            //     'to_pay_center' => 0,
+            // ]);
         }
         DB::commit();
 
