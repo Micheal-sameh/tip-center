@@ -85,6 +85,8 @@
                                 <th>prof Papper</th>
                                 <th>Student Papper</th>
                                 <th>Markers</th>
+                                <th>Other Center</th>
+                                <th>Other Print</th>
                                 <th>Attended Student</th>
                                 <th>Session Total</th>
                             </tr>
@@ -106,6 +108,10 @@
                                     </td>
                                     <td>{{ $session->sessionExtra?->markers > 0 ? number_format($session->sessionExtra?->markers, 1) : '-' }}
                                     </td>
+                                    <td>{{ $session->sessionExtra?->other > 0 ? number_format($session->sessionExtra?->other, 1) : '-' }}
+                                    </td>
+                                    <td>{{ $session->sessionExtra?->other_print > 0 ? number_format($session->sessionExtra?->other_print, 1) : '-' }}
+                                    </td>
                                     <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}
                                     </td>
                                     <td class="fw-bold text-primary">
@@ -114,6 +120,8 @@
                                                 $session->total_professor_price +
                                                 $session->total_printables +
                                                 $session->sessionExtra?->markers +
+                                                $session->sessionExtra?->other +
+                                                $session->sessionExtra?->other_print +
                                                 $session->sessionExtra?->copies,
                                             1,
                                         ) }}
@@ -137,6 +145,8 @@
                                     <th>{{ number_format($totals['printables'], 1) }}</th>
                                     <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
                                     <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
+                                    <th>{{ number_format($totals['other_center'] ?? 0, 1) }}</th>
+                                    <th>{{ number_format($totals['other_print'] ?? 0, 1) }}</th>
                                     <th>{{ $totals['attended_count'] }}</th>
                                     <th class="fw-bold text-primary">
                                         {{ number_format($totals['overall_total'], 1) }}

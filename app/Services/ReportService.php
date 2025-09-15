@@ -61,6 +61,8 @@ class ReportService
             'printables' => 0,
             'copies' => 0,
             'markers' => 0,
+            'other_center' => 0,
+            'other_print' => 0,
             'overall_total' => 0,
             'attended_count' => 0,
         ];
@@ -71,6 +73,8 @@ class ReportService
             $totals['center_price'] += $session->total_center_price;
             $totals['printables'] += $session->total_printables ?? 0;
             $totals['markers'] += $session->sessionExtra?->markers ?? 0;
+            $totals['other_center'] += $session->sessionExtra?->other ?? 0;
+            $totals['other_print'] += $session->sessionExtra?->other_print ?? 0;
             $totals['copies'] += $session->sessionExtra?->copies ?? 0;
         });
 
@@ -78,6 +82,8 @@ class ReportService
             $totals['center_price']
             + $totals['printables']
             + $totals['markers']
+            + $totals['other_center']
+            + $totals['other_print']
             + $totals['copies'];
 
         return compact('sessions', 'totals', 'charges', 'gap');
