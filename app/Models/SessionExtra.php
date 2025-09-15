@@ -16,5 +16,7 @@ class SessionExtra extends Model
         'cafeterea',
         'other',
         'notes',
+        'other_print',
+        'out_going',
     ];
 }

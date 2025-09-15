@@ -14,6 +14,8 @@ class CloseSessionRequest extends FormRequest
             'cafeterea' => 'nullable|numeric',
             'other' => 'nullable|numeric',
             'notes' => 'nullable|string',
+            'other_print' => 'nullable|numeric',
+            'out_going' => 'nullable|numeric',
         ];
     }
 }

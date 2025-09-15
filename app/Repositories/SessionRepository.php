@@ -158,6 +158,8 @@ class SessionRepository extends BaseRepository
             'markers' => $extras->markers + ($input['markers'] ?? 0),
             'cafeterea' => $extras->cafeterea + ($input['cafeterea'] ?? 0),
             'other' => $extras->other + ($input['other'] ?? 0),
+            'other_print' => $extras->other_print + ($input['other_print'] ?? 0),
+            'out_going' => $extras->out_going + ($input['out_going'] ?? 0),
             'notes' => $input['notes'] ?? $extras->notes,
         ]);
         $this->absence($session);
