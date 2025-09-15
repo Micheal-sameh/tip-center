@@ -58,7 +58,7 @@
                                 @if ($reports->contains(fn($r) => $r->printables > 0))
                                     <th>Student Papers</th>
                                 @endif
-                                    <th class="text-end">To Pay</th>
+                                <th class="text-end">To Pay</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,7 +199,12 @@
                                         if ($session->sessionExtra) {
                                             $extra = $session->sessionExtra;
                                             $adjustment =
-                                                $extra->markers + $extra->copies + $extra->other + $extra->cafeterea;
+                                                $extra->markers +
+                                                $extra->copies +
+                                                $extra->other +
+                                                $extra->cafeterea +
+                                                $extra->other_print +
+                                                $extra->out_going;
                                             $total +=
                                                 $selected_type == App\Enums\ReportType::PROFESSOR
                                                     ? -$adjustment
@@ -245,26 +250,41 @@
 
                 {{-- Extras --}}
                 @if ($session->sessionExtra)
-                    @php $extra = $session->sessionExtra; @endphp
+                    @php
+                        $extra = $session->sessionExtra;
+
+                        $fields = [
+                            'markers' => 'Markers',
+                            'cafeterea' => 'Cafeterea',
+                            'copies' => 'Prof Papers',
+                            'other' => 'Others Center',
+                            'other_print' => 'Others Print',
+                            'out_going' => 'Out Going',
+                        ];
+
+                        $formatValue = function ($value, $type) {
+                            if ($type == App\Enums\ReportType::PROFESSOR) {
+                                return $value > 0 ? -number_format($value, 2) : 0;
+                            }
+                            return number_format($value ?? 0, 2);
+                        };
+                    @endphp
+
                     <div class="row g-3 mb-3">
-                        @foreach (['markers', 'cafeterea', 'copies', 'other'] as $field)
+                        @foreach ($fields as $field => $label)
                             <div class="col-md-3 col-6">
                                 <div class="card h-100">
                                     <div class="card-body text-center">
-                                        <h6 class="card-subtitle mb-2 text-muted">{{ ucfirst($field) }}</h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">{{ $label }}</h6>
                                         <p class="card-text fs-5 fw-bold">
-                                            @if ($selected_type == App\Enums\ReportType::PROFESSOR)
-                                                {{ $extra->$field > 0 ? -number_format($extra->$field, 2) : 0 }}
-                                            @else
-                                                {{ number_format($extra->$field ?? 0, 2) }}
-                                            @endif
+                                            {{ $formatValue($extra->$field ?? 0, $selected_type) }}
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
 
-                        @if ($extra->notes)
+                        @if (!empty($extra->notes))
                             <div class="col-md-3 col-6">
                                 <div class="card h-100">
                                     <div class="card-body text-center">
@@ -276,7 +296,6 @@
                         @endif
                     </div>
                 @endif
-
             </div>
         </div>
     </div>

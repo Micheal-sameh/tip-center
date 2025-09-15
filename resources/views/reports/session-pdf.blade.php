@@ -219,9 +219,21 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Other</td>
+                    <td>Other Center </td>
                     <td class="text-end">
                         {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->other > 0 ? -number_format($extra->other, 2) : 0) : number_format($extra->other ?? 0, 2) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Other Print</td>
+                    <td class="text-end">
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->other_print > 0 ? -number_format($extra->other_print, 2) : 0) : number_format($extra->other_print ?? 0, 2) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Out Going</td>
+                    <td class="text-end">
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->out_going > 0 ? -number_format($extra->out_going, 2) : 0) : number_format($extra->out_going ?? 0, 2) }}
                     </td>
                 </tr>
                 @if ($extra->notes)
@@ -266,7 +278,7 @@
                             fn($r) => $r->professor_price + $r->center_price + $r->printables + $r->materials,
                         );
                         if ($session->sessionExtra) {
-                            $adjustment = $extra->markers + $extra->copies + $extra->other + $extra->cafeterea;
+                            $adjustment = $extra->markers + $extra->copies + $extra->other + $extra->cafeterea + $extra->other_print + $extra->out_going;
                             $total += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adjustment : $adjustment;
                         }
                     @endphp

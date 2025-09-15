@@ -158,6 +158,8 @@ class SessionRepository extends BaseRepository
             'markers' => $extras->markers + ($input['markers'] ?? 0),
             'cafeterea' => $extras->cafeterea + ($input['cafeterea'] ?? 0),
             'other' => $extras->other + ($input['other'] ?? 0),
+            'other_print' => $extras->other_print + ($input['other_print'] ?? 0),
+            'out_going' => $extras->out_going + ($input['out_going'] ?? 0),
             'notes' => $input['notes'] ?? $extras->notes,
         ]);
         $this->absence($session);
@@ -373,6 +375,8 @@ class SessionRepository extends BaseRepository
         COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) as center,
         COALESCE(SUM(ss.printables), 0) as print,
         COALESCE(SUM(e.markers), 0) as markers,
+        COALESCE(SUM(e.other_print), 0) as other_print,
+        COALESCE(SUM(e.other_center), 0) as other_center,
         COALESCE(SUM(e.copies), 0) as copies,
 
         -- charges
@@ -388,6 +392,8 @@ class SessionRepository extends BaseRepository
             COALESCE(SUM(ss.printables), 0) +
             COALESCE(SUM(e.copies), 0) +
             COALESCE(SUM(e.markers), 0) +
+            COALESCE(SUM(e.other_center), 0) +
+            COALESCE(SUM(e.other_print), 0) +
             COALESCE(MAX(c.charges_gap), 0)
         ) as income_total,
 
@@ -406,6 +412,8 @@ class SessionRepository extends BaseRepository
                 COALESCE(SUM(ss.printables), 0) +
                 COALESCE(SUM(e.copies), 0) +
                 COALESCE(SUM(e.markers), 0) +
+                COALESCE(SUM(e.other_center), 0) +
+                COALESCE(SUM(e.other_print), 0) +
                 COALESCE(SUM(c.charges_gap), 0)
             ) -
             (
@@ -417,10 +425,28 @@ class SessionRepository extends BaseRepository
         ) as difference_total,
 
         -- net values
-        (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(c.charges_center), 0)) as net_center,
-        ((COALESCE(SUM(e.copies), 0) + COALESCE(SUM(ss.printables), 0)) - COALESCE(MAX(c.charges_copies), 0)) as net_copies,
-        (COALESCE(SUM(e.markers), 0) - COALESCE(MAX(c.charges_markers), 0)) as net_markers,
-        (0 - COALESCE(MAX(c.charges_others), 0)) as net_others
+        (
+            COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0)
+            - COALESCE(MAX(c.charges_center), 0)
+            + COALESCE(SUM(e.other_center), 0)
+        ) as net_center,
+
+        (
+            COALESCE(SUM(e.copies), 0)
+            + COALESCE(SUM(e.other_print), 0)
+            + COALESCE(SUM(ss.printables), 0)
+            - COALESCE(MAX(c.charges_copies), 0)
+        ) as net_copies,
+
+        (
+            COALESCE(SUM(e.markers), 0)
+            - COALESCE(MAX(c.charges_markers), 0)
+        ) as net_markers,
+
+        (
+            0 - COALESCE(MAX(c.charges_others), 0)
+        ) as net_others
+
     ')
             ->leftJoin('sessions as s', DB::raw('DATE(s.created_at)'), '=', 'days.day')
             ->leftJoin(DB::raw('(
@@ -433,7 +459,9 @@ class SessionRepository extends BaseRepository
             ->leftJoin(DB::raw('(
         SELECT session_id,
                 SUM(markers) as markers,
-                SUM(copies) as copies
+                SUM(copies) as copies,
+                SUM(other) as other_center,
+                SUM(other_print) as other_print
         FROM session_extras
         GROUP BY session_id
     ) e'), 's.id', '=', 'e.session_id')
