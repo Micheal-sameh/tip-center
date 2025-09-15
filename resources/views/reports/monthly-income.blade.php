@@ -50,6 +50,7 @@
                             <th>Total Copies</th>
                             <th>Total Markers</th>
                             <th>Total Other</th>
+                            <th>Total Gap</th>
                             <th>NET</th>
                         </tr>
                     </thead>
@@ -71,6 +72,7 @@
                                 <td>{{ number_format($report->net_copies, 2) }}</td>
                                 <td>{{ number_format($report->net_markers, 2) }}</td>
                                 <td>{{ number_format($report->net_others, 2) }}</td>
+                                <td>{{ number_format($report->charges_gap, 2) }}</td>
                                 <td class="{{ $report->difference_total >= 0 ? 'text-success' : 'text-danger' }} fw-bold">
                                     {{ number_format($report->difference_total, 2) }}
                                 </td>
@@ -94,6 +96,7 @@
                             <td>{{ number_format($totals['net_copies'], 2) }}</td>
                             <td>{{ number_format($totals['net_markers'], 2) }}</td>
                             <td>{{ number_format($totals['net_others'], 2) }}</td>
+                            <td>{{ number_format($totals['gap'], 2) }}</td>
                             <td class="{{ $totals['total_difference'] >= 0 ? 'text-success' : 'text-danger' }}">
                                 {{ number_format($totals['total_difference'], 2) }}
                             </td>
