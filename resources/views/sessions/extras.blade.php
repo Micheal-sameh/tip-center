@@ -24,7 +24,7 @@
                             <label for="markers" class="form-label fw-bold">
                                 <i class="fas fa-marker me-1 text-secondary"></i> Markers
                             </label>
-                            <input type="number" class="form-control" id="markers" name="markers" min="0"
+                            <input type="number" class="form-control" id="markers" name="markers"
                                 value="{{ old('markers') }}" placeholder="{{ $session->sessionExtra->markers }}">
                             <style>
                                 #extra-form ::placeholder {
@@ -39,7 +39,7 @@
                             <label for="copies" class="form-label fw-bold">
                                 <i class="fas fa-copy me-1 text-secondary"></i> Prof Papers
                             </label>
-                            <input type="number" class="form-control" id="copies" name="copies" min="0"
+                            <input type="number" class="form-control" id="copies" name="copies" 
                                 value="{{ old('copies') }}" placeholder="{{ $session->sessionExtra->copies }}">
                             <style>
                                 #extra-form ::placeholder {
@@ -54,7 +54,7 @@
                             <label for="cafeterea" class="form-label fw-bold">
                                 <i class="fas fa-coffee me-1 text-secondary"></i> Cafeterea
                             </label>
-                            <input type="number" class="form-control" id="cafeterea" name="cafeterea" min="0"
+                            <input type="number" class="form-control" id="cafeterea" name="cafeterea"
                                 value="{{ old('cafeterea') }}" placeholder="{{ $session->sessionExtra->cafeterea ?? 0 }}">
                             <style>
                                 #extra-form ::placeholder {
@@ -69,7 +69,7 @@
                             <label for="other" class="form-label fw-bold">
                                 <i class="fas fa-ellipsis-h me-1 text-secondary"></i> Other
                             </label>
-                            <input type="number" class="form-control" id="other" name="other" min="0"
+                            <input type="number" class="form-control" id="other" name="other"
                                 value="{{ old('other') }}" placeholder="{{ $session->sessionExtra->other }}">
                             <style>
                                 #extra-form ::placeholder {
