@@ -216,7 +216,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Copies</label>
+                            <label class="form-label">Prof Papers</label>
                             <input type="number" class="form-control" id="copies" name="copies"
                                 placeholder="Enter copies">
                         </div>

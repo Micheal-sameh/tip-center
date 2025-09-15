@@ -194,9 +194,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="copies" class="form-label">Copies</label>
+                            <label for="copies" class="form-label">Prof Papers</label>
                             <input type="number" class="form-control" id="copies" name="copies" min="0"
-                                placeholder="Enter number of copies used">
+                                placeholder="Enter price of Prof Papers used">
                         </div>
 
                         <div class="mb-3">
