@@ -146,7 +146,7 @@
                     <th class="text-center">Materials</th>
                 @endif
                 @if ($reports->contains(fn($r) => $r->printables > 0))
-                    <th class="text-center">Printables</th>
+                    <th class="text-center">Student Papers</th>
                 @endif
                 <th>Amount Paid</th>
                 @if ($reports->contains(fn($r) => $r->to_pay $r->to_pay_center > 0))

@@ -56,7 +56,7 @@
                                     <th>Materials</th>
                                 @endif
                                 @if ($reports->contains(fn($r) => $r->printables > 0))
-                                    <th>Printables</th>
+                                    <th>Student Papers</th>
                                 @endif
                                     <th class="text-end">To Pay</th>
                             </tr>
@@ -164,7 +164,7 @@
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
-                                    <h6 class="card-subtitle mb-2 text-muted">Printables</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Student Papers</h6>
                                     <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('printables'), 2) }}
                                     </p>
                                 </div>

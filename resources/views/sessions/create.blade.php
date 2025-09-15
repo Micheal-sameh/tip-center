@@ -118,7 +118,7 @@
                                     <input type="number" step="1" name="printables" id="printables"
                                         value="{{ old('printables') }}" placeholder="0.00"
                                         class="form-control @error('printables') is-invalid @enderror">
-                                    <label for="printables">{{ __('Printables Cost') }}</label>
+                                    <label for="printables">{{ __('Student Papers') }}</label>
                                     @error('printables')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror

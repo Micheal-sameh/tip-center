@@ -387,6 +387,7 @@ class SessionRepository extends BaseRepository
             COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
             COALESCE(SUM(ss.printables), 0) +
             COALESCE(SUM(e.copies), 0) +
+            COALESCE(SUM(e.markers), 0) +
             COALESCE(MAX(c.charges_gap), 0)
         ) as income_total,
 
@@ -404,7 +405,8 @@ class SessionRepository extends BaseRepository
                 COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
                 COALESCE(SUM(ss.printables), 0) +
                 COALESCE(SUM(e.copies), 0) +
-                COALESCE(MAX(c.charges_gap), 0)
+                COALESCE(SUM(e.markers), 0) +
+                COALESCE(SUM(c.charges_gap), 0)
             ) -
             (
                 COALESCE(MAX(c.charges_center), 0) +

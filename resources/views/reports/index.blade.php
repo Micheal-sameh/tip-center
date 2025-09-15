@@ -214,7 +214,7 @@
         <script>
             function openReport(sessionId) {
                 const url = `{{ route('reports.session') }}?session_id=${sessionId}&type=1`;
-                window.open(url, '_blank');
+                window.location.href = url; 
             }
         </script>
     @endpush

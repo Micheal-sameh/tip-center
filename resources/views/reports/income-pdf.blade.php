@@ -240,7 +240,7 @@
             </thead>
             <tbody>
                 @forelse ($sessions as $index => $session)
-                    <tr>
+                    <tr class="{{ $session->attended_count <= 0 ? 'table-danger' : '' }}">
                         <td>{{ $index + 1 }}</td>
                         <td class="text-start">
                             {{ $session->professor->name ?? '-' }}

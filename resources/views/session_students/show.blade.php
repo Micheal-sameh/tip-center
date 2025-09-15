@@ -39,7 +39,7 @@
                             <p class="fw-bold">{{ number_format($session->center_price, 2) }} {{ config('app.currency', 'EGP') }}</p>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <p class="mb-1 text-muted">Printables</p>
+                            <p class="mb-1 text-muted">Student Papers</p>
                             <p class="fw-bold">{{ $session->printables ? number_format($session->printables, 2).' '.config('app.currency', 'EGP') : 'N/A' }}</p>
                         </div>
                     </div>
