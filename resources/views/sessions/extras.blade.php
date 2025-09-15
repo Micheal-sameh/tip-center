@@ -37,7 +37,7 @@
 
                         <div class="col-md-6">
                             <label for="copies" class="form-label fw-bold">
-                                <i class="fas fa-copy me-1 text-secondary"></i> Copies
+                                <i class="fas fa-copy me-1 text-secondary"></i> Prof Papers
                             </label>
                             <input type="number" class="form-control" id="copies" name="copies" min="0"
                                 value="{{ old('copies') }}" placeholder="{{ $session->sessionExtra->copies }}">

@@ -145,7 +145,7 @@
                 <th>Attending</th>
                 <th class="text-end">Payment</th>
                 <th>Materials</th>
-                <th>Printables</th>
+                <th>Student Papers</th>
                 <th class="text-end">To Pay</th>
             </tr>
         </thead>

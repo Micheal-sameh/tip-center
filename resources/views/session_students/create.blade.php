@@ -70,7 +70,7 @@
                     </div>
                     @if ($session->printables)
                         <div class="col-md-4">
-                            <h6>Printables (Center)</h6>
+                            <h6>Student Papers (Center)</h6>
                             <p>{{ number_format($session->printables ?? 0, 2) }} EGP</p>
                         </div>
                     @endif
@@ -160,7 +160,7 @@
                                 value="{{ $specialCase && $specialCase->pivot->professor_price > 0 ? $specialCase->pivot->professor_price : $session->professor_price }}">
                         </div>
                         <div class="col-md-4">
-                            <label>Printables (Center)</label>
+                            <label>Student Papers (Center)</label>
                             <input type="number" name="printables" id="printables" step="1" min="0"
                                 class="form-control" value="{{ $session->printables ?? 0 }}">
                         </div>

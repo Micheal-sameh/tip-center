@@ -160,7 +160,7 @@
                                 <th>Professor</th>
                                 <th>Attend Time</th>
                                 <th>Materials</th>
-                                <th>Printables</th>
+                                <th>Student Papers</th>
                                 <th>Total Paid</th>
                                 <th>To Pay</th>
                             </tr>

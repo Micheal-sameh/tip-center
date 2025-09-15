@@ -56,7 +56,7 @@
                             </div>
                             @if ($session->printables)
                                 <div class="d-flex justify-content-between">
-                                    <span>Printables:</span>
+                                    <span>Student Papers:</span>
                                     <span class="fw-bold">{{ number_format($session->printables, 2) }}
                                         {{ config('app.currency', 'EGP') }}</span>
                                 </div>

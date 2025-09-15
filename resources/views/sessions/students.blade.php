@@ -112,7 +112,7 @@
                             <input type="number" class="form-control" name="materials" id="materials">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Printables</label>
+                            <label class="form-label">Student Papers</label>
                             <input type="number" class="form-control" name="printables" id="printables">
                         </div>
                         <div class="mb-3">
