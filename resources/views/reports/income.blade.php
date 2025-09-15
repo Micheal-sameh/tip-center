@@ -8,8 +8,8 @@
             <h4 class="mb-0">Sessions Income Report</h4>
             <form action="{{ route('charges.store') }}" method="POST" class="d-flex align-items-center ms-3">
                 @csrf
-                <input type="hidden" value="{{auth()->user()->name}}" name="title">
-                <input type="hidden" value="{{App\Enums\chargeType::GAP}}" name="type">
+                <input type="hidden" value="{{ auth()->user()->name }}" name="title">
+                <input type="hidden" value="{{ App\Enums\chargeType::GAP }}" name="type">
                 <input type="number" step="1" name="amount" class="form-control form-control-sm me-2"
                     placeholder="Enter Gap" required>
                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -91,12 +91,12 @@
                         </thead>
                         <tbody>
                             @forelse ($sessions as $index => $session)
-                                <tr>
+                                <tr class="{{ $session->attended_count <= 0 ? 'table-danger' : '' }}">
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $session->professor->name ?? '-' }} -
                                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
                                     <td>{{ $session->created_at->format('d-m-Y') }}
-                                    <td>{{ $session->total_paid_students  }}
+                                    <td>{{ $session->total_paid_students }}
                                     </td>
                                     <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
                                     </td>
