@@ -14,6 +14,7 @@ class Charge extends Model
         'amount',
         'type',
         'created_by',
+        'reverse',
     ];
 
     public function createdBy()

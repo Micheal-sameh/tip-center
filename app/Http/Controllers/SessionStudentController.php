@@ -79,7 +79,7 @@ class SessionStudentController extends Controller
     public function store(StoreSessionStudentRequest $request)
     {
         $input = new SessionStudentDTO(...$request->only(
-            'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables', 'materials', 'to_pay', 'to_pay_center'
+            'session_id', 'student_id', 'total_paid', 'professor_price', 'center_price', 'printables', 'materials', 'to_pay', 'to_pay_center', 'to_pay_print'
         ));
         $student = $this->studentService->show($input->student_id);
         $reminder = $this->sessionStudentService->store($input);
@@ -93,7 +93,7 @@ class SessionStudentController extends Controller
     public function update(UpdateSessionStudentRequest $request, $id)
     {
         $input = new SessionStudentDTO(...$request->only(
-            'professor_price', 'center_price', 'printables', 'materials', 'to_pay', 'to_pay_center'
+            'professor_price', 'center_price', 'printables', 'materials', 'to_pay', 'to_pay_center', 'to_pay_print'
         ));
         $attendence = $this->sessionStudentService->update($input, $id);
 

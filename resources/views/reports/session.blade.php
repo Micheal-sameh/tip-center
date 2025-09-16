@@ -64,7 +64,7 @@
                         <tbody>
                             @foreach ($reports as $report)
                                 <tr
-                                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center > 0 ? 'table-warning' : '') }}">
+                                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $report->to_pay_print > 0 ? 'table-warning' : '') }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td><a
                                             href="{{ route('students.show', $report->student_id) }}">{{ $report->student?->name }}</a>
@@ -97,9 +97,9 @@
                                                 if ($selected_type == App\Enums\ReportType::PROFESSOR) {
                                                     return $pay->to_pay;
                                                 } elseif ($selected_type == App\Enums\ReportType::CENTER) {
-                                                    return $pay->to_pay_center;
+                                                    return $pay->to_pay_center + $pay->to_pay_print;
                                                 } else {
-                                                    return $pay->to_pay_center + $pay->to_pay;
+                                                    return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print;
                                                 }
                                             });
                                         @endphp
@@ -227,9 +227,9 @@
                                 if ($selected_type == App\Enums\ReportType::PROFESSOR) {
                                     return $pay->to_pay;
                                 } elseif ($selected_type == App\Enums\ReportType::CENTER) {
-                                    return $pay->to_pay_center;
+                                    return $pay->to_pay_center + $pay->to_pay_print;
                                 } else {
-                                    return $pay->to_pay_center + $pay->to_pay;
+                                    return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print;
                                 }
                             });
                         });

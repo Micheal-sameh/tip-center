@@ -38,7 +38,7 @@
             <div>
                 <strong>Warning:</strong> This student has a pending payment of <br>
                 @foreach ($to_pay as $pay)
-                    <strong>{{ number_format($pay->to_pay + $pay->to_pay_center, 2) }} EGP</strong> from session
+                    <strong>{{ number_format($pay->to_pay + $pay->to_pay_center + $pay->to_pay_print, 2) }} EGP</strong> from session
                     {{ $pay->session->professor->name }} - {{ $pay->created_at->format('d-m-Y') }}. <br>
                 @endforeach
             </div>
@@ -180,6 +180,11 @@
                                 min="0" class="form-control">
                         </div>
                         <div class="col-md-4">
+                            <label>To Pay (Print)</label>
+                            <input type="number" name="to_pay_print" id="to_pay_print" value="0" step="1"
+                                min="0" class="form-control">
+                        </div>
+                        <div class="col-md-4">
                             <label>Remaining</label>
                             <input type="text" id="remaining" class="form-control bg-light" readonly>
                         </div>
@@ -204,6 +209,7 @@
             const materials = document.getElementById("materials");
             const to_pay = document.getElementById("to_pay");
             const to_pay_center = document.getElementById("to_pay_center");
+            const to_pay_print = document.getElementById("to_pay_print");
             const remaining = document.getElementById("remaining");
 
             // Total session cost from backend
@@ -220,12 +226,13 @@
                     (parseFloat(printables.value) || 0) +
                     (parseFloat(materials.value) || 0) +
                     (parseFloat(to_pay.value) || 0) +
+                    (parseFloat(to_pay_print.value) || 0) +
                     (parseFloat(to_pay_center.value) || 0);
 
                 remaining.value = total - paid;
             }
 
-            [center_price, professor_price, printables, materials, to_pay, to_pay_center].forEach(input => {
+            [center_price, professor_price, printables, materials, to_pay, to_pay_center, to_pay_print].forEach(input => {
                 input.addEventListener("input", calculateRemaining);
             });
 
@@ -249,7 +256,7 @@
                         @forelse($to_pay as $payment)
                             <div class="border rounded p-3 mb-2 d-flex justify-content-between align-items-center">
                                 <div>
-                                    <strong>Due:</strong> {{ number_format($payment->to_pay + $payment->to_pay_center, 2) }} EGP
+                                    <strong>Due:</strong> {{ number_format($payment->to_pay + $payment->to_pay_center + $payment->to_pay_print, 2) }} EGP
                                     <br>
                                     <small class="text-muted">Date:
                                         {{ $payment->created_at->format('M d, Y') }}</small>
@@ -257,7 +264,7 @@
                                 <form action="{{ route('payments.pay', $payment->id) }}" method="POST" class="ms-2">
                                     @csrf
                                     @method('put')
-                                    <input type="hidden" name="amount" value="{{ $payment->to_pay + $payment->to_pay_center }}">
+                                    <input type="hidden" name="amount" value="{{ $payment->to_pay + $payment->to_pay_center + $payment->to_pay_print }}">
                                     <button type="submit" class="btn btn-sm btn-success">
                                         <i class="fas fa-money-bill-wave me-1"></i> Pay
                                     </button>

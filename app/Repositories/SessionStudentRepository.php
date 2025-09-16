@@ -92,6 +92,7 @@ class SessionStudentRepository extends BaseRepository
             'materials' => $input->materials ?? 0,
             'to_pay' => $input->to_pay ?? 0,
             'to_pay_center' => $input->to_pay_center ?? 0,
+            'to_pay_print' => $input->to_pay_print ?? 0,
             'is_attend' => AttendenceType::ATTEND,
             'created_by' => Auth::id(),
         ]);
@@ -110,6 +111,7 @@ class SessionStudentRepository extends BaseRepository
             'materials' => $input->materials ?? 0,
             'to_pay' => $input->to_pay ?? 0,
             'to_pay_center' => $input->to_pay_center ?? 0,
+            'to_pay_print' => $input->to_pay_print ?? 0,
             'is_attend' => AttendenceType::ATTEND,
             'updated_by' => Auth::id(),
         ]);
@@ -129,18 +131,25 @@ class SessionStudentRepository extends BaseRepository
                 'to_pay' => 0,
             ]);
         }
-        if ($pay->to_pay_center) {
-            $input = [
-                'title' => $pay->student->name.' session '.$pay->session->professor->name.' '.$pay->session->created_at->format('d-m'),
-                'amount' => $pay->to_pay_center,
+        if ($pay->to_pay_center || $pay->to_pay_print) {
+            $amount = $pay->to_pay_center + $pay->to_pay_print;
+            $title = $pay->student->name.' session '.$pay->session->professor->name.' '.$pay->session->created_at->format('d-m');
+
+            $this->chargeRepository->store([
+                'title' => $title,
+                'amount' => $amount,
                 'type' => ChargeType::GAP,
-            ];
-            $this->chargeRepository->store($input);
-            // $pay->update([
-            //     'center_price' => $pay->center_price + $pay->to_pay_center,
-            //     'to_pay_center' => 0,
-            // ]);
+                'reverse' => 1,
+            ]);
+
+            $pay->update([
+                'center_price' => $pay->center_price + $pay->to_pay_center,
+                'printables' => $pay->printables + $pay->to_pay_print,
+                'to_pay_center' => 0,
+                'to_pay_print' => 0,
+            ]);
         }
+
         DB::commit();
 
         return $pay;
@@ -193,7 +202,7 @@ class SessionStudentRepository extends BaseRepository
         if (isset($input['type'])) {
             match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials', 'is_attend'),
-                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay_center', 'is_attend'),
+                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay_center', 'to_pay_print', 'is_attend'),
                 default => $query,
             };
         }
