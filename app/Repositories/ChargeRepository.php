@@ -74,6 +74,7 @@ class ChargeRepository extends BaseRepository
             'type' => $input['type'],
             'reverse' => $input['reverse'] ?? 0,
             'created_by' => Auth::id(),
+            'created_at' => $input['created_at'] ?? now(),
         ]);
         DB::commit();
 
@@ -89,6 +90,7 @@ class ChargeRepository extends BaseRepository
                 'amount' => -$charge->amount,
                 'type' => $charge->type,
                 'created_by' => $charge->created_by,
+                'created_at' => $charge->created_at,
             ]);
             $charge->update([
                 'reverse' => 0,
