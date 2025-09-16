@@ -58,7 +58,7 @@
                 <button type="submit" class="btn btn-primary me-2 w-100">
                     <i class="fas fa-search me-1"></i> Filter
                 </button>
-                <a href="{{ route('charges.index') }}" class="btn btn-secondary w-100">
+                <a href="{{ route('charges.'. $route) }}" class="btn btn-secondary w-100">
                     <i class="fas fa-undo me-1"></i> Reset
                 </a>
             </div>
