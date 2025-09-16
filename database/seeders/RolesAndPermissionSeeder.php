@@ -119,6 +119,11 @@ class RolesAndPermissionSeeder extends Seeder
 
             $students_report,
             $sessions_report,
+
+            $charges_index,
+            $charges_create,
+            $income_report,
+            $special_room_report,
         ]);
 
         $partener = Role::firstOrCreate(['name' => 'partener']);
