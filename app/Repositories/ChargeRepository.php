@@ -72,11 +72,28 @@ class ChargeRepository extends BaseRepository
             'title' => $input['title'],
             'amount' => $input['amount'],
             'type' => $input['type'],
+            'reverse' => $input['reverse'] ?? 0,
             'created_by' => Auth::id(),
         ]);
         DB::commit();
 
         return $charge;
+    }
+
+    public function reverseGap()
+    {
+        $charges = $this->model->where('reverse', 1)->get();
+        foreach ($charges as $charge) {
+            $this->store([
+                'title' => 'reversed '.$charge->title,
+                'amount' => -$charge->amount,
+                'type' => $charge->type,
+                'created_by' => $charge->created_by,
+            ]);
+            $charge->update([
+                'reverse' => 0,
+            ]);
+        }
     }
 
     public function income($input)
