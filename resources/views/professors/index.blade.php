@@ -63,8 +63,46 @@
         </div>
 
         <!-- Pagination Container (will be updated via AJAX) -->
-        <div id="paginationContainer" class="d-flex justify-content-center">
-            {{ $professors->links() }}
+        <div class="d-flex justify-content-center pt-2">
+            @if ($professors->hasPages())
+                <nav>
+                    <ul class="pagination">
+                        {{-- Previous Page Link --}}
+                        @if ($professors->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="{{ $professors->previousPageUrl() . '&' . http_build_query(request()->except('page')) }}"
+                                    rel="prev">&laquo;</a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($professors->getUrlRange(1, $professors->lastPage()) as $page => $url)
+                            <li class="page-item {{ $professors->currentPage() === $page ? 'active' : '' }}">
+                                <a class="page-link"
+                                    href="{{ $url . '&' . http_build_query(request()->except('page')) }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($professors->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="{{ $professors->nextPageUrl() . '&' . http_build_query(request()->except('page')) }}"
+                                    rel="next">&raquo;</a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            @endif
         </div>
     </div>
 
