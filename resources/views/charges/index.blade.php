@@ -11,7 +11,7 @@
                 <i class="fas fa-list me-2 text-primary"></i> {{ $title }}
             </h4>
             <a href="{{ route('charges.create') }}" class="btn btn-sm btn-primary">
-                <i class="fas fa-plus me-1"></i> Add {{$title}}
+                <i class="fas fa-plus me-1"></i> Add {{ $title }}
             </a>
         </div>
 
@@ -58,7 +58,7 @@
                 <button type="submit" class="btn btn-primary me-2 w-100">
                     <i class="fas fa-search me-1"></i> Filter
                 </button>
-                <a href="{{ route('charges.'. $route) }}" class="btn btn-secondary w-100">
+                <a href="{{ route('charges.' . $route) }}" class="btn btn-secondary w-100">
                     <i class="fas fa-undo me-1"></i> Reset
                 </a>
             </div>
@@ -154,8 +154,46 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center">
-                    {{ $charges->links() }}
+                <div class="d-flex justify-content-center pt-2">
+                    @if ($charges->hasPages())
+                        <nav>
+                            <ul class="pagination">
+                                {{-- Previous Page Link --}}
+                                @if ($charges->onFirstPage())
+                                    <li class="page-item disabled">
+                                        <span class="page-link">&laquo;</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                            href="{{ $charges->previousPageUrl() . '&' . http_build_query(request()->except('page')) }}"
+                                            rel="prev">&laquo;</a>
+                                    </li>
+                                @endif
+
+                                {{-- Pagination Elements --}}
+                                @foreach ($charges->getUrlRange(1, $charges->lastPage()) as $page => $url)
+                                    <li class="page-item {{ $charges->currentPage() === $page ? 'active' : '' }}">
+                                        <a class="page-link"
+                                            href="{{ $url . '&' . http_build_query(request()->except('page')) }}">{{ $page }}</a>
+                                    </li>
+                                @endforeach
+
+                                {{-- Next Page Link --}}
+                                @if ($charges->hasMorePages())
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                            href="{{ $charges->nextPageUrl() . '&' . http_build_query(request()->except('page')) }}"
+                                            rel="next">&raquo;</a>
+                                    </li>
+                                @else
+                                    <li class="page-item disabled">
+                                        <span class="page-link">&raquo;</span>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
+                    @endif
                 </div>
             </div>
         </div>
