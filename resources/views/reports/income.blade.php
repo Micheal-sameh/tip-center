@@ -102,9 +102,9 @@
                                     </td>
                                     <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
                                     </td>
-                                    <td>{{ $session->total_printables > 0 ? number_format($session->total_printables, 1) : '-' }}
-                                    </td>
                                     <td>{{ $session->sessionExtra?->copies > 0 ? number_format($session->sessionExtra?->copies, 1) : '-' }}
+                                    </td>
+                                    <td>{{ $session->total_printables > 0 ? number_format($session->total_printables, 1) : '-' }}
                                     </td>
                                     <td>{{ $session->sessionExtra?->markers > 0 ? number_format($session->sessionExtra?->markers, 1) : '-' }}
                                     </td>
@@ -142,8 +142,8 @@
                                     <th>{{ $sessions->count() }}</th>
                                     <th>{{ $totals['paid_students'] }}</th>
                                     <th>{{ number_format($totals['center_price'], 1) }}</th>
-                                    <th>{{ number_format($totals['printables'], 1) }}</th>
                                     <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
+                                    <th>{{ number_format($totals['printables'], 1) }}</th>
                                     <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
                                     <th>{{ number_format($totals['other_center'] ?? 0, 1) }}</th>
                                     <th>{{ number_format($totals['other_print'] ?? 0, 1) }}</th>
