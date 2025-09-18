@@ -394,6 +394,7 @@ class SessionRepository extends BaseRepository
         COALESCE(SUM(e.markers), 0) as markers,
         COALESCE(SUM(e.other_print), 0) as other_print,
         COALESCE(SUM(e.other_center), 0) as other_center,
+        COALESCE(SUM(so.online_center), 0) as online_center,
         COALESCE(SUM(e.copies), 0) as copies,
 
         -- charges
@@ -410,6 +411,7 @@ class SessionRepository extends BaseRepository
             COALESCE(SUM(e.copies), 0) +
             COALESCE(SUM(e.markers), 0) +
             COALESCE(SUM(e.other_center), 0) +
+            COALESCE(SUM(so.online_center), 0) +
             COALESCE(SUM(e.other_print), 0) +
             COALESCE(MAX(c.charges_gap), 0)
         ) as income_total,
@@ -430,6 +432,7 @@ class SessionRepository extends BaseRepository
                 COALESCE(SUM(e.copies), 0) +
                 COALESCE(SUM(e.markers), 0) +
                 COALESCE(SUM(e.other_center), 0) +
+                COALESCE(SUM(so.online_center), 0) +
                 COALESCE(SUM(e.other_print), 0) +
                 COALESCE(SUM(c.charges_gap), 0)
             ) -
@@ -446,6 +449,7 @@ class SessionRepository extends BaseRepository
             COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0)
             - COALESCE(MAX(c.charges_center), 0)
             + COALESCE(SUM(e.other_center), 0)
+            + COALESCE(SUM(so.online_center), 0)
         ) as net_center,
 
         (
@@ -494,6 +498,13 @@ class SessionRepository extends BaseRepository
         FROM charges
         GROUP BY DATE(created_at)
         ) c'), 'days.day', '=', 'c.charge_day')
+            ->leftJoin(DB::raw('(
+                SELECT session_id,
+                    SUM(center) as online_center
+                FROM session_onlines
+                GROUP BY session_id
+            ) so'), 's.id', '=', 'so.session_id')
+
             ->groupBy('days.day')
             ->orderBy('days.day')
             ->get();

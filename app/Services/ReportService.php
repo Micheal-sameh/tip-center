@@ -100,7 +100,7 @@ class ReportService
         $reports = $this->sessionRepository->monthlyIncome($month);
         $center = $reports->sum('center');
         $center = $reports->sum(function ($item) {
-            return $item->center + $item->other_center;
+            return $item->center + $item->other_center + $item->online_center;
         });
         $copies = $reports->sum(function ($item) {
             return $item->print + $item->copies + $item->other_print;
