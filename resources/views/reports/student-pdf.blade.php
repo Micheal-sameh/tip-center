@@ -149,7 +149,7 @@
                     <th class="text-center">Student Papers</th>
                 @endif
                 <th>Amount Paid</th>
-                @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center + $r->to_pay_print > 0))
+                @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center + $r->to_pay_print + $r->to_pay_materials > 0))
                     <th>To Pay</th>
                 @endif
             </tr>
@@ -157,7 +157,7 @@
         <tbody>
             @foreach ($reports as $report)
                 <tr
-                    class=" {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $r->to_pay_print > 0 ? 'table-warning' : '') }}">
+                    class=" {{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $r->to_pay_print + $r->to_pay_materials > 0 ? 'table-warning' : '') }}">
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td class="date">{{ \Carbon\Carbon::parse($report->session->created_at)->format('d M Y') }}</td>
                     <td>{{ $report->session->professor->name ?? 'N/A' }}</td>
@@ -171,8 +171,8 @@
                     <td class="text-center fw-bold">
                         {{ number_format($report->professor_price + $report->center_price, 2) }}
                     </td>
-                    @if ($reports->contains(fn($r) => $r->to_pay $r->to_pay_center + $r->to_pay_print > 0))
-                        <td class="text-center">{{ $report->to_pay + $report->to_pay_center + $report->to_pay_print ?? 'N/A' }}</td>
+                    @if ($reports->contains(fn($r) => $r->to_pay $r->to_pay_center + $r->to_pay_print + $r->to_pay_materials > 0))
+                        <td class="text-center">{{ $report->to_pay + $report->to_pay_center + $report->to_pay_print + $r->to_pay_materials ?? 'N/A' }}</td>
                     @endif
                 </tr>
             @endforeach

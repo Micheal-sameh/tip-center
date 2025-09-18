@@ -17,6 +17,7 @@ class SessionStudentDTO extends DTO
     public ?int $to_pay;
     public ?int $to_pay_center;
     public ?int $to_pay_print;
+    public ?int $to_pay_materials;
 
     public function __construct(
         int $session_id = parent::INT,
@@ -29,6 +30,7 @@ class SessionStudentDTO extends DTO
         int $to_pay = parent::INT,
         int $to_pay_center = parent::INT,
         float $to_pay_print = parent::FLOAT,
+        float $to_pay_materials = parent::FLOAT,
     ) {
         parent::__construct(compact(...$this->getParameterList()));
     }

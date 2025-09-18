@@ -21,6 +21,7 @@ class Professor extends Model implements HasMedia
         'status',
         'type',
         'balance',
+        'materials_balance',
     ];
 
     protected $mediaAttributes = [

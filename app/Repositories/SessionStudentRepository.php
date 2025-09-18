@@ -93,6 +93,7 @@ class SessionStudentRepository extends BaseRepository
             'to_pay' => $input->to_pay ?? 0,
             'to_pay_center' => $input->to_pay_center ?? 0,
             'to_pay_print' => $input->to_pay_print ?? 0,
+            'to_pay_materials' => $input->to_pay_materials ?? 0,
             'is_attend' => AttendenceType::ATTEND,
             'created_by' => Auth::id(),
         ]);
@@ -112,6 +113,7 @@ class SessionStudentRepository extends BaseRepository
             'to_pay' => $input->to_pay ?? 0,
             'to_pay_center' => $input->to_pay_center ?? 0,
             'to_pay_print' => $input->to_pay_print ?? 0,
+            'to_pay_materials' => $input->to_pay_materials ?? 0,
             'is_attend' => AttendenceType::ATTEND,
             'updated_by' => Auth::id(),
         ]);
@@ -123,12 +125,17 @@ class SessionStudentRepository extends BaseRepository
     {
         $pay = $this->findById($id);
         DB::beginTransaction();
-        if ($pay->to_pay) {
+        if ($pay->to_pay || $pay->to_pay_materials) {
             $professor = $pay->session->professor;
-            $professor->update(['balance' => $professor->balance + $pay->to_pay]);
+            $professor->update([
+                'balance' => $professor->balance + $pay->to_pay,
+                'materials_balance' => $professor->materials_balance + $pay->to_pay_materials,
+            ]);
             $pay->update([
                 'professor_price' => $pay->professor_price + $pay->to_pay,
+                'materials' => $pay->materials + $pay->to_pay_materials,
                 'to_pay' => 0,
+                'to_pay_materials' => 0,
             ]);
         }
         if ($pay->to_pay_center || $pay->to_pay_print) {

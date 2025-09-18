@@ -73,9 +73,9 @@ class Student extends Model implements HasMedia
             ->where(function ($q) {
                 $q->where('to_pay', '>', 0)
                     ->orWhere('to_pay_center', '>', 0)
+                    ->orWhere('to_pay_materials', '>', 0)
                     ->orWhere('to_pay_print', '>', 0);
             });
-
     }
 
     public function isBirthdayToday()

@@ -60,7 +60,7 @@
         </div>
 
         @php
-            $has_balance = $professors->contains(fn($professor) => $professor->balance > 0);
+            $has_balance = $professors->contains(fn($professor) => $professor->balance + $professor->materials_balance > 0);
         @endphp
         <!-- Main Content Card -->
         <div class="card shadow-sm">
@@ -139,7 +139,7 @@
                                             </div>
                                         </td>
                                         @if ($has_balance)
-                                            <td class="text-center">{{ $professor->balance }}</td>
+                                            <td class="text-center">{{ $professor->balance + $professor->materials_balance }}</td>
                                         @endif
                                         <td>
                                             <div class="d-flex gap-1">
@@ -158,7 +158,7 @@
                                                         </button>
                                                     </form>
                                                 @endcan
-                                                @if ($professor->balance > 0)
+                                                @if ($professor->balance + $professor->materials_balance > 0)
                                                     <form action="{{ route('professors.settle', $professor->id) }}"
                                                         method="post" class="d-inline">
                                                         @csrf
@@ -264,7 +264,7 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     @endcan
-                                    
+
                                     @can('sessions_create')
                                         <form action="{{ route('sessions.create', $professor->id) }}" method="GET"
                                             class="d-inline">
@@ -274,7 +274,7 @@
                                             </button>
                                         </form>
                                     @endcan
-                                    @if ($professor->balance > 0)
+                                    @if ($professor->balance + $professor->materials_balance > 0)
                                         <form action="{{ route('professors.settle', $professor->id) }}" method="post"
                                             class="d-inline">
                                             @csrf

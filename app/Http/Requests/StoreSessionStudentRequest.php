@@ -21,6 +21,7 @@ class StoreSessionStudentRequest extends FormRequest
             'to_pay' => 'numeric|gte:0',
             'to_pay_center' => 'numeric|gte:0',
             'to_pay_print' => 'numeric|gte:0',
+            'to_pay_materials' => 'numeric|gte:0',
         ];
     }
 }
