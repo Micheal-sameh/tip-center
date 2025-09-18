@@ -69,23 +69,28 @@
         }
 
         table {
-            width: 100%;
+            width: 100% !important;
+            table-layout: fixed;
+            /* prevents columns from stretching */
             border-collapse: collapse;
-            margin-top: 15px;
+            word-wrap: break-word;
         }
+
+        th,
+        td {
+            font-size: 11px;
+            /* reduce font size */
+            padding: 4px;
+            word-break: break-word;
+        }
+
 
         thead {
             background: #2c6fbb;
             color: #fff;
         }
 
-        th,
-        td {
-            border: 1px solid #dee2e6;
-            padding: 6px;
-            font-size: 11px;
-            text-align: center;
-        }
+
 
         td.text-start,
         th.text-start {
@@ -231,13 +236,15 @@
                     <th>Date</th>
                     <th>paid Students</th>
                     <th>Centre</th>
+                    <th>Online</th>
                     <th>prof Papper</th>
                     <th>Student Papper</th>
                     <th>Markers</th>
                     <th>Other Center</th>
                     <th>Other Print</th>
+                    <th>TO Prof</th>
                     <th>Attended Student</th>
-                    <th>Session Total</th>
+                    <th>NET</th>
                 </tr>
             </thead>
             <tbody>
@@ -249,8 +256,10 @@
                             ({{ App\Enums\StagesEnum::getStringValue($session->stage) }})
                         </td>
                         <td>{{ $session->created_at->format('d-m-Y') }}</td>
-                        <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}</td>
+                        <td>{{ $session->total_paid_students > 0 ? $session->total_paid_students : '-' }}</td>
                         <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
+                        </td>
+                        <td>{{ $session->totalOnline > 0 ? number_format($session->totalOnline, 1) : '-' }}
                         </td>
                         <td>{{ $session->total_printables > 0 ? number_format($session->total_printables, 1) : '-' }}
                         </td>
@@ -262,14 +271,18 @@
                         </td>
                         <td>{{ $session->sessionExtra?->other_print > 0 ? number_format($session->sessionExtra?->other_print, 1) : '-' }}
                         </td>
+                        <td>{{ $session->sessionExtra?->to_professor ?: '-' }}
+                        </td>
                         <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}</td>
                         <td class="text-primary">
                             {{ number_format(
                                 $session->total_center_price +
+                                    $session->totalOnline +
                                     $session->total_professor_price +
                                     $session->total_printables +
                                     $session->sessionExtra?->other +
                                     $session->sessionExtra?->other_print +
+                                    $session->sessionExtra?->to_professor +
                                     ($session->sessionExtra?->markers ?? 0) +
                                     ($session->sessionExtra?->copies ?? 0),
                                 1,
@@ -289,11 +302,13 @@
                         <th>{{ $sessions->count() }}</th>
                         <th>{{ $totals['paid_students'] }}</th>
                         <th>{{ number_format($totals['center_price'], 1) }}</th>
+                        <th>{{ number_format($totals['online'], 1) }}</th>
                         <th>{{ number_format($totals['printables'], 1) }}</th>
                         <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
                         <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
                         <th>{{ number_format($totals['other_center'] ?? 0, 1) }}</th>
                         <th>{{ number_format($totals['other_print'] ?? 0, 1) }}</th>
+                        <th>{{ number_format($totals['to_professor'] ?? 0, 1) }}</th>
                         <th>{{ $totals['attended_count'] }}</th>
                         <th class="text-primary">{{ number_format($totals['overall_total'], 1) }}</th>
                     </tr>

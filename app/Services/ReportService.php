@@ -65,6 +65,8 @@ class ReportService
             'other_print' => 0,
             'overall_total' => 0,
             'attended_count' => 0,
+            'to_professor' => 0,
+            'online' => 0,
         ];
 
         $sessions->each(function ($session) use (&$totals) {
@@ -75,7 +77,9 @@ class ReportService
             $totals['markers'] += $session->sessionExtra?->markers ?? 0;
             $totals['other_center'] += $session->sessionExtra?->other ?? 0;
             $totals['other_print'] += $session->sessionExtra?->other_print ?? 0;
+            $totals['to_professor'] += $session->sessionExtra?->to_professor ?? 0;
             $totals['copies'] += $session->sessionExtra?->copies ?? 0;
+            $totals['online'] += $session->totalOnline ?? 0;
         });
 
         $totals['overall_total'] =
@@ -84,6 +88,8 @@ class ReportService
             + $totals['markers']
             + $totals['other_center']
             + $totals['other_print']
+            + $totals['to_professor']
+            + $totals['online']
             + $totals['copies'];
 
         return compact('sessions', 'totals', 'charges', 'gap');

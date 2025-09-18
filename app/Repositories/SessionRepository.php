@@ -338,6 +338,7 @@ class SessionRepository extends BaseRepository
                 'professor' => fn ($q) => $q->select('id', 'name'),
                 'sessionExtra',
             ])
+            ->withSum('onlines as totalOnline', 'center')
             ->withCount(['sessionStudents',
                 'sessionStudents as attended_count' => function ($query) {
                     $query->where('is_attend', 1);
