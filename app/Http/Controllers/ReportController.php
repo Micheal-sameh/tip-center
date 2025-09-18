@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ReportType;
 use App\Enums\StagesEnum;
 use App\Http\Requests\incomeFilterRequest;
 use App\Http\Requests\MonthlyIncomeRequest;
@@ -46,7 +47,7 @@ class ReportController extends Controller
     {
         $session = $this->sessionservice->report($request->validated());
         $reports = $this->reportService->session($request->validated());
-        $selected_type = $request->type;
+        $selected_type = $request->type ?? ReportType::ALL;
         $attendedCount = $reports->where('is_attend', true)->count();
 
         return view('reports.session', compact('reports', 'session', 'selected_type', 'attendedCount'));
