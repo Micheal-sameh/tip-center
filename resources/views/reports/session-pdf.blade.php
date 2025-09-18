@@ -152,7 +152,7 @@
         <tbody>
             @foreach ($reports as $report)
                 <tr
-                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $report->to_pay_print > 0 ? 'table-warning' : '') }}">
+                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $report->to_pay_print + $report->to_pay_materials > 0 ? 'table-warning' : '') }}">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $report->student?->name }}</td>
                     @if ($report->student?->phone)
@@ -171,11 +171,11 @@
                     @php
                         $total = $report->student->toPay->sum(function ($pay) use ($selected_type) {
                             if ($selected_type == App\Enums\ReportType::PROFESSOR) {
-                                return $pay->to_pay;
+                                return $pay->to_pay + $pay->to_pay_materials;
                             } elseif ($selected_type == App\Enums\ReportType::CENTER) {
                                 return $pay->to_pay_center + $pay->to_pay_print;
                             } else {
-                                return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print;
+                                return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print + $pay->to_pay_materials;
                             }
                         });
                     @endphp
@@ -325,6 +325,12 @@
                     <td class="text-end">{{ number_format($session->professor->balance), 2 }}</td>
                 </tr>
             @endif
+            @if ($session->professor->materials_balance)
+                <tr>
+                    <th>Materials Balance (Prof)</th>
+                    <td class="text-end">{{ number_format($session->professor->materials_balance), 2 }}</td>
+                </tr>
+            @endif
             @if ($session->materials)
                 <tr>
                     <th>Materials</th>
@@ -348,6 +354,10 @@
                             $selected_type == App\Enums\ReportType::PROFESSOR
                                 ? $session->professor->balance
                                 : -$session->professor->balance;
+                        $total +=
+                            $selected_type == App\Enums\ReportType::PROFESSOR
+                                ? $session->professor->materials_balance
+                                : -$session->professor->materials_balance;
                         if ($session->sessionExtra) {
                             $adjustment =
                                 $extra->markers +
@@ -380,11 +390,11 @@
 
                     return $report->student->toPay->sum(function ($pay) use ($selected_type) {
                         if ($selected_type == App\Enums\ReportType::PROFESSOR) {
-                            return $pay->to_pay;
+                            return $pay->to_pay + $pay->to_pay_materials;
                         } elseif ($selected_type == App\Enums\ReportType::CENTER) {
                             return $pay->to_pay_center + $pay->to_pay_print;
                         } else {
-                            return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print;
+                            return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print + $pay->to_pay_materials;
                         }
                     });
                 });

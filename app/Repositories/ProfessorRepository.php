@@ -167,6 +167,7 @@ class ProfessorRepository extends BaseRepository
 
         return $professor->update([
             'balance' => 0,
+            'materials_balance' => 0,
         ]);
     }
 

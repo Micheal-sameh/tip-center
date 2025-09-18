@@ -167,7 +167,7 @@
                         </thead>
                         <tbody>
                             @foreach ($reports as $report)
-                                <tr class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $report->to_pay_print > 0 ? 'table-warning' : '') }}">
+                                <tr class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $report->to_pay_print + $report->to_pay_materials > 0 ? 'table-warning' : '') }}">
                                     <td class="ps-3">{{ $loop->iteration }}</td>
                                     <td>
                                         <span class="badge bg-light text-dark">
@@ -181,7 +181,7 @@
                                     <td class="fw-bold">
                                         {{ number_format($report->professor_price + $report->center_price + $report->printables, 2) }}
                                     </td>
-                                    <td>{{ $report->to_pay + $report->to_pay_center + $report->to_pay_print ?? 'N/A' }}</td>
+                                    <td>{{ $report->to_pay + $report->to_pay_center + $report->to_pay_print + $report->to_pay_materials ?? 'N/A' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

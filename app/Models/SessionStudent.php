@@ -22,6 +22,7 @@ class SessionStudent extends Model
         'updated_by',
         'to_pay_center',
         'to_pay_print',
+        'to_pay_materials',
     ];
 
     public function session()
