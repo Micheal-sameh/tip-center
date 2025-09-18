@@ -67,6 +67,13 @@
                             <input type="number" class="form-control" id="out_going" name="out_going"
                                 value="{{ old('out_going') }}" placeholder="{{ $session->sessionExtra->out_going }}">
                         </div>
+                        <div class="col-md-6">
+                            <label for="to_professor" class="form-label fw-bold">
+                                <i class="fas fa-user-tie me-1 text-secondary"></i>Other (To Prof)
+                            </label>
+                            <input type="number" class="form-control" id="to_professor" name="to_professor"
+                                value="{{ old('to_professor') }}" placeholder="{{ $session->sessionExtra->to_professor }}">
+                        </div>
 
                         <div class="col-12">
                             <label for="notes" class="form-label fw-bold">

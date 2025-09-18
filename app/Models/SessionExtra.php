@@ -18,5 +18,6 @@ class SessionExtra extends Model
         'notes',
         'other_print',
         'out_going',
+        'to_professor',
     ];
 }

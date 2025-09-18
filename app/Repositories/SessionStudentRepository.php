@@ -125,7 +125,7 @@ class SessionStudentRepository extends BaseRepository
         DB::beginTransaction();
         if ($pay->to_pay) {
             $professor = $pay->session->professor;
-            $professor->update(['balance' => $pay->to_pay]);
+            $professor->update(['balance' => $professor->balance + $pay->to_pay]);
             $pay->update([
                 'professor_price' => $pay->professor_price + $pay->to_pay,
                 'to_pay' => 0,

@@ -57,9 +57,10 @@
                     <tbody>
                         @foreach ($reports as $report)
                             <tr>
+                            {{-- @dd($reports) --}}
                                 <td class="fw-semibold">{{ \Carbon\Carbon::parse($report->day)->format('d M Y') }}</td>
-                                <td>{{ number_format($report->center, 2) }}</td>
-                                <td>{{ number_format($report->copies + $report->print, 2) }}</td>
+                                <td>{{ number_format($report->center + $report->other_center + $report->online_center, 2) }}</td>
+                                <td>{{ number_format($report->copies + $report->print + $report->other_print, 2) }}</td>
                                 <td>{{ number_format($report->markers, 2) }}</td>
                                 <td>{{ number_format($report->charges_gap, 2) }}</td>
                                 <td class="fw-bold text-success">{{ number_format($report->income_total, 2) }}</td>

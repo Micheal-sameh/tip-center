@@ -82,11 +82,13 @@
                                 <th>Session Date</th>
                                 <th>paid Students</th>
                                 <th>Centre</th>
+                                <th>Online</th>
                                 <th>prof Papper</th>
                                 <th>Student Papper</th>
                                 <th>Markers</th>
                                 <th>Other Center</th>
                                 <th>Other Print</th>
+                                <th>TO Professor</th>
                                 <th>Attended Student</th>
                                 <th>Session Total</th>
                             </tr>
@@ -101,6 +103,7 @@
                                     <td>{{ $session->total_paid_students }}
                                     </td>
                                     <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
+                                    <td>{{ $session->totalOnline > 0 ? number_format($session->totalOnline, 1) : '-' }}
                                     </td>
                                     <td>{{ $session->sessionExtra?->copies > 0 ? number_format($session->sessionExtra?->copies, 1) : '-' }}
                                     </td>
@@ -112,16 +115,20 @@
                                     </td>
                                     <td>{{ $session->sessionExtra?->other_print > 0 ? number_format($session->sessionExtra?->other_print, 1) : '-' }}
                                     </td>
+                                    <td>{{ $session->sessionExtra?->to_professor ?: '-' }}
+                                    </td>
                                     <td>{{ $session->attended_count > 0 ? $session->attended_count : '-' }}
                                     </td>
                                     <td class="fw-bold text-primary">
                                         {{ number_format(
                                             $session->total_center_price +
+                                                $session->totalOnline +
                                                 $session->total_professor_price +
                                                 $session->total_printables +
                                                 $session->sessionExtra?->markers +
                                                 $session->sessionExtra?->other +
                                                 $session->sessionExtra?->other_print +
+                                                $session->sessionExtra?->to_professor +
                                                 $session->sessionExtra?->copies,
                                             1,
                                         ) }}
@@ -142,11 +149,13 @@
                                     <th>{{ $sessions->count() }}</th>
                                     <th>{{ $totals['paid_students'] }}</th>
                                     <th>{{ number_format($totals['center_price'], 1) }}</th>
+                                    <th>{{ number_format($totals['online'], 1) }}</th>
                                     <th>{{ number_format($totals['copies'] ?? 0, 1) }}</th>
                                     <th>{{ number_format($totals['printables'], 1) }}</th>
                                     <th>{{ number_format($totals['markers'] ?? 0, 1) }}</th>
                                     <th>{{ number_format($totals['other_center'] ?? 0, 1) }}</th>
                                     <th>{{ number_format($totals['other_print'] ?? 0, 1) }}</th>
+                                    <th>{{ number_format($totals['to_professor'] ?? 0, 1) }}</th>
                                     <th>{{ $totals['attended_count'] }}</th>
                                     <th class="fw-bold text-primary">
                                         {{ number_format($totals['overall_total'], 1) }}

@@ -16,6 +16,7 @@ class CloseSessionRequest extends FormRequest
             'notes' => 'nullable|string',
             'other_print' => 'nullable|numeric',
             'out_going' => 'nullable|numeric',
+            'to_professor' => 'nullable|numeric',
         ];
     }
 }

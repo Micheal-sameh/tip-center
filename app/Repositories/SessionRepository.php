@@ -6,6 +6,7 @@ use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Enums\SessionType;
 use App\Models\Session;
+use App\Models\SessionOnline;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -89,7 +90,21 @@ class SessionRepository extends BaseRepository
 
     public function report($input)
     {
-        $query = $this->model->where('id', $input['session_id']);
+        $query = $this->model->where('id', $input['session_id'])
+            ->with([
+                'onlines' => function ($q) use ($input) {
+                    if (isset($input['type'])) {
+                        match ((int) $input['type']) {
+                            ReportType::PROFESSOR => $q->select('id', 'session_id', 'name', 'stage', 'professor', 'created_at', 'materials'),
+                            ReportType::CENTER => $q->select('id', 'session_id', 'name', 'stage', 'center', 'created_at'),
+                            default => $q->select('id', 'session_id', 'name', 'stage', 'professor', 'center', 'materials', 'created_at'),
+                        };
+                    } else {
+                        $q->select('id', 'session_id', 'name', 'stage', 'professor', 'center', 'materials', 'created_at');
+                    }
+                },
+            ]);
+
         if (isset($input['type'])) {
             match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('created_at', 'id', 'professor_id', 'stage', 'professor_price', 'materials'),
@@ -160,6 +175,7 @@ class SessionRepository extends BaseRepository
             'other' => $extras->other + ($input['other'] ?? 0),
             'other_print' => $extras->other_print + ($input['other_print'] ?? 0),
             'out_going' => $extras->out_going + ($input['out_going'] ?? 0),
+            'to_professor' => $extras->to_professor - ($input['to_professor'] ?? 0),
             'notes' => $input['notes'] ?? $extras->notes,
         ]);
         $this->absence($session);
@@ -322,6 +338,7 @@ class SessionRepository extends BaseRepository
                 'professor' => fn ($q) => $q->select('id', 'name'),
                 'sessionExtra',
             ])
+            ->withSum('onlines as totalOnline', 'center')
             ->withCount(['sessionStudents',
                 'sessionStudents as attended_count' => function ($query) {
                     $query->where('is_attend', 1);
@@ -377,6 +394,7 @@ class SessionRepository extends BaseRepository
         COALESCE(SUM(e.markers), 0) as markers,
         COALESCE(SUM(e.other_print), 0) as other_print,
         COALESCE(SUM(e.other_center), 0) as other_center,
+        COALESCE(SUM(so.online_center), 0) as online_center,
         COALESCE(SUM(e.copies), 0) as copies,
 
         -- charges
@@ -393,6 +411,7 @@ class SessionRepository extends BaseRepository
             COALESCE(SUM(e.copies), 0) +
             COALESCE(SUM(e.markers), 0) +
             COALESCE(SUM(e.other_center), 0) +
+            COALESCE(SUM(so.online_center), 0) +
             COALESCE(SUM(e.other_print), 0) +
             COALESCE(MAX(c.charges_gap), 0)
         ) as income_total,
@@ -413,6 +432,7 @@ class SessionRepository extends BaseRepository
                 COALESCE(SUM(e.copies), 0) +
                 COALESCE(SUM(e.markers), 0) +
                 COALESCE(SUM(e.other_center), 0) +
+                COALESCE(SUM(so.online_center), 0) +
                 COALESCE(SUM(e.other_print), 0) +
                 COALESCE(SUM(c.charges_gap), 0)
             ) -
@@ -429,6 +449,7 @@ class SessionRepository extends BaseRepository
             COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0)
             - COALESCE(MAX(c.charges_center), 0)
             + COALESCE(SUM(e.other_center), 0)
+            + COALESCE(SUM(so.online_center), 0)
         ) as net_center,
 
         (
@@ -477,6 +498,13 @@ class SessionRepository extends BaseRepository
         FROM charges
         GROUP BY DATE(created_at)
         ) c'), 'days.day', '=', 'c.charge_day')
+            ->leftJoin(DB::raw('(
+                SELECT session_id,
+                    SUM(center) as online_center
+                FROM session_onlines
+                GROUP BY session_id
+            ) so'), 's.id', '=', 'so.session_id')
+
             ->groupBy('days.day')
             ->orderBy('days.day')
             ->get();
@@ -501,5 +529,10 @@ class SessionRepository extends BaseRepository
                 $q->whereColumn('center_price', 'sessions.center_price');
             }], 'center_price')
             ->get();
+    }
+
+    public function online($input, $id)
+    {
+        SessionOnline::create($input);
     }
 }

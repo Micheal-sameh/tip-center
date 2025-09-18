@@ -189,6 +189,51 @@
         </tbody>
     </table>
 
+    @if (!$session->onlines->isEmpty())
+        <h5 class="mt-4 mb-3">Students Online</h5>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    @if ($selected_type == \App\Enums\ReportType::ALL || $selected_type == \App\Enums\ReportType::STUDENT)
+                        <th class="text-end">Price</th>
+                        <th class="text-end">Materials</th>
+                    @endif
+                    @if ($selected_type == \App\Enums\ReportType::PROFESSOR)
+                        <th class="text-end">Materials</th>
+                        <th class="text-end">Professor Price</th>
+                    @endif
+                    @if ($selected_type == \App\Enums\ReportType::CENTER)
+                        <th class="text-end">Center Price</th>
+                    @endif
+                    <th>Stage</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($session->onlines as $online)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $online->name }}</td>
+                        @if ($selected_type == \App\Enums\ReportType::ALL || $selected_type == \App\Enums\ReportType::STUDENT)
+                            <td class="text-end">
+                                {{ number_format($online->professor + $online->center, 2) }}</td>
+                            <td class="text-end">{{ number_format($online->materials, 2) }}</td>
+                        @endif
+                        @if ($selected_type == \App\Enums\ReportType::PROFESSOR)
+                            <td class="text-end">{{ number_format($online->materials, 2) }}</td>
+                            <td class="text-end">{{ number_format($online->professor, 2) }}</td>
+                        @endif
+                        @if ($selected_type == \App\Enums\ReportType::CENTER)
+                            <td class="text-end">{{ number_format($online->center, 2) }}</td>
+                        @endif
+                        <td>{{ App\Enums\StagesEnum::getStringValue($online->stage) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
+
     @if ($session->sessionExtra)
         @php $extra = $session->sessionExtra; @endphp
         <h5 class="mt-4 mb-3">Expenses</h5>
@@ -213,7 +258,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Copies</td>
+                    <td>Prof papper</td>
                     <td class="text-end">
                         {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->copies > 0 ? -number_format($extra->copies, 2) : 0) : number_format($extra->copies ?? 0, 2) }}
                     </td>
@@ -233,7 +278,13 @@
                 <tr>
                     <td>Out Going</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->out_going > 0 ? -number_format($extra->out_going, 2) : 0) : number_format($extra->out_going ?? 0, 2) }}
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ?  -number_format($extra->out_going, 2)  : number_format($extra->out_going ?? 0, 2) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>To Prof</td>
+                    <td class="text-end">
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ?  -number_format($extra->to_professor, 2)  : number_format($extra->to_professor ?? 0, 2) }}
                     </td>
                 </tr>
                 @if ($extra->notes)
@@ -252,10 +303,26 @@
                 <th>Total Students</th>
                 <td class="text-end">{{ $reports->where('is_attend', 1)->count() }}</td>
             </tr>
+            @if (!$session->onlines->isEmpty())
+                <tr>
+                    <th>Total online</th>
+                    <td class="text-end">
+                        {{ $session->onlines->sum(function ($online) {
+                            return $online->materials + $online->professor + $online->center;
+                        }) }}
+                    </td>
+                </tr>
+            @endif
             @if ($session->professor_price)
                 <tr>
                     <th>Professor Fees</th>
                     <td class="text-end">{{ number_format($reports->sum('professor_price'), 2) }}</td>
+                </tr>
+            @endif
+            @if ($session->professor->balance)
+                <tr>
+                    <th>Balance</th>
+                    <td class="text-end">{{ number_format($session->professor->balance), 2 }}</td>
                 </tr>
             @endif
             @if ($session->materials)
@@ -277,12 +344,31 @@
                         $total = $reports->sum(
                             fn($r) => $r->professor_price + $r->center_price + $r->printables + $r->materials,
                         );
+                        $total +=
+                            $selected_type == App\Enums\ReportType::PROFESSOR
+                                ? $session->professor->balance
+                                : -$session->professor->balance;
                         if ($session->sessionExtra) {
-                            $adjustment = $extra->markers + $extra->copies + $extra->other + $extra->cafeterea + $extra->other_print + $extra->out_going;
+                            $adjustment =
+                                $extra->markers +
+                                $extra->copies +
+                                $extra->other +
+                                $extra->cafeterea +
+                                $extra->other_print +
+                                $extra->to_professor +
+                                $extra->out_going;
                             $total += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adjustment : $adjustment;
                         }
+                        if (!$session->onlines->isEmpty()) {
+                            $onlines = $session->onlines;
+
+                            $onlineTotal = $onlines->sum(function ($online) {
+                                return $online->materials + $online->professor + $online->center;
+                            });
+                            $total += $onlineTotal;
+                        }
                     @endphp
-                    {{ number_format($total + $session->professor->balance, 2) }}
+                    {{ number_format($total, 2) }}
                 </td>
             </tr>
             @php
@@ -305,8 +391,7 @@
             @endphp
             <tr class="{{ $total > 0 ? 'bg-warning' : '' }}">
                 <th> To Collect</th>
-                <td
-                    class="text-end {{ $total > 0 ? 'text-danger' : '' }} total-value">
+                <td class="text-end {{ $total > 0 ? 'text-danger' : '' }} total-value">
                     {{ number_format($total, 2) }}
                 </td>
             </tr>

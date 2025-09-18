@@ -42,4 +42,9 @@ class Session extends Model
     {
         return $this->hasOne(SessionExtra::class);
     }
+
+    public function onlines()
+    {
+        return $this->hasMany(SessionOnline::class);
+    }
 }

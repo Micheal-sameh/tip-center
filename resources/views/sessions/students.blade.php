@@ -12,8 +12,8 @@
                         {{ $session->created_at->format('d-m-Y') }}</div>
                 </div>
 
+                {{-- Students Table --}}
                 <h5 class="mt-4 mb-3">Students Attendance</h5>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover align-middle">
                         <thead class="table-dark">
@@ -51,11 +51,11 @@
 
                                 <tr class="student-row {{ $rowClass }}" data-id="{{ $student->id }}"
                                     data-center="{{ $student->center_price }}"
-                                    data-professor="{{ $student->professor_price }}"
-                                    data-to_pay="{{ $student->to_pay }}"
+                                    data-professor="{{ $student->professor_price }}" data-to_pay="{{ $student->to_pay }}"
                                     data-to_pay_center="{{ $student->to_pay_center }}"
                                     data-to_pay_print="{{ $student->to_pay_print }}"
-                                    data-materials="{{ $student->materials }}" data-printables="{{ $student->printables }}">
+                                    data-materials="{{ $student->materials }}"
+                                    data-printables="{{ $student->printables }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $student->student?->name }}</td>
                                     <td>{{ $student->student?->code }}</td>
@@ -70,7 +70,7 @@
                                     <td>{{ $student->updatedBy?->name }}</td>
                                     <td>
                                         <form action="{{ route('attendances.delete', $student->id) }}" method="POST"
-                                            onsubmit="return confirm('Are you sure you want to delete {{ $student->student?->name }} attendance?');">
+                                            onsubmit="return confirm('Delete {{ $student->student?->name }} attendance?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
@@ -83,11 +83,65 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Onlines Table --}}
+                @if(!$session->onlines->isEmpty())
+                    <h5 class="mt-5 mb-3">Online Payments</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Materials</th>
+                                    <th>Stage</th>
+                                    <th>Professor</th>
+                                    <th>Center</th>
+                                    <th>Paid At</th>
+                                    <th>Created By</th>
+                                    <th>Updated By</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($session->onlines as $online)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $online->name }}</td>
+                                        <td>{{ $online->materials }}</td>
+                                        <td>{{ App\Enums\StagesEnum::getStringValue($online->stage) }}</td>
+                                        <td>{{ $online->professor }}</td>
+                                        <td>{{ $online->center }}</td>
+                                        <td>{{ $online->created_at->format('h:i A') }}</td>
+                                        <td>{{ $online->createdBy?->name }}</td>
+                                        <td>{{ $online->updatedBy?->name }}</td>
+                                        <td>
+                                            <form action="{{ route('online.delete', $online->id) }}" method="POST"
+                                                onsubmit="return confirm('Delete online payment for {{ $online->name }}?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                @if ($session->onlines->isEmpty())
+                                    <tr>
+                                        <td colspan="10" class="text-center">No online payments found.</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
             </div>
         </div>
     </div>
 
-    <!-- Update Prices Modal -->
+    {{-- Students Update Modal --}}
     <div class="modal fade" id="updatePricesModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" id="updatePricesForm">

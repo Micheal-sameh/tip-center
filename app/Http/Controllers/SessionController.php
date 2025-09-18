@@ -6,9 +6,11 @@ use App\DTOs\SessionDTO;
 use App\Enums\SessionStatus;
 use App\Enums\StagesEnum;
 use App\Http\Requests\CloseSessionRequest;
+use App\Http\Requests\CreateOnlinePaymentRequest;
 use App\Http\Requests\SessionCreateRequest;
 use App\Http\Requests\SessionIndexRequest;
 use App\Http\Requests\SessionUpdateRequest;
+use App\Models\SessionOnline;
 use App\Repositories\SessionRepository;
 use App\Services\ProfessorService;
 use App\Services\SessionService;
@@ -137,5 +139,28 @@ class SessionController extends Controller
         $session = $this->sessionservice->students($id);
 
         return view('sessions.students', compact('session'));
+    }
+
+    public function onlineForm($id)
+    {
+        $stages = StagesEnum::all();
+        $session = $this->sessionservice->show($id);
+
+        return view('sessions.online', compact('stages', 'session'));
+    }
+
+    public function online(CreateOnlinePaymentRequest $request, $id)
+    {
+        $this->sessionservice->online($request->validated(), $id);
+
+        return to_route('sessions.index')->with('success', 'online successfully');
+    }
+
+    public function onlineDelete($id)
+    {
+        $online = SessionOnline::find($id);
+        $online->delete();
+
+        return redirect()->back()->with('success', 'online student deleted successfully');
     }
 }

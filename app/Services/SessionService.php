@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\ProfessorRepository;
 use App\Repositories\SessionRepository;
 use App\Repositories\SessionStudentRepository;
+use Illuminate\Support\Facades\Auth;
 
 class SessionService
 {
@@ -97,5 +98,11 @@ class SessionService
     {
         $professors = $this->professorRepository->todaySessions();
         $this->sessionRepository->automaticCreateSessions($professors);
+    }
+
+    public function online($input, $id)
+    {
+        $input['created_by'] = Auth::id();
+        $this->sessionRepository->online($input, $id);
     }
 }
