@@ -112,6 +112,50 @@
                         </tbody>
                     </table>
                 </div>
+                {{-- Online Payments --}}
+                @if ($session->onlines && $session->onlines->isNotEmpty())
+                    <h5 class="mt-5 mb-3">Online Payments</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th class="text-end">Materials</th>
+                                    @if ($selected_type == \App\Enums\ReportType::ALL)
+                                        <th class="text-end">Price</th>
+                                    @endif
+                                    @if ($selected_type == \App\Enums\ReportType::PROFESSOR)
+                                        <th class="text-end">Professor Price</th>
+                                    @endif
+                                    @if ($selected_type == \App\Enums\ReportType::CENTER)
+                                        <th class="text-end">Center Price</th>
+                                    @endif
+                                    <th>Stage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($session->onlines as $online)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $online->name }}</td>
+                                        <td class="text-end">{{ number_format($online->materials, 2) }}</td>
+                                        @if ($selected_type == \App\Enums\ReportType::ALL)
+                                            <td class="text-end">{{ number_format($online->professor + $online->center, 2) }}</td>
+                                        @endif
+                                        @if ($selected_type == \App\Enums\ReportType::PROFESSOR)
+                                            <td class="text-end">{{ number_format($online->professor, 2) }}</td>
+                                        @endif
+                                        @if ($selected_type == \App\Enums\ReportType::CENTER)
+                                            <td class="text-end">{{ number_format($online->center, 2) }}</td>
+                                        @endif
+                                        <td>{{ App\Enums\StagesEnum::getStringValue($online->stage) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
 
 
 
@@ -195,7 +239,10 @@
                                                     $r->center_price +
                                                     $r->printables +
                                                     $r->materials,
-                                            ) + $session->professor->balance;
+                                            ) +
+                                            ($type == App\Enums\ReportType::PROFESSOR)
+                                                ? $session->professor->balance
+                                                : -$session->professor->balance;
                                         if ($session->sessionExtra) {
                                             $extra = $session->sessionExtra;
                                             $adjustment =
@@ -204,6 +251,7 @@
                                                 $extra->other +
                                                 $extra->cafeterea +
                                                 $extra->other_print +
+                                                $extra->to_professor +
                                                 $extra->out_going;
                                             $total +=
                                                 $selected_type == App\Enums\ReportType::PROFESSOR
@@ -260,11 +308,12 @@
                             'other' => 'Others Center',
                             'other_print' => 'Others Print',
                             'out_going' => 'Out Going',
+                            'to_professor' => 'Other (To Professor)',
                         ];
 
                         $formatValue = function ($value, $type) {
                             if ($type == App\Enums\ReportType::PROFESSOR) {
-                                return $value > 0 ? -number_format($value, 2) : 0;
+                                return $value != 0 ? -number_format($value, 2) : 0;
                             }
                             return number_format($value ?? 0, 2);
                         };

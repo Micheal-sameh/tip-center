@@ -15,6 +15,7 @@ class ChargeType
     public const GAP     = 5;
     public const SALARY  = 6;
     public const RENT    = 7;
+    public const ROOM_10_11 = 8;
 
     private static array $translations = [
         self::CENTER => [
@@ -45,6 +46,10 @@ class ChargeType
             'en' => 'Rent',
             'ar' => 'ايجار',
         ],
+        self::ROOM_10_11 => [
+            'en' => 'Charges 10 & 11',
+            'ar' => 'مصاريف 10 & 11',
+        ],
     ];
 
     public static function all(): array
@@ -54,7 +59,7 @@ class ChargeType
         $values = array_keys(self::$translations);
 
         if (! Auth::user()?->can('charges_salary')) {
-            $values = array_diff($values, [self::RENT, self::SALARY, self::GAP]);
+            $values = array_diff($values, [self::RENT, self::SALARY, self::ROOM_10_11]);
         }
 
         return array_map(

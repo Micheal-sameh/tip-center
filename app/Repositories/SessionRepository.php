@@ -6,6 +6,7 @@ use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Enums\SessionType;
 use App\Models\Session;
+use App\Models\SessionOnline;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -89,7 +90,21 @@ class SessionRepository extends BaseRepository
 
     public function report($input)
     {
-        $query = $this->model->where('id', $input['session_id']);
+        $query = $this->model->where('id', $input['session_id'])
+       ->with([
+        'onlines' => function ($q) use ($input) {
+            if (isset($input['type'])) {
+                match ((int) $input['type']) {
+                    ReportType::PROFESSOR => $q->select('id', 'session_id', 'name', 'stage', 'professor', 'created_at', 'materials'),
+                    ReportType::CENTER    => $q->select('id', 'session_id', 'name', 'stage', 'center', 'created_at'),
+                    default               => $q->select('id', 'session_id', 'name', 'stage', 'professor', 'center', 'materials', 'created_at'),
+                };
+            } else {
+                $q->select('id', 'session_id', 'name', 'stage', 'professor', 'center', 'materials', 'created_at');
+            }
+        }
+    ]);
+        ;
         if (isset($input['type'])) {
             match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('created_at', 'id', 'professor_id', 'stage', 'professor_price', 'materials'),
@@ -160,6 +175,7 @@ class SessionRepository extends BaseRepository
             'other' => $extras->other + ($input['other'] ?? 0),
             'other_print' => $extras->other_print + ($input['other_print'] ?? 0),
             'out_going' => $extras->out_going + ($input['out_going'] ?? 0),
+            'to_professor' => $extras->to_professor - ($input['to_professor'] ?? 0),
             'notes' => $input['notes'] ?? $extras->notes,
         ]);
         $this->absence($session);
@@ -501,5 +517,10 @@ class SessionRepository extends BaseRepository
                 $q->whereColumn('center_price', 'sessions.center_price');
             }], 'center_price')
             ->get();
+    }
+
+    public function online($input, $id)
+    {
+        SessionOnline::create($input);
     }
 }

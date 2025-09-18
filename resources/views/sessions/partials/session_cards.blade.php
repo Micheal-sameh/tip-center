@@ -104,6 +104,10 @@
                             Extras
                         </a>
 
+                        <a href="{{route('sessions.online-form', $session->id)}}" type="button" class="btn btn-sm btn-primary mt-2" >
+                            Online
+                        </a>
+
                     </div>
 
                     <div class="card-footer bg-white border-top-0">
