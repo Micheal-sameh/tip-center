@@ -44,7 +44,7 @@
                                         $student->student->specialCases->contains('id', $session->professor_id)
                                     ) {
                                         $rowClass = 'table-info';
-                                    } elseif ($student->to_pay + $student->to_pay_center + $student->to_pay_print > 0) {
+                                    } elseif ($student->to_pay + $student->to_pay_center + $student->to_pay_print + $student->to_pay_materials > 0) {
                                         $rowClass = 'table-warning';
                                     }
                                 @endphp
@@ -54,6 +54,7 @@
                                     data-professor="{{ $student->professor_price }}" data-to_pay="{{ $student->to_pay }}"
                                     data-to_pay_center="{{ $student->to_pay_center }}"
                                     data-to_pay_print="{{ $student->to_pay_print }}"
+                                    data-to_pay_materials="{{ $student->to_pay_materials }}"
                                     data-materials="{{ $student->materials }}"
                                     data-printables="{{ $student->printables }}">
                                     <td>{{ $loop->iteration }}</td>
@@ -182,6 +183,10 @@
                             <label class="form-label">To Pay (Print)</label>
                             <input type="number" class="form-control" name="to_pay_print" id="to_pay_print">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">To Pay (Materials)</label>
+                            <input type="number" class="form-control" name="to_pay_materials" id="to_pay_materials">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save</button>
@@ -205,6 +210,7 @@
                 document.getElementById('printables').value = this.dataset.printables;
                 document.getElementById('to_pay').value = this.dataset.to_pay;
                 document.getElementById('to_pay_print').value = this.dataset.to_pay_print;
+                document.getElementById('to_pay_materials').value = this.dataset.to_pay_materials;
                 document.getElementById('to_pay_center').value = this.dataset.to_pay_center;
 
                 document.getElementById('updatePricesForm').action = `/session-students/${id}`;
