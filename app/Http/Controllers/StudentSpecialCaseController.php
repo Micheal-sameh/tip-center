@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfilePicRequest;
 use App\Http\Requests\SettleDueRequest;
+use App\Http\Requests\SpecialCaseUpdateRequest;
 use App\Repositories\ProfessorRepository;
 use App\Services\StudentService;
 use Illuminate\Http\Request;
@@ -51,11 +52,11 @@ class StudentSpecialCaseController extends Controller
         return view('students.edit', compact('student'));
     }
 
-    public function update(Request $request, $id)
+    public function update(SpecialCaseUpdateRequest $request, $id)
     {
-        $this->studentservice->updateSpecialCase($request, $id);
+        $this->studentservice->updateSpecialCase($request->validated(), $id);
 
-        return to_route('students.show', $id);
+        return redirect()->back();
     }
 
     public function delete($id)

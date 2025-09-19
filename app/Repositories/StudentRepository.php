@@ -155,7 +155,7 @@ class StudentRepository extends BaseRepository
         DB::table('student_special_cases')
             ->where('id', $input['case_id'])
             ->update([
-                $input['field'] => $input['value'],
+                $input['field'] => $input['value'] ?? 0,
                 'updated_at' => now(),
             ]);
 
