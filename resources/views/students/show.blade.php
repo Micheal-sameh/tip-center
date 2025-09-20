@@ -216,7 +216,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content rounded-3 shadow-lg">
                         <div class="modal-header">
-                            <h5 class="modal-title">{{ __('trans.edit_to_pay') }}</h5>
+                            <h5 class="modal-title">{{ __('trans.to_pay') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <form id="editToPayForm" method="POST">
@@ -249,7 +249,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"
                                     data-bs-dismiss="modal">{{ __('trans.cancel') }}</button>
-                                <button type="submit" class="btn btn-primary">{{ __('trans.save_changes') }}</button>
+                                <button type="submit" class="btn btn-primary">{{ __('trans.save') }}</button>
                             </div>
                         </form>
                     </div>
