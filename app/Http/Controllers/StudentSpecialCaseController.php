@@ -8,6 +8,8 @@ use App\Http\Requests\SpecialCaseUpdateRequest;
 use App\Repositories\ProfessorRepository;
 use App\Services\StudentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StudentSpecialCaseController extends Controller
 {
@@ -59,11 +61,23 @@ class StudentSpecialCaseController extends Controller
         return redirect()->back();
     }
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
-        $this->studentservice->delete($id);
+        $request->validate([
+            'password' => ['required'],
+        ]);
 
-        return to_route('students.index');
+        // Verify password
+        if (! Hash::check($request->password, auth()->user()->password)) {
+            return back()->withErrors(['password' => 'Password is incorrect.']);
+        }
+        $deleted = DB::table('student_special_cases')->where('id', $id)->delete();
+
+        if ($deleted) {
+            return back()->with('success', 'Special case deleted successfully.');
+        }
+
+        return back()->with('error', 'Special case not found.');
     }
 
     public function profilePic(ProfilePicRequest $request, $id)
