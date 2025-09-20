@@ -140,6 +140,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/create', [StudentSpecialCaseController::class, 'create'])->name('student-special-cases.create');
             Route::post('', [StudentSpecialCaseController::class, 'store'])->name('student-special-cases.store');
             Route::put('/{id}', [StudentSpecialCaseController::class, 'update'])->name('student-special-cases.update');
+            Route::delete('/{id}', [StudentSpecialCaseController::class, 'delete'])->name('student-special-cases.delete');
         });
 
         Route::prefix('settings')->group(function () {
