@@ -58,8 +58,9 @@ class StudentController extends Controller
     public function show($id)
     {
         $student = $this->studentservice->show($id);
+        $toPays = $student->toPay;
 
-        return view('students.show', compact('student'));
+        return view('students.show', compact('student', 'toPays'));
     }
 
     public function create()
@@ -69,10 +70,6 @@ class StudentController extends Controller
 
     public function store(StudentCreateRequest $request)
     {
-        // $input = new StudentDTO(...$request->only(
-        //     'name', 'stage', 'phone', 'parent_phone', 'parent_phone_2', 'birth_date', 'note',
-        // ));
-
         $student = $this->studentservice->store($request->validated());
 
         return to_route('students.index')

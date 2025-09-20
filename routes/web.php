@@ -120,6 +120,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             // Route::put('/{id}/update', [SessionStudentController::class, 'update'])->name('attendances.update');
             Route::put('/{id}', [SessionStudentController::class, 'update'])->name('attendances.update');
             Route::put('/{id}/pay', [SessionStudentController::class, 'pay'])->name('payments.pay');
+            Route::put('/{id}/update-pay', [SessionStudentController::class, 'updateToPay'])->name('payments.update-pay');
             Route::delete('/{id}', [SessionStudentController::class, 'delete'])->name('attendances.delete');
         });
 

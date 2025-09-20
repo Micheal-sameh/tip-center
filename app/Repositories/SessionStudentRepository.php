@@ -121,6 +121,20 @@ class SessionStudentRepository extends BaseRepository
         return $attendance;
     }
 
+    public function updateToPay($input, $id)
+    {
+        $attendance = $this->findById($id);
+        $attendance->update([
+            'to_pay' => $input->to_pay ?? 0,
+            'to_pay_center' => $input->to_pay_center ?? 0,
+            'to_pay_print' => $input->to_pay_print ?? 0,
+            'to_pay_materials' => $input->to_pay_materials ?? 0,
+            'updated_by' => Auth::id(),
+        ]);
+
+        return $attendance;
+    }
+
     public function pay($id)
     {
         $pay = $this->findById($id);
