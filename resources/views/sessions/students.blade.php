@@ -44,7 +44,13 @@
                                         $student->student->specialCases->contains('id', $session->professor_id)
                                     ) {
                                         $rowClass = 'table-info';
-                                    } elseif ($student->to_pay + $student->to_pay_center + $student->to_pay_print + $student->to_pay_materials > 0) {
+                                    } elseif (
+                                        $student->to_pay +
+                                            $student->to_pay_center +
+                                            $student->to_pay_print +
+                                            $student->to_pay_materials >
+                                        0
+                                    ) {
                                         $rowClass = 'table-warning';
                                     }
                                 @endphp
@@ -70,15 +76,25 @@
                                     <td>{{ $student->createdBy?->name }}</td>
                                     <td>{{ $student->updatedBy?->name }}</td>
                                     <td>
-                                        <form action="{{ route('attendances.delete', $student->id) }}" method="POST"
-                                            onsubmit="return confirm('Delete {{ $student->student?->name }} attendance?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+                                        <div class="d-flex gap-2">
+                                            {{-- Show button --}}
+                                            <a href="{{ route('students.show', $student->student?->id) }}"
+                                                class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            {{-- Delete button --}}
+                                            <form action="{{ route('attendances.delete', $student->id) }}" method="POST"
+                                                onsubmit="return confirm('Delete {{ $student->student?->name }} attendance?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
+
                                 </tr>
                             @endforeach
                         </tbody>
@@ -86,7 +102,7 @@
                 </div>
 
                 {{-- Onlines Table --}}
-                @if(!$session->onlines->isEmpty())
+                @if (!$session->onlines->isEmpty())
                     <h5 class="mt-5 mb-3">Online Payments</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle">

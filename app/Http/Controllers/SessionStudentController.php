@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\SessionStudentDTO;
 use App\Http\Requests\AttendanceCreateRequest;
 use App\Http\Requests\StoreSessionStudentRequest;
+use App\Http\Requests\UpdatePayRequest;
 use App\Http\Requests\UpdateSessionStudentRequest;
 use App\Models\SessionStudent;
 use App\Services\SessionService;
@@ -98,6 +99,16 @@ class SessionStudentController extends Controller
         $attendence = $this->sessionStudentService->update($input, $id);
 
         return redirect()->route('sessions.students', $attendence->session_id)->with('success', "prices updated to {$attendence->student->name}");
+    }
+
+    public function updateToPay(UpdatePayRequest $request, $id)
+    {
+        $input = new SessionStudentDTO(...$request->only(
+            'to_pay', 'to_pay_center', 'to_pay_print', 'to_pay_materials'
+        ));
+        $attendence = $this->sessionStudentService->updateToPay($input, $id);
+
+        return redirect()->back();
     }
 
     public function pay($id)

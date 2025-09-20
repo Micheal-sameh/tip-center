@@ -88,4 +88,9 @@ return [
     'finance' => 'Finance',
     'Today Login' => 'Today Login',
     'gap' => 'Gap',
+    'center' => 'Center',
+    'print' => 'Print',
+    'material' => 'Materials',
+    'date' => 'Date',
+    'to_pay' => 'To Pay',
 ];
