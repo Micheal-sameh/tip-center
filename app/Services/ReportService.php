@@ -124,6 +124,20 @@ class ReportService
             'net_center', 'net_copies', 'net_markers', 'net_others');
     }
 
+    public function monthlyTenAndEleven($month)
+    {
+        $reports = $this->sessionRepository->monthlyTenAndEleven($month);
+        $totals = [
+            'center' => $reports->sum('center_income'),
+            'other_center' => $reports->sum('other'),
+            'charges' => $reports->sum('charges_ten_eleven'),
+        ];
+
+        $totals['overall_total'] = $totals['center'] + $totals['other_center'] - $totals['charges'];
+
+        return compact('reports', 'totals');
+    }
+
     public function specialRooms($input)
     {
         $sessions = $this->sessionRepository->specialRooms($input);

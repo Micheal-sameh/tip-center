@@ -52,6 +52,7 @@ class RolesAndPermissionSeeder extends Seeder
         $income_report = Permission::firstOrCreate(['name' => 'income_report']);
         $special_room_report = Permission::firstOrCreate(['name' => 'special_room_report']);
         $monthly_income = Permission::firstOrCreate(['name' => 'monthly_income']);
+        $monthly_special_rooms = Permission::firstOrCreate(['name' => 'monthly_special_rooms']);
 
         // charges
         $charges_create = Permission::firstOrCreate(['name' => 'charges_create']);
@@ -93,6 +94,7 @@ class RolesAndPermissionSeeder extends Seeder
             $income_report,
             $special_room_report,
             $monthly_income,
+            $monthly_special_rooms,
 
             $charges_index,
             $charges_create,

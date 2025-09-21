@@ -320,7 +320,7 @@
                                             <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.charges') }}
                                         </a>
                                     </li>
-                                
+
                                     <li>
                                         <a href="{{ route('charges.gap') }}"
                                             class="dropdown-item {{ request()->routeIs('charges.gap') ? 'active' : '' }}">
@@ -352,6 +352,14 @@
                                         <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
                                             href="{{ route('reports.monthly-income') }}">
                                             <i class="fas fa-calendar-alt me-2"></i> {{ __('trans.monthly_income') }}
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('monthly_special_rooms')
+                                    <li>
+                                        <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
+                                            href="{{ route('reports.monthly-ten-eleven') }}">
+                                            <i class="fas fa-calendar-alt me-2"></i> {{ __('trans.monthly_special_rooms') }}
                                         </a>
                                     </li>
                                 @endcan
