@@ -41,26 +41,31 @@
                 </div>
 
                 <h5 class="mt-4 mb-3">Students Attendance</h5>
+                @php
+                    $showPhone = $reports->contains(fn($r) => $r->student?->phone > 0);
+                    $showParentPhone = $reports->contains(fn($r) => $r->student?->parent_phone > 0);
+                    $showMaterials = $reports->contains(fn($r) => $r->materials > 0);
+                    $showPrintables = $reports->contains(fn($r) => $r->printables > 0);
+                @endphp
 
-                <!-- Responsive Table (works for both desktop and mobile) -->
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead class="table-dark">
                             <tr>
                                 <th>#</th>
                                 <th>Student Name</th>
-                                @if ($reports->contains(fn($r) => $r->student?->phone > 0))
+                                @if ($showPhone)
                                     <th>Phone</th>
                                 @endif
-                                @if ($reports->contains(fn($r) => $r->student?->parent_phone > 0))
+                                @if ($showParentPhone)
                                     <th>Parent Phone</th>
                                 @endif
                                 <th>Attend</th>
                                 <th class="text-end">Payment</th>
-                                @if ($reports->contains(fn($r) => $r->materials > 0))
+                                @if ($showMaterials)
                                     <th>Materials</th>
                                 @endif
-                                @if ($reports->contains(fn($r) => $r->printables > 0))
+                                @if ($showPrintables)
                                     <th>Student Papers</th>
                                 @endif
                                 <th class="text-end">To Pay</th>
@@ -68,55 +73,62 @@
                         </thead>
                         <tbody>
                             @foreach ($reports as $report)
-                                <tr
-                                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $report->to_pay_print + $report->to_pay_materials > 0 ? 'table-warning' : '') }}">
+                                @php
+                                    $rowClass =
+                                        $report->is_attend == App\Enums\AttendenceType::ABSENT
+                                            ? 'table-danger'
+                                            : ($report->to_pay +
+                                                $report->to_pay_center +
+                                                $report->to_pay_print +
+                                                $report->to_pay_materials >
+                                            0
+                                                ? 'table-warning'
+                                                : '');
+
+                                    $toPayTotal = isset($report->student->toPay)
+                                        ? $report->student->toPay->sum(
+                                            fn($pay) => match ($selected_type) {
+                                                App\Enums\ReportType::PROFESSOR => $pay->to_pay +
+                                                    $pay->to_pay_materials,
+                                                App\Enums\ReportType::CENTER => $pay->to_pay_center +
+                                                    $pay->to_pay_print,
+                                                default => $pay->to_pay +
+                                                    $pay->to_pay_center +
+                                                    $pay->to_pay_print +
+                                                    $pay->to_pay_materials,
+                                            },
+                                        )
+                                        : 0;
+                                @endphp
+                                <tr class="{{ $rowClass }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td><a
                                             href="{{ route('students.show', $report->student_id) }}">{{ $report->student?->name }}</a>
                                     </td>
-
-                                    @if ($reports->contains(fn($r) => $r->student?->phone > 0))
+                                    @if ($showPhone)
                                         <td>{{ $report->student?->phone }}</td>
                                     @endif
-                                    @if ($reports->contains(fn($r) => $r->student?->parent_phone > 0))
+                                    @if ($showParentPhone)
                                         <td>{{ $report->student?->parent_phone }}</td>
                                     @endif
-
-                                    <td>
-                                        {{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
+                                    <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
                                     </td>
                                     <td class="text-end">
-                                        {{ number_format($report->professor_price + $report->center_price, 2) }}
-                                    </td>
-
-                                    @if ($reports->contains(fn($r) => $r->materials > 0))
+                                        {{ number_format($report->professor_price + $report->center_price, 2) }}</td>
+                                    @if ($showMaterials)
                                         <td>{{ $report->materials }}</td>
                                     @endif
-                                    @if ($reports->contains(fn($r) => $r->printables > 0))
+                                    @if ($showPrintables)
                                         <td class="text-end">{{ $report->printables }}</td>
                                     @endif
-
-                                    @if (isset($report->student->toPay))
-                                        @php
-                                            $total = $report->student->toPay->sum(function ($pay) use ($selected_type) {
-                                                if ($selected_type == App\Enums\ReportType::PROFESSOR) {
-                                                    return $pay->to_pay + $pay->to_pay_materials;
-                                                } elseif ($selected_type == App\Enums\ReportType::CENTER) {
-                                                    return $pay->to_pay_center + $pay->to_pay_print;
-                                                } else {
-                                                    return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print + $pay->to_pay_materials;
-                                                }
-                                            });
-                                        @endphp
-                                        <td class="text-end fw-bold {{ $total > 0 ? 'text-danger' : '' }}">
-                                            {{ number_format($total, 2) }}
-                                        </td>
-                                    @endif
+                                    <td class="text-end fw-bold {{ $toPayTotal > 0 ? 'text-danger' : '' }}">
+                                        {{ number_format($toPayTotal, 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+
                 {{-- Online Payments --}}
                 @if ($session->onlines && $session->onlines->isNotEmpty())
                     <h5 class="mt-5 mb-3">Online Payments</h5>
@@ -142,8 +154,7 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $online->name }}</td>
                                         @if ($selected_type != \App\Enums\ReportType::CENTER)
-                                            <td class="text-end">
-                                                {{ number_format($online->professor, 2) }}</td>
+                                            <td class="text-end">{{ number_format($online->professor, 2) }}</td>
                                             <td class="text-end">{{ number_format($online->materials, 2) }}</td>
                                         @endif
                                         @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
@@ -157,9 +168,48 @@
                     </div>
                 @endif
 
+                {{-- Summary --}}
+                @php
+                    $summaryTotal = $reports->sum(
+                        fn($r) => $r->professor_price + $r->center_price + $r->printables + $r->materials,
+                    );
+                    $summaryTotal +=
+                        $selected_type == App\Enums\ReportType::PROFESSOR
+                            ? $session->professor->balance
+                            : -$session->professor->balance;
+                    $summaryTotal +=
+                        $selected_type == App\Enums\ReportType::PROFESSOR
+                            ? $session->professor->materials_balance
+                            : -$session->professor->materials_balance;
+                    if ($session->sessionExtra) {
+                        $adj = collect([
+                            'markers',
+                            'copies',
+                            'other',
+                            'cafeterea',
+                            'other_print',
+                            'to_professor',
+                            'out_going',
+                        ])->sum(fn($f) => $session->sessionExtra->$f ?? 0);
+                        $summaryTotal += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adj : $adj;
+                    }
+                    if ($session->onlines->isNotEmpty()) {
+                        $summaryTotal += $session->onlines->sum(fn($o) => $o->materials + $o->professor + $o->center);
+                    }
+                    $toCollect = $reports->sum(
+                        fn($report) => $report->student?->toPay?->sum(
+                            fn($pay) => match ($selected_type) {
+                                App\Enums\ReportType::PROFESSOR => $pay->to_pay + $pay->to_pay_materials,
+                                App\Enums\ReportType::CENTER => $pay->to_pay_center + $pay->to_pay_print,
+                                default => $pay->to_pay +
+                                    $pay->to_pay_center +
+                                    $pay->to_pay_print +
+                                    $pay->to_pay_materials,
+                            },
+                        ) ?? 0,
+                    );
+                @endphp
 
-
-                {{-- Summary (totals) --}}
                 <div class="row mt-4">
                     <div class="col-md-2 col-6 mb-3">
                         <div class="card h-100">
@@ -193,37 +243,34 @@
                             </div>
                         </div>
                     @endif
+
                     @if ($session->professor->balance)
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
-                                    <h6 class="card-subtitle mb-2 text-muted">balance</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Balance</h6>
                                     <p class="card-text fs-4 fw-bold">
-                                        {{ $selected_type == App\Enums\ReportType::PROFESSOR
-                                            ? number_format($session->professor->balance)
-                                            : -number_format($session->professor->balance),
-                                            2 }}
+                                        {{ number_format($selected_type == App\Enums\ReportType::PROFESSOR ? $session->professor->balance : -$session->professor->balance, 2) }}
                                     </p>
                                 </div>
                             </div>
                         </div>
                     @endif
+
                     @if ($session->professor->materials_balance > 0)
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Material Balance (Prof)</h6>
                                     <p class="card-text fs-4 fw-bold">
-                                        {{ $selected_type == App\Enums\ReportType::PROFESSOR
-                                            ? number_format($session->professor->materials_balance)
-                                            : -number_format($session->professor->materials_balance),
-                                            2 }}
+                                        {{ number_format($selected_type == App\Enums\ReportType::PROFESSOR ? $session->professor->materials_balance : -$session->professor->materials_balance, 2) }}
                                     </p>
                                 </div>
                             </div>
                         </div>
                     @endif
-                    @if ($reports->contains(fn($r) => $r->printables > 0))
+
+                    @if ($showPrintables)
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
@@ -234,7 +281,8 @@
                             </div>
                         </div>
                     @endif
-                    @if ($reports->contains(fn($r) => $r->materials > 0))
+
+                    @if ($showMaterials)
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
@@ -245,7 +293,8 @@
                             </div>
                         </div>
                     @endif
-                    @if (!$session->onlines->isEmpty())
+
+                    @if ($session->onlines->isNotEmpty())
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
@@ -258,84 +307,21 @@
                         </div>
                     @endif
 
-
                     <div class="col-md-3 col-6 mb-3">
                         <div class="card h-100 bg-light">
                             <div class="card-body text-center">
                                 <h6 class="card-subtitle mb-2 text-muted">Total Value</h6>
-                                <p class="card-text fs-4 fw-bold text-primary">
-                                    @php
-                                        $total = $reports->sum(
-                                            fn($r) => $r->professor_price +
-                                                $r->center_price +
-                                                $r->printables +
-                                                $r->materials,
-                                        );
-                                        $total +=
-                                            $selected_type == App\Enums\ReportType::PROFESSOR
-                                                ? $session->professor->balance
-                                                : -$session->professor->balance;
-                                        $total +=
-                                            $selected_type == App\Enums\ReportType::PROFESSOR
-                                                ? $session->professor->materials_balance
-                                                : -$session->professor->materials_balance;
-
-                                        if ($session->sessionExtra) {
-                                            $extra = $session->sessionExtra;
-                                            $adjustment =
-                                                $extra->markers +
-                                                $extra->copies +
-                                                $extra->other +
-                                                $extra->cafeterea +
-                                                $extra->other_print +
-                                                $extra->to_professor +
-                                                $extra->out_going;
-                                            $total +=
-                                                $selected_type == App\Enums\ReportType::PROFESSOR
-                                                    ? -$adjustment
-                                                    : $adjustment;
-                                        }
-                                        if (!$session->onlines->isEmpty()) {
-                                            $onlines = $session->onlines;
-
-                                            $onlineTotal = $onlines->sum(function ($online) {
-                                                return $online->materials + $online->professor + $online->center;
-                                            });
-                                            $total += $onlineTotal;
-                                        }
-                                    @endphp
-                                    {{ number_format($total, 2) }}
-                                </p>
+                                <p class="card-text fs-4 fw-bold text-primary">{{ number_format($summaryTotal, 2) }}</p>
                             </div>
                         </div>
                     </div>
-                    @php
-
-                        $total = $reports->sum(function ($report) use ($selected_type) {
-                            if (!isset($report->student->toPay)) {
-                                return 0;
-                            }
-
-                            return $report->student->toPay->sum(function ($pay) use ($selected_type) {
-                                if ($selected_type == App\Enums\ReportType::PROFESSOR) {
-                                    return $pay->to_pay + $pay->to_pay_materials;
-                                } elseif ($selected_type == App\Enums\ReportType::CENTER) {
-                                    return $pay->to_pay_center + $pay->to_pay_print;
-                                } else {
-                                    return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print + $pay->to_pay_materials;
-                                }
-                            });
-                        });
-                    @endphp
-
 
                     <div class="col-md-3 col-6 mb-3">
-                        <div class="card h-100 {{ $total > 0 ? 'bg-warning bg-opacity-10' : '' }}">
+                        <div class="card h-100 {{ $toCollect > 0 ? 'bg-warning bg-opacity-10' : '' }}">
                             <div class="card-body text-center">
                                 <h6 class="card-subtitle mb-2 text-muted">To Collect</h6>
-                                <p class="card-text fs-4 fw-bold {{ $total > 0 ? 'text-danger' : '' }}">
-                                    {{ number_format($total, 2) }}
-                                </p>
+                                <p class="card-text fs-4 fw-bold {{ $toCollect > 0 ? 'text-danger' : '' }}">
+                                    {{ number_format($toCollect, 2) }}</p>
                             </div>
                         </div>
                     </div>
@@ -345,7 +331,6 @@
                 @if ($session->sessionExtra)
                     @php
                         $extra = $session->sessionExtra;
-
                         $fields = [
                             'markers' => 'Markers',
                             'cafeterea' => 'Cafeterea',
@@ -355,29 +340,23 @@
                             'out_going' => 'Out Going',
                             'to_professor' => 'Other (To Professor)',
                         ];
-
-                        $formatValue = function ($value, $type) {
-                            if ($type == App\Enums\ReportType::PROFESSOR) {
-                                return $value != 0 ? -number_format($value, 2) : 0;
-                            }
-                            return number_format($value ?? 0, 2);
-                        };
+                        $formatVal = fn($val) => $selected_type == App\Enums\ReportType::PROFESSOR
+                            ? ($val != 0
+                                ? -number_format($val, 2)
+                                : 0)
+                            : number_format($val ?? 0, 2);
                     @endphp
-
                     <div class="row g-3 mb-3">
                         @foreach ($fields as $field => $label)
                             <div class="col-md-3 col-6">
                                 <div class="card h-100">
                                     <div class="card-body text-center">
                                         <h6 class="card-subtitle mb-2 text-muted">{{ $label }}</h6>
-                                        <p class="card-text fs-5 fw-bold">
-                                            {{ $formatValue($extra->$field ?? 0, $selected_type) }}
-                                        </p>
+                                        <p class="card-text fs-5 fw-bold">{{ $formatVal($extra->$field ?? 0) }}</p>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
-
                         @if (!empty($extra->notes))
                             <div class="col-md-3 col-6">
                                 <div class="card h-100">
