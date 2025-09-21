@@ -115,7 +115,10 @@ class ChargeRepository extends BaseRepository
     public function delete($id)
     {
         $charge = $this->findById($id);
+        $type = $charge->type;
         $charge->delete();
+
+        return $type;
     }
 
     private function incomeQuery($input)

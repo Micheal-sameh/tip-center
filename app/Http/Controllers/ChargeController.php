@@ -50,8 +50,11 @@ class ChargeController extends Controller
 
     public function delete($id)
     {
-        $this->chargeRepository->delete($id);
+        $type = $this->chargeRepository->delete($id);
 
-        return to_route('charges.index');
+        return match ($type) {
+            ChargeType::GAP => to_route('charges.gap'),
+            default => to_route('charges.index'),
+        };
     }
 }
