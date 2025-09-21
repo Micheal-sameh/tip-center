@@ -138,6 +138,7 @@ class SessionStudentRepository extends BaseRepository
     public function pay($id)
     {
         $pay = $this->findById($id);
+        info('before pay '.$pay);
         DB::beginTransaction();
         if ($pay->to_pay || $pay->to_pay_materials) {
             $professor = $pay->session->professor;
@@ -170,6 +171,8 @@ class SessionStudentRepository extends BaseRepository
                 'to_pay_print' => 0,
             ]);
         }
+        info('after pay '.$pay);
+        info('professor '.$professor);
 
         DB::commit();
 
