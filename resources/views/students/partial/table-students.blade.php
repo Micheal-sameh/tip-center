@@ -198,11 +198,34 @@
                 @endif
 
                 {{-- Pagination Elements --}}
-                @foreach ($students->getUrlRange(1, $students->lastPage()) as $page => $url)
+                @php
+                    $start = max(1, $students->currentPage() - 3);
+                    $end = min($students->lastPage(), $students->currentPage() + 3);
+                @endphp
+
+                {{-- Show first page + dots if needed --}}
+                @if ($start > 1)
+                    <li class="page-item"><a class="page-link" href="{{ $students->url(1) }}">1</a></li>
+                    @if ($start > 2)
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    @endif
+                @endif
+
+                {{-- Main page loop --}}
+                @foreach ($students->getUrlRange($start, $end) as $page => $url)
                     <li class="page-item {{ $students->currentPage() === $page ? 'active' : '' }}">
                         <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                     </li>
                 @endforeach
+
+                {{-- Show last page + dots if needed --}}
+                @if ($end < $students->lastPage())
+                    @if ($end < $students->lastPage() - 1)
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    @endif
+                    <li class="page-item"><a class="page-link"
+                            href="{{ $students->url($students->lastPage()) }}">{{ $students->lastPage() }}</a></li>
+                @endif
 
                 {{-- Next Page Link --}}
                 @if ($students->hasMorePages())
@@ -217,4 +240,5 @@
             </ul>
         </nav>
     @endif
+
 </div>
