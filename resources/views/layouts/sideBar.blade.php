@@ -306,7 +306,8 @@
                         </li>
                     @endcan
 
-                    @canany(['charges_index', 'income_report', 'monthly_income', 'special_room_report'])
+                    @canany(['charges_index', 'income_report', 'monthly_income', 'special_room_report',
+                        'monthly_special_rooms'])
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="chargesDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -317,14 +318,14 @@
                                     <li>
                                         <a href="{{ route('charges.index') }}"
                                             class="dropdown-item {{ request()->routeIs('charges.index') ? 'active' : '' }}">
-                                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.charges') }}
+                                            <i class="fas fa-receipt me-2 text-primary"></i> {{ __('trans.charges') }}
                                         </a>
                                     </li>
 
                                     <li>
                                         <a href="{{ route('charges.gap') }}"
                                             class="dropdown-item {{ request()->routeIs('charges.gap') ? 'active' : '' }}">
-                                            <i class="fas fa-file-invoice-dollar me-2"></i> {{ __('trans.gap') }}
+                                            <i class="fas fa-balance-scale me-2 text-warning"></i> {{ __('trans.gap') }}
                                         </a>
                                     </li>
                                 @endcan
@@ -333,7 +334,7 @@
                                     <li>
                                         <a class="dropdown-item {{ request()->routeIs('reports.special-rooms') ? 'active' : '' }}"
                                             href="{{ route('reports.special-rooms') }}">
-                                            <i class="fas fa-door-open me-2"></i> {{ __('trans.room 10 & 11') }}
+                                            <i class="fas fa-door-open me-2 text-success"></i> {{ __('trans.room 10 & 11') }}
                                         </a>
                                     </li>
                                 @endcan
@@ -342,7 +343,7 @@
                                     <li>
                                         <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
                                             href="{{ route('reports.income') }}">
-                                            <i class="fas fa-coins me-2"></i> {{ __('trans.income') }}
+                                            <i class="fas fa-chart-line me-2 text-info"></i> {{ __('trans.income') }}
                                         </a>
                                     </li>
                                 @endcan
@@ -351,21 +352,24 @@
                                     <li>
                                         <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
                                             href="{{ route('reports.monthly-income') }}">
-                                            <i class="fas fa-calendar-alt me-2"></i> {{ __('trans.monthly_income') }}
+                                            <i class="fas fa-calendar-alt me-2 text-success"></i> {{ __('trans.monthly_income') }}
                                         </a>
                                     </li>
                                 @endcan
+
                                 @can('monthly_special_rooms')
                                     <li>
-                                        <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
+                                        <a class="dropdown-item {{ request()->routeIs('reports.monthly-ten-eleven') ? 'active' : '' }}"
                                             href="{{ route('reports.monthly-ten-eleven') }}">
-                                            <i class="fas fa-calendar-alt me-2"></i> {{ __('trans.monthly_special_rooms') }}
+                                            <i class="fas fa-calendar-check me-2 text-danger"></i>
+                                            {{ __('trans.monthly_special_rooms') }}
                                         </a>
                                     </li>
                                 @endcan
                             </ul>
                         </li>
                     @endcanany
+
 
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
