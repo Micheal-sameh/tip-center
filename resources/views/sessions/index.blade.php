@@ -122,9 +122,9 @@
                         <div class="col-md-2">
                             <select name="status" class="form-select">
                                 <option value="">All Statuses</option>
-                                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Pending</option>
-                                <option value="2" {{ request('status') == '2' ? 'selected' : '' }}>Active</option>
-                                <option value="3" {{ request('status') == '3' ? 'selected' : '' }}>Inactive</option>
+                                @foreach(App\Enums\SessionStatus::all() as $status)
+                                <option value="{{ $status['value'] }}" {{ request('status') == $status['value'] ? 'selected' : '' }}>{{$status['name']}}</option>
+                                @endforeach
                             </select>
                         </div>
 
