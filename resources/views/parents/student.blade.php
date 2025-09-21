@@ -183,12 +183,10 @@
                 <tr>
                     <th class="text-center">#</th>
                     <th>Session Date</th>
+                    <th class="text-center">time</th>
                     <th>Professor</th>
                     <th class="text-center">Attend Time</th>
-                    <th>Amount Paid</th>
-                    @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center + $r->to_pay_print > 0))
-                        <th>To Pay</th>
-                    @endif
+
                 </tr>
             </thead>
             <tbody>
@@ -197,32 +195,13 @@
                         <td class="text-center">{{ $loop->iteration }}</td>
                         <td class="date">{{ \Carbon\Carbon::parse($report->session->created_at)->format('d M Y') }}
                         </td>
+                        <td class="text-center">{{ $report->session->start_at?->format('H:i') }} - {{ $report->session->end_at?->format('H:i') }} </td>
                         <td>{{ $report->session->professor->name ?? 'N/A' }}</td>
                         <td class="text-center">{{ $report->is_attend == App\Enums\AttendenceType::ATTEND ? \Carbon\Carbon::parse($report->created_at)->format('h:i A') : 'Absent' }}</td>
-                        <td class="fw-bold">
-                            {{ number_format($report->professor_price + $report->center_price + $report->printables + $report->materials, 2) }}
-                        </td>
-                        @if ($reports->contains(fn($r) => $r->to_pay + $r->to_pay_center + $r->to_pay_print > 0))
-                            <td class="text-center">{{ $report->to_pay + $report->to_pay_center + $report->to_pay_print ?? 'N/A' }}</td>
-                        @endif
                     </tr>
                 @endforeach
 
-                @if (count($reports) > 0)
-                    <tr class="total-row">
-                        <td colspan="4" class="text-right"><strong>Total Amount:</strong></td>
-                        <td class="text-right">
-                            <strong>
-                                {{ number_format(
-                                    $reports->sum(function ($report) {
-                                        return $report->professor_price + $report->center_price + $report->printables + $report->materials;
-                                    }),
-                                    2,
-                                ) }}
-                            </strong>
-                        </td>
-                    </tr>
-                @endif
+
             </tbody>
         </table>
     </div>

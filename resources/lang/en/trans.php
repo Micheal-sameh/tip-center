@@ -93,4 +93,5 @@ return [
     'material' => 'Materials',
     'date' => 'Date',
     'to_pay' => 'To Pay',
+    'monthly_special_rooms' => 'Monthly Special Rooms',
 ];

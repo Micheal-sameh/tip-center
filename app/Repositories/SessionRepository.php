@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ChargeType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
 use App\Enums\SessionType;
@@ -505,6 +506,72 @@ class SessionRepository extends BaseRepository
                 GROUP BY session_id
             ) so'), 's.id', '=', 'so.session_id')
 
+            ->groupBy('days.day')
+            ->orderBy('days.day')
+            ->get();
+    }
+
+    public function monthlyTenAndEleven($month)
+    {
+        $carbonMonth = Carbon::parse($month)->startOfMonth();
+        $start = $carbonMonth->copy()->startOfMonth()->toDateString();
+
+        // if selected month is current month → stop at today
+        if ($carbonMonth->isSameMonth(Carbon::now())) {
+            $end = Carbon::now()->toDateString();
+        } else {
+            $end = $carbonMonth->copy()->endOfMonth()->toDateString();
+        }
+
+        return DB::table(DB::raw("
+        (
+            SELECT DATE('$start' + INTERVAL seq DAY) as day
+            FROM (
+                SELECT a.N + b.N * 10 as seq
+                FROM (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                    UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
+                CROSS JOIN (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2) b -- supports up to 30 days
+            ) numbers
+            WHERE DATE('$start' + INTERVAL seq DAY) <= '$end'
+        ) days
+    "))
+            ->selectRaw('
+            days.day,
+
+            -- income from sessions (rooms 10 and 11 only)
+            COALESCE(SUM(ss.center_price), 0) center_income,
+            COALESCE(SUM(e.other), 0) as other,
+
+            -- charges for ten & eleven
+            COALESCE(MAX(c.charges_ten_eleven), 0) as charges_ten_eleven,
+
+            -- net
+            (
+                (COALESCE(SUM(ss.center_price), 0) + COALESCE(SUM(e.other), 0))
+                - COALESCE(MAX(c.charges_ten_eleven), 0)
+            ) as net
+        ')
+            ->leftJoin(DB::raw('sessions as s'), function ($join) {
+                $join->on(DB::raw('DATE(s.created_at)'), '=', 'days.day')
+                    ->whereIn('s.room', [10, 11]); // condition inside join
+            })
+            ->leftJoin(DB::raw('(
+            SELECT session_id, SUM(center_price) as center_price
+            FROM session_students
+            GROUP BY session_id
+        ) ss'), 's.id', '=', 'ss.session_id')
+            ->leftJoin(DB::raw('(
+            SELECT session_id, SUM(other) as other
+            FROM session_extras
+            GROUP BY session_id
+        ) e'), 's.id', '=', 'e.session_id')
+            ->leftJoin(DB::raw('(
+            SELECT
+                DATE(created_at) as charge_day,
+                SUM(CASE WHEN type = '.(int) ChargeType::ROOM_10_11.' THEN amount ELSE 0 END) as charges_ten_eleven
+            FROM charges
+            GROUP BY DATE(created_at)
+        ) c'), 'days.day', '=', 'c.charge_day')
             ->groupBy('days.day')
             ->orderBy('days.day')
             ->get();

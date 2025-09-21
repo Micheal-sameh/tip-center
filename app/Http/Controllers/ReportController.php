@@ -34,6 +34,7 @@ class ReportController extends Controller
         $this->middleware('permission:income_report')->only(['income', 'incomePdf']);
         $this->middleware('permission:monthly_income')->only(['monthlyIncome']);
         $this->middleware('permission:special_room_report')->only('specialRooms', 'downloadSpecialRooms');
+        $this->middleware('permission:monthly_special_rooms')->only('monthlyTenAndEleven');
     }
 
     public function index(ReportIndexRequest $request)
@@ -179,6 +180,16 @@ class ReportController extends Controller
         ];
 
         return view('reports.monthly-income', compact('reports', 'totals', 'month'));
+    }
+
+    public function monthlyTenAndEleven(MonthlyIncomeRequest $request)
+    {
+        $month = $request->month;
+        $data = $this->reportService->monthlyTenAndEleven($month);
+        $reports = $data['reports'];
+        $totals = $data['totals'];
+
+        return view('reports.monthly-special-rooms', compact('reports', 'totals', 'month'));
     }
 
     public function specialRooms(incomeFilterRequest $request)

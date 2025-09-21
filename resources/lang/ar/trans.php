@@ -93,4 +93,5 @@ return [
     'material' => 'ملازم',
     'date' => 'تاريخ',
     'to_pay' => 'مطلوب دفع',
+    'monthly_special_rooms' => 'التقرير الشهري ل10 و 11',
 ];
