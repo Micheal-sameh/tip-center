@@ -356,7 +356,6 @@ class SessionRepository extends BaseRepository
             ->withCount(['sessionStudents as total_paid_students' => function ($q) {
                 $q->whereColumn('center_price', 'sessions.center_price');
             }], 'center_price')
-            ->withSum('sessionStudents as total_center_price', 'center_price')
             ->withSum('sessionStudents as total_materials', 'materials')
             ->withSum('sessionStudents as total_printables', 'printables')
             ->get();

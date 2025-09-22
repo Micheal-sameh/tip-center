@@ -80,6 +80,7 @@
                                 <th>#</th>
                                 <th>Professor</th>
                                 <th>Session Date</th>
+                                <th>Room</th>
                                 <th>paid Students</th>
                                 <th>Centre</th>
                                 <th>Online</th>
@@ -100,6 +101,7 @@
                                     <td>{{ $session->professor->name ?? '-' }} -
                                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
                                     <td>{{ $session->created_at->format('d-m-Y') }}
+                                    <td>{{ $session->room }}
                                     <td>{{ $session->total_paid_students }}
                                     </td>
                                     <td>{{ $session->total_center_price > 0 ? number_format($session->total_center_price, 1) : '-' }}
@@ -147,6 +149,7 @@
                                 <tr>
                                     <th colspan="2" class="text-end">Totals:</th>
                                     <th>{{ $sessions->count() }}</th>
+                                    <th> - </th>
                                     <th>{{ $totals['paid_students'] }}</th>
                                     <th>{{ number_format($totals['center_price'], 1) }}</th>
                                     <th>{{ number_format($totals['online'], 1) }}</th>
