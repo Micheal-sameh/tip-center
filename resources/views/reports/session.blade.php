@@ -87,7 +87,7 @@
 
                                     $toPayTotal = isset($report->student->toPay)
                                         ? $report->student->toPay->sum(
-                                            fn($pay) => match ($selected_type) {
+                                            fn($pay) => match ((int) $selected_type) {
                                                 App\Enums\ReportType::PROFESSOR => $pay->to_pay +
                                                     $pay->to_pay_materials,
                                                 App\Enums\ReportType::CENTER => $pay->to_pay_center +
