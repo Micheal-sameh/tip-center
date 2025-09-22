@@ -60,7 +60,9 @@
         </div>
 
         @php
-            $has_balance = $professors->contains(fn($professor) => $professor->balance + $professor->materials_balance > 0);
+            $has_balance = $professors->contains(
+                fn($professor) => $professor->balance + $professor->materials_balance > 0,
+            );
         @endphp
         <!-- Main Content Card -->
         <div class="card shadow-sm">
@@ -139,7 +141,8 @@
                                             </div>
                                         </td>
                                         @if ($has_balance)
-                                            <td class="text-center">{{ $professor->balance + $professor->materials_balance }}</td>
+                                            <td class="text-center">
+                                                {{ $professor->balance + $professor->materials_balance }}</td>
                                         @endif
                                         <td>
                                             <div class="d-flex gap-1">
@@ -315,11 +318,33 @@
                             @endif
 
                             {{-- Pagination Elements --}}
-                            @foreach ($professors->getUrlRange(1, $professors->lastPage()) as $page => $url)
+                            @php
+                                $start = max(1, $professors->currentPage() - 2);
+                                $end = min($professors->lastPage(), $professors->currentPage() + 2);
+                            @endphp
+
+                            {{-- Show first page + dots if needed --}}
+                            @if ($start > 1)
+                                <li class="page-item"><a class="page-link" href="{{ $professors->url(1) }}">1</a></li>
+                                @if ($start > 2)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
+                            @endif
+
+                            {{-- Main page loop --}}
+                            @foreach ($professors->getUrlRange($start, $end) as $page => $url)
                                 <li class="page-item {{ $professors->currentPage() === $page ? 'active' : '' }}">
                                     <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                                 </li>
                             @endforeach
+                            @if ($end < $professors->lastPage())
+                                @if ($end < $professors->lastPage() - 1)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
+                                <li class="page-item"><a class="page-link"
+                                        href="{{ $professors->url($professors->lastPage()) }}">{{ $professors->lastPage() }}</a>
+                                </li>
+                            @endif
 
                             {{-- Next Page Link --}}
                             @if ($professors->hasMorePages())
