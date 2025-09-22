@@ -41,7 +41,7 @@ class ProfessorRepository extends BaseRepository
                 });
             })->when($input->has('stages'), function ($query) use ($input) {
                 $query->whereHas('stages', fn ($q) => $q->whereIn('stage', $input->stages));
-            });
+            })->orderBy('name');
 
         return $this->execute($query);
     }

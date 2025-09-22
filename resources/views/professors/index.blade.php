@@ -79,11 +79,35 @@
                         @endif
 
                         {{-- Pagination Elements --}}
-                        @foreach ($professors->getUrlRange(1, $professors->lastPage()) as $page => $url)
+                        @php
+                            $start = max(1, $professors->currentPage() - 3);
+                            $end = min($professors->lastPage(), $professors->currentPage() + 3);
+                        @endphp
+
+                        {{-- Show first page + dots if needed --}}
+                        @if ($start > 1)
+                            <li class="page-item"><a class="page-link" href="{{ $professors->url(1) }}">1</a></li>
+                            @if ($start > 2)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                        @endif
+
+                        {{-- Main page loop --}}
+                        @foreach ($professors->getUrlRange($start, $end) as $page => $url)
                             <li class="page-item {{ $professors->currentPage() === $page ? 'active' : '' }}">
                                 <a class="page-link" href="{{ $url }}">{{ $page }}</a>
                             </li>
                         @endforeach
+
+                        {{-- Show last page + dots if needed --}}
+                        @if ($end < $professors->lastPage())
+                            @if ($end < $professors->lastPage() - 1)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                            <li class="page-item"><a class="page-link"
+                                    href="{{ $professors->url($professors->lastPage()) }}">{{ $professors->lastPage() }}</a>
+                            </li>
+                        @endif
 
                         {{-- Next Page Link --}}
                         @if ($professors->hasMorePages())
