@@ -145,10 +145,13 @@ class ReportService
     public function specialRooms($input)
     {
         $sessions = $this->sessionRepository->specialRooms($input);
+        $settle = $this->chargeRepository->specialRoomsIncome($input);
+        $charges = $this->chargeRepository->specialRoomsCharge($input);
         $totals = [
             'attended_count' => 0,
             'paid_students' => 0,
             'center_price' => 0,
+            'overall_total' => 0,
         ];
 
         $sessions->each(function ($session) use (&$totals) {
@@ -156,7 +159,8 @@ class ReportService
             $totals['attended_count'] += $session->attended_count;
             $totals['center_price'] += $session->center;
         });
+        $totals['overall_total'] = $totals['center_price'] + $settle - $charges;
 
-        return compact('sessions', 'totals');
+        return compact('sessions', 'totals', 'settle', 'charges');
     }
 }

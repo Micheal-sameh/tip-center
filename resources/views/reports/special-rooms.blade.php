@@ -23,7 +23,8 @@
                 <button type="submit" class="btn btn-primary w-100 me-1">
                     <i class="fas fa-search me-1"></i> Filter
                 </button>
-                <a href="{{ route('reports.special-rooms-pdf', request()->all()) }}" class="btn btn-success w-100" id="exportBtn">
+                <a href="{{ route('reports.special-rooms-pdf', request()->all()) }}" class="btn btn-success w-100"
+                    id="exportBtn">
                     <i class="fas fa-file-export me-1"></i> Export
                 </a>
             </div>
@@ -82,11 +83,14 @@
                                     <td>{{ $session->professor->name ?? '-' }} -
                                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
                                     <td class="text-center">{{ $session->created_at->format('d-m-Y') ?? '-' }} </td>
-                                    <td class="text-center">{{ $session->total_paid_students > 0 ? $session->total_paid_students : '-' }}
+                                    <td class="text-center">
+                                        {{ $session->total_paid_students > 0 ? $session->total_paid_students : '-' }}
                                     </td>
-                                    <td class="text-center">{{ $session->center > 0 ? number_format($session->center, 1) : '-' }}
+                                    <td class="text-center">
+                                        {{ $session->center > 0 ? number_format($session->center, 1) : '-' }}
                                     </td>
-                                    <td class="text-center">{{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}
+                                    <td class="text-center">
+                                        {{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}
                                     </td>
                                 </tr>
                             @empty
@@ -110,6 +114,34 @@
                             </tfoot>
                         @endif
                     </table>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow border-0 rounded-4 mb-4">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-md-6 text-end fw-bold">Gap:</div>
+                    <div class="col-md-6 fw-bold text-danger">
+                        {{ number_format($gap ?? 0, 1) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-end fw-bold">Charges Total:</div>
+                    <div class="col-md-6 fw-bold text-danger">
+                        {{ number_format(-$charges ?? 0, 1) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-end fw-bold">Student Settle:</div>
+                    <div class="col-md-6 fw-bold text-danger">
+                        {{ number_format($settle ?? 0, 1) }}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6 text-end fw-bold">Final Total:</div>
+                    <div class="col-md-6 fw-bold text-success">
+                        {{ number_format($totals['overall_total'], 1) }}
+                    </div>
                 </div>
             </div>
         </div>
