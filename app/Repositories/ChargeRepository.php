@@ -85,6 +85,7 @@ class ChargeRepository extends BaseRepository
     public function reverseGap()
     {
         $charges = $this->model->where('reverse', 1)->get();
+        DB::beginTransaction();
         foreach ($charges as $charge) {
             $this->store([
                 'title' => 'reversed '.$charge->title,
@@ -92,11 +93,13 @@ class ChargeRepository extends BaseRepository
                 'type' => $charge->type,
                 'created_by' => $charge->created_by,
                 'created_at' => $charge->created_at,
+                'reverse' => 0,
             ]);
             $charge->update([
                 'reverse' => 0,
             ]);
         }
+        DB::commit();
     }
 
     public function income($input)
@@ -117,6 +120,20 @@ class ChargeRepository extends BaseRepository
     {
         return $this->incomeQuery($input)
             ->whereIn('type', [ChargeType::STUDENT_SETTLE_CENTER, ChargeType::STUDENT_SETTLE_PRINT])
+            ->sum('amount');
+    }
+
+    public function specialRoomsIncome($input)
+    {
+        return $this->incomeQuery($input)
+            ->where('type', ChargeType::STUDENT_SETTLE_CENTER_ROOM)
+            ->sum('amount');
+    }
+
+    public function specialRoomsCharge($input)
+    {
+        return $this->incomeQuery($input)
+            ->where('type', ChargeType::ROOM_10_11)
             ->sum('amount');
     }
 

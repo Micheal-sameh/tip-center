@@ -40,6 +40,53 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .summary-section {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .summary-card {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 50%;
+            margin-right: auto;
+        }
+
+        .summary-row {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #dee2e6;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-size: 14px;
+        }
+
+        .summary-label {
+            flex: 1;
+            text-align: left;
+            font-weight: bold;
+            padding-right: 15px;
+            color: #495057;
+        }
+
+        .summary-value {
+            flex: 1;
+            font-weight: bold;
+            text-align: left;
+        }
+        .summary {
+            margin-top: 20px;
+            text-align: right;
+        }
+
     </style>
 </head>
 
@@ -89,6 +136,38 @@
             </tfoot>
         @endif
     </table>
+    @if (count($sessions))
+        <div class="summary-section">
+            <div class="summary-card">
+                <div class="summary-row">
+                    <div class="summary-label">Charges Total:</div>
+                    <div class="summary-value text-danger">
+                        -{{ number_format($charges ?? 0, 1) }} EGP
+                    </div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label">Students Settle:</div>
+                    <div class="summary-value text-danger">
+                        {{ number_format($settle ?? 0, 1) }} EGP
+                    </div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label">Final Total:</div>
+                    <div class="summary-value text-success final-total">
+                        {{ number_format($totals['overall_total'], 1) }}
+                        EGP
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- <div class="summary">
+                <div class="total-box">
+                    <div class="total-label">Grand Total</div>
+                    <div class="total-amount"> {{ number_format(($totals['overall_total'] - $charges + $gap ?? 0) - ($totals['charges_total'] ?? 0), 1) }} EGP</div>
+                </div>
+            </div> --}}
+    @endif
 </body>
 
 </html>
