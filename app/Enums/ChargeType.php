@@ -16,6 +16,8 @@ class ChargeType
     public const SALARY  = 6;
     public const RENT    = 7;
     public const ROOM_10_11 = 8;
+    public const STUDENT_SETTLE_CENTER = 9;
+    public const STUDENT_SETTLE_PRINT = 10;
 
     private static array $translations = [
         self::CENTER => [

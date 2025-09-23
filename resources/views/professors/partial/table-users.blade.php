@@ -85,6 +85,7 @@
                                     <th width="120">{{ __('trans.stages') }}</th>
                                     @if ($has_balance)
                                         <th width="80">{{ __('trans.balance') }}</th>
+                                        <th width="80">{{ __('Balance Materials') }}</th>
                                     @endif
                                     <th width="120">{{ __('trans.actions') }}</th>
                                 </tr>
@@ -142,7 +143,9 @@
                                         </td>
                                         @if ($has_balance)
                                             <td class="text-center">
-                                                {{ $professor->balance + $professor->materials_balance }}</td>
+                                                {{ $professor->balance  }}</td>
+                                            <td class="text-center">
+                                                {{ $professor->materials_balance }}</td>
                                         @endif
                                         <td>
                                             <div class="d-flex gap-1">
