@@ -139,13 +139,17 @@ class SessionStudentRepository extends BaseRepository
     {
         $pay = $this->findById($id);
         info('before pay '.$pay);
+        $isPast = $pay->session->created_at->isPast();
+
         DB::beginTransaction();
         if ($pay->to_pay || $pay->to_pay_materials) {
             $professor = $pay->session->professor;
-            $professor->update([
-                'balance' => $professor->balance + $pay->to_pay,
-                'materials_balance' => $professor->materials_balance + $pay->to_pay_materials,
-            ]);
+            if ($isPast) {
+                $professor->update([
+                    'balance' => $professor->balance + $pay->to_pay,
+                    'materials_balance' => $professor->materials_balance + $pay->to_pay_materials,
+                ]);
+            }
             $pay->update([
                 'professor_price' => $pay->professor_price + $pay->to_pay,
                 'materials' => $pay->materials + $pay->to_pay_materials,
@@ -153,16 +157,26 @@ class SessionStudentRepository extends BaseRepository
                 'to_pay_materials' => 0,
             ]);
         }
-        if ($pay->to_pay_center || $pay->to_pay_print) {
-            $amount = $pay->to_pay_center + $pay->to_pay_print;
+        if ($pay->to_pay_center > 0 || $pay->to_pay_print > 0) {
             $title = $pay->student->name.' session '.$pay->session->professor->name.' '.$pay->session->created_at->format('d-m');
-
-            $this->chargeRepository->store([
-                'title' => $title,
-                'amount' => $amount,
-                'type' => ChargeType::GAP,
-                'reverse' => 1,
-            ]);
+            if ($isPast) {
+                if ($pay->to_pay_center > 0) {
+                    $this->chargeRepository->store([
+                        'title' => $title,
+                        'amount' => $pay->to_pay_center,
+                        'type' => ChargeType::STUDENT_SETTLE_CENTER,
+                        'reverse' => 1,
+                    ]);
+                }
+                if ($pay->to_pay_print > 0) {
+                    $this->chargeRepository->store([
+                        'title' => $title,
+                        'amount' => $pay->to_pay_print,
+                        'type' => ChargeType::STUDENT_SETTLE_PRINT,
+                        'reverse' => 1,
+                    ]);
+                }
+            }
 
             $pay->update([
                 'center_price' => $pay->center_price + $pay->to_pay_center,

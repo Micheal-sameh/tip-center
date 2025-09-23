@@ -55,6 +55,7 @@ class ReportService
         $sessions = $this->sessionRepository->income($input);
         $charges = $this->chargeRepository->income($input);
         $gap = $this->chargeRepository->incomeGap($input);
+        $settle = $this->chargeRepository->incomeSettle($input);
         $totals = [
             'paid_students' => 0,
             'center_price' => 0,
@@ -90,9 +91,12 @@ class ReportService
             + $totals['other_print']
             + $totals['to_professor']
             + $totals['online']
-            + $totals['copies'];
+            + $totals['copies']
+            + $settle
+            - $gap
+            - $charges;
 
-        return compact('sessions', 'totals', 'charges', 'gap');
+        return compact('sessions', 'totals', 'charges', 'gap', 'settle');
     }
 
     public function monthlyIncome($month)

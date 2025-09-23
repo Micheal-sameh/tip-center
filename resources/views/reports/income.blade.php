@@ -185,10 +185,16 @@
                         {{ number_format(-$charges ?? 0, 1) }}
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-6 text-end fw-bold">Student Settle:</div>
+                    <div class="col-md-6 fw-bold text-danger">
+                        {{ number_format($settle ?? 0, 1) }}
+                    </div>
+                </div>
                 <div class="row mt-2">
                     <div class="col-md-6 text-end fw-bold">Final Total:</div>
                     <div class="col-md-6 fw-bold text-success">
-                        {{ number_format(($totals['overall_total'] - $charges + $gap ?? 0) - ($totals['charges_total'] ?? 0), 1) }}
+                        {{ number_format($totals['overall_total'], 1) }}
                     </div>
                 </div>
             </div>

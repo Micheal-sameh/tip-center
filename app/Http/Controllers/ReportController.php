@@ -136,8 +136,9 @@ class ReportController extends Controller
         $totals = $data['totals'];
         $charges = $data['charges'];
         $gap = $data['gap'];
+        $settle = $data['settle'];
 
-        return view('reports.income', compact('sessions', 'totals', 'charges', 'gap'));
+        return view('reports.income', compact('sessions', 'totals', 'charges', 'gap', 'settle'));
     }
 
     public function incomePdf(incomeFilterRequest $request)
