@@ -115,7 +115,7 @@
                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
                     <td>{{ $session->created_at->format('d-m-Y') }}</td>
                     <td>{{ $session->total_paid_students > 0 ? $session->total_paid_students : '-' }}</td>
-                    <td>{{ $session->center > 0 ? number_format($session->center, 1) : '-' }}</td>
+                    <td>{{ ($session->center + $session->sessionExtra?->other) > 0 ? number_format($session->center + $session->sessionExtra?->other, 1) : '-' }}</td>
                     <td>{{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}</td>
                 </tr>
             @empty

@@ -337,7 +337,12 @@ class SessionRepository extends BaseRepository
             ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()))
             ->with([
                 'professor' => fn ($q) => $q->select('id', 'name'),
-                'sessionExtra',
+                'sessionExtra' => fn ($q) => $q->select([
+                    'id', 'session_id', 'other', 'other_print', 'markers', 'copies', 'to_professor',
+                    DB::raw('(CASE WHEN session_id IN (
+                                    SELECT id FROM sessions WHERE room NOT IN (10,11)
+                                ) THEN other ELSE NULL END) as other'),
+                ]),
             ])
             ->withSum('onlines as totalOnline', 'center')
             ->withCount(['sessionStudents',
@@ -584,6 +589,7 @@ class SessionRepository extends BaseRepository
             ->whereIn('room', [10, 11])
             ->with([
                 'professor' => fn ($q) => $q->select('id', 'name'),
+                'sessionExtra' => fn ($q) => $q->select('id', 'session_id', 'other'),
             ])
             ->withSum('sessionStudents as center', 'center_price')
             ->withCount(['sessionStudents',
