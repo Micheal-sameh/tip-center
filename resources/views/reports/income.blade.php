@@ -161,7 +161,7 @@
                                     <th>{{ number_format($totals['to_professor'] ?? 0, 1) }}</th>
                                     <th>{{ $totals['attended_count'] }}</th>
                                     <th class="fw-bold text-primary">
-                                        {{ number_format($totals['overall_total'] + $charges - $settle, 1) }}
+                                        {{ number_format($totals['overall_total'] + $gap + $charges - $settle, 1) }}
                                     </th>
                                 </tr>
 
