@@ -157,7 +157,7 @@ class ReportService
         $sessions->each(function ($session) use (&$totals) {
             $totals['paid_students'] += $session->total_paid_students;
             $totals['attended_count'] += $session->attended_count;
-            $totals['center_price'] += $session->center;
+            $totals['center_price'] += $session->center + $session->sessionExtra?->other;
         });
         $totals['overall_total'] = $totals['center_price'] + $settle - $charges;
 

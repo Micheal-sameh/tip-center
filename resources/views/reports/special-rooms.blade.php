@@ -87,7 +87,7 @@
                                         {{ $session->total_paid_students > 0 ? $session->total_paid_students : '-' }}
                                     </td>
                                     <td class="text-center">
-                                        {{ $session->center > 0 ? number_format($session->center, 1) : '-' }}
+                                        {{ $session->center > 0 ? number_format($session->center + $session->sessionExtra?->other, 1) : '-' }}
                                     </td>
                                     <td class="text-center">
                                         {{ $session->session_students_count > 0 ? $session->session_students_count : '-' }}
