@@ -139,7 +139,8 @@ class SessionStudentRepository extends BaseRepository
     {
         $pay = $this->findById($id);
         info('before pay '.$pay);
-        $isPast = $pay->session->created_at->isPast();
+        $sessionDate = $pay->session->created_at->startOfDay();
+        $isPast = $sessionDate->lt(today());
 
         DB::beginTransaction();
         if ($pay->to_pay || $pay->to_pay_materials) {
@@ -164,7 +165,7 @@ class SessionStudentRepository extends BaseRepository
                     $this->chargeRepository->store([
                         'title' => $title,
                         'amount' => $pay->to_pay_center,
-                        'type' => ChargeType::STUDENT_SETTLE_CENTER,
+                        'type' => ($pay->session == 10 || $pay->session == 11) ? ChargeType::STUDENT_SETTLE_CENTER_ROOM : ChargeType::STUDENT_SETTLE_CENTER,
                         'reverse' => 1,
                     ]);
                 }
