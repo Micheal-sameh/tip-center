@@ -148,10 +148,11 @@ class ReportController extends Controller
         $totals = $data['totals'];
         $charges = $data['charges'];
         $gap = $data['gap'];
+        $settle = $data['settle'];
         $date_from = Carbon::parse($request->date_from) ?? today();
         $date_to = Carbon::parse($request->date_to) ?? today();
 
-        $pdf = Pdf::loadView('reports.income-pdf', compact('sessions', 'totals', 'date_from', 'date_to', 'charges', 'gap'));
+        $pdf = Pdf::loadView('reports.income-pdf', compact('sessions', 'totals', 'date_from', 'date_to', 'charges', 'gap', 'settle'));
         $filename = Str::slug('income').'.pdf';
 
         return $pdf->download($filename);

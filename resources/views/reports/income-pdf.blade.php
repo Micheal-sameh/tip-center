@@ -310,7 +310,7 @@
                         <th>{{ number_format($totals['other_print'] ?? 0, 1) }}</th>
                         <th>{{ number_format($totals['to_professor'] ?? 0, 1) }}</th>
                         <th>{{ $totals['attended_count'] }}</th>
-                        <th class="text-primary">{{ number_format($totals['overall_total'], 1) }}</th>
+                        <th class="text-primary">{{ number_format($totals['overall_total'] - $charges - $settle, 1) }}</th>
                     </tr>
                 </tfoot>
             @endif
@@ -335,7 +335,7 @@
                     <div class="summary-row">
                         <div class="summary-label">Final Total:</div>
                         <div class="summary-value text-success final-total">
-                            {{ number_format(($totals['overall_total'] - $charges + $gap ?? 0) - ($totals['charges_total'] ?? 0), 1) }}
+                            {{ number_format($totals['overall_total'], 1) }}
                             EGP
                         </div>
                     </div>
