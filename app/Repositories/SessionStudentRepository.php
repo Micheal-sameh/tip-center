@@ -228,17 +228,28 @@ class SessionStudentRepository extends BaseRepository
 
     public function session($input)
     {
+        $session = $this->model->findById($input['session_id']);
+
         $query = $this->model
             ->with([
-                'student' => function ($query) use ($input) {
-                    isset($input['with_phones'])
-                     ? $query->select('id', 'name', 'phone', 'parent_phone')
-                     : $query->select('id', 'name');
+                'student' => function ($q) use ($input, $session) {
+                    if (isset($input['with_phones'])) {
+                        $q->select('id', 'name', 'phone', 'parent_phone');
+                    } else {
+                        $q->select('id', 'name');
+                    }
+
+                    // eager-load toPay filtered by professor
+                    $q->with(['toPay' => function ($sub) use ($session) {
+                        $sub->whereHas('session', function ($sq) use ($session) {
+                            $sq->where('professor_id', $session->professor_id);
+                        });
+                    }]);
                 },
             ])
             ->where('session_id', $input['session_id']);
         if (isset($input['type'])) {
-            match ((int) $input['type']) {
+            $query = match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials', 'is_attend'),
                 ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay_center', 'to_pay_print', 'is_attend'),
                 default => $query,
