@@ -136,85 +136,74 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="d-flex justify-content-center pt-2">
+        <div class="d-flex justify-content-center">
             @if ($sessions->hasPages())
                 <nav>
                     <ul class="pagination">
                         {{-- Previous Page Link --}}
                         @if ($sessions->onFirstPage())
-                            <li class="page-item disabled">
-                                <span class="page-link">&laquo;</span>
-                            </li>
+                            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
                         @else
                             <li class="page-item">
-                                <a class="page-link"
-                                    href="{{ $sessions->previousPageUrl() . '&' . http_build_query(request()->except('page')) }}"
-                                    rel="prev">&laquo;</a>
+                                <a class="page-link" href="{{ $sessions->previousPageUrl() }}" rel="prev">&laquo;</a>
                             </li>
                         @endif
 
-                        {{-- Pagination Elements --}}
-                        @foreach ($sessions->getUrlRange(1, $sessions->lastPage()) as $page => $url)
-                            <li class="page-item {{ $sessions->currentPage() === $page ? 'active' : '' }}">
-                                <a class="page-link"
-                                    href="{{ $url . '&' . http_build_query(request()->except('page')) }}">{{ $page }}</a>
+                        @php
+                            $current = $sessions->currentPage();
+                            $last = $sessions->lastPage();
+                            $start = max($current - 2, 2);
+                            $end = min($current + 2, $last - 1);
+                        @endphp
+
+                        {{-- First page --}}
+                        <li class="page-item {{ $current === 1 ? 'active' : '' }}">
+                            <a class="page-link" href="{{ $sessions->url(1) }}">1</a>
+                        </li>
+
+                        {{-- Dots before start --}}
+                        @if ($start > 2)
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        @endif
+
+                        {{-- Page range --}}
+                        @for ($page = $start; $page <= $end; $page++)
+                            <li class="page-item {{ $current === $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $sessions->url($page) }}">{{ $page }}</a>
                             </li>
-                        @endforeach
+                        @endfor
+
+                        {{-- Dots after end --}}
+                        @if ($end < $last - 1)
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        @endif
+
+                        {{-- Last page --}}
+                        @if ($last > 1)
+                            <li class="page-item {{ $current === $last ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $sessions->url($last) }}">{{ $last }}</a>
+                            </li>
+                        @endif
 
                         {{-- Next Page Link --}}
                         @if ($sessions->hasMorePages())
                             <li class="page-item">
-                                <a class="page-link"
-                                    href="{{ $sessions->nextPageUrl() . '&' . http_build_query(request()->except('page')) }}"
-                                    rel="next">&raquo;</a>
+                                <a class="page-link" href="{{ $sessions->nextPageUrl() }}" rel="next">&raquo;</a>
                             </li>
                         @else
-                            <li class="page-item disabled">
-                                <span class="page-link">&raquo;</span>
-                            </li>
+                            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
                         @endif
                     </ul>
                 </nav>
             @endif
         </div>
-
-        {{-- Report Type Modal --}}
-        {{-- <div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="reportTypeForm" method="GET" action="{{ route('reports.session') }}" target="_blank">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Choose Report Type</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="session_id" id="reportSessionId">
-                        <div class="mb-3">
-                            <label for="reportTypeSelect" class="form-label">Report From</label>
-                            <select name="type" id="reportTypeSelect" class="form-select" required>
-                                <option value="" disabled selected>Select Type</option>
-                                @foreach (\App\Enums\ReportType::all() as $type)
-                                    <option value="{{ $type['value'] }}">{{ $type['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-file-alt me-1"></i> View Report
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div> --}}
     @endsection
 
     @push('scripts')
         <script>
             function openReport(sessionId) {
                 const url = `{{ route('reports.session') }}?session_id=${sessionId}&type=1`;
-                window.location.href = url; 
+                window.location.href = url;
             }
         </script>
     @endpush
