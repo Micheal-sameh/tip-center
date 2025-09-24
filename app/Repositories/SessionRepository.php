@@ -341,7 +341,7 @@ class SessionRepository extends BaseRepository
                     'id', 'session_id', 'other', 'other_print', 'markers', 'copies', 'to_professor',
                     DB::raw('(CASE WHEN session_id IN (
                                     SELECT id FROM sessions WHERE room NOT IN (10,11)
-                                ) THEN other ELSE NULL END) as other'),
+                                ) THEN other ELSE 0 END) as other'),
                 ]),
             ])
             ->withSum('onlines as totalOnline', 'center')

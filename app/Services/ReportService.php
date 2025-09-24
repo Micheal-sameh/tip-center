@@ -93,7 +93,7 @@ class ReportService
             + $totals['online']
             + $totals['copies']
             + $settle
-            - $gap
+            + $gap
             - $charges;
 
         return compact('sessions', 'totals', 'charges', 'gap', 'settle');
