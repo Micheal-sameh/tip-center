@@ -310,7 +310,7 @@
                         <th>{{ number_format($totals['other_print'] ?? 0, 1) }}</th>
                         <th>{{ number_format($totals['to_professor'] ?? 0, 1) }}</th>
                         <th>{{ $totals['attended_count'] }}</th>
-                        <th class="text-primary">{{ number_format($totals['overall_total'] + $charges + gap - $settle , 1) }}</th>
+                        <th class="text-primary">{{ number_format($totals['overall_total'] + $charges - $gap - $settle , 1) }}</th>
                     </tr>
                 </tfoot>
             @endif
