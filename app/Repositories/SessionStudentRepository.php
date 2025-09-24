@@ -34,7 +34,7 @@ class SessionStudentRepository extends BaseRepository
 
     protected function execute(Builder $query): Collection|LengthAwarePaginator
     {
-        return $this->pagination ? $query->paginate($this->perPage) : $query->get();
+        return $this->pagination ? $query->paginate($this->perPage)->appends(request()->query()) : $query->get();
     }
 
     public function index($input)
