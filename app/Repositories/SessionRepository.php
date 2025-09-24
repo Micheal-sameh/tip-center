@@ -34,7 +34,7 @@ class SessionRepository extends BaseRepository
 
     protected function execute(Builder $query): Collection|LengthAwarePaginator
     {
-        return $this->pagination ? $query->paginate($this->perPage) : $query->get();
+        return $this->pagination ? $query->paginate($this->perPage)->appends(request()->query()) : $query->get();
     }
 
     public function index($input)
@@ -439,7 +439,7 @@ class SessionRepository extends BaseRepository
                 COALESCE(SUM(e.other_center), 0) +
                 COALESCE(SUM(so.online_center), 0) +
                 COALESCE(SUM(e.other_print), 0) +
-                COALESCE(SUM(c.charges_gap), 0)
+                COALESCE(MAX(c.charges_gap), 0)
             ) -
             (
                 COALESCE(MAX(c.charges_center), 0) +
@@ -483,14 +483,17 @@ class SessionRepository extends BaseRepository
         GROUP BY session_id
     ) ss'), 's.id', '=', 'ss.session_id')
             ->leftJoin(DB::raw('(
-        SELECT session_id,
-                SUM(markers) as markers,
-                SUM(copies) as copies,
-                SUM(other) as other_center,
-                SUM(other_print) as other_print
-        FROM session_extras
-        GROUP BY session_id
-    ) e'), 's.id', '=', 'e.session_id')
+                SELECT session_id,
+                    SUM(markers) as markers,
+                    SUM(copies) as copies,
+                    SUM(CASE WHEN session_id IN (
+                            SELECT id FROM sessions WHERE room NOT IN (10,11)
+                        ) THEN other ELSE 0 END) as other_center,
+                    SUM(other_print) as other_print
+                FROM session_extras
+                GROUP BY session_id
+            ) e'), 's.id', '=', 'e.session_id')
+
             ->leftJoin(DB::raw('(
         SELECT
             DATE(created_at) as charge_day,
