@@ -257,7 +257,7 @@ class SessionRepository extends BaseRepository
             })
             ->when(isset($input['from']), fn ($q) => $q->whereDate('created_at', '>=', $input['from']))
             ->when(isset($input['to']), fn ($q) => $q->whereDate('created_at', '<=', $input['to']))
-            ->latest();
+            ->orderByDesc('id');
 
         return $this->execute($query);
     }
