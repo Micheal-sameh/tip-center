@@ -38,7 +38,8 @@
             <div>
                 <strong>Warning:</strong> This student has a pending payment of <br>
                 @foreach ($to_pay as $pay)
-                    <strong>{{ number_format($pay->to_pay + $pay->to_pay_center + $pay->to_pay_print + $pay->to_pay_materials, 2) }} EGP</strong> from session
+                    <strong>{{ number_format($pay->to_pay + $pay->to_pay_center + $pay->to_pay_print + $pay->to_pay_materials, 2) }}
+                        EGP</strong> from session
                     {{ $pay->session->professor->name }} - {{ $pay->created_at->format('d-m-Y') }}. <br>
                 @endforeach
             </div>
@@ -101,14 +102,14 @@
                                 <input type="hidden" name="session_id" value="{{ $session->id }}">
                                 <input type="hidden" name="student_id" value="{{ $student->id }}">
                                 <input type="number" id="paidAmountInput" name="total_paid" step="1" min="0"
-                                    class="form-control" placeholder="Enter total paid"
-                                    value="{{ old('total_paid', (int) $defaultTotal) }}" required>
+                                    class="form-control" placeholder="{{ (int) $defaultTotal }}"
+                                    value="{{ old('total_paid') }}" required>
                                 <button type="submit" class="btn btn-success">Pay</button>
                             </div>
                         </div>
                     </form>
                     @if (!$to_pay->isEmpty())
-                        <button class="btn btn-warning mb-3" data-bs-toggle="modal" data-bs-target="#settleDueModal">
+                        <button class="btn btn-warning mb-3 mt-2" data-bs-toggle="modal" data-bs-target="#settleDueModal">
                             <i class="fas fa-wallet me-1"></i> Settle Previous Dues
                         </button>
                     @endif
@@ -151,7 +152,7 @@
                             <label>Center Paid</label>
                             <input type="number" name="center_price" id="center_price" step="1" min="0"
                                 class="form-control"
-                                value="{{ $specialCase  && $specialCase->pivot->center_price > 0 ? $specialCase->pivot->center_price : $session->center_price }}">
+                                value="{{ $specialCase && $specialCase->pivot->center_price > 0 ? $specialCase->pivot->center_price : $session->center_price }}">
                         </div>
                         <div class="col-md-4">
                             <label>Professor Paid</label>
@@ -186,8 +187,8 @@
                         </div>
                         <div class="col-md-4">
                             <label>To Pay (Materials)</label>
-                            <input type="number" name="to_pay_materials" id="to_pay_materials" value="0" step="1"
-                                min="0" class="form-control">
+                            <input type="number" name="to_pay_materials" id="to_pay_materials" value="0"
+                                step="1" min="0" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label>Remaining</label>
@@ -220,8 +221,12 @@
 
             // Total session cost from backend
             const total =
-                {{ ($specialCase && $specialCase->pivot->center_price > 0 ? $specialCase->pivot->center_price : $session->center_price ?? 0) +
-                    ($specialCase && $specialCase->pivot->professor_price > 0 ? $specialCase->pivot->professor_price : $session->professor_price ?? 0) +
+                {{ ($specialCase && $specialCase->pivot->center_price > 0
+                    ? $specialCase->pivot->center_price
+                    : $session->center_price ?? 0) +
+                    ($specialCase && $specialCase->pivot->professor_price > 0
+                        ? $specialCase->pivot->professor_price
+                        : $session->professor_price ?? 0) +
                     ($session->printables ?? 0) +
                     ($session->materials ?? 0) }};
 
@@ -239,7 +244,9 @@
                 remaining.value = total - paid;
             }
 
-            [center_price, professor_price, printables, materials, to_pay, to_pay_center, to_pay_print, to_pay_materials].forEach(input => {
+            [center_price, professor_price, printables, materials, to_pay, to_pay_center, to_pay_print,
+                to_pay_materials
+            ].forEach(input => {
                 input.addEventListener("input", calculateRemaining);
             });
 
@@ -263,7 +270,9 @@
                         @forelse($to_pay as $payment)
                             <div class="border rounded p-3 mb-2 d-flex justify-content-between align-items-center">
                                 <div>
-                                    <strong>Due:</strong> {{ number_format($payment->to_pay + $payment->to_pay_center + $payment->to_pay_print + $payment->to_pay_materials, 2) }} EGP
+                                    <strong>Due:</strong>
+                                    {{ number_format($payment->to_pay + $payment->to_pay_center + $payment->to_pay_print + $payment->to_pay_materials, 2) }}
+                                    EGP
                                     <br>
                                     <small class="text-muted">Date:
                                         {{ $payment->created_at->format('M d, Y') }}</small>
@@ -271,7 +280,8 @@
                                 <form action="{{ route('payments.pay', $payment->id) }}" method="POST" class="ms-2">
                                     @csrf
                                     @method('put')
-                                    <input type="hidden" name="amount" value="{{ $payment->to_pay + $payment->to_pay_center + $payment->to_pay_print + $payment->to_pay_materials }}">
+                                    <input type="hidden" name="amount"
+                                        value="{{ $payment->to_pay + $payment->to_pay_center + $payment->to_pay_print + $payment->to_pay_materials }}">
                                     <button type="submit" class="btn btn-sm btn-success">
                                         <i class="fas fa-money-bill-wave me-1"></i> Pay
                                     </button>
@@ -325,5 +335,13 @@
             });
         });
     </script>
+
+    @if (!$specialCase)
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('paidAmountInput').focus();
+            });
+        </script>
+    @endif
 
 @endpush
