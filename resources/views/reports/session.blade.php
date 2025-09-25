@@ -154,11 +154,11 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $online->name }}</td>
                                         @if ($selected_type != \App\Enums\ReportType::CENTER)
-                                            <td class="text-end">{{ number_format($online->professor, 2) }}</td>
                                             <td class="text-end">{{ number_format($online->materials, 2) }}</td>
+                                            <td class="text-end">{{ number_format($online->professor, 2) }}</td>
                                         @endif
                                         @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
-                                            <td class="text-end">{{ number_format($online->center, 2) }}</td>
+                                            <td class="text-end">{{ number_format($online->center ?? 0, 2) }}</td>
                                         @endif
                                         <td>{{ App\Enums\StagesEnum::getStringValue($online->stage) }}</td>
                                     </tr>
@@ -245,6 +245,12 @@
                     @endif
 
                     @if ($session->professor->balance)
+                        @php
+                            $balanceValue =
+                                $selected_type == App\Enums\ReportType::PROFESSOR
+                                    ? $session->professor->balance
+                                    : -$session->professor->balance;
+                        @endphp
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
@@ -258,6 +264,12 @@
                     @endif
 
                     @if ($session->professor->materials_balance > 0)
+                        @php
+                            $materialsBalanceValue =
+                                $selected_type == App\Enums\ReportType::PROFESSOR
+                                    ? $session->professor->materials_balance
+                                    : -$session->professor->materials_balance;
+                        @endphp
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">

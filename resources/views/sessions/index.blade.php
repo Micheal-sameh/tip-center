@@ -122,8 +122,10 @@
                         <div class="col-md-2">
                             <select name="status" class="form-select">
                                 <option value="">All Statuses</option>
-                                @foreach(App\Enums\SessionStatus::all() as $status)
-                                <option value="{{ $status['value'] }}" {{ request('status') == $status['value'] ? 'selected' : '' }}>{{$status['name']}}</option>
+                                @foreach (App\Enums\SessionStatus::all() as $status)
+                                    <option value="{{ $status['value'] }}"
+                                        {{ request('status') == $status['value'] ? 'selected' : '' }}>
+                                        {{ $status['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -234,7 +236,7 @@
 
 
                     // Add the status input
-                                       // Reset form and show modal
+                    // Reset form and show modal
                     modal.find('form')[0].reset();
                     modal.modal('show');
                 });
@@ -308,7 +310,7 @@
                     clearInterval(refreshInterval);
                 }
                 refreshInterval = setInterval(reloadSessions, 300000);
-                setTimeout(reloadSessions, 1000); // Initial load after 1 second
+                setTimeout(reloadSessions, 30000); // Initial load after 1 second
             }
 
             // Initialize

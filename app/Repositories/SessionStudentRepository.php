@@ -165,7 +165,7 @@ class SessionStudentRepository extends BaseRepository
                     $this->chargeRepository->store([
                         'title' => $title,
                         'amount' => $pay->to_pay_center,
-                        'type' => ($pay->session == 10 || $pay->session == 11) ? ChargeType::STUDENT_SETTLE_CENTER_ROOM : ChargeType::STUDENT_SETTLE_CENTER,
+                        'type' => ($pay->session_id == 10 || $pay->session_id == 11) ? ChargeType::STUDENT_SETTLE_CENTER_ROOM : ChargeType::STUDENT_SETTLE_CENTER,
                         'reverse' => 1,
                     ]);
                 }

@@ -152,13 +152,13 @@
                             <label>Center Paid</label>
                             <input type="number" name="center_price" id="center_price" step="1" min="0"
                                 class="form-control"
-                                value="{{ $specialCase && $specialCase->pivot->center_price > 0 ? $specialCase->pivot->center_price : $session->center_price }}">
+                                value="{{ $specialCase && $specialCase->pivot->center_price > 0 ? $specialCase->pivot->center_price : 0 }}">
                         </div>
                         <div class="col-md-4">
                             <label>Professor Paid</label>
                             <input type="number" name="professor_price" id="professor_price" step="1" min="0"
                                 class="form-control"
-                                value="{{ $specialCase && $specialCase->pivot->professor_price > 0 ? $specialCase->pivot->professor_price : $session->professor_price }}">
+                                value="{{ $specialCase && $specialCase->pivot->professor_price > 0 ? $specialCase->pivot->professor_price : 0 }}">
                         </div>
                         <div class="col-md-4">
                             <label>Student Papers (Center)</label>
@@ -221,12 +221,8 @@
 
             // Total session cost from backend
             const total =
-                {{ ($specialCase && $specialCase->pivot->center_price > 0
-                    ? $specialCase->pivot->center_price
-                    : $session->center_price ?? 0) +
-                    ($specialCase && $specialCase->pivot->professor_price > 0
-                        ? $specialCase->pivot->professor_price
-                        : $session->professor_price ?? 0) +
+                {{ ($specialCase && $specialCase->pivot->center_price > 0 ? $specialCase->pivot->center_price : 0) +
+                    ($specialCase && $specialCase->pivot->professor_price > 0 ? $specialCase->pivot->professor_price : 0) +
                     ($session->printables ?? 0) +
                     ($session->materials ?? 0) }};
 
