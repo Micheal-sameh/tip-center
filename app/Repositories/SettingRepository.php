@@ -6,6 +6,7 @@ use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 class SettingRepository extends BaseRepository
 {
@@ -35,6 +36,20 @@ class SettingRepository extends BaseRepository
         return $this->execute($query);
     }
 
+    public function getAllSettings()
+    {
+        return Cache::remember('settings', 3600, function () {
+            return $this->model->pluck('value', 'key')->toArray();
+        });
+    }
+
+    public function getSetting($key)
+    {
+        $settings = $this->getAllSettings();
+
+        return $settings[$key] ?? null;
+    }
+
     public function update($settings, $files)
     {
         foreach ($settings as $key => $setting) {
@@ -56,5 +71,8 @@ class SettingRepository extends BaseRepository
                 ]);
             }
         }
+
+        // Clear cache after update
+        Cache::forget('settings');
     }
 }

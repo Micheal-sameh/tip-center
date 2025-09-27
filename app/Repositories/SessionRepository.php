@@ -41,6 +41,7 @@ class SessionRepository extends BaseRepository
     {
         $this->checkActive();
         $query = $this->model->query()
+            ->with(['professor', 'sessionExtra'])
             ->withCount(['sessionStudents',
                 'sessionStudents as attended_count' => function ($query) {
                     $query->where('is_attend', 1);
@@ -92,6 +93,7 @@ class SessionRepository extends BaseRepository
     public function report($input)
     {
         $query = $this->model->where('id', $input['session_id'])
+            ->with('professor')
             ->with([
                 'onlines' => function ($q) use ($input) {
                     if (isset($input['type'])) {
@@ -251,7 +253,8 @@ class SessionRepository extends BaseRepository
             $input['from'] = today();
             $input['to'] = today();
         }
-        $query = $this->model->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
+        $query = $this->model->with('professor')
+            ->when(isset($input['stage']), fn ($q) => $q->where('stage', $input['stage']))
             ->when(isset($input['professor']), function ($query) use ($input) {
                 $query->whereHas('professor', fn ($q) => $q->where('name', 'like', '%'.$input['professor'].'%'));
             })
