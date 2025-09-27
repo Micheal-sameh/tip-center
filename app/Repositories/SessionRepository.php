@@ -303,15 +303,14 @@ class SessionRepository extends BaseRepository
 
         foreach ($professors as $professor) {
             foreach ($professor->stages as $stage) {
+                if ($stage->day != now()->dayOfWeek) {
+                    continue;
+                }
 
                 $lastSession = $stage->getLastForProfessorAndStage(
                     $stage->professor_id,
                     $stage->stage
                 );
-
-                if (! $lastSession) {
-                    continue;
-                }
 
                 $session = $this->model->create([
                     'professor_id' => $stage->professor_id,
@@ -319,11 +318,12 @@ class SessionRepository extends BaseRepository
                     'start_at' => $stage->from,
                     'end_at' => $stage->to,
                     'type' => SessionType::OFFLINE,
-                    'professor_price' => $lastSession->professor_price,
-                    'center_price' => $lastSession->center_price,
+                    'professor_price' => $lastSession?->professor_price ?? 0,
+                    'center_price' => $lastSession?->center_price ?? 0,
                     'status' => SessionStatus::PENDING,
-                    'room' => $lastSession->room,
+                    'room' => $lastSession?->room ?? null,
                 ]);
+
                 $session->sessionExtra()->create();
             }
         }
