@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Enums\ReportType;
 use App\Enums\StagesEnum;
+use App\Http\Requests\ChargeIndexRequest;
 use App\Http\Requests\incomeFilterRequest;
 use App\Http\Requests\MonthlyIncomeRequest;
 use App\Http\Requests\ParentReportRequest;
 use App\Http\Requests\ReportIndexRequest;
 use App\Http\Requests\SessionReportRequest;
 use App\Http\Requests\StudentReportRequest;
+use App\Http\Requests\StudentSettlementsRequest;
 use App\Services\ProfessorService;
 use App\Services\ReportService;
 use App\Services\SessionService;
@@ -32,7 +34,7 @@ class ReportController extends Controller
         $this->middleware('permission:students_report')->only(['student', 'downloadStudentReport']);
         $this->middleware('permission:sessions_report')->only(['session', 'index', 'downloadSessionReport']);
         $this->middleware('permission:income_report')->only(['income', 'incomePdf']);
-        $this->middleware('permission:monthly_income')->only(['monthlyIncome']);
+        $this->middleware('permission:monthly_income')->only(['monthlyIncome', 'charges', 'chargesPdf']);
         $this->middleware('permission:special_room_report')->only('specialRooms', 'downloadSpecialRooms');
         $this->middleware('permission:monthly_special_rooms')->only('monthlyTenAndEleven');
     }
@@ -47,11 +49,14 @@ class ReportController extends Controller
     public function session(SessionReportRequest $request)
     {
         $session = $this->sessionservice->report($request->validated());
-        $reports = $this->reportService->session($request->validated());
+        $data = $this->reportService->session($request->validated());
+        $reports = $data['reports'];
+        $settlements = $data['settlements'];
+        $settlementTotals = $data['settlementTotals'];
         $selected_type = $request->type ?? ReportType::ALL;
         $attendedCount = $reports->where('is_attend', true)->count();
 
-        return view('reports.session', compact('reports', 'session', 'selected_type', 'attendedCount'));
+        return view('reports.session', compact('reports', 'session', 'selected_type', 'attendedCount', 'settlements', 'settlementTotals'));
     }
 
     public function student(StudentReportRequest $request)
@@ -220,5 +225,59 @@ class ReportController extends Controller
         $filename = Str::slug('Room 10 & 11').'.pdf';
 
         return $pdf->download($filename);
+    }
+
+    public function charges(ChargeIndexRequest $request)
+    {
+        $data = $this->reportService->chargesReport($request->validated());
+        $charges = $data['charges'];
+        $total = $data['total'];
+        $title = 'Charges Report';
+        $route = 'charges';
+
+        return view('reports.charges', compact('charges', 'total', 'title', 'route'));
+    }
+
+    public function chargesPdf(ChargeIndexRequest $request)
+    {
+        $data = $this->reportService->chargesReport($request->validated());
+        $charges = $data['charges'];
+        $total = $data['total'];
+        $date_from = Carbon::parse($request->date_from) ?? today();
+        $date_to = Carbon::parse($request->date_to) ?? today();
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'orientation' => 'P',
+            'default_font_size' => 12,
+            'default_font' => 'DejaVuSans',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 16,
+            'margin_bottom' => 16,
+            'margin_header' => 9,
+            'margin_footer' => 9,
+        ]);
+
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+        $mpdf->SetDirectionality('ltr');
+
+        $html = view('reports.charges-pdf', compact('charges', 'total', 'date_from', 'date_to'))->render();
+        $mpdf->WriteHTML($html);
+
+        $filename = Str::slug('charges-report').'.pdf';
+
+        return $mpdf->Output($filename, 'D');
+    }
+
+    public function studentSettlements(StudentSettlementsRequest $request)
+    {
+        $data = $this->reportService->studentSettlements($request->validated());
+        $settlements = $data['settlements'];
+        $totals = $data['totals'];
+
+        return view('reports.student-settlements', compact('settlements', 'totals'));
     }
 }

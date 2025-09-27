@@ -95,4 +95,9 @@ class Student extends Model implements HasMedia
             ->withPivot(['id', 'professor_price', 'center_price'])
             ->withTimestamps();
     }
+
+    public function settlements()
+    {
+        return $this->hasMany(StudentSettlement::class);
+    }
 }

@@ -294,12 +294,6 @@
                                         </a>
                                     </li>
                                 @endcan
-                                <li>
-                                    <a class="dropdown-item {{ request()->routeIs('audits.index') ? 'active' : '' }}"
-                                        href="{{ route('audits.index') }}">
-                                        <i class="fas fa-history me-2"></i> Audit Logs
-                                    </a>
-                                </li>
                             </ul>
                         </li>
                     @endcanany
@@ -342,63 +336,84 @@
                                         </a>
                                     </li>
                                 @endcan
-
-                                @can('special_room_report')
-                                    <li>
-                                        <a class="dropdown-item {{ request()->routeIs('reports.special-rooms') ? 'active' : '' }}"
-                                            href="{{ route('reports.special-rooms') }}">
-                                            <i class="fas fa-door-open me-2 text-success"></i> {{ __('trans.room 10 & 11') }}
-                                        </a>
-                                    </li>
-                                @endcan
-
-                                @can('income_report')
-                                    <li>
-                                        <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
-                                            href="{{ route('reports.income') }}">
-                                            <i class="fas fa-chart-line me-2 text-info"></i> {{ __('trans.income') }}
-                                        </a>
-                                    </li>
-                                @endcan
-
                                 @can('monthly_income')
                                     <li>
-                                        <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
-                                            href="{{ route('reports.monthly-income') }}">
-                                            <i class="fas fa-calendar-alt me-2 text-success"></i> {{ __('trans.monthly_income') }}
-                                        </a>
-                                    </li>
-                                @endcan
-
-                                @can('monthly_special_rooms')
+                                        <a href="{{ route('reports.charges') }}"
+                                            class="dropdown-item {{ request()->routeIs('reports.charges') ? 'active' : '' }}">
+                                            <i class="fas fa-chart-bar me-2 text-success"></i> Charges Report
                                     <li>
-                                        <a class="dropdown-item {{ request()->routeIs('reports.monthly-ten-eleven') ? 'active' : '' }}"
-                                            href="{{ route('reports.monthly-ten-eleven') }}">
-                                            <i class="fas fa-calendar-check me-2 text-danger"></i>
-                                            {{ __('trans.monthly_special_rooms') }}
+                                        <a href="{{ route('reports.student-settlements') }}"
+                                            class="dropdown-item {{ request()->routeIs('reports.student-settlements') ? 'active' : '' }}">
+                                            <i class="fas fa-hand-holding-usd me-2 text-primary"></i> Student Settlements
                                         </a>
                                     </li>
-                                @endcan
-                            </ul>
-                        </li>
-                    @endcanany
+                                    </a>
+                            </li>
+                        @endcan
+                        @can('monthly_income')
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('audits.index') ? 'active' : '' }}"
+                                    href="{{ route('audits.index') }}">
+                                    <i class="fas fa-history me-2"></i> Audit Logs
+                                </a>
+                            </li>
+                        @endcan
+                        @can('special_room_report')
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('reports.special-rooms') ? 'active' : '' }}"
+                                    href="{{ route('reports.special-rooms') }}">
+                                    <i class="fas fa-door-open me-2 text-success"></i> {{ __('trans.room 10 & 11') }}
+                                </a>
+                            </li>
+                        @endcan
+
+                        @can('income_report')
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('reports.income') ? 'active' : '' }}"
+                                    href="{{ route('reports.income') }}">
+                                    <i class="fas fa-chart-line me-2 text-info"></i> {{ __('trans.income') }}
+                                </a>
+                            </li>
+                        @endcan
+
+                        @can('monthly_income')
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
+                                    href="{{ route('reports.monthly-income') }}">
+                                    <i class="fas fa-calendar-alt me-2 text-success"></i> {{ __('trans.monthly_income') }}
+                                </a>
+                            </li>
+                        @endcan
+
+                        @can('monthly_special_rooms')
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('reports.monthly-ten-eleven') ? 'active' : '' }}"
+                                    href="{{ route('reports.monthly-ten-eleven') }}">
+                                    <i class="fas fa-calendar-check me-2 text-danger"></i>
+                                    {{ __('trans.monthly_special_rooms') }}
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                    </li>
+                @endcanany
 
 
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="nav-link bg-transparent border-0 w-100 text-start">
-                                <i class="fas fa-sign-out-alt me-2"></i> {{ __('trans.logout') }}
-                            </button>
-                        </form>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a href="{{ route('loginPage') }}" class="nav-link">
-                            <i class="fas fa-sign-in-alt me-2"></i> {{ __('trans.login') }}
-                        </a>
-                    </li>
-                @endauth
+                <li class="nav-item">
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="nav-link bg-transparent border-0 w-100 text-start">
+                            <i class="fas fa-sign-out-alt me-2"></i> {{ __('trans.logout') }}
+                        </button>
+                    </form>
+                </li>
+            @else
+                <li class="nav-item">
+                    <a href="{{ route('loginPage') }}" class="nav-link">
+                        <i class="fas fa-sign-in-alt me-2"></i> {{ __('trans.login') }}
+                    </a>
+                </li>
+            @endauth
             </ul>
         </nav>
 

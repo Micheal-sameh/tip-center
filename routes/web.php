@@ -137,6 +137,9 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/monthly-special-rooms', [ReportController::class, 'monthlyTenAndEleven'])->name('reports.monthly-ten-eleven');
             Route::get('/special-rooms', [ReportController::class, 'specialRooms'])->name('reports.special-rooms');
             Route::get('/special-rooms-pdf', [ReportController::class, 'downloadSpecialRooms'])->name('reports.special-rooms-pdf');
+            Route::get('/student-settlements', [ReportController::class, 'studentSettlements'])->name('reports.student-settlements');
+            Route::get('/charges', [ReportController::class, 'charges'])->name('reports.charges');
+            Route::get('/charges-pdf', [ReportController::class, 'chargesPdf'])->name('reports.chargesPdf');
         });
 
         Route::prefix('audits')->group(function () {
@@ -167,6 +170,7 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::prefix('reset')->group(function () {
             Route::post('/', [ResetController::class, 'resetYearly'])->name('reset.year');
         });
+        Route::get('/student-settlements', [ReportController::class, 'studentSettlements'])->name('reports.student-settlements');
     });
 
     Route::prefix('parents')->group(function () {

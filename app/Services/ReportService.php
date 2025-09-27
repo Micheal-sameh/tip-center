@@ -6,6 +6,7 @@ use App\Repositories\ChargeRepository;
 use App\Repositories\SessionRepository;
 use App\Repositories\SessionStudentRepository;
 use App\Repositories\StudentRepository;
+use App\Repositories\StudentSettlementRepository;
 
 class ReportService
 {
@@ -14,6 +15,7 @@ class ReportService
         protected SessionRepository $sessionRepository,
         protected StudentRepository $studentRepository,
         protected ChargeRepository $chargeRepository,
+        protected StudentSettlementRepository $studentSettlementRepository,
     ) {}
 
     public function index($input)
@@ -37,9 +39,23 @@ class ReportService
 
     public function session($input)
     {
-        $student = $this->sessionStudentRepository->session($input);
+        $reports = $this->sessionStudentRepository->session($input);
+        $sessionId = $input['session_id'];
+        $settlements = $this->studentSettlementRepository->settlementsFilter(['session_id' => $sessionId])->with(['student' => function ($q) {
+            $q->select('name', 'id');
+        }, 'professor' => function ($q) {
+            $q->select('name', 'id');
+        }])->get();
 
-        return $student;
+        // Calculate totals for settlements based on selected_type
+        $settlementTotals = [
+            'total_center' => $settlements->sum('center'),
+            'total_professor' => $settlements->sum('professor_amount'),
+            'total_materials' => $settlements->sum('materials'),
+            'total_printables' => $settlements->sum('printables'),
+        ];
+
+        return compact('reports', 'settlements', 'settlementTotals');
     }
 
     public function student($input)
@@ -165,5 +181,26 @@ class ReportService
         $totals['overall_total'] = $totals['center_price'] + $settle - $charges;
 
         return compact('sessions', 'totals', 'settle', 'charges');
+    }
+
+    public function chargesReport($input)
+    {
+        return $this->chargeRepository->chargesReport($input);
+    }
+
+    public function studentSettlements($input)
+    {
+        $settlements = $this->studentSettlementRepository->index($input);
+
+        $query = $this->studentSettlementRepository->settlementsFilter($input);
+        $totals = [
+            'total_amount' => (clone $query)->sum('amount'),
+            'total_center' => (clone $query)->sum('center'),
+            'total_professor' => (clone $query)->sum('professor_amount'),
+            'total_materials' => (clone $query)->sum('materials'),
+            'total_printables' => (clone $query)->sum('printables'),
+        ];
+
+        return compact('settlements', 'totals');
     }
 }
