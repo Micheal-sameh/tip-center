@@ -411,6 +411,7 @@ class SessionRepository extends BaseRepository
         COALESCE(MAX(c.charges_markers), 0) as charges_markers,
         COALESCE(MAX(c.charges_others), 0) as charges_others,
         COALESCE(MAX(c.charges_copies), 0) as charges_copies,
+        COALESCE(MAX(c.charges_student_print), 0) as charges_student_print,
 
         -- income total
         (
@@ -421,7 +422,8 @@ class SessionRepository extends BaseRepository
             COALESCE(SUM(e.other_center), 0) +
             COALESCE(SUM(so.online_center), 0) +
             COALESCE(SUM(e.other_print), 0) +
-            COALESCE(MAX(c.charges_gap), 0)
+            COALESCE(MAX(c.charges_gap), 0) +
+            COALESCE(MAX(c.charges_student_print), 0)
         ) as income_total,
 
         -- charges total
@@ -442,7 +444,8 @@ class SessionRepository extends BaseRepository
                 COALESCE(SUM(e.other_center), 0) +
                 COALESCE(SUM(so.online_center), 0) +
                 COALESCE(SUM(e.other_print), 0) +
-                COALESCE(MAX(c.charges_gap), 0)
+                COALESCE(MAX(c.charges_gap), 0) +
+                COALESCE(MAX(c.charges_student_print), 0)
             ) -
             (
                 COALESCE(MAX(c.charges_center), 0) +
@@ -505,7 +508,8 @@ class SessionRepository extends BaseRepository
             SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::MARKERS.' THEN amount ELSE 0 END) as charges_markers,
             SUM(CASE WHEN type IN ('.(int) \App\Enums\ChargeType::OTHERS.', '.(int) \App\Enums\ChargeType::RENT.', '.(int) \App\Enums\ChargeType::SALARY.')
                      THEN amount ELSE 0 END) as charges_others,
-            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::GAP.' THEN amount ELSE 0 END) as charges_gap
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::GAP.' THEN amount ELSE 0 END) as charges_gap,
+            SUM(CASE WHEN type = '.(int) \App\Enums\ChargeType::STUDENT_PRINT.' THEN amount ELSE 0 END) as charges_student_print
         FROM charges
         GROUP BY DATE(created_at)
         ) c'), 'days.day', '=', 'c.charge_day')

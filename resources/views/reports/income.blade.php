@@ -4,18 +4,30 @@
     <div class="container py-4" style="max-width: 1200px;">
 
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-start mb-4">
             <h4 class="mb-0">Sessions Income Report</h4>
-            <form action="{{ route('charges.store') }}" method="POST" class="d-flex align-items-center ms-3">
-                @csrf
-                <input type="hidden" value="{{ auth()->user()->name }}" name="title">
-                <input type="hidden" value="{{ App\Enums\chargeType::GAP }}" name="type">
-                <input type="number" step="1" name="amount" class="form-control form-control-sm me-2"
-                    placeholder="Enter Gap" required>
-                <button type="submit" class="btn btn-sm btn-outline-danger">
-                    Save
-                </button>
-            </form>
+            <div class="d-flex flex-column">
+                <form action="{{ route('charges.store') }}" method="POST" class="d-flex align-items-center mb-2">
+                    @csrf
+                    <input type="hidden" value="{{ auth()->user()->name }}" name="title">
+                    <input type="hidden" value="{{ App\Enums\chargeType::GAP }}" name="type">
+                    <input type="number" step="1" name="amount" class="form-control form-control-sm me-2"
+                        placeholder="Enter Gap" required>
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        Save
+                    </button>
+                </form>
+                <form action="{{ route('charges.store') }}" method="POST" class="d-flex align-items-center">
+                    @csrf
+                    <input type="hidden" value="{{ auth()->user()->name }}" name="title">
+                    <input type="hidden" value="{{ App\Enums\chargeType::STUDENT_PRINT }}" name="type">
+                    <input type="number" step="1" name="amount" class="form-control form-control-sm me-2"
+                        placeholder="Enter Student Print" required>
+                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                        Save
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- Filter Form -->
@@ -161,7 +173,7 @@
                                     <th>{{ number_format($totals['to_professor'] ?? 0, 1) }}</th>
                                     <th>{{ $totals['attended_count'] }}</th>
                                     <th class="fw-bold text-primary">
-                                        {{ number_format($totals['overall_total'] + $charges - $gap - $settle, 1) }}
+                                        {{ number_format($totals['overall_total'] + $charges - $gap - $settle - $studentPrint, 1) }}
                                     </th>
                                 </tr>
 
@@ -177,6 +189,12 @@
                     <div class="col-md-6 text-end fw-bold">Gap:</div>
                     <div class="col-md-6 fw-bold text-danger">
                         {{ number_format($gap ?? 0, 1) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-end fw-bold">Student Print:</div>
+                    <div class="col-md-6 fw-bold text-danger">
+                        {{ number_format($studentPrint ?? 0, 1) }}
                     </div>
                 </div>
                 <div class="row">

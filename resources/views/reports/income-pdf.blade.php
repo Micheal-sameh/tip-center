@@ -310,7 +310,7 @@
                         <th>{{ number_format($totals['other_print'] ?? 0, 1) }}</th>
                         <th>{{ number_format($totals['to_professor'] ?? 0, 1) }}</th>
                         <th>{{ $totals['attended_count'] }}</th>
-                        <th class="text-primary">{{ number_format($totals['overall_total'] + $charges - $gap - $settle , 1) }}</th>
+                        <th class="text-primary">{{ number_format($totals['overall_total'] + $charges - $gap - $settle - $studentPrint, 1) }}</th>
                     </tr>
                 </tfoot>
             @endif
@@ -324,6 +324,12 @@
                         <div class="summary-label">Gap:</div>
                         <div class="summary-value text-danger">
                             {{ number_format($gap ?? 0, 1) }} EGP
+                        </div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">Student Print:</div>
+                        <div class="summary-value text-danger">
+                            {{ number_format($studentPrint ?? 0, 1) }} EGP
                         </div>
                     </div>
                     <div class="summary-row">

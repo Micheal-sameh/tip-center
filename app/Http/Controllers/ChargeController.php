@@ -34,6 +34,15 @@ class ChargeController extends Controller
         return view('charges.index', compact('charges', 'title', 'route'));
     }
 
+    public function studentPrint(ChargeIndexRequest $request)
+    {
+        $charges = $this->chargeRepository->studentPrint($request->validated());
+        $title = 'Student Print';
+        $route = 'student-print';
+
+        return view('charges.index', compact('charges', 'title', 'route'));
+    }
+
     public function create()
     {
         return view('charges.create');
@@ -54,6 +63,7 @@ class ChargeController extends Controller
 
         return match ($type) {
             ChargeType::GAP => to_route('charges.gap'),
+            ChargeType::STUDENT_PRINT => to_route('charges.student-print'),
             default => to_route('charges.index'),
         };
     }

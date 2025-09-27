@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ProfessorController;
@@ -138,6 +139,10 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/special-rooms-pdf', [ReportController::class, 'downloadSpecialRooms'])->name('reports.special-rooms-pdf');
         });
 
+        Route::prefix('audits')->group(function () {
+            Route::get('/', [AuditController::class, 'index'])->name('audits.index');
+        });
+
         Route::prefix('student-special-cases')->group(function () {
             Route::get('/create', [StudentSpecialCaseController::class, 'create'])->name('student-special-cases.create');
             Route::post('', [StudentSpecialCaseController::class, 'store'])->name('student-special-cases.store');
@@ -153,6 +158,7 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::prefix('charges')->group(function () {
             Route::get('/', [ChargeController::class, 'index'])->name('charges.index');
             Route::get('/gap', [ChargeController::class, 'gap'])->name('charges.gap');
+            Route::get('/student-print', [ChargeController::class, 'studentPrint'])->name('charges.student-print');
             Route::get('/create', [ChargeController::class, 'create'])->name('charges.create');
             Route::post('/', [ChargeController::class, 'store'])->name('charges.store');
             Route::delete('/{id}', [ChargeController::class, 'delete'])->name('charges.destroy');

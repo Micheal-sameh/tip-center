@@ -60,7 +60,7 @@
                                 <td class="fw-semibold">{{ \Carbon\Carbon::parse($report->day)->format('d') }}</td>
                                 <td>{{ number_format($report->center + $report->other_center + $report->online_center, 2) }}
                                 </td>
-                                <td>{{ number_format($report->copies + $report->print + $report->other_print, 2) }}</td>
+                                <td>{{ number_format($report->copies + $report->print + $report->other_print + $report->charges_student_print, 2) }}</td>
                                 <td>{{ number_format($report->markers, 2) }}</td>
                                 <td>{{ number_format($report->charges_gap, 2) }}</td>
                                 <td class="fw-bold text-success">{{ number_format($report->income_total, 2) }}</td>

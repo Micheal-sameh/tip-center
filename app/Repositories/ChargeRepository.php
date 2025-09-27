@@ -37,7 +37,7 @@ class ChargeRepository extends BaseRepository
         $query = $this->chargesFilter($input)
             ->when($user->can('charges_salary'), fn ($q) => $q->whereNot('type', ChargeType::GAP))
             ->when(! $user->can('charges_salary'), fn ($q) => $q->whereNotIn('type', [ChargeType::GAP, ChargeType::SALARY, ChargeType::RENT]))
-            ->whereNotIn('type', [ChargeType::STUDENT_SETTLE_CENTER, ChargeType::STUDENT_SETTLE_PRINT])
+            ->whereNotIn('type', [ChargeType::STUDENT_SETTLE_CENTER, ChargeType::STUDENT_SETTLE_PRINT, ChargeType::STUDENT_PRINT])
             ->latest();
 
         return $this->execute($query);
@@ -47,6 +47,15 @@ class ChargeRepository extends BaseRepository
     {
         $query = $this->chargesFilter($input)
             ->where('type', ChargeType::GAP)
+            ->latest();
+
+        return $this->execute($query);
+    }
+
+    public function studentPrint($input)
+    {
+        $query = $this->chargesFilter($input)
+            ->where('type', ChargeType::STUDENT_PRINT)
             ->latest();
 
         return $this->execute($query);
@@ -105,7 +114,7 @@ class ChargeRepository extends BaseRepository
     public function income($input)
     {
         return $this->incomeQuery($input)
-            ->whereNotIn('type', [ChargeType::GAP, ChargeType::STUDENT_SETTLE_CENTER, ChargeType::STUDENT_SETTLE_PRINT])
+            ->whereNotIn('type', [ChargeType::GAP, ChargeType::STUDENT_SETTLE_CENTER, ChargeType::STUDENT_SETTLE_PRINT, ChargeType::STUDENT_PRINT])
             ->sum('amount');
     }
 
@@ -120,6 +129,13 @@ class ChargeRepository extends BaseRepository
     {
         return $this->incomeQuery($input)
             ->whereIn('type', [ChargeType::STUDENT_SETTLE_CENTER, ChargeType::STUDENT_SETTLE_PRINT])
+            ->sum('amount');
+    }
+
+    public function incomeStudentPrint($input)
+    {
+        return $this->incomeQuery($input)
+            ->where('type', ChargeType::STUDENT_PRINT)
             ->sum('amount');
     }
 
