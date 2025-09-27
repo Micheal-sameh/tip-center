@@ -2,6 +2,18 @@
 
 namespace App\Providers;
 
+use App\Models\Charge;
+use App\Models\Professor;
+use App\Models\Session;
+use App\Models\SessionExtra;
+use App\Models\SessionStudent;
+use App\Models\Student;
+use App\Observers\ChargeObserver;
+use App\Observers\ProfessorObserver;
+use App\Observers\SessionExtraObserver;
+use App\Observers\SessionObserver;
+use App\Observers\SessionStudentObserver;
+use App\Observers\StudentObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -25,7 +37,12 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Session::observe(SessionObserver::class);
+        SessionExtra::observe(SessionExtraObserver::class);
+        SessionStudent::observe(SessionStudentObserver::class);
+        Charge::observe(ChargeObserver::class);
+        Professor::observe(ProfessorObserver::class);
+        Student::observe(StudentObserver::class);
     }
 
     /**

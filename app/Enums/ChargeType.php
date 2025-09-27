@@ -8,17 +8,29 @@ use InvalidArgumentException;
 
 class ChargeType
 {
-    public const CENTER  = 1;
-    public const COPIES  = 2;
+    public const CENTER = 1;
+
+    public const COPIES = 2;
+
     public const MARKERS = 3;
-    public const OTHERS  = 4;
-    public const GAP     = 5;
-    public const SALARY  = 6;
-    public const RENT    = 7;
+
+    public const OTHERS = 4;
+
+    public const GAP = 5;
+
+    public const SALARY = 6;
+
+    public const RENT = 7;
+
     public const ROOM_10_11 = 8;
+
     public const STUDENT_SETTLE_CENTER = 9;
+
     public const STUDENT_SETTLE_PRINT = 10;
+
     public const STUDENT_SETTLE_CENTER_ROOM = 11;
+
+    public const STUDENT_PRINT = 12;
 
     private static array $translations = [
         self::CENTER => [
@@ -52,6 +64,10 @@ class ChargeType
         self::ROOM_10_11 => [
             'en' => 'Charges 10 & 11',
             'ar' => 'مصاريف 10 & 11',
+        ],
+        self::STUDENT_PRINT => [
+            'en' => 'Student Print',
+            'ar' => 'طباعة الطالب',
         ],
     ];
 

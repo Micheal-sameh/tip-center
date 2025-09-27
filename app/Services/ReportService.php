@@ -56,6 +56,7 @@ class ReportService
         $charges = $this->chargeRepository->income($input);
         $gap = $this->chargeRepository->incomeGap($input);
         $settle = $this->chargeRepository->incomeSettle($input);
+        $studentPrint = $this->chargeRepository->incomeStudentPrint($input);
         $totals = [
             'paid_students' => 0,
             'center_price' => 0,
@@ -94,9 +95,10 @@ class ReportService
             + $totals['copies']
             + $settle
             + $gap
+            + $studentPrint
             - $charges;
 
-        return compact('sessions', 'totals', 'charges', 'gap', 'settle');
+        return compact('sessions', 'totals', 'charges', 'gap', 'settle', 'studentPrint');
     }
 
     public function monthlyIncome($month)
@@ -107,7 +109,7 @@ class ReportService
             return $item->center + $item->other_center + $item->online_center;
         });
         $copies = $reports->sum(function ($item) {
-            return $item->print + $item->copies + $item->other_print;
+            return $item->print + $item->copies + $item->other_print + $item->charges_student_print;
         });
         $markers = $reports->sum('markers');
         $total_income = $reports->sum('income_total');
@@ -122,10 +124,11 @@ class ReportService
         $net_copies = $reports->sum('net_copies');
         $net_markers = $reports->sum('net_markers');
         $net_others = $reports->sum('net_others');
+        $studentPrint = $reports->sum('charges_student_print');
 
         return compact('reports', 'center', 'copies', 'markers', 'total_income', 'gap', 'charges_center',
             'charges_markers', 'charges_others', 'charges_copies', 'total_charges', 'total_difference',
-            'net_center', 'net_copies', 'net_markers', 'net_others');
+            'net_center', 'net_copies', 'net_markers', 'net_others', 'studentPrint');
     }
 
     public function monthlyTenAndEleven($month)

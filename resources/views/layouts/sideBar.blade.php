@@ -294,6 +294,12 @@
                                         </a>
                                     </li>
                                 @endcan
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('audits.index') ? 'active' : '' }}"
+                                        href="{{ route('audits.index') }}">
+                                        <i class="fas fa-history me-2"></i> Audit Logs
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     @endcanany
@@ -326,6 +332,13 @@
                                         <a href="{{ route('charges.gap') }}"
                                             class="dropdown-item {{ request()->routeIs('charges.gap') ? 'active' : '' }}">
                                             <i class="fas fa-balance-scale me-2 text-warning"></i> {{ __('trans.gap') }}
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="{{ route('charges.student-print') }}"
+                                            class="dropdown-item {{ request()->routeIs('charges.student-print') ? 'active' : '' }}">
+                                            <i class="fas fa-print me-2 text-info"></i> Student Print
                                         </a>
                                     </li>
                                 @endcan
