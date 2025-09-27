@@ -347,6 +347,12 @@
                                         <a href="{{ route('reports.charges') }}"
                                             class="dropdown-item {{ request()->routeIs('reports.charges') ? 'active' : '' }}">
                                             <i class="fas fa-chart-bar me-2 text-success"></i> Charges Report
+                                    <li>
+                                        <a href="{{ route('reports.student-settlements') }}"
+                                            class="dropdown-item {{ request()->routeIs('reports.student-settlements') ? 'active' : '' }}">
+                                            <i class="fas fa-hand-holding-usd me-2 text-primary"></i> Student Settlements
+                                        </a>
+                                    </li>
                                         </a>
                                     </li>
                                 @endcan

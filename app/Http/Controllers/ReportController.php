@@ -11,6 +11,7 @@ use App\Http\Requests\ParentReportRequest;
 use App\Http\Requests\ReportIndexRequest;
 use App\Http\Requests\SessionReportRequest;
 use App\Http\Requests\StudentReportRequest;
+use App\Http\Requests\StudentSettlementsRequest;
 use App\Services\ProfessorService;
 use App\Services\ReportService;
 use App\Services\SessionService;
@@ -266,5 +267,14 @@ class ReportController extends Controller
         $filename = Str::slug('charges-report').'.pdf';
 
         return $mpdf->Output($filename, 'D');
+    }
+
+    public function studentSettlements(StudentSettlementsRequest $request)
+    {
+        $data = $this->reportService->studentSettlements($request->validated());
+        $settlements = $data['settlements'];
+        $totals = $data['totals'];
+
+        return view('reports.student-settlements', compact('settlements', 'totals'));
     }
 }

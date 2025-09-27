@@ -6,6 +6,7 @@ use App\Repositories\ChargeRepository;
 use App\Repositories\SessionRepository;
 use App\Repositories\SessionStudentRepository;
 use App\Repositories\StudentRepository;
+use App\Repositories\StudentSettlementRepository;
 
 class ReportService
 {
@@ -14,6 +15,7 @@ class ReportService
         protected SessionRepository $sessionRepository,
         protected StudentRepository $studentRepository,
         protected ChargeRepository $chargeRepository,
+        protected StudentSettlementRepository $studentSettlementRepository,
     ) {}
 
     public function index($input)
@@ -170,5 +172,21 @@ class ReportService
     public function chargesReport($input)
     {
         return $this->chargeRepository->chargesReport($input);
+    }
+
+    public function studentSettlements($input)
+    {
+        $settlements = $this->studentSettlementRepository->index($input);
+
+        $query = $this->studentSettlementRepository->settlementsFilter($input);
+        $totals = [
+            'total_amount' => (clone $query)->sum('amount'),
+            'total_center' => (clone $query)->sum('center'),
+            'total_professor' => (clone $query)->sum('professor_amount'),
+            'total_materials' => (clone $query)->sum('materials'),
+            'total_printables' => (clone $query)->sum('printables'),
+        ];
+
+        return compact('settlements', 'totals');
     }
 }

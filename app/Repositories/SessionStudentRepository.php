@@ -19,6 +19,7 @@ class SessionStudentRepository extends BaseRepository
     public function __construct(
         SessionStudent $model,
         protected ChargeRepository $chargeRepository,
+        protected StudentSettlementRepository $studentSettlementRepository,
     ) {
         $this->model = $model;
     }
@@ -143,6 +144,10 @@ class SessionStudentRepository extends BaseRepository
         $isPast = $sessionDate->lt(today());
 
         DB::beginTransaction();
+        $professor_amount = $pay->to_pay;
+        $materials = $pay->to_pay_materials;
+        $center = $pay->to_pay_center;
+        $printables = $pay->to_pay_print;
         if ($pay->to_pay || $pay->to_pay_materials) {
             $professor = $pay->session->professor;
             if ($isPast) {
@@ -191,11 +196,26 @@ class SessionStudentRepository extends BaseRepository
         }
         info('after pay '.$pay);
         info('professor '.$professor);
+        $totalPaid = $professor_amount + $materials + $center + $printables;
+        if ($totalPaid > 0) {
+            $this->studentSettlementRepository->store([
+                'student_id' => $pay->student_id,
+                'session_id' => $pay->session_id,
+                'professor_id' => $pay->session->professor_id,
+                'amount' => $totalPaid,
+                'description' => 'Payment settlement for session',
+                'session_student_ids' => [$pay->id],
+                'settled_at' => now(),
+                'center' => $center,
+                'professor_amount' => $professor_amount,
+                'materials' => $materials,
+                'printables' => $printables,
+            ]);
+        }
 
         DB::commit();
 
         return $pay;
-
     }
 
     public function absentStudents($session_id, $studentsIds)
