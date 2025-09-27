@@ -39,9 +39,23 @@ class ReportService
 
     public function session($input)
     {
-        $student = $this->sessionStudentRepository->session($input);
+        $reports = $this->sessionStudentRepository->session($input);
+        $sessionId = $input['session_id'];
+        $settlements = $this->studentSettlementRepository->settlementsFilter(['session_id' => $sessionId])->with(['student' => function ($q) {
+            $q->select('name', 'id');
+        }, 'professor' => function ($q) {
+            $q->select('name', 'id');
+        }])->get();
 
-        return $student;
+        // Calculate totals for settlements based on selected_type
+        $settlementTotals = [
+            'total_center' => $settlements->sum('center'),
+            'total_professor' => $settlements->sum('professor_amount'),
+            'total_materials' => $settlements->sum('materials'),
+            'total_printables' => $settlements->sum('printables'),
+        ];
+
+        return compact('reports', 'settlements', 'settlementTotals');
     }
 
     public function student($input)

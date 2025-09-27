@@ -49,11 +49,14 @@ class ReportController extends Controller
     public function session(SessionReportRequest $request)
     {
         $session = $this->sessionservice->report($request->validated());
-        $reports = $this->reportService->session($request->validated());
+        $data = $this->reportService->session($request->validated());
+        $reports = $data['reports'];
+        $settlements = $data['settlements'];
+        $settlementTotals = $data['settlementTotals'];
         $selected_type = $request->type ?? ReportType::ALL;
         $attendedCount = $reports->where('is_attend', true)->count();
 
-        return view('reports.session', compact('reports', 'session', 'selected_type', 'attendedCount'));
+        return view('reports.session', compact('reports', 'session', 'selected_type', 'attendedCount', 'settlements', 'settlementTotals'));
     }
 
     public function student(StudentReportRequest $request)
