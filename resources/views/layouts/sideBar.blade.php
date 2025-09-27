@@ -342,6 +342,14 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('monthly_income')
+                                    <li>
+                                        <a href="{{ route('reports.charges') }}"
+                                            class="dropdown-item {{ request()->routeIs('reports.charges') ? 'active' : '' }}">
+                                            <i class="fas fa-chart-bar me-2 text-success"></i> Charges Report
+                                        </a>
+                                    </li>
+                                @endcan
 
                                 @can('special_room_report')
                                     <li>

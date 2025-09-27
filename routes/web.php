@@ -136,6 +136,8 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/monthly-special-rooms', [ReportController::class, 'monthlyTenAndEleven'])->name('reports.monthly-ten-eleven');
             Route::get('/special-rooms', [ReportController::class, 'specialRooms'])->name('reports.special-rooms');
             Route::get('/special-rooms-pdf', [ReportController::class, 'downloadSpecialRooms'])->name('reports.special-rooms-pdf');
+            Route::get('/charges', [ReportController::class, 'charges'])->name('reports.charges');
+            Route::get('/charges-pdf', [ReportController::class, 'chargesPdf'])->name('reports.chargesPdf');
         });
 
         Route::prefix('audits')->group(function () {

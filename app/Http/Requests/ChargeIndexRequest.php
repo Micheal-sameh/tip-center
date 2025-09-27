@@ -10,10 +10,10 @@ class ChargeIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date_from' => 'date',
-            'date_to' => 'date'.($this->from ? '|after_or_equal:from' : ''),
-            'name' => 'string',
-            'type' => 'in:'.implode(',', array_column(ChargeType::all(), 'value')),
+            'date_from' => 'nullable|date',
+            'date_to' => 'nullable|date'.($this->from ? '|after_or_equal:from' : ''),
+            'name' => 'nullable|string',
+            'type' => 'nullable|in:'.implode(',', array_column(ChargeType::all(), 'value')),
         ];
     }
 }

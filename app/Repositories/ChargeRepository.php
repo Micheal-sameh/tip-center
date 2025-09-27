@@ -173,4 +173,19 @@ class ChargeRepository extends BaseRepository
             ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
             ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']));
     }
+
+    public function chargesReport($input)
+    {
+        $user = auth()->user();
+        $query = $this->chargesFilter($input)
+            ->when($user->can('charges_salary'), fn ($q) => $q->whereNot('type', ChargeType::GAP))
+            ->when(! $user->can('charges_salary'), fn ($q) => $q->whereNotIn('type', [ChargeType::GAP, ChargeType::SALARY, ChargeType::RENT]))
+            ->whereNotIn('type', [ChargeType::STUDENT_SETTLE_CENTER, ChargeType::STUDENT_SETTLE_PRINT, ChargeType::STUDENT_PRINT, ChargeType::STUDENT_SETTLE_CENTER_ROOM, ChargeType::ROOM_10_11])
+            ->orderByDesc('id');
+
+        $charges = $query->get();
+        $total = $query->sum('amount');
+
+        return compact('charges', 'total');
+    }
 }

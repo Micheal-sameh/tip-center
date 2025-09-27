@@ -166,4 +166,9 @@ class ReportService
 
         return compact('sessions', 'totals', 'settle', 'charges');
     }
+
+    public function chargesReport($input)
+    {
+        return $this->chargeRepository->chargesReport($input);
+    }
 }
