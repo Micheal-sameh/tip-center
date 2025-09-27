@@ -45,7 +45,7 @@ class ReportService
     public function student($input)
     {
         $reports = $this->sessionStudentRepository->student($input);
-        $reports->load('session.sessionExtra');
+        $reports->load('session.professor', 'session.sessionExtra');
 
         return $reports;
     }

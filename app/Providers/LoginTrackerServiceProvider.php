@@ -29,10 +29,15 @@ class LoginTrackerServiceProvider extends ServiceProvider
     {
         $alreadyToday = UserLogin::whereDate('created_at', today())
             ->exists();
-        UserLogin::create([
-            'user_id' => $user->id,
-            'ip' => request()->ip(),
-        ]);
+        $alreadyloginUser = UserLogin::where('user_id', $user->id)
+            ->whereDate('created_at', today())
+            ->exists();
+        if (! $alreadyloginUser) {
+            UserLogin::create([
+                'user_id' => $user->id,
+                'ip' => request()->ip(),
+            ]);
+        }
         if (! $alreadyToday) {
             $sessionService = app(SessionService::class);
             $sessionService->automaticCreateSessions();
