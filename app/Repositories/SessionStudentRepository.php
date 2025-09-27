@@ -146,10 +146,13 @@ class SessionStudentRepository extends BaseRepository
         if ($pay->to_pay || $pay->to_pay_materials) {
             $professor = $pay->session->professor;
             if ($isPast) {
-                $professor->update([
-                    'balance' => $professor->balance + $pay->to_pay,
-                    'materials_balance' => $professor->materials_balance + $pay->to_pay_materials,
-                ]);
+                \App\Models\ProfessorStageBalance::updateOrCreate(
+                    ['professor_id' => $professor->id, 'stage' => $pay->session->stage],
+                    [
+                        'balance' => DB::raw('balance + '.$pay->to_pay),
+                        'materials_balance' => \DB::raw('materials_balance + '.$pay->to_pay_materials),
+                    ]
+                );
             }
             $pay->update([
                 'professor_price' => $pay->professor_price + $pay->to_pay,
