@@ -60,9 +60,10 @@
         </div>
 
         @php
-            $has_balance = $professors->contains(
-                fn($professor) => $professor->balance + $professor->materials_balance > 0,
-            );
+            $has_balance = 0;
+             //$professors->contains(
+               // fn($professor) => $professor->stageBalances->sum('balance') + $professor->stageBalances->sum('materials_balance') > 0,
+            //);
         @endphp
         <!-- Main Content Card -->
         <div class="card shadow-sm">
@@ -143,9 +144,9 @@
                                         </td>
                                         @if ($has_balance)
                                             <td class="text-center">
-                                                {{ $professor->balance  }}</td>
+                                                {{ $professor->stageBalances->sum('balance') }}</td>
                                             <td class="text-center">
-                                                {{ $professor->materials_balance }}</td>
+                                                {{ $professor->stageBalances->sum('materials_balance') }}</td>
                                         @endif
                                         <td>
                                             <div class="d-flex gap-1">
@@ -164,7 +165,7 @@
                                                         </button>
                                                     </form>
                                                 @endcan
-                                                @if ($professor->balance + $professor->materials_balance > 0)
+                                                @if ($professor->stageBalances->sum('balance') + $professor->stageBalances->sum('materials_balance') > 0)
                                                     <form action="{{ route('professors.settle', $professor->id) }}"
                                                         method="post" class="d-inline">
                                                         @csrf
@@ -280,7 +281,7 @@
                                             </button>
                                         </form>
                                     @endcan
-                                    @if ($professor->balance + $professor->materials_balance > 0)
+                                    @if ($professor->stageBalances->sum('balance') + $professor->stageBalances->sum('materials_balance') > 0)
                                         <form action="{{ route('professors.settle', $professor->id) }}" method="post"
                                             class="d-inline">
                                             @csrf

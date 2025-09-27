@@ -20,8 +20,8 @@ class Professor extends Model implements HasMedia
         'birth_date',
         'status',
         'type',
-        'balance',
-        'materials_balance',
+        // 'balance',
+        // 'materials_balance',
     ];
 
     protected $mediaAttributes = [
@@ -40,6 +40,11 @@ class Professor extends Model implements HasMedia
     public function stages()
     {
         return $this->hasMany(ProfessorStage::class);
+    }
+
+    public function stageBalances()
+    {
+        return $this->hasMany(ProfessorStageBalance::class);
     }
 
     public function students()

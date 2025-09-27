@@ -34,6 +34,7 @@ class ProfessorRepository extends BaseRepository
     public function index($input)
     {
         $query = $this->model->query()
+            ->with('stageBalances')
             ->when($input->has('name'), function ($q) use ($input) {
                 $q->where(function ($subQuery) use ($input) {
                     $subQuery->where('name', 'like', '%'.$input->name.'%')
@@ -165,10 +166,13 @@ class ProfessorRepository extends BaseRepository
     {
         $professor = $this->findById($id);
 
-        return $professor->update([
+        // Reset stage balances instead of global balance
+        $professor->stageBalances()->update([
             'balance' => 0,
             'materials_balance' => 0,
         ]);
+
+        return true;
     }
 
     public function todaySessions()
