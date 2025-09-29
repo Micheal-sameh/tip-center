@@ -85,20 +85,23 @@
                                                 ? 'table-warning'
                                                 : '');
 
-                                    $toPayTotal = isset($report->student->toPay)
-                                        ? $report->student->toPay->sum(
-                                            fn($pay) => match ((int) $selected_type) {
-                                                App\Enums\ReportType::PROFESSOR => $pay->to_pay +
-                                                    $pay->to_pay_materials,
-                                                App\Enums\ReportType::CENTER => $pay->to_pay_center +
-                                                    $pay->to_pay_print,
-                                                default => $pay->to_pay +
-                                                    $pay->to_pay_center +
-                                                    $pay->to_pay_print +
-                                                    $pay->to_pay_materials,
-                                            },
-                                        )
-                                        : 0;
+                                    $toPayTotal =
+                                        $report->student
+                                            ?->toPay()
+                                            ->get(['to_pay_materials', 'to_pay_print', 'to_pay_center', 'to_pay', 'id'])
+                                            ->sum(function ($p) use ($selected_type) {
+                                                return match ((int) $selected_type) {
+                                                    App\Enums\ReportType::PROFESSOR => $p->to_pay +
+                                                        $p->to_pay_materials,
+                                                    App\Enums\ReportType::CENTER => $p->to_pay_center +
+                                                        $p->to_pay_print,
+                                                    default => $p->to_pay +
+                                                        $p->to_pay_center +
+                                                        $p->to_pay_print +
+                                                        $p->to_pay_materials,
+                                                };
+                                            }) ?? 0;
+
                                 @endphp
                                 <tr class="{{ $rowClass }}">
                                     <td>{{ $loop->iteration }}</td>
@@ -280,7 +283,7 @@
                         $summaryTotal += $session->onlines->sum(fn($o) => $o->materials + $o->professor + $o->center);
                     }
                     $toCollect = $reports->sum(
-                        fn($report) => $report->student?->toPay?->sum(
+                        fn($report) => $report->student?->toPay()->get(['id', 'to_pay', 'to_pay_materials', 'to_pay_center', 'to_pay_print'])->sum(
                             fn($pay) => match ($selected_type) {
                                 App\Enums\ReportType::PROFESSOR => $pay->to_pay + $pay->to_pay_materials,
                                 App\Enums\ReportType::CENTER => $pay->to_pay_center + $pay->to_pay_print,
