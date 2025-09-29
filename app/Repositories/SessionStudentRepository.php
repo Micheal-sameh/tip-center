@@ -6,6 +6,7 @@ use App\Enums\AttendenceType;
 use App\Enums\ChargeType;
 use App\Enums\ReportType;
 use App\Enums\SessionStatus;
+use App\Models\ProfessorStageBalance;
 use App\Models\Session;
 use App\Models\SessionStudent;
 use Illuminate\Database\Eloquent\Builder;
@@ -151,11 +152,11 @@ class SessionStudentRepository extends BaseRepository
         if ($pay->to_pay || $pay->to_pay_materials) {
             $professor = $pay->session->professor;
             if ($isPast) {
-                \App\Models\ProfessorStageBalance::updateOrCreate(
+                ProfessorStageBalance::updateOrCreate(
                     ['professor_id' => $professor->id, 'stage' => $pay->session->stage],
                     [
                         'balance' => DB::raw('balance + '.$pay->to_pay),
-                        'materials_balance' => \DB::raw('materials_balance + '.$pay->to_pay_materials),
+                        'materials_balance' => DB::raw('materials_balance + '.$pay->to_pay_materials),
                     ]
                 );
             }
