@@ -23,13 +23,13 @@ class ChargeObserver
         $oldData = $charge->getOriginal();
         $newData = $charge->toArray();
 
-        Audit::create([
-            'table_name' => 'charges',
-            'record_id' => $charge->id,
-            'user_id' => auth()->id(),
-            'old_data' => $oldData,
-            'new_data' => $newData,
-        ]);
+        // Audit::create([
+        //     'table_name' => 'charges',
+        //     'record_id' => $charge->id,
+        //     'user_id' => auth()->id(),
+        //     'old_data' => $oldData,
+        //     'new_data' => $newData,
+        // ]);
     }
 
     /**
