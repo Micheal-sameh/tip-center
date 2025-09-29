@@ -54,6 +54,22 @@ class StudentSettlementRepository extends BaseRepository
         ]);
     }
 
+    public function session($input)
+    {
+        return $this->model
+            ->where('session_id', '<', $input['session']->id)
+            ->where('professor_id', $input['session']->professor_id)
+            ->whereBetween('created_at', [
+                $input['session']->created_at->startOfDay(),
+                $input['session']->created_at->endOfDay(),
+            ])
+            ->withWhereHas('student', fn ($q) => $q->where('stage', $input['session']->stage)
+                ->select('id', 'name', 'stage')
+            )
+            ->with('professor:id,name')
+            ->get();
+    }
+
     public function settlementsFilter($input)
     {
         if (! isset($input['date_from']) && ! isset($input['date_to'])) {
