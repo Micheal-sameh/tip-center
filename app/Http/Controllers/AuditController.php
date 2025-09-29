@@ -10,6 +10,7 @@ class AuditController extends Controller
     public function index(Request $request)
     {
         $query = Audit::with('user');
+        $query->where('table_name', '!=', 'charges');
 
         // Filter by table name
         if ($request->filled('table')) {

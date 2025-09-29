@@ -36,8 +36,10 @@
                 <select name="table" class="form-select">
                     <option value="">All Tables</option>
                     <option value="sessions" {{ request('table') == 'sessions' ? 'selected' : '' }}>Sessions</option>
-                    <option value="session_extras" {{ request('table') == 'session_extras' ? 'selected' : '' }}>Session Extras</option>
-                    <option value="session_students" {{ request('table') == 'session_students' ? 'selected' : '' }}>Session Students</option>
+                    <option value="session_extras" {{ request('table') == 'session_extras' ? 'selected' : '' }}>Session
+                        Extras</option>
+                    <option value="session_students" {{ request('table') == 'session_students' ? 'selected' : '' }}>Session
+                        Students</option>
                     <option value="charges" {{ request('table') == 'charges' ? 'selected' : '' }}>Charges</option>
                     <option value="professors" {{ request('table') == 'professors' ? 'selected' : '' }}>Professors</option>
                     <option value="students" {{ request('table') == 'students' ? 'selected' : '' }}>Students</option>
@@ -52,7 +54,8 @@
                     placeholder="From date">
             </div>
             <div class="col-md-2">
-                <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}" placeholder="To date">
+                <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}"
+                    placeholder="To date">
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary w-100">
@@ -89,7 +92,7 @@
                                 <td>{{ $audit->record_id }}</td>
                                 <td>{{ $audit->user ? $audit->user->name : 'System' }}</td>
                                 <td>
-                                    @if($audit->old_data)
+                                    @if ($audit->old_data)
                                         <details>
                                             <summary>View Old Data</summary>
                                             <pre>{{ json_encode($audit->old_data, JSON_PRETTY_PRINT) }}</pre>
@@ -99,7 +102,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @if($audit->new_data)
+                                    @if ($audit->new_data)
                                         <details>
                                             <summary>View New Data</summary>
                                             <pre>{{ json_encode($audit->new_data, JSON_PRETTY_PRINT) }}</pre>
@@ -128,13 +131,13 @@
                         <h5 class="card-title mb-2">{{ ucfirst($audit->table_name) }} #{{ $audit->record_id }}</h5>
                         <p class="mb-1"><strong>User:</strong> {{ $audit->user ? $audit->user->name : 'System' }}</p>
                         <p class="mb-1"><strong>Updated At:</strong> {{ $audit->created_at->format('M d, Y H:i') }}</p>
-                        @if($audit->old_data)
+                        @if ($audit->old_data)
                             <details class="mb-2">
                                 <summary>Old Data</summary>
                                 <pre>{{ json_encode($audit->old_data, JSON_PRETTY_PRINT) }}</pre>
                             </details>
                         @endif
-                        @if($audit->new_data)
+                        @if ($audit->new_data)
                             <details class="mb-2">
                                 <summary>New Data</summary>
                                 <pre>{{ json_encode($audit->new_data, JSON_PRETTY_PRINT) }}</pre>
@@ -148,8 +151,64 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="d-flex justify-content-center">
-            {{ $audits->links() }}
+        <div class="d-flex justify-content-center pt-2">
+            @if ($audits->hasPages())
+                <nav>
+                    <ul class="pagination">
+                        {{-- Previous Page Link --}}
+                        @if ($audits->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $audits->previousPageUrl() }}" rel="prev">&laquo;</a>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @php
+                            $start = max(1, $audits->currentPage() - 3);
+                            $end = min($audits->lastPage(), $audits->currentPage() + 3);
+                        @endphp
+
+                        {{-- Show first page + dots if needed --}}
+                        @if ($start > 1)
+                            <li class="page-item"><a class="page-link" href="{{ $audits->url(1) }}">1</a></li>
+                            @if ($start > 2)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                        @endif
+
+                        {{-- Main page loop --}}
+                        @foreach ($audits->getUrlRange($start, $end) as $page => $url)
+                            <li class="page-item {{ $audits->currentPage() === $page ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+
+                        {{-- Show last page + dots if needed --}}
+                        @if ($end < $audits->lastPage())
+                            @if ($end < $audits->lastPage() - 1)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                            <li class="page-item"><a class="page-link"
+                                    href="{{ $audits->url($audits->lastPage()) }}">{{ $audits->lastPage() }}</a></li>
+                        @endif
+
+                        {{-- Next Page Link --}}
+                        @if ($audits->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $audits->nextPageUrl() }}" rel="next">&raquo;</a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            @endif
         </div>
     </div>
 @endsection
