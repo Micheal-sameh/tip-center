@@ -143,6 +143,7 @@ Route::group(['middleware' => ['setlocale']], function () {
 
         Route::prefix('audits')->group(function () {
             Route::get('/', [AuditController::class, 'index'])->name('audits.index');
+            Route::get('/{id}/show', [AuditController::class, 'show'])->name('audits.show');
         });
 
         Route::prefix('student-special-cases')->group(function () {

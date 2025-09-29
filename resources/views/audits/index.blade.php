@@ -82,6 +82,7 @@
                             <th>Old Data</th>
                             <th>New Data</th>
                             <th>Updated At</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -112,10 +113,15 @@
                                     @endif
                                 </td>
                                 <td>{{ $audit->created_at->format('M d, Y H:i') }}</td>
+                                <td>
+                                    <a href="{{ route('audits.show', $audit->id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">No audit logs available.</td>
+                                <td colspan="8" class="text-center py-4 text-muted">No audit logs available.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -143,6 +149,9 @@
                                 <pre>{{ json_encode($audit->new_data, JSON_PRETTY_PRINT) }}</pre>
                             </details>
                         @endif
+                        <a href="{{ route('audits.show', $audit->id) }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
                     </div>
                 </div>
             @empty
