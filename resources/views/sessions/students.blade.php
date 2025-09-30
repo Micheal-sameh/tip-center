@@ -84,14 +84,11 @@
                                             </a>
 
                                             {{-- Delete button --}}
-                                            <form action="{{ route('attendances.delete', $student->id) }}" method="POST"
-                                                onsubmit="return confirm('Delete {{ $student->student?->name }} attendance?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-danger btn-sm delete-attendance-btn"
+                                                data-attendance-id="{{ $student->id }}"
+                                                data-student-name="{{ $student->student?->name }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </div>
                                     </td>
 
@@ -133,14 +130,11 @@
                                         <td>{{ $online->createdBy?->name }}</td>
                                         <td>{{ $online->updatedBy?->name }}</td>
                                         <td>
-                                            <form action="{{ route('online.delete', $online->id) }}" method="POST"
-                                                onsubmit="return confirm('Delete online payment for {{ $online->name }}?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-danger btn-sm delete-online-btn"
+                                                data-online-id="{{ $online->id }}"
+                                                data-online-name="{{ $online->name }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -157,6 +151,16 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Forms -->
+    <form id="deleteAttendanceForm" action="" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+    <form id="deleteOnlineForm" action="" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
 
     {{-- Students Update Modal --}}
     <div class="modal fade" id="updatePricesModal" tabindex="-1" aria-hidden="true">
@@ -213,6 +217,8 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.querySelectorAll('.student-row').forEach(row => {
             row.addEventListener('click', function(e) {
@@ -232,6 +238,56 @@
                 document.getElementById('updatePricesForm').action = `/session-students/${id}`;
 
                 new bootstrap.Modal(document.getElementById('updatePricesModal')).show();
+            });
+        });
+
+        // Delete attendance handler
+        $(document).ready(function() {
+            $(document).off('click', '.delete-attendance-btn').on('click', '.delete-attendance-btn', function() {
+                const button = $(this);
+                const attendanceId = button.data('attendance-id');
+                const studentName = button.data('student-name');
+
+                Swal.fire({
+                    title: 'Delete Attendance',
+                    text: `Delete ${studentName} attendance?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('#deleteAttendanceForm');
+                        form.attr('action', `/session-students/${attendanceId}`);
+                        form.submit();
+                    }
+                });
+            });
+
+            // Delete online handler
+            $(document).off('click', '.delete-online-btn').on('click', '.delete-online-btn', function() {
+                const button = $(this);
+                const onlineId = button.data('online-id');
+                const onlineName = button.data('online-name');
+
+                Swal.fire({
+                    title: 'Delete Online Payment',
+                    text: `Delete online payment for ${onlineName}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('#deleteOnlineForm');
+                        form.attr('action', `/online/${onlineId}`);
+                        form.submit();
+                    }
+                });
             });
         });
     </script>
