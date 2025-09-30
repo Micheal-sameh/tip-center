@@ -152,6 +152,12 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Form -->
+    <form id="deleteSessionForm" action="" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
     <!-- Professor Selection Modal -->
     <div class="modal fade" id="professorSelectionModal" tabindex="-1" aria-labelledby="professorSelectionModalLabel"
         aria-hidden="true">
@@ -325,6 +331,31 @@
                 $('select[name="type"]').val('');
                 $('select[name="status"]').val('');
                 reloadSessions();
+            });
+
+            // Delete session handler
+            $(document).off('click', '.delete-session-btn').on('click', '.delete-session-btn', function() {
+                const button = $(this);
+                const sessionId = button.data('session-id');
+                const professorName = button.data('professor-name');
+                const stage = button.data('stage');
+
+                Swal.fire({
+                    title: 'Delete Session',
+                    text: `Are you sure you want to delete the session for ${professorName} - ${stage}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('#deleteSessionForm');
+                        form.attr('action', `/sessions/${sessionId}`);
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

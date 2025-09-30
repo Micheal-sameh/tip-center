@@ -25,7 +25,7 @@ class SessionController extends Controller
         $this->middleware('permission:sessions_view')->only(['index', 'show']);
         $this->middleware('permission:sessions_create')->only(['create', 'store']);
         $this->middleware('permission:sessions_update')->only(['edit', 'update']);
-        $this->middleware('permission:sessions_delete')->only('destroy');
+        $this->middleware('permission:sessions_delete')->only('delete');
         $this->middleware('permission:sessions_resetPassword')->only('resetPassword');
     }
 
@@ -96,9 +96,13 @@ class SessionController extends Controller
 
     public function delete($id)
     {
-        $this->sessionservice->delete($id);
+        try {
+            $this->sessionservice->delete($id);
 
-        return to_route('sessions.index');
+            return to_route('sessions.index')->with('success', 'Session deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function extrasForm($id)

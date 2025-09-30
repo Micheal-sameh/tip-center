@@ -154,6 +154,15 @@
                                         </a>
                                     @endif
                                 @endcan
+                                @can('sessions_delete')
+                                    @if ($session->attended_count == 0)
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-session-btn" title="Delete"
+                                            data-session-id="{{ $session->id }}" data-professor-name="{{ $session->professor->name }}"
+                                            data-stage="{{ App\Enums\StagesEnum::getStringValue($session->stage) }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    @endif
+                                @endcan
                             </div>
                         </div>
                     </div>
