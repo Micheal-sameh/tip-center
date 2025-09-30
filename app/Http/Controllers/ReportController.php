@@ -97,8 +97,12 @@ class ReportController extends Controller
     public function downloadSessionReport(SessionReportRequest $request)
     {
         $session = $this->sessionservice->report($request->validated());
-        $reports = $this->reportService->session($request->validated());
-        $selected_type = $request->type;
+        $data = $this->reportService->session($request->validated());
+        $reports = $data['reports'];
+        $settlements = $data['settlements'];
+        $settlementTotals = $data['settlementTotals'];
+        $selected_type = $request->type ?? ReportType::ALL;
+        $attendedCount = $reports->where('is_attend', true)->count();
 
         // إنشاء وتكوين mPDF
         $mpdf = new Mpdf([
@@ -119,6 +123,9 @@ class ReportController extends Controller
             'reports' => $reports,
             'session' => $session,
             'selected_type' => $selected_type,
+            'settlements' => $settlements,
+            'settlementTotals' => $settlementTotals,
+            'attendedCount' => $attendedCount,
         ])->render();
 
         // إضافة المحتوى إلى PDF

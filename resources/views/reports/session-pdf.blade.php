@@ -234,6 +234,84 @@
         </table>
     @endif
 
+    {{-- Settlements --}}
+    @if ($settlements->isNotEmpty())
+        <h5 class="mt-4 mb-3">Settlements</h5>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student</th>
+                    <th class="text-end">Amount</th>
+                    @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
+                        <th class="text-end">Center</th>
+                        <th class="text-end">Printables</th>
+                    @endif
+                    @if ($selected_type != \App\Enums\ReportType::CENTER)
+                        <th class="text-end">Professor</th>
+                        <th class="text-end">Materials</th>
+                    @endif
+                    <th>Description</th>
+                    <th>Settled At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($settlements as $settlement)
+                    @php
+                        $amount = match ((int) $selected_type) {
+                            \App\Enums\ReportType::PROFESSOR => $settlement->professor_amount + $settlement->materials,
+                            \App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
+                            default => $settlement->amount,
+                        };
+                    @endphp
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $settlement->student->name ?? 'N/A' }}</td>
+                        <td class="text-end">{{ number_format($amount, 2) }}</td>
+                        @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
+                            <td class="text-end">{{ number_format($settlement->center, 2) }}</td>
+                            <td class="text-end">{{ number_format($settlement->printables, 2) }}</td>
+                        @endif
+                        @if ($selected_type != \App\Enums\ReportType::CENTER)
+                            <td class="text-end">{{ number_format($settlement->professor_amount, 2) }}</td>
+                            <td class="text-end">{{ number_format($settlement->materials, 2) }}</td>
+                        @endif
+                        <td>{{ $settlement->description ?? '-' }}</td>
+                        <td>{{ $settlement->settled_at?->format('Y-m-d H:i') ?? 'N/A' }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr class="table-info fw-bold">
+                    @php
+                        $total_amount = $settlements->sum(function ($settlement) use ($selected_type) {
+                            return match ((int) $selected_type) {
+                                \App\Enums\ReportType::PROFESSOR => $settlement->professor_amount +
+                                    $settlement->materials,
+                                \App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
+                                default => $settlement->amount,
+                            };
+                        });
+                    @endphp
+                    <th colspan="2">Totals</th>
+                    <th class="text-end">{{ number_format($total_amount, 2) }}</th>
+                    @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
+                        <th class="text-end">{{ number_format($settlementTotals['total_center'], 2) }}</th>
+                        <th class="text-end">{{ number_format($settlementTotals['total_printables'], 2) }}
+                        </th>
+                    @endif
+                    @if ($selected_type != \App\Enums\ReportType::CENTER)
+                        <th class="text-end">{{ number_format($settlementTotals['total_professor'], 2) }}
+                        </th>
+                        <th class="text-end">{{ number_format($settlementTotals['total_materials'], 2) }}
+                        </th>
+                    @endif
+                    <th colspan="3"></th>
+                </tr>
+            </tfoot>
+        </table>
+    @endif
+
     @if ($session->sessionExtra)
         @php $extra = $session->sessionExtra; @endphp
         <h5 class="mt-4 mb-3">Expenses</h5>
@@ -278,13 +356,13 @@
                 <tr>
                     <td>Out Going</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ?  -number_format($extra->out_going, 2)  : number_format($extra->out_going ?? 0, 2) }}
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? -number_format($extra->out_going, 2) : number_format($extra->out_going ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>To Prof</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ?  -number_format($extra->to_professor, 2)  : number_format($extra->to_professor ?? 0, 2) }}
+                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? -number_format($extra->to_professor, 2) : number_format($extra->to_professor ?? 0, 2) }}
                     </td>
                 </tr>
                 @if ($extra->notes)
@@ -301,7 +379,7 @@
         <tbody>
             <tr>
                 <th>Total Students</th>
-                <td class="text-end">{{ $reports->where('is_attend', 1)->count() }}</td>
+                <td class="text-end">{{ $attendedCount }}</td>
             </tr>
             @if (!$session->onlines->isEmpty())
                 <tr>
@@ -378,7 +456,7 @@
                             $total += $onlineTotal;
                         }
                     @endphp
-                    {{ number_format($total, 2) }}
+                    {{ number_format($total + $total_amount, 2) }}
                 </td>
             </tr>
             @php
