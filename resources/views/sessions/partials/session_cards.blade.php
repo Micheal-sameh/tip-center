@@ -155,7 +155,7 @@
                                     @endif
                                 @endcan
                                 @can('sessions_delete')
-                                    @if ($session->attended_count == 0)
+                                    @if ($session->attended_count == 0 && $session->onlines_count == 0)
                                         <button type="button" class="btn btn-sm btn-outline-danger delete-session-btn" title="Delete"
                                             data-session-id="{{ $session->id }}" data-professor-name="{{ $session->professor->name }}"
                                             data-stage="{{ App\Enums\StagesEnum::getStringValue($session->stage) }}">
