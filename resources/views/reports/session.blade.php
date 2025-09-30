@@ -283,16 +283,19 @@
                         $summaryTotal += $session->onlines->sum(fn($o) => $o->materials + $o->professor + $o->center);
                     }
                     $toCollect = $reports->sum(
-                        fn($report) => $report->student?->toPay()->get(['id', 'to_pay', 'to_pay_materials', 'to_pay_center', 'to_pay_print'])->sum(
-                            fn($pay) => match ($selected_type) {
-                                App\Enums\ReportType::PROFESSOR => $pay->to_pay + $pay->to_pay_materials,
-                                App\Enums\ReportType::CENTER => $pay->to_pay_center + $pay->to_pay_print,
-                                default => $pay->to_pay +
-                                    $pay->to_pay_center +
-                                    $pay->to_pay_print +
-                                    $pay->to_pay_materials,
-                            },
-                        ) ?? 0,
+                        fn($report) => $report->student
+                            ?->toPay()
+                            ->get(['id', 'to_pay', 'to_pay_materials', 'to_pay_center', 'to_pay_print'])
+                            ->sum(
+                                fn($pay) => match ($selected_type) {
+                                    App\Enums\ReportType::PROFESSOR => $pay->to_pay + $pay->to_pay_materials,
+                                    App\Enums\ReportType::CENTER => $pay->to_pay_center + $pay->to_pay_print,
+                                    default => $pay->to_pay +
+                                        $pay->to_pay_center +
+                                        $pay->to_pay_print +
+                                        $pay->to_pay_materials,
+                                },
+                            ) ?? 0,
                     );
                 @endphp
 
@@ -409,7 +412,8 @@
                         <div class="card h-100 bg-light">
                             <div class="card-body text-center">
                                 <h6 class="card-subtitle mb-2 text-muted">Total Value</h6>
-                                <p class="card-text fs-4 fw-bold text-primary">{{ number_format($summaryTotal, 2) }}</p>
+                                <p class="card-text fs-4 fw-bold text-primary">
+                                    {{ number_format($summaryTotal + $total_amount, 2) }}</p>
                             </div>
                         </div>
                     </div>
