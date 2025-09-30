@@ -42,7 +42,7 @@ class SessionRepository extends BaseRepository
         $this->checkActive();
         $query = $this->model->query()
             ->with(['professor', 'sessionExtra'])
-            ->withCount(['sessionStudents',
+            ->withCount(['onlines', 'sessionStudents',
                 'sessionStudents as attended_count' => function ($query) {
                     $query->where('is_attend', 1);
                 },
@@ -163,8 +163,9 @@ class SessionRepository extends BaseRepository
     {
         $session = $this->findById($id);
         $attendedCount = $session->sessionStudents()->where('is_attend', 1)->count();
-        if ($attendedCount > 0) {
-            throw new \Exception('Cannot delete session with attended students.');
+        $onlineCount = $session->onlines()->count();
+        if ($attendedCount > 0 || $onlineCount > 0) {
+            throw new \Exception('Cannot delete session with attended or online students.');
         }
         $session->delete();
     }
