@@ -31,41 +31,56 @@
         </div>
 
         {{-- Filter Form --}}
-        <form method="GET" action="{{ route('audits.index') }}" class="row g-2 mb-4">
-            <div class="col-md-2">
-                <select name="table" class="form-select">
-                    <option value="">All Tables</option>
-                    <option value="sessions" {{ request('table') == 'sessions' ? 'selected' : '' }}>Sessions</option>
-                    <option value="session_extras" {{ request('table') == 'session_extras' ? 'selected' : '' }}>Session
-                        Extras</option>
-                    <option value="session_students" {{ request('table') == 'session_students' ? 'selected' : '' }}>Session
-                        Students</option>
-                    <option value="charges" {{ request('table') == 'charges' ? 'selected' : '' }}>Charges</option>
-                    <option value="professors" {{ request('table') == 'professors' ? 'selected' : '' }}>Professors</option>
-                    <option value="students" {{ request('table') == 'students' ? 'selected' : '' }}>Students</option>
-                </select>
+        <form method="GET" action="{{ route('audits.index') }}" class="mb-4">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <select name="table" class="form-select">
+                        <option value="">All Tables</option>
+                        <option value="sessions" {{ request('table') == 'sessions' ? 'selected' : '' }}>Sessions</option>
+                        <option value="session_extras" {{ request('table') == 'session_extras' ? 'selected' : '' }}>Session Extras</option>
+                        <option value="session_students" {{ request('table') == 'session_students' ? 'selected' : '' }}>Session Students</option>
+                        <option value="charges" {{ request('table') == 'charges' ? 'selected' : '' }}>Charges</option>
+                        <option value="professors" {{ request('table') == 'professors' ? 'selected' : '' }}>Professors</option>
+                        <option value="students" {{ request('table') == 'students' ? 'selected' : '' }}>Students</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="user" class="form-control" placeholder="User ID" value="{{ request('user') }}">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}" placeholder="From date">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}" placeholder="To date">
+                </div>
             </div>
-            <div class="col-md-2">
-                <input type="text" name="user" class="form-control" placeholder="User ID"
-                    value="{{ request('user') }}">
+            <div class="row g-2 mt-2">
+                <div class="col-md-3">
+                    <input type="time" name="time_from" class="form-control" value="{{ request('time_from') }}" placeholder="From time">
+                </div>
+                <div class="col-md-3">
+                    <input type="time" name="time_to" class="form-control" value="{{ request('time_to') }}" placeholder="To time">
+                </div>
+                <div class="col-md-3 d-flex align-items-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="with_data" id="with_data" value="1" {{ request('with_data') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="with_data">
+                            With Data
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i> Filter
+                    </button>
+                </div>
             </div>
-            <div class="col-md-2">
-                <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}"
-                    placeholder="From date">
-            </div>
-            <div class="col-md-2">
-                <input type="date" name="to_date" class="form-control" value="{{ request('to_date') }}"
-                    placeholder="To date">
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="fas fa-search me-1"></i> Filter
-                </button>
-            </div>
-            <div class="col-md-2">
-                <a href="{{ route('audits.index') }}" class="btn btn-secondary w-100">
-                    <i class="fas fa-times me-1"></i> Clear
-                </a>
+            <div class="row g-2 mt-2">
+                <div class="col-md-3">
+                    <a href="{{ route('audits.index') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-times me-1"></i> Clear
+                    </a>
+                </div>
             </div>
         </form>
 
@@ -79,8 +94,10 @@
                             <th>Table</th>
                             <th>Record ID</th>
                             <th>User</th>
-                            <th>Old Data</th>
-                            <th>New Data</th>
+                            @if (request('with_data'))
+                                <th>Old Data</th>
+                                <th>New Data</th>
+                            @endif
                             <th>Updated At</th>
                             <th>Actions</th>
                         </tr>
@@ -92,26 +109,28 @@
                                 <td>{{ ucfirst($audit->table_name) }}</td>
                                 <td>{{ $audit->record_id }}</td>
                                 <td>{{ $audit->user ? $audit->user->name : 'System' }}</td>
-                                <td>
-                                    @if ($audit->old_data)
-                                        <details>
-                                            <summary>View Old Data</summary>
-                                            <pre>{{ json_encode($audit->old_data, JSON_PRETTY_PRINT) }}</pre>
-                                        </details>
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($audit->new_data)
-                                        <details>
-                                            <summary>View New Data</summary>
-                                            <pre>{{ json_encode($audit->new_data, JSON_PRETTY_PRINT) }}</pre>
-                                        </details>
-                                    @else
-                                        N/A
-                                    @endif
-                                </td>
+                                @if (request('with_data'))
+                                    <td>
+                                        @if ($audit->old_data)
+                                            <details>
+                                                <summary>View Old Data</summary>
+                                                <pre>{{ json_encode($audit->old_data, JSON_PRETTY_PRINT) }}</pre>
+                                            </details>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($audit->new_data)
+                                            <details>
+                                                <summary>View New Data</summary>
+                                                <pre>{{ json_encode($audit->new_data, JSON_PRETTY_PRINT) }}</pre>
+                                            </details>
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
+                                @endif
                                 <td>{{ $audit->created_at->format('M d, Y H:i') }}</td>
                                 <td>
                                     <a href="{{ route('audits.show', $audit->id) }}" class="btn btn-sm btn-primary">
@@ -221,3 +240,4 @@
         </div>
     </div>
 @endsection
+</edit_file>

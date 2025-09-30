@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\UserLogin;
+use App\Repositories\AuditRepository;
 use App\Repositories\ChargeRepository;
 use App\Services\SessionService;
 use Illuminate\Auth\Events\Authenticated;
@@ -44,6 +45,9 @@ class LoginTrackerServiceProvider extends ServiceProvider
 
             $chargeRepository = app(ChargeRepository::class);
             $chargeRepository->reverseGap();
+
+            $auditRepository = app(AuditRepository::class);
+            $auditRepository->cleanOldAudits();
         }
     }
 }
