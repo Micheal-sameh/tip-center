@@ -88,8 +88,47 @@
 
             <button type="submit" class="btn btn-primary w-100">Search</button>
         </form>
+
+        <div class="mt-3 text-center">
+            <a href="{{ route('parents.schedule') }}" class="btn btn-outline-secondary w-100">View Schedule</a>
+        </div>
     </div>
 
+    {{-- Schedule Section --}}
+    @if(isset($schedule) && count($schedule) > 0)
+        <div class="mt-4">
+            <h4 class="mb-3 text-center">Professor Schedule</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Professor</th>
+                            <th>Day</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Stage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                        @endphp
+                        @foreach($schedule as $index => $session)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $session->professor_name }}</td>
+                                <td>{{ $days[$session->day] ?? 'Unknown' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($session->from)->format('h:i A') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($session->to)->format('h:i A') }}</td>
+                                <td>{{ \App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
 </body>
 
 </html>

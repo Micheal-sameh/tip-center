@@ -249,6 +249,12 @@
                         </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a href="{{ route('professors.schedule') }}" class="nav-link">
+                            <i class="fas fa-calendar-alt me-2"></i> Schedule
+                        </a>
+                    </li>
+
                     @can('professors_view')
                         <li class="nav-item">
                             <a href="{{ route('professors.index') }}" class="nav-link">

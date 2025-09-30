@@ -182,4 +182,32 @@ class ProfessorRepository extends BaseRepository
             ->with(['stages' => fn ($q) => $q->where('day', now()->format('w'))])
             ->get();
     }
+
+    public function getSchedule(array $filters = [])
+    {
+        $query = $this->model->with('stages');
+
+        if (! empty($filters['professor_name'])) {
+            $query->where('name', 'like', '%'.$filters['professor_name'].'%');
+        }
+
+        if (! empty($filters['stage'])) {
+            $query->whereHas('stages', function ($q) use ($filters) {
+                $q->where('stage', $filters['stage']);
+            });
+        }
+
+        return $query->get()
+            ->flatMap(function ($professor) {
+                return $professor->stages->map(function ($stage) use ($professor) {
+                    return (object) [
+                        'professor_name' => $professor->name,
+                        'day' => $stage->day,
+                        'from' => $stage->from,
+                        'to' => $stage->to,
+                        'stage' => $stage->stage,
+                    ];
+                });
+            });
+    }
 }
