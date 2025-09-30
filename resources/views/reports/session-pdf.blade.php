@@ -455,8 +455,12 @@
                             });
                             $total += $onlineTotal;
                         }
+
+                        if($settlements->isNotEmpty()) {
+                            $total += $total_amount;
+                        }
                     @endphp
-                    {{ number_format($total + $total_amount, 2) }}
+                    {{ number_format($total, 2) }}
                 </td>
             </tr>
             @php

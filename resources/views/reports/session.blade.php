@@ -282,6 +282,9 @@
                     if ($session->onlines->isNotEmpty()) {
                         $summaryTotal += $session->onlines->sum(fn($o) => $o->materials + $o->professor + $o->center);
                     }
+                    if ($settlements->isNotEmpty()) {
+                        $summaryTotal += $total_amount;
+                    }
                     $toCollect = $reports->sum(
                         fn($report) => $report->student
                             ?->toPay()
@@ -413,7 +416,7 @@
                             <div class="card-body text-center">
                                 <h6 class="card-subtitle mb-2 text-muted">Total Value</h6>
                                 <p class="card-text fs-4 fw-bold text-primary">
-                                    {{ number_format($summaryTotal + $total_amount, 2) }}</p>
+                                    {{ number_format($summaryTotal, 2) }}</p>
                             </div>
                         </div>
                     </div>
