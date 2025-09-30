@@ -162,6 +162,10 @@ class SessionRepository extends BaseRepository
     public function delete($id)
     {
         $session = $this->findById($id);
+        $attendedCount = $session->sessionStudents()->where('is_attend', 1)->count();
+        if ($attendedCount > 0) {
+            throw new \Exception('Cannot delete session with attended students.');
+        }
         $session->delete();
     }
 
