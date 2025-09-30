@@ -380,56 +380,79 @@
     </script>
 
     <!-- Status Toggle Script -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function toggleStatus(professorId) {
-            if (!confirm("Are you sure you want to change this professor's status?")) {
-                return; // stop if user presses Cancel
-            }
             const buttons = document.querySelectorAll(`#status-btn-${professorId}`);
             const current = buttons[0].classList.contains('bg-success');
-            const newStatus = !current;
 
-            buttons.forEach(button => {
-                button.disabled = true;
-                button.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
-            });
+            Swal.fire({
+                title: 'Change Professor Status',
+                text: 'Are you sure you want to change this professor\'s status?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, change it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (!result.isConfirmed) {
+                    return;
+                }
 
-            fetch(`/professors/${professorId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        status: newStatus
-                    })
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        buttons.forEach(button => {
-                            button.classList.toggle('bg-success', newStatus);
-                            button.classList.toggle('bg-secondary', !newStatus);
-                            button.textContent = newStatus ? activeText : inactiveText;
-                            button.disabled = false;
-                        });
+                const newStatus = !current;
 
-                        // Update row/card appearance
-                        const row = document.querySelector(`#professor-row-${professorId}`);
-                        const card = document.querySelector(`#professor-card-${professorId}`);
-                        if (row) row.classList.toggle('text-muted', !newStatus);
-                        if (card) card.classList.toggle('text-muted', !newStatus);
-                    } else {
-                        alert(data.message || statusFailMsg);
-                    }
-                })
-                .catch(error => {
-                    alert(statusFailMsg + ': ' + error.message);
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
                 });
+
+                fetch(`/professors/${professorId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: newStatus
+                        })
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            buttons.forEach(button => {
+                                button.classList.toggle('bg-success', newStatus);
+                                button.classList.toggle('bg-secondary', !newStatus);
+                                button.textContent = newStatus ? activeText : inactiveText;
+                                button.disabled = false;
+                            });
+
+                            // Update row/card appearance
+                            const row = document.querySelector(`#professor-row-${professorId}`);
+                            const card = document.querySelector(`#professor-card-${professorId}`);
+                            if (row) row.classList.toggle('text-muted', !newStatus);
+                            if (card) card.classList.toggle('text-muted', !newStatus);
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: data.message || statusFailMsg,
+                                icon: 'error'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Error',
+                            text: statusFailMsg + ': ' + error.message,
+                            icon: 'error'
+                        });
+                    });
+            });
         }
 
         // Form submission handler to remove empty name parameter

@@ -117,8 +117,7 @@
                                     class="d-inline">
                                     @csrf
                                     @method('PUT')
-                                    <button type="submit" class="btn btn-sm btn-primary"
-                                        onclick="return confirm('Are you sure you want to close this session?');">
+                                    <button type="submit" class="btn btn-sm btn-primary close-session-btn">
                                         Close
                                     </button>
                                 </form>
@@ -286,6 +285,33 @@
                 form.querySelector('#notes').placeholder = session.session_extra?.notes ?? '';
             });
 
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            $(document).off('click', '.close-session-btn').on('click', '.close-session-btn', function(e) {
+                e.preventDefault();
+                const button = $(this);
+                const form = button.closest('form');
+
+                Swal.fire({
+                    title: 'Close Session',
+                    text: 'Are you sure you want to close this session?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, close it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
         });
     </script>
 @endpush

@@ -223,28 +223,43 @@
         // Delete confirmation handler
         $(document).on('submit', '.delete-form', function(e) {
             e.preventDefault();
-            if (!confirm(confirmDeleteMsg)) return false;
-
             const form = $(this);
             const row = form.closest('tr, .card');
 
-            $.ajax({
-                url: form.attr('action'),
-                method: 'POST',
-                data: form.serialize(),
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function() {
-                    row.fadeOut(300, function() {
-                        $(this).remove();
-                        // Reload the table to update pagination
-                        loadProfessors($('#filterForm').serialize());
+            Swal.fire({
+                title: 'Delete Professor',
+                text: confirmDeleteMsg,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: 'POST',
+                        data: form.serialize(),
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function() {
+                            row.fadeOut(300, function() {
+                                $(this).remove();
+                                // Reload the table to update pagination
+                                loadProfessors($('#filterForm').serialize());
+                            });
+                        },
+                        error: function(xhr) {
+                            console.error(xhr);
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Error deleting professor',
+                                icon: 'error'
+                            });
+                        }
                     });
-                },
-                error: function(xhr) {
-                    console.error(xhr);
-                    alert('Error deleting professor');
                 }
             });
         });

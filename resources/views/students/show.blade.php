@@ -150,8 +150,8 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#confirmDeleteModal" data-id="{{ $case->pivot->id }}">
+                                                <button type="button" class="btn btn-sm btn-danger delete-special-case-btn"
+                                                    data-case-id="{{ $case->pivot->id }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
@@ -292,6 +292,13 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Form -->
+    <form id="deleteSpecialCaseForm" action="" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+        <input type="password" name="password" style="display: none;">
+    </form>
 
     <!-- Edit Special Case Modal -->
     <div class="modal fade" id="editSpecialCaseModal" tabindex="-1" aria-hidden="true">
@@ -467,9 +474,20 @@
                 const removeAvatarBtn = document.getElementById('removeAvatarBtn');
                 if (removeAvatarBtn) {
                     removeAvatarBtn.addEventListener('click', function() {
-                        if (confirm('{{ __('trans.confirm_remove_avatar') }}')) {
-                            document.getElementById('removeAvatarForm').submit();
-                        }
+                        Swal.fire({
+                            title: 'Remove Avatar',
+                            text: '{{ __('trans.confirm_remove_avatar') }}',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, remove it!',
+                            cancelButtonText: 'Cancel'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                document.getElementById('removeAvatarForm').submit();
+                            }
+                        });
                     });
                 }
             });
@@ -551,4 +569,44 @@
             });
         </script>
     @endpush
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            $(document).off('click', '.delete-special-case-btn').on('click', '.delete-special-case-btn', function() {
+                const button = $(this);
+                const caseId = button.data('case-id');
+
+                Swal.fire({
+                    title: 'Delete Special Case',
+                    input: 'password',
+                    inputLabel: 'Please enter your password to confirm',
+                    inputPlaceholder: 'Password',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocorrect: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (password) => {
+                        if (!password) {
+                            Swal.showValidationMessage('Password is required');
+                            return false;
+                        }
+                        return password;
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('#deleteSpecialCaseForm');
+                        form.attr('action', `/student-special-cases/${caseId}`);
+                        form.find('input[name="password"]').val(result.value);
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

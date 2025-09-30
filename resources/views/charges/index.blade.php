@@ -64,6 +64,11 @@
             </div>
         </form>
 
+        <!-- Delete Confirmation Form -->
+        <form id="deleteChargeForm" action="" method="POST" style="display: none;">
+            @csrf
+            @method('DELETE')
+        </form>
 
         <div class="card shadow border-0 rounded-4">
             <div class="card-body">
@@ -95,15 +100,13 @@
                                     @can('charges_delete')
                                         @if (!$charge->created_at->lt(today()))
                                             <td>
-                                                <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
-                                                    class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('Are you sure you want to delete {{ $charge->title }} as {{ App\Enums\ChargeType::getStringValue($charge->type) }} with amount {{ $charge->amount }} EGP?');">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button" class="btn btn-sm btn-danger delete-charge-btn"
+                                                    data-charge-id="{{ $charge->id }}"
+                                                    data-title="{{ $charge->title }}"
+                                                    data-type="{{ App\Enums\ChargeType::getStringValue($charge->type) }}"
+                                                    data-amount="{{ $charge->amount }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </td>
                                         @endif
                                     @endcan
@@ -136,14 +139,13 @@
                                 <p class="mb-2"><strong>Date:</strong> {{ $charge->created_at->format('d-m-Y') }}</p>
                                 @can('charges_delete')
                                     <div class="d-flex justify-content-end">
-                                        <form action="{{ route('charges.destroy', $charge->id) }}" method="post"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn btn-sm btn-danger delete-charge-btn"
+                                            data-charge-id="{{ $charge->id }}"
+                                            data-title="{{ $charge->title }}"
+                                            data-type="{{ App\Enums\ChargeType::getStringValue($charge->type) }}"
+                                            data-amount="{{ $charge->amount }}">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
                                     </div>
                                 @endcan
                             </div>
@@ -205,6 +207,64 @@
                 if (!input.value.trim()) {
                     input.disabled = true;
                 }
+            });
+        });
+
+        // Delete charge handler
+        $(document).off('click', '.delete-charge-btn').on('click', '.delete-charge-btn', function() {
+            const button = $(this);
+            const chargeId = button.data('charge-id');
+            const title = button.data('title');
+            const type = button.data('type');
+            const amount = button.data('amount');
+
+            Swal.fire({
+                title: 'Delete Charge',
+                text: `Are you sure you want to delete "${title}" as ${type} with amount ${amount} EGP?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = $('#deleteChargeForm');
+                    form.attr('action', `/charges/${chargeId}`);
+                    form.submit();
+                }
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            // Delete charge handler
+            $(document).off('click', '.delete-charge-btn').on('click', '.delete-charge-btn', function() {
+                const button = $(this);
+                const chargeId = button.data('charge-id');
+                const title = button.data('title');
+                const type = button.data('type');
+                const amount = button.data('amount');
+
+                Swal.fire({
+                    title: 'Delete Charge',
+                    text: `Are you sure you want to delete "${title}" as ${type} with amount ${amount} EGP?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('#deleteChargeForm');
+                        form.attr('action', `/charges/${chargeId}`);
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

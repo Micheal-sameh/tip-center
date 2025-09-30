@@ -11,6 +11,12 @@
             </div>
         @endcan
 
+        <!-- Delete Confirmation Form -->
+        <form id="deleteUserForm" action="" method="POST" style="display: none;">
+            @csrf
+            @method('DELETE')
+        </form>
+
         {{-- Desktop Table --}}
         <div class="d-none d-md-block">
             <div class="table-responsive shadow-sm rounded">
@@ -53,10 +59,10 @@
                                         @endcan --}}
                                         @can('users_update')
                                             <form action="{{ route('users.resetPassword', $user->id) }}" method="POST"
-                                                class="d-inline">
+                                                class="d-inline reset-password-form">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-link p-0 m-0 align-baseline me-3"
+                                                <button type="button" class="btn btn-link p-0 m-0 align-baseline me-3 reset-password-btn"
                                                     title="{{ __('trans.reset_password') }}">
                                                     <i class="fas fa-key text-primary"></i>
                                                 </button>
@@ -67,16 +73,11 @@
                                             </a>
                                         @endcan
                                         @if (auth()->user()->can('users_delete') && !$user->hasRole('admin'))
-                                            <form action="{{ route('users.delete', $user) }}" method="POST"
-                                                class="d-inline-block"
-                                                onsubmit="return confirm('{{ __('trans.confirm_delete') }}');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                <button type="button" class="btn btn-sm btn-outline-danger delete-user-btn"
+                                                    data-user-id="{{ $user->id }}"
                                                     title="{{ __('trans.delete') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                            </form>
                                         @endcan
                                 </div>
                             </td>
@@ -176,13 +177,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- Status Toggle Script --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function toggleStatus(userId) {
-            // confirm dialog
-            if (!confirm("Are you sure you want to change this user's status?")) {
-                return;
-            }
-
             const buttons = document.querySelectorAll(`.status-btn[data-user-id="${userId}"]`);
             let currentStatus = null;
 
@@ -190,56 +188,124 @@
                 if (currentStatus === null) {
                     currentStatus = btn.classList.contains('bg-success');
                 }
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
             });
 
-            const newStatus = !currentStatus;
+            Swal.fire({
+                title: 'Change User Status',
+                text: 'Are you sure you want to change this user\'s status?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, change it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (!result.isConfirmed) {
+                    return;
+                }
 
-            fetch(`/users/${userId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        status: newStatus
-                    })
-                })
-                .then(res => {
-                    if (!res.ok) {
-                        // server-side error (403, 500, etc.)
-                        return res.json().then(err => {
-                            throw new Error(err.message || `HTTP ${res.status}`);
-                        });
-                    }
-                    return res.json();
-                })
-                .then(data => {
-                    if (!data.success) throw new Error(data.message || 'Failed to update status');
-
-                    const isActive = data.status == 1;
-
-                    buttons.forEach(btn => {
-                        btn.classList.toggle('bg-success', isActive);
-                        btn.classList.toggle('bg-secondary', !isActive);
-                        btn.innerHTML = isActive ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
-                        btn.disabled = false;
-                    });
-                })
-                .catch(err => {
-                    // reset buttons back to old state if failed
-                    buttons.forEach(btn => {
-                        btn.classList.toggle('bg-success', currentStatus);
-                        btn.classList.toggle('bg-secondary', !currentStatus);
-                        btn.innerHTML = currentStatus ? '{{ __('trans.active') }}' :
-                            '{{ __('trans.inactive') }}';
-                        btn.disabled = false;
-                    });
-
-                    alert("{{ __('trans.failed_to_update_status') }}: " + err.message);
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
                 });
+
+                const newStatus = !currentStatus;
+
+                fetch(`/users/${userId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: newStatus
+                        })
+                    })
+                    .then(res => {
+                        if (!res.ok) {
+                            // server-side error (403, 500, etc.)
+                            return res.json().then(err => {
+                                throw new Error(err.message || `HTTP ${res.status}`);
+                            });
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (!data.success) throw new Error(data.message || 'Failed to update status');
+
+                        const isActive = data.status == 1;
+
+                        buttons.forEach(btn => {
+                            btn.classList.toggle('bg-success', isActive);
+                            btn.classList.toggle('bg-secondary', !isActive);
+                            btn.innerHTML = isActive ? '{{ __('trans.active') }}' : '{{ __('trans.inactive') }}';
+                            btn.disabled = false;
+                        });
+                    })
+                    .catch(err => {
+                        // reset buttons back to old state if failed
+                        buttons.forEach(btn => {
+                            btn.classList.toggle('bg-success', currentStatus);
+                            btn.classList.toggle('bg-secondary', !currentStatus);
+                            btn.innerHTML = currentStatus ? '{{ __('trans.active') }}' :
+                                '{{ __('trans.inactive') }}';
+                            btn.disabled = false;
+                        });
+
+                        Swal.fire({
+                            title: 'Error',
+                            text: "{{ __('trans.failed_to_update_status') }}: " + err.message,
+                            icon: 'error'
+                        });
+                    });
+            });
         }
+
+        // Delete user handler
+        $(document).ready(function() {
+            $(document).off('click', '.delete-user-btn').on('click', '.delete-user-btn', function() {
+                const button = $(this);
+                const userId = button.data('user-id');
+
+                Swal.fire({
+                    title: 'Delete User',
+                    text: 'Are you sure you want to delete this user?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('#deleteUserForm');
+                        form.attr('action', `/users/${userId}`);
+                        form.submit();
+                    }
+                });
+            });
+
+            // Reset password handler
+            $(document).off('click', '.reset-password-btn').on('click', '.reset-password-btn', function() {
+                const button = $(this);
+                const form = button.closest('.reset-password-form');
+
+                Swal.fire({
+                    title: 'Reset Password',
+                    text: 'Are you sure you want to reset this user\'s password?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, reset it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
     </script>
 @endsection
