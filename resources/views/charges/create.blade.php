@@ -36,6 +36,18 @@
                         @enderror
                     </div>
 
+                    @can('charges_salary')
+                        <!-- Created At -->
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="created_at" value="{{ old('created_at', date('Y-m-d')) }}"
+                                class="form-control @error('created_at') is-invalid @enderror">
+                            @error('created_at')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endcan
+
                     <!-- Is gap -->
                     <div class="mb-3">
                         <label class="form-label d-block">Charge Type</label>
