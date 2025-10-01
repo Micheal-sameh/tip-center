@@ -169,21 +169,24 @@
                     <td>{{ $report->materials }}</td>
                     <td class="text-end">{{ $report->printables ?? 0 }}</td>
                     @php
-                        $total = $report->student->toPay->sum(function ($pay) use ($selected_type) {
-                            if ($selected_type == App\Enums\ReportType::PROFESSOR) {
-                                return $pay->to_pay + $pay->to_pay_materials;
-                            } elseif ($selected_type == App\Enums\ReportType::CENTER) {
-                                return $pay->to_pay_center + $pay->to_pay_print;
-                            } else {
-                                return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print + $pay->to_pay_materials;
-                            }
-                        });
+                        $total =
+                            $report->student
+                                ?->toPay()
+                                ->get(['to_pay_materials', 'to_pay_print', 'to_pay_center', 'to_pay', 'id'])
+                                ->sum(function ($p) use ($selected_type) {
+                                    return match ((int) $selected_type) {
+                                        App\Enums\ReportType::PROFESSOR => $p->to_pay + $p->to_pay_materials,
+                                        App\Enums\ReportType::CENTER => $p->to_pay_center + $p->to_pay_print,
+                                        default => $p->to_pay +
+                                            $p->to_pay_center +
+                                            $p->to_pay_print +
+                                            $p->to_pay_materials,
+                                    };
+                                }) ?? 0;
                     @endphp
-                    @if ($total > 0)
-                        <td class="text-end fw-bold {{ $total > 0 ? 'text-danger' : '' }}">
-                            {{ number_format($total, 2) }}
-                        </td>
-                    @endif
+                    <td class="text-end fw-bold {{ $total > 0 ? 'text-danger' : '' }}">
+                        {{ number_format($total, 2) }}
+                    </td>
                 </tr>
             @endforeach
         </tbody>
@@ -456,7 +459,7 @@
                             $total += $onlineTotal;
                         }
 
-                        if($settlements->isNotEmpty()) {
+                        if ($settlements->isNotEmpty()) {
                             $total += $total_amount;
                         }
                     @endphp
@@ -465,21 +468,21 @@
             </tr>
             @php
 
-                $total = $reports->sum(function ($report) use ($selected_type) {
-                    if (!isset($report->student->toPay)) {
-                        return 0;
-                    }
-
-                    return $report->student->toPay->sum(function ($pay) use ($selected_type) {
-                        if ($selected_type == App\Enums\ReportType::PROFESSOR) {
-                            return $pay->to_pay + $pay->to_pay_materials;
-                        } elseif ($selected_type == App\Enums\ReportType::CENTER) {
-                            return $pay->to_pay_center + $pay->to_pay_print;
-                        } else {
-                            return $pay->to_pay_center + $pay->to_pay + $pay->to_pay_print + $pay->to_pay_materials;
-                        }
-                    });
-                });
+                $total = $reports->sum(
+                    fn($report) => $report->student
+                        ?->toPay()
+                        ->get(['id', 'to_pay', 'to_pay_materials', 'to_pay_center', 'to_pay_print'])
+                        ->sum(
+                            fn($pay) => match ((int) $selected_type) {
+                                App\Enums\ReportType::PROFESSOR => $pay->to_pay + $pay->to_pay_materials,
+                                App\Enums\ReportType::CENTER => $pay->to_pay_center + $pay->to_pay_print,
+                                default => $pay->to_pay +
+                                    $pay->to_pay_center +
+                                    $pay->to_pay_print +
+                                    $pay->to_pay_materials,
+                            },
+                        ) ?? 0,
+                );
             @endphp
             <tr class="{{ $total > 0 ? 'bg-warning' : '' }}">
                 <th> To Collect</th>
