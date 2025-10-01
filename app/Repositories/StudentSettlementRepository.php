@@ -56,14 +56,16 @@ class StudentSettlementRepository extends BaseRepository
 
     public function session($input)
     {
+        $session = $input['session'];
+        $startDateTime = $session->created_at->copy()
+            ->setTimeFrom($session->start_at);
+        $endDateTime = $session->created_at->copy()
+            ->setTimeFrom($session->end_at);
+
         return $this->model
-            ->where('session_id', '<', $input['session']->id)
-            ->where('professor_id', $input['session']->professor_id)
-            ->whereBetween('created_at', [
-                $input['session']->created_at->startOfDay(),
-                $input['session']->created_at->endOfDay(),
-            ])
-            ->withWhereHas('student', fn ($q) => $q->where('stage', $input['session']->stage)
+            ->where('professor_id', $session->professor_id)
+            ->whereBetween('created_at', [$startDateTime, $endDateTime])
+            ->withWhereHas('student', fn ($q) => $q->where('stage', $session->stage)
                 ->select('id', 'name', 'stage')
             )
             ->with('professor:id,name')
