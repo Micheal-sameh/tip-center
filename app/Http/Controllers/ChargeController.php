@@ -45,7 +45,11 @@ class ChargeController extends Controller
 
     public function create()
     {
-        return view('charges.create');
+        $previousRoute = app('router')->getRoutes()->match(request()->create(url()->previous()));
+        $lastPart = last(explode('.', $previousRoute->getName()));
+        $title = $lastPart == 'gap' ? 'Create Gap' : ($lastPart == 'student-print' ? 'Create Student Print' : 'Create Charge');
+
+        return view('charges.create', compact('title', 'lastPart'));
     }
 
     public function store(ChargeStoreRequest $request)

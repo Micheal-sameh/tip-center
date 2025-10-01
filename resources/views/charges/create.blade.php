@@ -4,7 +4,7 @@
     <div class="container-fluid px-4 mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="fw-bold m-0">
-                <i class="fas fa-plus me-2 text-success"></i> Create gap
+                <i class="fas fa-plus me-2 text-success"></i> {{ $title }}
             </h4>
             <a href="{{ route('charges.index') }}" class="btn btn-sm btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back
@@ -51,11 +51,17 @@
                     <!-- Is gap -->
                     <div class="mb-3">
                         <label class="form-label d-block">Charge Type</label>
-                        @foreach (App\Enums\ChargeType::all() as $key => $type)
+                        @php
+                            $types = App\Enums\ChargeType::create($lastPart); // should return an array/collection
+                            $autoCheck = count($types) === 1 ? $types[0]['value'] : null;
+                        @endphp
+                        @foreach ($types as $key => $type)
                             <div class="form-check form-check-inline">
+
                                 <input type="radio" name="type" id="type_{{ $type['value'] }}"
-                                    value="{{ $type['value'] }}" class="form-check-input"
-                                    {{ old('type') === $type['value'] ? 'checked' : '' }}>
+                                    value="{{ $type['value'] }}" class="form-check-input" {
+                                    {{ old('type') === $type['value'] ? 'checked' : '' }}
+                                    {{ $autoCheck === $type['value'] ? 'checked' : '' }}>
                                 <label for="type_{{ $type['value'] }}" class="form-check-label">
                                     {{ $type['name'] }}
                                 </label>

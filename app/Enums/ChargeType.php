@@ -76,6 +76,7 @@ class ChargeType
         $locale = App::isLocale('ar') ? 'ar' : 'en';
 
         $values = array_keys(self::$translations);
+        $values = array_diff($values, [self::STUDENT_PRINT]);
 
         if (! Auth::user()?->can('charges_salary')) {
             $values = array_diff($values, [self::RENT, self::SALARY, self::ROOM_10_11]);
@@ -102,11 +103,36 @@ class ChargeType
     public static function getValues(): array
     {
         $values = array_keys(self::$translations);
+        $values = array_diff($values, [self::STUDENT_PRINT]);
 
         if (! Auth::user()?->can('charges_salary')) {
             $values = array_diff($values, [self::RENT, self::SALARY, self::GAP]);
         }
 
         return $values;
+    }
+
+    public static function create($route): array
+    {
+        $locale = App::isLocale('ar') ? 'ar' : 'en';
+
+        $values = array_keys(self::$translations);
+        $values = array_diff($values, [self::STUDENT_PRINT]);
+        if (! Auth::user()?->can('charges_salary')) {
+            $values = array_diff($values, [self::RENT, self::SALARY, self::GAP]);
+        }
+        $values = match ($route) {
+            'gap' => [self::GAP],
+            'student-print' => [self::STUDENT_PRINT],
+            default => array_diff($values, [self::STUDENT_PRINT, self::GAP]),
+        };
+
+        return array_map(
+            fn ($value) => [
+                'name' => self::$translations[$value][$locale],
+                'value' => $value,
+            ],
+            $values
+        );
     }
 }
