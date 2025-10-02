@@ -7,14 +7,14 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="fw-bold text-gradient m-0 d-flex align-items-center">
                 <i class="fas fa-calendar-alt me-2 text-primary"></i>
-                Monthly Report -
+                Monthly Report - Rooms 10 & 11 -
                 <span class="ms-1 text-primary">
                     {{ \Carbon\Carbon::parse($month)->format('F Y') }}
                 </span>
             </h4>
 
             <!-- Month Search -->
-            <form action="{{ route('reports.monthly-income') }}" method="GET" class="d-flex align-items-center">
+            <form action="{{ route('reports.monthly-ten-eleven') }}" method="GET" class="d-flex align-items-center">
                 <input type="month" name="month" class="form-control me-2 shadow-sm rounded-pill px-3"
                     value="{{ request('month', now()->format('Y-m')) }}" onchange="this.form.submit()">
                 <noscript>
