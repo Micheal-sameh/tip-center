@@ -56,8 +56,8 @@ class ChargeController extends Controller
     {
         $charge = $this->chargeRepository->store($request->validated());
 
-        return $charge->type == ChargeType::GAP
-            ? redirect()->back()->with('success', "gap: $charge->amount EGP created successfuly")
+        return ($charge->type == ChargeType::GAP || $charge->type == ChargeType::STUDENT_PRINT)
+            ? redirect()->back()->with('success', ChargeType::getStringValue($charge->type) . ': ' . $charge->amount . ' EGP created successfully')
             : to_route('charges.index');
     }
 

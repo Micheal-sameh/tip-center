@@ -76,7 +76,7 @@ class ChargeType
         $locale = App::isLocale('ar') ? 'ar' : 'en';
 
         $values = array_keys(self::$translations);
-        $values = array_diff($values, [self::STUDENT_PRINT]);
+        // $values = array_diff($values, [self::STUDENT_PRINT]);
 
         if (! Auth::user()?->can('charges_salary')) {
             $values = array_diff($values, [self::RENT, self::SALARY, self::ROOM_10_11]);
@@ -103,7 +103,7 @@ class ChargeType
     public static function getValues(): array
     {
         $values = array_keys(self::$translations);
-        $values = array_diff($values, [self::STUDENT_PRINT]);
+        // $values = array_diff($values, [self::STUDENT_PRINT]);
 
         if (! Auth::user()?->can('charges_salary')) {
             $values = array_diff($values, [self::RENT, self::SALARY, self::GAP]);
