@@ -70,6 +70,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Professor</th>
+                                <th>Room</th>
                                 <th class="text-center">Session Date</th>
                                 <th class="text-center">students Attends</th>
                                 <th class="text-center">Center</th>
@@ -82,6 +83,7 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $session->professor->name ?? '-' }} -
                                         {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</td>
+                                    <td>{{ $session->room }}</td>
                                     <td class="text-center">{{ $session->created_at->format('d-m-Y') ?? '-' }} </td>
                                     <td class="text-center">
                                         {{ $session->total_paid_students > 0 ? $session->total_paid_students : '-' }}
