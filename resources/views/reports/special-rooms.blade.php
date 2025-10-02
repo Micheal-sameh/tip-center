@@ -106,7 +106,7 @@
                         @if (count($sessions))
                             <tfoot class="table-dark">
                                 <tr>
-                                    <th colspan="2" class="text-end">Totals:</th>
+                                    <th colspan="3" class="text-end">Totals:</th>
                                     <th class="text-center">{{ $sessions->count() }}</th>
                                     <th class="text-center">{{ $totals['paid_students'] }}</th>
                                     <th class="text-center">{{ number_format($totals['center_price'], 1) }}</th>
