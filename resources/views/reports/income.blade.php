@@ -173,7 +173,7 @@
                                     <th>{{ number_format($totals['to_professor'] ?? 0, 1) }}</th>
                                     <th>{{ $totals['attended_count'] }}</th>
                                     <th class="fw-bold text-primary">
-                                        {{ number_format($totals['overall_total'] + $charges - $gap - $settle - $studentPrint, 1) }}
+                                        {{ number_format($totals['overall_total'] + $charges - $gap - $settle - $print - $studentPrint, 1) }}
                                     </th>
                                 </tr>
 
@@ -204,9 +204,15 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6 text-end fw-bold">Student Settle:</div>
+                    <div class="col-md-6 text-end fw-bold">Student Settle Center :</div>
                     <div class="col-md-6 fw-bold text-danger">
                         {{ number_format($settle ?? 0, 1) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-end fw-bold">Student Settle Print:</div>
+                    <div class="col-md-6 fw-bold text-danger">
+                        {{ number_format($print ?? 0, 1) }}
                     </div>
                 </div>
                 <div class="row mt-2">
