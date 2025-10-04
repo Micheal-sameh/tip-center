@@ -90,4 +90,22 @@ class StudentSettlementRepository extends BaseRepository
                     ->orWhereHas('professor', fn ($p) => $p->where('name', 'like', '%'.$input['name'].'%'));
             }));
     }
+
+    public function incomeCenter($input)
+    {
+        return $this->model->query()
+            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
+            ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()))
+            ->sum('center');
+    }
+
+    public function incomePrint($input)
+    {
+        return $this->model->query()
+            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
+            ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()))
+            ->sum('printables');
+    }
 }

@@ -47,4 +47,9 @@ class Session extends Model
     {
         return $this->hasMany(SessionOnline::class);
     }
+
+    public function studentSettlements()
+    {
+        return $this->hasMany(StudentSettlement::class);
+    }
 }

@@ -358,21 +358,28 @@ class SessionRepository extends BaseRepository
                 'sessionStudents as attended_count' => function ($query) {
                     $query->where('is_attend', 1);
                 },
-            ])->when(true, function ($query) {
-                $query->withSum([
-                    'sessionStudents as total_center_price' => function ($q) {
-                        $q->whereHas('session', function ($session) {
-                            $session->whereNotIn('room', [10, 11]);
-                        });
-                    },
-                ], 'center_price');
-            })
+            ])
+            ->withSum([
+                'sessionStudents as total_center_price' => function ($q) {
+                    $q->whereHas('session', function ($session) {
+                        $session->whereNotIn('room', [10, 11]);
+                    });
+                },
+            ], 'center_price')
             ->withCount(['sessionStudents as total_paid_students' => function ($q) {
                 $q->whereColumn('center_price', 'sessions.center_price');
             }], 'center_price')
             ->withSum('sessionStudents as total_materials', 'materials')
             ->withSum('sessionStudents as total_printables', 'printables')
-            ->get();
+            ->withSum('studentSettlements as total_settlement_center', 'center')
+            ->withSum('studentSettlements as total_settlement_printables', 'printables')
+            ->withSum('studentSettlements as total_settlement_materials', 'materials')
+            ->get()
+            ->each(function ($session) {
+                $session->total_center_price = $session->total_center_price - ($session->total_settlement_center ?? 0);
+                $session->total_printables = $session->total_printables - ($session->total_settlement_printables ?? 0);
+                $session->total_materials = $session->total_materials - ($session->total_settlement_materials ?? 0);
+            });
     }
 
     public function monthlyIncome($month)
