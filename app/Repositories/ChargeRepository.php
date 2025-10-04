@@ -77,7 +77,7 @@ class ChargeRepository extends BaseRepository
 
     public function store($input)
     {
-        $createdAt = Auth::user()->can('charges_salary') && isset($input['created_at']) ? $input['created_at'] : now();
+        $createdAt = isset($input['created_at']) ? $input['created_at'] : now();
         DB::beginTransaction();
         $charge = $this->model->create([
             'title' => $input['title'],
