@@ -72,4 +72,9 @@ class ProfessorService
 
         return true;
     }
+
+    public function getSchedule(array $filters = [])
+    {
+        return $this->professorRepository->getSchedule($filters);
+    }
 }

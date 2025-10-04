@@ -54,6 +54,10 @@
         <a href="{{ route('parents.index') }}" class="btn btn-success btn-lg flex-fill text-white text-decoration-none">
             <i class="fas fa-user-friends me-2"></i> Parent
         </a>
+
+        <a href="{{ route('parents.schedule') }}" class="btn btn-info btn-lg flex-fill text-white text-decoration-none">
+            <i class="fas fa-calendar-alt me-2"></i> Schedule
+        </a>
     </div>
 
 </body>

@@ -7,6 +7,7 @@ use App\Http\Requests\ProfessorCreateRequest;
 use App\Http\Requests\ProfessorIndexRequest;
 use App\Http\Requests\ProfessorUpdateRequest;
 use App\Http\Requests\ProfilePicRequest;
+use App\Http\Requests\ScheduleFilterRequest;
 use App\Services\ProfessorService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -15,7 +16,7 @@ class ProfessorController extends Controller
 {
     public function __construct(protected ProfessorService $professorService)
     {
-        $this->middleware('permission:professors_view')->only(['index', 'show']);
+        // $this->middleware('permission:professors_view')->only(['index', 'show', 'schedule']);
         $this->middleware('permission:professors_create')->only(['create', 'store']);
         $this->middleware('permission:professors_update')->only(['edit', 'update']);
         $this->middleware('permission:professors_delete')->only('delete');
@@ -39,6 +40,20 @@ class ProfessorController extends Controller
         $professor = $this->professorService->show($id);
 
         return view('professors.show', compact('professor'));
+    }
+
+    public function schedule(ScheduleFilterRequest $request)
+    {
+        $schedule = $this->professorService->getSchedule($request->validated());
+
+        return view('professors.schedule', compact('schedule'));
+    }
+
+    public function publicSchedule(ScheduleFilterRequest $request)
+    {
+        $schedule = $this->professorService->getSchedule($request->validated());
+
+        return view('professors.public_schedule', compact('schedule'));
     }
 
     public function create()

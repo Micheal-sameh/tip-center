@@ -66,6 +66,7 @@ Route::group(['middleware' => ['setlocale']], function () {
 
         Route::prefix('professors')->group(function () {
             Route::get('/', [ProfessorController::class, 'index'])->name('professors.index');
+            Route::get('/schedule', [ProfessorController::class, 'schedule'])->name('professors.schedule');
             Route::get('/create', [ProfessorController::class, 'create'])->name('professors.create');
             Route::get('/dropdown', [ProfessorController::class, 'dropdown'])->name('professors.dropdown');
             Route::get('/{id}/show', [ProfessorController::class, 'show'])->name('professors.show');
@@ -181,5 +182,6 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::get('/parent', [ReportController::class, 'parent'])->name('parents.student');
         Route::get('/student-pdf', [ReportController::class, 'downloadStudentReport'])->name('parents.download.pdf');
     });
+    Route::get('/schedule', [ProfessorController::class, 'publicSchedule'])->name('parents.schedule');
 
 });
