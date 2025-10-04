@@ -371,9 +371,21 @@ class SessionRepository extends BaseRepository
             }], 'center_price')
             ->withSum('sessionStudents as total_materials', 'materials')
             ->withSum('sessionStudents as total_printables', 'printables')
-            ->withSum('studentSettlements as total_settlement_center', 'center')
-            ->withSum('studentSettlements as total_settlement_printables', 'printables')
-            ->withSum('studentSettlements as total_settlement_materials', 'materials')
+            ->withSum(['studentSettlements as total_settlement_center' => function ($q) {
+                $q->whereHas('session', function ($session) {
+                    $session->whereIn('room', [10, 11]);
+                });
+            }], 'center')
+            ->withSum(['studentSettlements as total_settlement_printables' => function ($q) {
+                $q->whereHas('session', function ($session) {
+                    $session->whereIn('room', [10, 11]);
+                });
+            }], 'printables')
+            ->withSum(['studentSettlements as total_settlement_materials' => function ($q) {
+                $q->whereHas('session', function ($session) {
+                    $session->whereIn('room', [10, 11]);
+                });
+            }], 'materials')
             ->get()
             ->each(function ($session) {
                 $session->total_center_price = $session->total_center_price - ($session->total_settlement_center ?? 0);
@@ -410,8 +422,8 @@ class SessionRepository extends BaseRepository
             days.day,
 
         -- session income
-        COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) as center,
-        COALESCE(SUM(ss.printables), 0) as print,
+        (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(settlement_subtract.center), 0) + COALESCE(MAX(settlement_add.center), 0)) as center,
+        (COALESCE(SUM(ss.printables), 0) - COALESCE(MAX(settlement_subtract.printables), 0) + COALESCE(MAX(settlement_add.printables), 0)) as print,
         COALESCE(SUM(e.markers), 0) as markers,
         COALESCE(SUM(e.other_print), 0) as other_print,
         COALESCE(SUM(e.other_center), 0) as other_center,
@@ -428,8 +440,8 @@ class SessionRepository extends BaseRepository
 
         -- income total
         (
-            COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
-            COALESCE(SUM(ss.printables), 0) +
+            (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(settlement_subtract.center), 0) + COALESCE(MAX(settlement_add.center), 0)) +
+            (COALESCE(SUM(ss.printables), 0) - COALESCE(MAX(settlement_subtract.printables), 0) + COALESCE(MAX(settlement_add.printables), 0)) +
             COALESCE(SUM(e.copies), 0) +
             COALESCE(SUM(e.markers), 0) +
             COALESCE(SUM(e.other_center), 0) +
@@ -450,8 +462,8 @@ class SessionRepository extends BaseRepository
         -- difference
         (
             (
-                COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) +
-                COALESCE(SUM(ss.printables), 0) +
+                (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(settlement_subtract.center), 0) + COALESCE(MAX(settlement_add.center), 0)) +
+                (COALESCE(SUM(ss.printables), 0) - COALESCE(MAX(settlement_subtract.printables), 0) + COALESCE(MAX(settlement_add.printables), 0)) +
                 COALESCE(SUM(e.copies), 0) +
                 COALESCE(SUM(e.markers), 0) +
                 COALESCE(SUM(e.other_center), 0) +
@@ -470,7 +482,7 @@ class SessionRepository extends BaseRepository
 
         -- net values
         (
-            COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0)
+            (COALESCE(SUM(CASE WHEN s.room NOT IN (10, 11) THEN ss.center_price ELSE 0 END), 0) - COALESCE(MAX(settlement_subtract.center), 0) + COALESCE(SUM(settlement_add.center), 0))
             - COALESCE(MAX(c.charges_center), 0)
             + COALESCE(SUM(e.other_center), 0)
             + COALESCE(SUM(so.online_center), 0)
@@ -479,7 +491,7 @@ class SessionRepository extends BaseRepository
         (
             COALESCE(SUM(e.copies), 0)
             + COALESCE(SUM(e.other_print), 0)
-            + COALESCE(SUM(ss.printables), 0)
+            + (COALESCE(SUM(ss.printables), 0) - COALESCE(MAX(settlement_subtract.printables), 0) + COALESCE(MAX(settlement_add.printables), 0))
             - COALESCE(MAX(c.charges_copies), 0)
         ) as net_copies,
 
@@ -533,6 +545,21 @@ class SessionRepository extends BaseRepository
                 GROUP BY session_id
             ) so'), 's.id', '=', 'so.session_id')
 
+            ->leftJoin(DB::raw('(
+                SELECT DATE(s.created_at) as session_day, SUM(st.center) as center, SUM(st.printables) as printables
+                FROM student_settlements st
+                JOIN sessions s ON st.session_id = s.id
+                WHERE s.room NOT IN (10, 11)
+                GROUP BY session_day
+            ) settlement_subtract'), 'days.day', '=', 'settlement_subtract.session_day')
+
+            ->leftJoin(DB::raw('(
+                SELECT DATE(created_at) as settle_day, SUM(center) as center, SUM(printables) as printables
+                FROM student_settlements
+                WHERE session_id NOT IN (SELECT id FROM sessions WHERE room IN (10, 11))
+                GROUP BY settle_day
+            ) settlement_add'), 'days.day', '=', 'settlement_add.settle_day')
+
             ->groupBy('days.day')
             ->orderBy('days.day')
             ->get();
@@ -566,7 +593,7 @@ class SessionRepository extends BaseRepository
             days.day,
 
             -- income from sessions (rooms 10 and 11 only)
-            COALESCE(SUM(ss.center_price), 0) center_income,
+            (COALESCE(SUM(ss.center_price), 0) - COALESCE(MAX(settlement_subtract.center), 0) + COALESCE(MAX(settlement_add.center), 0)) as center_income,
             COALESCE(SUM(e.other), 0) as other,
 
             -- charges for ten & eleven
@@ -574,7 +601,7 @@ class SessionRepository extends BaseRepository
 
             -- net
             (
-                (COALESCE(SUM(ss.center_price), 0) + COALESCE(SUM(e.other), 0))
+                ((COALESCE(SUM(ss.center_price), 0) - COALESCE(MAX(settlement_subtract.center), 0) + COALESCE(MAX(settlement_add.center), 0)) + COALESCE(SUM(e.other), 0))
                 - COALESCE(MAX(c.charges_ten_eleven), 0)
             ) as net
         ')
@@ -599,6 +626,20 @@ class SessionRepository extends BaseRepository
             FROM charges
             GROUP BY DATE(created_at)
         ) c'), 'days.day', '=', 'c.charge_day')
+            ->leftJoin(DB::raw('(
+                SELECT DATE(s.created_at) as session_day, SUM(st.center) as center
+                FROM student_settlements st
+                JOIN sessions s ON st.session_id = s.id
+                WHERE s.room IN (10,11)
+                GROUP BY session_day
+            ) settlement_subtract'), 'days.day', '=', 'settlement_subtract.session_day')
+            ->leftJoin(DB::raw('(
+                SELECT DATE(st.created_at) as settle_day, SUM(st.center) as center
+                FROM student_settlements st
+                JOIN sessions s ON st.session_id = s.id
+                WHERE s.room IN (10,11)
+                GROUP BY settle_day
+            ) settlement_add'), 'days.day', '=', 'settlement_add.settle_day')
             ->groupBy('days.day')
             ->orderBy('days.day')
             ->get();

@@ -65,7 +65,6 @@ class ReportService
     public function income($input)
     {
         $sessions = $this->sessionRepository->income($input);
-        // dd($sessions);
         $charges = $this->chargeRepository->income($input);
         $gap = $this->chargeRepository->incomeGap($input);
         $settle = $this->studentSettlementRepository->incomeCenter($input);
