@@ -97,6 +97,7 @@ class StudentSettlementRepository extends BaseRepository
             ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
             ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
             ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()))
+            ->whereHas('session', fn ($q) => $q->whereNotIn('room', [10, 11]))
             ->sum('center');
     }
 
@@ -106,6 +107,17 @@ class StudentSettlementRepository extends BaseRepository
             ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
             ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
             ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()))
+            ->whereHas('session', fn ($q) => $q->whereNotIn('room', [10, 11]))
             ->sum('printables');
+    }
+
+    public function specialRoomsIncome($input)
+    {
+        return $this->model->query()
+            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
+            ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()))
+            ->whereHas('session', fn ($q) => $q->whereIn('room', [10, 11]))
+            ->sum('center');
     }
 }
