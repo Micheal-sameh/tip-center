@@ -162,7 +162,7 @@ class ReportService
     public function specialRooms($input)
     {
         $sessions = $this->sessionRepository->specialRooms($input);
-        $settle = $this->chargeRepository->specialRoomsIncome($input);
+        $settle = $this->studentSettlementRepository->specialRoomsIncome($input);
         $charges = $this->chargeRepository->specialRoomsCharge($input);
         $totals = [
             'attended_count' => 0,

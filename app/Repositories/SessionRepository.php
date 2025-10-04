@@ -657,6 +657,7 @@ class SessionRepository extends BaseRepository
                 'sessionExtra' => fn ($q) => $q->select('id', 'session_id', 'other'),
             ])
             ->withSum('sessionStudents as center', 'center_price')
+            ->withSum(['studentSettlements as settlement_center'], 'center')
             ->withCount(['sessionStudents',
                 'sessionStudents as attended_count' => function ($query) {
                     $query->where('is_attend', 1);
@@ -665,7 +666,9 @@ class SessionRepository extends BaseRepository
             ->withCount(['sessionStudents as total_paid_students' => function ($q) {
                 $q->whereColumn('center_price', 'sessions.center_price');
             }], 'center_price')
-            ->get();
+            ->get()->each(function ($session) {
+                $session->center = $session->center - ($session->settlement_center ?? 0);
+            });
     }
 
     public function online($input, $id)
