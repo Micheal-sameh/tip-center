@@ -40,6 +40,7 @@ class ReportService
     public function session($input)
     {
         $session = $this->sessionRepository->findById($input['session_id']);
+        $input['session'] = $session;
         $reports = $this->sessionStudentRepository->session($input);
         $sessionId = $input['session_id'];
         $settlements = $this->studentSettlementRepository->session(['session' => $session]);

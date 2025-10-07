@@ -253,7 +253,7 @@ class SessionStudentRepository extends BaseRepository
 
     public function session($input)
     {
-        $session = $this->findById($input['session_id']);
+        $session = $input['session'];
 
         $query = $this->model
             ->with([
