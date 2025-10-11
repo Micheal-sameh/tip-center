@@ -54,7 +54,7 @@ class SessionStudentController extends Controller
     {
         $student = $this->studentService->show($request->student_id);
         $session = $this->sessionservice->show($request->session_id);
-        $to_pay = $student->toPay()->with('session.professor')->get();
+        $to_pay = $student->toPay($session->professor_id)->with('session.professor')->get();
         $attend = SessionStudent::where('session_id', $request->session_id)
             ->where('student_id', $request->student_id)->exists();
 
