@@ -19,6 +19,7 @@ use App\Services\SessionStudentService;
 use App\Services\StudentService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Mpdf\Mpdf;
 
@@ -288,5 +289,12 @@ class ReportController extends Controller
         $totals = $data['totals'];
 
         return view('reports.student-settlements', compact('settlements', 'totals'));
+    }
+
+    public function toPay(Request $request)
+    {
+        $toPays = $this->reportService->toPay($request->all());
+
+        return view('reports.to_pay', compact('toPays'));
     }
 }

@@ -202,4 +202,9 @@ class ReportService
 
         return compact('settlements', 'totals');
     }
+
+    public function toPay($input)
+    {
+        return $this->sessionStudentRepository->toPay($input);
+    }
 }
