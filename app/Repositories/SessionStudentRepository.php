@@ -354,4 +354,22 @@ class SessionStudentRepository extends BaseRepository
         return SessionStudent::where('session_id', $session_id)
             ->where('student_id', $student_id)->first();
     }
+
+    public function toPay($input)
+    {
+        $query = $this->model->query()
+            ->with(['student:id,name,stage,phone,parent_phone', 'session.professor:id,name'])
+            ->where(function ($q) {
+                $q->where('to_pay', '>', 0)
+                    ->orWhere('to_pay_center', '>', 0)
+                    ->orWhere('to_pay_materials', '>', 0)
+                    ->orWhere('to_pay_print', '>', 0);
+            })
+            ->when(isset($input['stage']), fn ($q) => $q->whereHas('student', fn ($sq) => $sq->where('stage', $input['stage'])))
+            ->when(isset($input['name']), fn ($q) => $q->whereHas('student', fn ($sq) => $sq->where('name', 'like', '%'.$input['name'].'%')))
+            ->when(isset($input['professor_id']), fn ($q) => $q->whereHas('session', fn ($sq) => $sq->where('professor_id', $input['professor_id'])))
+            ->orderBy('created_at');
+
+        return $this->execute($query);
+    }
 }
