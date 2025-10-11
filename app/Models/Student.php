@@ -67,9 +67,12 @@ class Student extends Model implements HasMedia
             ->count();
     }
 
-    public function toPay()
+    public function toPay($professor_id = null)
     {
         return $this->hasMany(SessionStudent::class, 'student_id', 'id')
+            ->when(isset($professor_id), function ($query) use ($professor_id) {
+                $query->whereHas('session', fn ($q) => $q->where('professor_id', $professor_id));
+            })
             ->where(function ($q) {
                 $q->where('to_pay', '>', 0)
                     ->orWhere('to_pay_center', '>', 0)

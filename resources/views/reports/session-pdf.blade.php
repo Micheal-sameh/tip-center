@@ -171,7 +171,7 @@
                     @php
                         $total =
                             $report->student
-                                ?->toPay()
+                                ?->toPay($session->professor_id)
                                 ->get(['to_pay_materials', 'to_pay_print', 'to_pay_center', 'to_pay', 'id'])
                                 ->sum(function ($p) use ($selected_type) {
                                     return match ((int) $selected_type) {
@@ -470,7 +470,7 @@
 
                 $total = $reports->sum(
                     fn($report) => $report->student
-                        ?->toPay()
+                        ?->toPay($session->professor_id)
                         ->get(['id', 'to_pay', 'to_pay_materials', 'to_pay_center', 'to_pay_print'])
                         ->sum(
                             fn($pay) => match ((int) $selected_type) {

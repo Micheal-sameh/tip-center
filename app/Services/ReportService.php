@@ -43,7 +43,7 @@ class ReportService
         $input['session'] = $session;
         $reports = $this->sessionStudentRepository->session($input);
         $sessionId = $input['session_id'];
-        $settlements = $this->studentSettlementRepository->session(['session' => $session]);
+        $settlements = $this->studentSettlementRepository->session($input);
 
         $settlementTotals = [
             'total_center' => $settlements->sum('center'),
