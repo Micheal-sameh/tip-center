@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\ReportType;
 use App\Models\StudentSettlement;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,21 +55,34 @@ class StudentSettlementRepository extends BaseRepository
         ]);
     }
 
-    public function session($input)
+    public function session(array $input)
     {
         $session = $input['session'];
-        $startDateTime = $session->created_at->copy()
-            ->setTimeFrom($session->start_at);
-        $endDateTime = $session->created_at->copy()
-            ->setTimeFrom($session->end_at);
+
+        $startDateTime = $session->created_at->clone()->setTimeFrom($session->start_at);
+        $endDateTime = $session->created_at->clone()->setTimeFrom($session->end_at);
 
         return $this->model
             ->where('professor_id', $session->professor_id)
             ->whereBetween('created_at', [$startDateTime, $endDateTime])
-            ->withWhereHas('student', fn ($q) => $q->where('stage', $session->stage)
-                ->select('id', 'name', 'stage')
-            )
-            ->with('professor:id,name')
+            ->when(isset($input['type']), function ($query) use ($input) {
+                $type = (int) $input['type'];
+
+                $query->where(function ($q) use ($type) {
+                    if ($type === ReportType::PROFESSOR) {
+                        $q->where('professor_amount', '>', 0)
+                            ->orWhere('materials', '>', 0);
+                    } elseif ($type === ReportType::CENTER) {
+                        $q->where('center', '>', 0)
+                            ->orWhere('printables', '>', 0);
+                    }
+                });
+            })
+            ->with([
+                'student' => fn ($q) => $q->where('stage', $session->stage)
+                    ->select('id', 'name', 'stage'),
+                'professor:id,name',
+            ])
             ->get();
     }
 
