@@ -128,7 +128,7 @@ class StudentRepository extends BaseRepository
 
     public function dropdown()
     {
-        return $this->model->get(['id', 'name', 'stage', 'code', 'phone']);
+        return $this->model->get(['id', 'name', 'stage', 'code', 'phone', 'parent_phone', 'parent_phone_2']);
     }
 
     public function parent($input)

@@ -27,7 +27,7 @@
                                 <i class="fas fa-search text-muted"></i>
                             </span>
                             <input type="text" id="studentSearch" class="form-control border-start-0"
-                                placeholder="@lang('trans.Search by name, code or phone...')" autocomplete="off" autofocus>
+                                placeholder="@lang('trans.Search by name, code, phone or parent phone...')" autocomplete="off" autofocus>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -58,6 +58,8 @@
                                             <div class="d-flex gap-2">
                                                 <small class="text-muted">{{ $student->code ?? '' }}</small>
                                                 <small class="text-muted">{{ $student->phone ?? '' }}</small>
+                                                <small class="text-muted">{{ $student->parent_phone ?? '' }}</small>
+                                                <small class="text-muted">{{ $student->parent_phone_2 ?? '' }}</small>
                                             </div>
                                         </div>
                                         <div class="text-end">
