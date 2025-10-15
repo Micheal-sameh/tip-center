@@ -22,6 +22,8 @@ class StudentSettlement extends Model
         'professor_amount',
         'materials',
         'printables',
+        'session_student_id',
+        'settled_in_session_id',
     ];
 
     protected $casts = [

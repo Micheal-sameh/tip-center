@@ -59,9 +59,9 @@ class SessionStudentController extends Controller
             ->where('student_id', $request->student_id)->exists();
 
         $message = null;
-        if ($attend) {
-            $message = 'Student already attended this session.';
-        }
+        // if ($attend) {
+        //     $message = 'Student already attended this session.';
+        // }
 
         return view('session_students.create', compact('student', 'session', 'to_pay', 'message'));
     }

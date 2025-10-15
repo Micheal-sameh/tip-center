@@ -199,6 +199,10 @@ class SessionStudentRepository extends BaseRepository
         info('professor '.$professor);
         $totalPaid = $professor_amount + $materials + $center + $printables;
         if ($totalPaid > 0) {
+            $activeSession = Session::where('professor_id', $pay->session->professor_id)
+                ->where('status', SessionStatus::ACTIVE)
+                ->first();
+
             $this->studentSettlementRepository->store([
                 'student_id' => $pay->student_id,
                 'session_id' => $pay->session_id,
@@ -211,6 +215,8 @@ class SessionStudentRepository extends BaseRepository
                 'professor_amount' => $professor_amount,
                 'materials' => $materials,
                 'printables' => $printables,
+                'session_student_id' => $pay->id,
+                'settled_in_session_id' => $activeSession ? $activeSession->id : null,
             ]);
         }
 
@@ -275,8 +281,8 @@ class SessionStudentRepository extends BaseRepository
             ->where('session_id', $input['session_id']);
         if (isset($input['type'])) {
             $query = match ((int) $input['type']) {
-                ReportType::PROFESSOR => $query->select('created_at', 'professor_price', 'student_id', 'to_pay', 'materials', 'is_attend'),
-                ReportType::CENTER => $query->select('created_at', 'center_price', 'printables', 'student_id', 'to_pay_center', 'to_pay_print', 'is_attend'),
+                ReportType::PROFESSOR => $query->select('id', 'created_at', 'professor_price', 'student_id', 'to_pay', 'materials', 'is_attend'),
+                ReportType::CENTER => $query->select('id', 'created_at', 'center_price', 'printables', 'student_id', 'to_pay_center', 'to_pay_print', 'is_attend'),
                 default => $query,
             };
         }

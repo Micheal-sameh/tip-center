@@ -44,4 +44,9 @@ class SessionStudent extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function studentSettlement()
+    {
+        return $this->belongsTo(StudentSettlement::class, 'id', 'session_student_id');
+    }
 }

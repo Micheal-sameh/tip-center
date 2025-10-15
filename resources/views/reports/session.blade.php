@@ -1,6 +1,9 @@
 @extends('layouts.sideBar')
 
 @section('content')
+@php
+    $total_settelments = 0;
+@endphp
     <div class="container py-4">
         <div class="card mb-4">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -101,7 +104,26 @@
                                                         $p->to_pay_materials,
                                                 };
                                             }) ?? 0;
+                                            $set = null;
+                                            if($report->studentSettlement){
+                                                $set = $report->studentSettlement;
+                                                if (is_null($set)) {
+                                                    return ;
+                                                }
+                                                $settelment = match ((int) $selected_type){
+                                                    App\Enums\ReportType::PROFESSOR => (int) $set->professor_amount +
+                                                    (int) $set->materials,
+                                                    App\Enums\ReportType::CENTER => (int) $set->center +
+                                                    (int) $set->printables,
+                                                    default => (int) $set->professor_amount+
+                                                    (int) $set->center +
+                                                    (int) $set->printables +
+                                                    (int) $set->materials,
 
+                                                };
+                                                $toPayTotal += $settelment;
+                                                $total_settelments += $settelment;
+                                            }
                                 @endphp
                                 <tr class="{{ $rowClass }}">
                                     <td>{{ $loop->iteration }}</td>
@@ -117,12 +139,20 @@
                                     <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
                                     </td>
                                     <td class="text-end">
-                                        {{ number_format($report->professor_price + $report->center_price, 2) }}</td>
+                                        @if($report->professor_price && $report->center_price)
+                                        {{ number_format(!is_null($set) ? $report->professor_price - $set->professor_amount + $report->center_price - $set->center : $professor_price + $report->center_price, 2) }}
+                                        @elseif($report->professor_price)
+                                        {{ number_format(!is_null($set) ? $report->professor_price - $set->professor_amount : $report->professor_price, 2) }}
+                                        @elseif($report->center_price)
+                                        {{ number_format(!is_null($set) ? $report->professor_price - $set->professor_amount + $report->center_price - $set->center : $report->center_price, 2) }}
+                                        @endif
+
+                                    </td>
                                     @if ($showMaterials)
-                                        <td>{{ $report->materials }}</td>
+                                        <td>{{ !is_null($set) ? $report->materials - $set->materials : $report->materials }}</td>
                                     @endif
                                     @if ($showPrintables)
-                                        <td class="text-end">{{ $report->printables }}</td>
+                                        <td class="text-end">{{ !is_null($set) ? $report->printables - $set->printables : $report->printables}}</td>
                                     @endif
                                     <td class="text-end fw-bold {{ $toPayTotal > 0 ? 'text-danger' : '' }}">
                                         {{ number_format($toPayTotal, 2) }}</td>
@@ -425,8 +455,8 @@
                         <div class="card h-100 {{ $toCollect > 0 ? 'bg-warning bg-opacity-10' : '' }}">
                             <div class="card-body text-center">
                                 <h6 class="card-subtitle mb-2 text-muted">To Collect</h6>
-                                <p class="card-text fs-4 fw-bold {{ $toCollect > 0 ? 'text-danger' : '' }}">
-                                    {{ number_format($toCollect, 2) }}</p>
+                                <p class="card-text fs-4 fw-bold {{ $toCollect  > 0 ? 'text-danger' : '' }}">
+                                    {{ number_format($toCollect + $total_settelments, 2) }}</p>
                             </div>
                         </div>
                     </div>

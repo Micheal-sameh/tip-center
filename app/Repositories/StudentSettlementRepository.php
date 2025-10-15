@@ -52,6 +52,8 @@ class StudentSettlementRepository extends BaseRepository
             'professor_amount' => $input['professor_amount'] ?? 0,
             'materials' => $input['materials'] ?? 0,
             'printables' => $input['printables'] ?? 0,
+            'session_student_id' => $input['session_student_id'] ?? null,
+            'settled_in_session_id' => $input['settled_in_session_id'] ?? null,
         ]);
     }
 
