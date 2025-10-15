@@ -59,8 +59,8 @@ class StudentSettlementRepository extends BaseRepository
     {
         $session = $input['session'];
 
-        $startDateTime = $session->created_at->clone()->setTimeFrom($session->start_at);
-        $endDateTime = $session->created_at->clone()->setTimeFrom($session->end_at);
+        $startDateTime = $session->created_at->clone()->setTimeFrom($session->start_at)->subMinutes(30);
+        $endDateTime = $session->created_at->clone()->setTimeFrom($session->end_at)->subMinutes(30);
 
         return $this->model
             ->where('professor_id', $session->professor_id)
