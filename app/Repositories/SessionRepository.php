@@ -648,8 +648,8 @@ class SessionRepository extends BaseRepository
     public function specialRooms($input)
     {
         return $this->model->query()
-            ->when(isset($input['date_from']), fn ($q) => $q->where('created_at', '>=', $input['date_from']))
-            ->when(isset($input['date_to']), fn ($q) => $q->where('created_at', '<=', $input['date_to']))
+            ->when(isset($input['date_from']), fn ($q) => $q->whereDate('created_at', '>=', $input['date_from']))
+            ->when(isset($input['date_to']), fn ($q) => $q->whereDate('created_at', '<=', $input['date_to']))
             ->when(! isset($input['date_from']) && ! isset($input['date_to']), fn ($q) => $q->whereDate('created_at', today()))
             ->whereIn('room', [10, 11])
             ->with([
