@@ -373,17 +373,17 @@ class SessionRepository extends BaseRepository
             ->withSum('sessionStudents as total_printables', 'printables')
             ->withSum(['studentSettlements as total_settlement_center' => function ($q) {
                 $q->whereHas('session', function ($session) {
-                    $session->whereIn('room', [10, 11]);
+                    $session->whereNotIn('room', [10, 11]);
                 });
             }], 'center')
             ->withSum(['studentSettlements as total_settlement_printables' => function ($q) {
                 $q->whereHas('session', function ($session) {
-                    $session->whereIn('room', [10, 11]);
+                    $session->whereNotIn('room', [10, 11]);
                 });
             }], 'printables')
             ->withSum(['studentSettlements as total_settlement_materials' => function ($q) {
                 $q->whereHas('session', function ($session) {
-                    $session->whereIn('room', [10, 11]);
+                    $session->whereNotIn('room', [10, 11]);
                 });
             }], 'materials')
             ->get()
