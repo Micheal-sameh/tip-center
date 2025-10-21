@@ -73,7 +73,7 @@ class SessionRepository extends BaseRepository
             ->orderBy('status')
             ->orderBy('start_at');
 
-        return $query->paginate(12)->appends(request()->query());
+        return $query->get();
     }
 
     public function onlineSessions()
