@@ -35,7 +35,7 @@ class SessionController extends Controller
         $sessions = $data['sessions'];
         // dd($sessions->first()->sessionExtra);
         // return $sessions;
-        $totalsessions = $sessions->total();
+        $totalsessions = $sessions->count();
         $online_sessions = $data['onlineSessions'];
         $professors = $this->professorService->dropdown();
         if ($request->ajax()) {

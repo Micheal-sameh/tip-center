@@ -170,43 +170,7 @@
         @endforeach
     </div>
 
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center mt-4">
-        @if ($sessions->hasPages())
-            <nav>
-                <ul class="pagination">
-                    {{-- Previous Page Link --}}
-                    @if ($sessions->onFirstPage())
-                        <li class="page-item disabled">
-                            <span class="page-link">&laquo;</span>
-                        </li>
-                    @else
-                        <li class="page-item">
-                            <a class="page-link" href="{{ $sessions->previousPageUrl() }}" rel="prev">&laquo;</a>
-                        </li>
-                    @endif
 
-                    {{-- Pagination Elements --}}
-                    @foreach ($sessions->getUrlRange(1, $sessions->lastPage()) as $page => $url)
-                        <li class="page-item {{ $sessions->currentPage() === $page ? 'active' : '' }}">
-                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                        </li>
-                    @endforeach
-
-                    {{-- Next Page Link --}}
-                    @if ($sessions->hasMorePages())
-                        <li class="page-item">
-                            <a class="page-link" href="{{ $sessions->nextPageUrl() }}" rel="next">&raquo;</a>
-                        </li>
-                    @else
-                        <li class="page-item disabled">
-                            <span class="page-link">&raquo;</span>
-                        </li>
-                    @endif
-                </ul>
-            </nav>
-        @endif
-    </div>
 
     {{-- Modal --}}
     <div class="modal fade" id="statusChangeModal" tabindex="-1" aria-hidden="true">
