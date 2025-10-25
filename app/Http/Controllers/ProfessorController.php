@@ -49,13 +49,6 @@ class ProfessorController extends Controller
         return view('professors.schedule', compact('schedule'));
     }
 
-    public function publicSchedule(ScheduleFilterRequest $request)
-    {
-        $schedule = $this->professorService->getSchedule($request->validated());
-
-        return view('professors.public_schedule', compact('schedule'));
-    }
-
     public function create()
     {
         return view('professors.create');

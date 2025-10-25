@@ -88,10 +88,6 @@
 
             <button type="submit" class="btn btn-primary w-100">Search</button>
         </form>
-
-        <div class="mt-3 text-center">
-            <a href="{{ route('parents.schedule') }}" class="btn btn-outline-secondary w-100">View Schedule</a>
-        </div>
     </div>
 
     {{-- Schedule Section --}}

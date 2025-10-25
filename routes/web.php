@@ -183,6 +183,4 @@ Route::group(['middleware' => ['setlocale']], function () {
         Route::get('/parent', [ReportController::class, 'parent'])->name('parents.student');
         Route::get('/student-pdf', [ReportController::class, 'downloadStudentReport'])->name('parents.download.pdf');
     });
-    Route::get('/schedule', [ProfessorController::class, 'publicSchedule'])->name('parents.schedule');
-
 });
