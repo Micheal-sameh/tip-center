@@ -434,7 +434,7 @@ class SessionRepository extends BaseRepository
         COALESCE(MAX(c.charges_gap), 0) as charges_gap,
         COALESCE(MAX(c.charges_center), 0) as charges_center,
         COALESCE(MAX(c.charges_markers), 0) as charges_markers,
-        COALESCE(MAX(c.charges_others), 0) as charges_others,
+        COALESCE(MAX(c.charges_others), 0) - COALESCE(SUM(e.to_professor), 0) as charges_others,
         COALESCE(MAX(c.charges_copies), 0) as charges_copies,
         COALESCE(MAX(c.charges_student_print), 0) as charges_student_print,
 
@@ -456,7 +456,8 @@ class SessionRepository extends BaseRepository
             COALESCE(MAX(c.charges_center), 0) +
             COALESCE(MAX(c.charges_copies), 0) +
             COALESCE(MAX(c.charges_markers), 0) +
-            COALESCE(MAX(c.charges_others), 0)
+            COALESCE(MAX(c.charges_others), 0) -
+            COALESCE(SUM(e.to_professor), 0)
         ) as charges_total,
 
         -- difference
@@ -476,7 +477,8 @@ class SessionRepository extends BaseRepository
                 COALESCE(MAX(c.charges_center), 0) +
                 COALESCE(MAX(c.charges_copies), 0) +
                 COALESCE(MAX(c.charges_markers), 0) +
-                COALESCE(MAX(c.charges_others), 0)
+                COALESCE(MAX(c.charges_others), 0) -
+                COALESCE(SUM(e.to_professor), 0)
             )
         ) as difference_total,
 
@@ -501,9 +503,12 @@ class SessionRepository extends BaseRepository
         ) as net_markers,
 
         (
-            0 - COALESCE(MAX(c.charges_others), 0)
-        ) as net_others
+            0 - (COALESCE(MAX(c.charges_others), 0) - COALESCE(SUM(e.to_professor), 0))
+        ) as net_others,
 
+        (
+            0 - COALESCE(SUM(e.to_professor), 0)
+        ) as net_to_professor
     ')
             ->leftJoin('sessions as s', DB::raw('DATE(s.created_at)'), '=', 'days.day')
             ->leftJoin(DB::raw('(
@@ -520,7 +525,8 @@ class SessionRepository extends BaseRepository
                     SUM(CASE WHEN session_id IN (
                             SELECT id FROM sessions WHERE room NOT IN (10,11)
                         ) THEN other ELSE 0 END) as other_center,
-                    SUM(other_print) as other_print
+                    SUM(other_print) as other_print,
+                    SUM(to_professor) as to_professor
                 FROM session_extras
                 GROUP BY session_id
             ) e'), 's.id', '=', 'e.session_id')
