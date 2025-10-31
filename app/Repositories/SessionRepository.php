@@ -217,6 +217,12 @@ class SessionRepository extends BaseRepository
     public function status($status, $id)
     {
         $session = $this->findById($id);
+
+        // Prevent activation if session starts more than 30 minutes from now
+        if ($status == SessionStatus::ACTIVE && $session->start_at > now()->addMinutes(30)) {
+            return ['error' => 'Cannot activate session that starts more than 30 minutes from now, please try at : '.Carbon::parse($session->start_at)->subMinutes(30)->format('h:i')];
+        }
+
         $session->update([
             'status' => $status,
         ]);
@@ -413,7 +419,7 @@ class SessionRepository extends BaseRepository
                     SELECT a.N + b.N * 10 as seq
                     FROM (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
                         UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
-                    CROSS JOIN (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2) b -- supports up to 30 days
+                    CROSS JOIN (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3) b -- supports up to 40 days
                 ) numbers
                 WHERE DATE('$start' + INTERVAL seq DAY) <= '$end'
             ) days
@@ -590,7 +596,7 @@ class SessionRepository extends BaseRepository
                 SELECT a.N + b.N * 10 as seq
                 FROM (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
                     UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
-                CROSS JOIN (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2) b -- supports up to 30 days
+                CROSS JOIN (SELECT 0 as N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3) b -- supports up to 40 days
             ) numbers
             WHERE DATE('$start' + INTERVAL seq DAY) <= '$end'
         ) days
