@@ -135,6 +135,10 @@ class SessionController extends Controller
         }
         $session = $this->sessionservice->status(SessionStatus::ACTIVE, $id);
 
+        if ($session && is_array($session) && isset($session['error'])) {
+            return redirect()->back()->with('error', $session['error']);
+        }
+
         return redirect()->back()->with('success', $session->professor->name.' stage '.StagesEnum::getStringValue($session->stage).' '.'Status changed successfully');
     }
 
