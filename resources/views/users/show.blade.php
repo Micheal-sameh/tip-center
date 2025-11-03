@@ -23,7 +23,7 @@
                     <div class="col-md-4 p-4 text-center border-end bg-light">
                         <div class="d-flex flex-column align-items-center h-100">
                             <!-- Avatar with hover effect -->
-                            <div class="avatar-wrapper mx-auto mb-3 position-relative">
+                            <div class="avatar-wrapper mx-auto mt-auto position-relative">
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#avatarModal" class="avatar-link">
                                     @if ($user->hasMedia('profile_pic'))
                                         <div class="position-relative d-inline-block">
@@ -184,8 +184,8 @@
     <style>
         /* Avatar Styles */
         .avatar-wrapper {
-            width: 140px;
-            height: 140px;
+            width: 200px;
+            height: 200px;
             position: relative;
         }
 

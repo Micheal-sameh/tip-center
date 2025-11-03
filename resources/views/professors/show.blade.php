@@ -26,8 +26,25 @@
                     <!-- Professor Avatar Column -->
                     <div class="col-md-4 p-4 text-center border-end bg-light bg-opacity-10">
                         <div class="d-flex flex-column align-items-center h-100">
+                            <div class="mb-3 w-100">
+                                <h5 class="text-dark fw-bold pt-4 mb-1">{{ $professor->name }}</h5>
+                                <p class="text-muted small mb-3">{{ $professor->email }}</p>
+                                @if ($professor->status == 1)
+                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+                                        <i class="fas fa-circle me-1 small" style="font-size: 8px;"></i>
+                                        {{ __('trans.active') }}
+                                    </span>
+                                @else
+                                    <span
+                                        class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-normal">
+                                        <i class="fas fa-circle me-1 small" style="font-size: 8px;"></i>
+                                        {{ __('trans.inactive') }}
+                                    </span>
+                                @endif
+                            </div>
+
                             <!-- Avatar with hover effect -->
-                            <div class="avatar-wrapper mx-auto mb-3 position-relative">
+                            <div class="avatar-wrapper mx-auto mt-auto position-relative">
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#avatarModal" class="avatar-link">
                                     @if ($professor->hasMedia('professors_images'))
                                         <img src="{{ $professor->getFirstMediaUrl('professors_images') }}"
@@ -46,23 +63,6 @@
                                         </div>
                                     @endif
                                 </a>
-                            </div>
-
-                            <div class="mt-auto w-100">
-                                <h5 class="text-dark fw-bold pt-4 mb-1">{{ $professor->name }}</h5>
-                                <p class="text-muted small mb-3">{{ $professor->email }}</p>
-                                @if ($professor->status == 1)
-                                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
-                                        <i class="fas fa-circle me-1 small" style="font-size: 8px;"></i>
-                                        {{ __('trans.active') }}
-                                    </span>
-                                @else
-                                    <span
-                                        class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-normal">
-                                        <i class="fas fa-circle me-1 small" style="font-size: 8px;"></i>
-                                        {{ __('trans.inactive') }}
-                                    </span>
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -246,8 +246,8 @@
 
             /* Avatar Styles */
             .avatar-wrapper {
-                width: 160px;
-                height: 160px;
+                width: 200px;
+                height: 200px;
                 position: relative;
             }
 
