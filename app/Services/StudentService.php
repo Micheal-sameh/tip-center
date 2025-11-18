@@ -51,9 +51,15 @@ class StudentService
         return $student;
     }
 
-    public function delete($id)
+    public function delete($id, $password)
     {
-        return $this->studentRepository->delete($id);
+        $result = $this->studentRepository->delete($id, $password);
+
+        if (! $result['success']) {
+            return $result;
+        }
+
+        return $result;
     }
 
     public function changeStatus($id)

@@ -72,7 +72,7 @@ return [
     'image' => 'صورة',
     'Add Student' => 'اضافة طالب',
     'Attend Student to Session' => 'حضور الطلاب في الحصص',
-    'Search by name, code or phone...' => 'البحث بالاسم والكود ورقم التليفون',
+    'Search by name, code, phone or parent phone...' => 'البحث بالاسم والكود ورقم التليفون',
     'clear' => 'محو',
     'Students' => 'الطلاب',
     'Selected Student' => 'الطالب',
