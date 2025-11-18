@@ -37,7 +37,13 @@ class StudentObserver
      */
     public function deleted(Student $student): void
     {
-        //
+        Audit::create([
+            'table_name' => 'students',
+            'record_id' => $student->id,
+            'user_id' => auth()->id(),
+            'old_data' => $student->toArray(),
+            'new_data' => null,
+        ]);
     }
 
     /**
