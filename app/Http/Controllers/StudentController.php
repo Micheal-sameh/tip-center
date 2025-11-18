@@ -94,11 +94,19 @@ class StudentController extends Controller
         return to_route('students.show', $id);
     }
 
-    public function delete($id)
+    public function delete($id, Request $request)
     {
-        $this->studentservice->delete($id);
+        $request->validate([
+            'password' => 'required|string',
+        ]);
 
-        return to_route('students.index');
+        $result = $this->studentservice->delete($id, $request->password);
+
+        if (! $result['success']) {
+            return redirect()->back()->withErrors(['password' => $result['message']]);
+        }
+
+        return to_route('students.index')->with('success', $result['message']);
     }
 
     public function profilePic(ProfilePicRequest $request, $id)

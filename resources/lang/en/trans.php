@@ -72,7 +72,7 @@ return [
     'image' => 'Image',
     'Add Student' => 'Add Student',
     'Attend Student to Session' => 'Attend Student to Session',
-    'Search by name, code or phone...' => 'Search by name, code or phone...',
+    'Search by name, code, phone or parent phone...' => 'Search by name, code, phone or parent phone...',
     'clear' => 'Clear',
     'Students' => 'Students',
     'Selected Student' => 'Selected Student',

@@ -275,16 +275,11 @@
                         <i class="fas fa-edit me-2"></i>
                     </a>
                 @endcan
-                {{-- @can('students_delete')
-                    <form action="{{ route('students.delete', $student->id) }}" method="POST"
-                        onsubmit="return confirm('{{ __('trans.delete_confirm') }}')">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger rounded-pill px-4">
-                            <i class="fas fa-trash-alt me-2"></i>
-                        </button>
-                    </form>
-                @endcan --}}
+                @can('students_delete')
+                    <button class="btn btn-danger rounded-pill px-4" id="deleteStudentBtn">
+                        <i class="fas fa-trash-alt me-2"></i>
+                    </button>
+                @endcan
                 <a href="{{ route('reports.student', ['search' => $student->code]) }}"
                     class="btn btn-outline-secondary rounded-pill px-4">
                     <i class="fas fa-chart-line me-2"></i>
@@ -298,6 +293,13 @@
         @csrf
         @method('DELETE')
         <input type="password" name="password" style="display: none;">
+    </form>
+
+    <!-- Delete Student Form -->
+    <form id="deleteStudentForm" action="{{ route('students.delete', $student->id) }}" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+        <input type="password" name="password" id="deletePassword" style="display: none;">
     </form>
 
     <!-- Edit Special Case Modal -->
@@ -574,6 +576,7 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
+            // Delete Special Case
             $(document).off('click', '.delete-special-case-btn').on('click', '.delete-special-case-btn', function() {
                 const button = $(this);
                 const caseId = button.data('case-id');
@@ -603,6 +606,39 @@
                         const form = $('#deleteSpecialCaseForm');
                         form.attr('action', `/student-special-cases/${caseId}`);
                         form.find('input[name="password"]').val(result.value);
+                        form.submit();
+                    }
+                });
+            });
+
+            // Delete Student
+            $('#deleteStudentBtn').on('click', function() {
+                Swal.fire({
+                    title: 'Delete Student',
+                    text: 'This action cannot be undone. All related records will be deleted.',
+                    input: 'password',
+                    inputLabel: 'Please enter your password to confirm',
+                    inputPlaceholder: 'Password',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocorrect: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete Student',
+                    confirmButtonColor: '#dc3545',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (password) => {
+                        if (!password) {
+                            Swal.showValidationMessage('Password is required');
+                            return false;
+                        }
+                        return password;
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('#deleteStudentForm');
+                        form.find('#deletePassword').val(result.value);
                         form.submit();
                     }
                 });

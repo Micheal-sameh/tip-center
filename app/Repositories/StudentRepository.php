@@ -3,11 +3,13 @@
 namespace App\Repositories;
 
 use App\Enums\UserStatus;
+use App\Models\SessionStudent;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StudentRepository extends BaseRepository
 {
@@ -103,10 +105,29 @@ class StudentRepository extends BaseRepository
         return $student;
     }
 
-    public function delete($id)
+    public function delete($id, $password)
     {
         $student = $this->findById($id);
-        $student->delete();
+
+        if (! Hash::check($password, auth()->user()->password)) {
+            return ['success' => false, 'message' => 'Invalid password'];
+        }
+
+        DB::beginTransaction();
+
+        try {
+            SessionStudent::where('student_id', $id)->delete();
+
+            $student->delete();
+
+            DB::commit();
+
+            return ['success' => true, 'message' => 'Student deleted successfully'];
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return ['success' => false, 'message' => 'Failed to delete student: '.$e->getMessage()];
+        }
     }
 
     public function changeStatus($id)

@@ -164,6 +164,13 @@
             </div>
         </div>
 
+        <!-- Delete Student Form -->
+        <form id="deleteStudentForm" action="" method="POST" style="display: none;">
+            @csrf
+            @method('DELETE')
+            <input type="password" name="password" id="deletePassword" style="display: none;">
+        </form>
+
         <style>
             .avatar {
                 display: inline-flex;
@@ -229,6 +236,7 @@
         </style>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             // Function to update the URL with current filters
             function updateUrlParams(params) {
@@ -375,6 +383,44 @@
                         todayHighlight: true
                     });
                 }
+
+                // Delete Student
+                $(document).off('click', '.delete-student-btn').on('click', '.delete-student-btn', function() {
+                    const button = $(this);
+                    const studentId = button.data('student-id');
+                    const studentName = button.data('student-name');
+
+                    Swal.fire({
+                        title: 'Delete Student',
+                        text: `Are you sure you want to delete "${studentName}"? This action cannot be undone. All related records will be deleted.`,
+                        input: 'password',
+                        inputLabel: 'Please enter your password to confirm',
+                        inputPlaceholder: 'Password',
+                        inputAttributes: {
+                            autocapitalize: 'off',
+                            autocorrect: 'off'
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Delete Student',
+                        confirmButtonColor: '#dc3545',
+                        showLoaderOnConfirm: true,
+                        preConfirm: (password) => {
+                            if (!password) {
+                                Swal.showValidationMessage('Password is required');
+                                return false;
+                            }
+                            return password;
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = $('#deleteStudentForm');
+                            form.attr('action', `/students/${studentId}`);
+                            form.find('#deletePassword').val(result.value);
+                            form.submit();
+                        }
+                    });
+                });
             });
         </script>
     </div>

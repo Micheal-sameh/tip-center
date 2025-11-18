@@ -79,6 +79,14 @@
                                         title="{{ __('trans.Edit') }}">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    @can('students_delete')
+                                        <button class="btn btn-sm btn-danger delete-student-btn"
+                                                data-student-id="{{ $student->id }}"
+                                                data-student-name="{{ $student->name }}"
+                                                title="{{ __('Delete') }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -164,6 +172,15 @@
                                     <i class="fas fa-edit me-2"></i>{{ __('Edit') }}
                                 </a>
                             </li>
+                            @can('students_delete')
+                                <li>
+                                    <button class="dropdown-item text-danger delete-student-btn"
+                                            data-student-id="{{ $student->id }}"
+                                            data-student-name="{{ $student->name }}">
+                                        <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
+                                    </button>
+                                </li>
+                            @endcan
                         </ul>
                     </div>
                 </div>
