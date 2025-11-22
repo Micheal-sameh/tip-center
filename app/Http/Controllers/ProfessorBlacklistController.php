@@ -46,4 +46,16 @@ class ProfessorBlacklistController extends Controller
 
         return redirect()->route('professor_blacklists.index')->with('success', 'Blacklist entry deleted successfully.');
     }
+
+    public function getStudentsByProfessor($professorId)
+    {
+        $professor = Professor::with('stages')->findOrFail($professorId);
+        $stageIds = $professor->stages->pluck('stage');
+
+        $students = Student::whereIn('stage', $stageIds)
+            ->hasAttendToProf($professorId)
+            ->orderBy('name')->get(['id', 'name']);
+
+        return response()->json($students);
+    }
 }

@@ -103,4 +103,18 @@ class Student extends Model implements HasMedia
     {
         return $this->hasMany(StudentSettlement::class);
     }
+
+    public function sessionStudent()
+    {
+        return $this->hasMany(SessionStudent::class);
+    }
+
+    public function scopeHasAttendToProf($query, $professorId)
+    {
+        return $query->whereHas('sessionStudent', function ($q) use ($professorId) {
+            $q->whereHas('session', function ($q2) use ($professorId) {
+                $q2->where('professor_id', $professorId);
+            });
+        });
+    }
 }

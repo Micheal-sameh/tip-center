@@ -22,11 +22,6 @@
             <label for="student_id" class="form-label">Student</label>
             <select name="student_id" id="student_id" class="form-select" required>
                 <option value="" disabled selected>Select a Student</option>
-                @foreach($students as $student)
-                    <option value="{{ $student->id }}" {{ old('student_id') == $student->id ? 'selected' : '' }}>
-                        {{ $student->name }}
-                    </option>
-                @endforeach
             </select>
         </div>
 
@@ -40,3 +35,48 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const professorSelect = document.getElementById('professor_id');
+        const studentSelect = document.getElementById('student_id');
+
+        async function loadStudents(professorId) {
+            if (!professorId) {
+                studentSelect.innerHTML = '<option value="" disabled selected>Select a Student</option>';
+                return;
+            }
+            try {
+                const response = await axios.get(`/professor_blacklists/get-students-by-professor/${professorId}`);
+                const students = response.data;
+
+                let options = '<option value="" disabled selected>Select a Student</option>';
+                students.forEach(student => {
+                    options += `<option value="${student.id}">${student.name}</option>`;
+                });
+                studentSelect.innerHTML = options;
+
+                // If old student_id exists, select it
+                const oldStudentId = "{{ old('student_id') }}";
+                if (oldStudentId) {
+                    studentSelect.value = oldStudentId;
+                }
+            } catch (error) {
+                console.error('Error loading students:', error);
+                studentSelect.innerHTML = '<option value="" disabled selected>Error loading students</option>';
+            }
+        }
+
+        // Initial load if professor is pre-selected
+        if (professorSelect.value) {
+            loadStudents(professorSelect.value);
+        }
+
+        professorSelect.addEventListener('change', function () {
+            loadStudents(this.value);
+        });
+    });
+</script>
+@endpush

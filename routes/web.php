@@ -84,6 +84,7 @@ Route::group(['middleware' => ['setlocale']], function () {
             Route::get('/create', [\App\Http\Controllers\ProfessorBlacklistController::class, 'create'])->name('professor_blacklists.create');
             Route::post('', [\App\Http\Controllers\ProfessorBlacklistController::class, 'store'])->name('professor_blacklists.store');
             Route::delete('/{id}', [\App\Http\Controllers\ProfessorBlacklistController::class, 'destroy'])->name('professor_blacklists.destroy');
+            Route::get('/get-students-by-professor/{professorId}', [\App\Http\Controllers\ProfessorBlacklistController::class, 'getStudentsByProfessor'])->name('professor_blacklists.getStudentsByProfessor');
         });
 
         Route::prefix('sessions')->group(function () {
