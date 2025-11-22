@@ -269,6 +269,13 @@
                             </a>
                         </li>
                     @endcan
+                    {{-- @can('professor_blacklists_view') --}}
+                        <li class="nav-item">
+                            <a href="{{ route('professor_blacklists.index') }}" class="nav-link">
+                                <i class="fas fa-ban me-2"></i> Professor Blacklist
+                            </a>
+                        </li>
+                    {{-- @endcan --}}
                     @can('settings_update')
                         <li class="nav-item">
                             <a href="{{ route('settings.index') }}" class="nav-link">
