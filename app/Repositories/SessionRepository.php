@@ -244,6 +244,11 @@ class SessionRepository extends BaseRepository
 
         return $this->model
             ->where('stage', $input['stage'])
+            ->whereHas('professor', function ($query) use ($input) {
+                $query->whereDoesntHave('blacklists', function ($q) use ($input) {
+                    $q->where('student_id', $input['student_id']);
+                });
+            })
             ->where('status', SessionStatus::ACTIVE)
             ->whereIn('professor_id', $professorIds)
             // ->whereHas('sessionStudents', fn($q) => $q->where('student_id', '!=', $input['student_id']))

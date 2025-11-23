@@ -53,4 +53,9 @@ class Professor extends Model implements HasMedia
             ->withPivot(['professor_price', 'center_price'])
             ->withTimestamps();
     }
+
+    public function blacklists()
+    {
+        return $this->hasMany(ProfessorBlacklist::class);
+    }
 }
