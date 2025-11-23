@@ -27,10 +27,37 @@ class ProfessorBlacklistController extends Controller
 
     public function create()
     {
-        $professors = Professor::orderBy('name')->get();
-        $students = Student::orderBy('name')->get();
+        $student_id = request()->get('student_id');
+        $professor_id = request()->get('professor_id');
 
-        return view('professor_blacklists.create', compact('professors', 'students'));
+        // Filter students based on professor stages if professor_id provided
+        if ($professor_id) {
+            $professor = Professor::with('stages')->find($professor_id);
+            if ($professor) {
+                $stageIds = $professor->stages->pluck('stage')->toArray();
+                $students = Student::whereIn('stage', $stageIds)->orderBy('name')->get();
+            } else {
+                $students = collect(); // Empty collection if no professor found
+            }
+        } else {
+            $students = collect(); // Return empty collection instead of all students
+        }
+
+        if ($student_id) {
+            $student = Student::find($student_id);
+            if ($student) {
+                $professors = Professor::whereHas('stages', function ($query) use ($student) {
+                    $query->where('stage', $student->stage);
+                })->orderBy('name')->get();
+            } else {
+                $professors = Professor::orderBy('name')->get();
+            }
+            $students = Student::where('id', $student_id)->orderBy('name')->get();
+        } else {
+            $professors = Professor::orderBy('name')->get();
+        }
+
+        return view('professor_blacklists.create', compact('professors', 'students', 'professor_id'));
     }
 
     public function store(StoreProfessorBlacklistRequest $request)

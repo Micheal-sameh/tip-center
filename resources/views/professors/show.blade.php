@@ -151,6 +151,10 @@
                             <i class="fas fa-edit me-2"></i> {{ __('trans.edit') }}
                         </a>
                     @endcan
+                    <a href="{{ route('professor_blacklists.create', ['professor_id' => $professor->id]) }}"
+                       class="btn btn-danger rounded-pill px-4">
+                        <i class="fas fa-ban me-2"></i> Add to Blacklist
+                    </a>
                 </div>
             </div>
         </div>
