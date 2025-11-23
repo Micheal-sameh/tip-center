@@ -49,7 +49,7 @@ class ProfessorRepository extends BaseRepository
 
     public function show($id)
     {
-        return $this->findById($id);
+        return $this->model->with('blacklists')->findOrFail($id);
     }
 
     public function store($input)

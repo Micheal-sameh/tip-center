@@ -157,6 +157,51 @@
                     </a>
                 </div>
             </div>
+
+            <div class="card-body p-4">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
+                    <div class="bg-gradient-primary text-white px-4 py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">
+                            Students Blacklists related to this Professor
+                        </h5>
+                    </div>
+                    @if ($professor->blacklists->isNotEmpty())
+                        <div class="d-none d-md-block table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Reason</th>
+                                        <th>Created At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($professor->blacklists as $blacklist)
+                                    <tr>
+                                        <td>{{ $blacklist->student->name ?? 'N/A' }}</td>
+                                        <td>{{ $blacklist->reason }}</td>
+                                        <td>{{ $blacklist->created_at->format('Y-m-d') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-block d-md-none">
+                            @foreach ($professor->blacklists as $blacklist)
+                                <div class="card mb-3 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-2">{{ $blacklist->student->name ?? 'N/A' }}</h5>
+                                        <p class="card-text mb-1"><strong>Reason: </strong>{{ $blacklist->reason }}</p>
+                                        <p class="card-text text-muted small">Created at: {{ $blacklist->created_at->format('Y-m-d') }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">No student blacklists related to this professor.</p>
+                    @endif
+                </div>
+            </div>
         </div>
 
         <!-- Avatar Modal -->
