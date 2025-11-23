@@ -262,27 +262,33 @@
                             </a>
                         </li>
                     @endcan
-                    @can('sessions_view')
-                        <li class="nav-item">
-                            <a href="{{ route('sessions.index') }}" class="nav-link">
-                                <i class="fas fa-clock me-2"></i> {{ __('trans.sessions') }}
-                            </a>
+                @can('sessions_view')
+                    <li class="nav-item">
+                        <a href="{{ route('sessions.index') }}" class="nav-link">
+                            <i class="fas fa-clock me-2"></i> {{ __('trans.sessions') }}
+                        </a>
+                    </li>
+                @endcan
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="blacklistsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ban me-2"></i> Blacklists
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="blacklistsDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('professor_blacklists.index') }}">Professor Blacklists</a>
                         </li>
-                    @endcan
-                    {{-- @can('professor_blacklists_view') --}}
-                        <li class="nav-item">
-                            <a href="{{ route('professor_blacklists.index') }}" class="nav-link">
-                                <i class="fas fa-ban me-2"></i> Professor Blacklist
-                            </a>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('student_blacklists.index') }}">Student Blacklists</a>
                         </li>
-                    {{-- @endcan --}}
-                    @can('settings_update')
-                        <li class="nav-item">
-                            <a href="{{ route('settings.index') }}" class="nav-link">
-                                <i class="fas fa-cog me-2"></i> {{ __('trans.settings') }}
-                            </a>
-                        </li>
-                    @endcan
+                    </ul>
+                </li>
+                @can('settings_update')
+                    <li class="nav-item">
+                        <a href="{{ route('settings.index') }}" class="nav-link">
+                            <i class="fas fa-cog me-2"></i> {{ __('trans.settings') }}
+                        </a>
+                    </li>
+                @endcan
                     @canany(['sessions_report', 'students_report'])
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ request()->routeIs('reports.*') ? 'active' : '' }}"

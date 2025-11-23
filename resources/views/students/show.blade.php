@@ -277,8 +277,14 @@
                 @endcan
                 <a href="{{ route('professor_blacklists.create', ['student_id' => $student->id]) }}"
                    class="btn btn-danger rounded-pill px-4">
-                    <i class="fas fa-ban me-2"></i> Add to Blacklist
+                    <i class="fas fa-ban me-2"></i> Add to Professor Blacklist
                 </a>
+                @if(!$student->centerBlacklists)
+                    <a href="{{ route('student_blacklists.create', ['student_id' => $student->id]) }}"
+                    class="btn btn-warning rounded-pill px-4 ms-2">
+                        <i class="fas fa-user-slash me-2"></i> Add to Center Blacklist
+                    </a>
+                @endif
                 @can('students_delete')
                     <button class="btn btn-danger rounded-pill px-4" id="deleteStudentBtn">
                         <i class="fas fa-trash-alt me-2"></i>

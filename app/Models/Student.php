@@ -35,9 +35,8 @@ class Student extends Model implements HasMedia
     {
         static::creating(function ($student) {
             if (empty($student->code)) {
-                $year = Setting::where('name', 'academic_year')->first(); // e.g., '25' for 2025
+                $year = Setting::where('name', 'academic_year')->first();
 
-                // Get the latest student code for the current year
                 $latest = self::where('code', 'like', $year->value.'%')
                     ->orderBy('code', 'desc')
                     ->value('code');
@@ -48,7 +47,7 @@ class Student extends Model implements HasMedia
                     $nextNumber = 1;
                 }
 
-                $student->code = $year->value.str_pad($nextNumber, 4, '0', STR_PAD_LEFT); // e.g., 250001
+                $student->code = $year->value.str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
             }
         });
     }
@@ -116,5 +115,15 @@ class Student extends Model implements HasMedia
                 $q2->where('professor_id', $professorId);
             });
         });
+    }
+
+    public function professorBlacklists()
+    {
+        return $this->hasMany(ProfessorBlacklist::class);
+    }
+
+    public function centerBlacklists()
+    {
+        return $this->belongsTo(StudentBlacklist::class, 'id', 'student_id');
     }
 }

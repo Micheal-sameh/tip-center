@@ -149,7 +149,7 @@ class StudentRepository extends BaseRepository
 
     public function dropdown()
     {
-        return $this->model->get(['id', 'name', 'stage', 'code', 'phone', 'parent_phone', 'parent_phone_2']);
+        return $this->model->whereDoesntHave('centerBlacklists')->get(['id', 'name', 'stage', 'code', 'phone', 'parent_phone', 'parent_phone_2']);
     }
 
     public function parent($input)

@@ -3,12 +3,14 @@
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChargeController;
+use App\Http\Controllers\ProfessorBlacklistController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SessionStudentController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StudentBlacklistController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentSpecialCaseController;
 use App\Http\Controllers\UserController;
@@ -28,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return auth()->check() ? to_route('attendances.index') : view('welcome.index');
 })->name('home');
+
 Route::get('/professors/stage-row', function () {
     $index = request('index', 0);
 
@@ -48,6 +51,7 @@ Route::group(['middleware' => ['setlocale']], function () {
     });
 
     Route::middleware(['auth', 'check.status'])->group(function () {
+
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
             Route::get('/profile', [UserController::class, 'profile'])->name('users.profile');
@@ -80,11 +84,18 @@ Route::group(['middleware' => ['setlocale']], function () {
         });
 
         Route::prefix('professor_blacklists')->group(function () {
-            Route::get('', [\App\Http\Controllers\ProfessorBlacklistController::class, 'index'])->name('professor_blacklists.index');
-            Route::get('/create', [\App\Http\Controllers\ProfessorBlacklistController::class, 'create'])->name('professor_blacklists.create');
-            Route::post('', [\App\Http\Controllers\ProfessorBlacklistController::class, 'store'])->name('professor_blacklists.store');
-            Route::delete('/{id}', [\App\Http\Controllers\ProfessorBlacklistController::class, 'destroy'])->name('professor_blacklists.destroy');
-            Route::get('/get-students-by-professor/{professorId}', [\App\Http\Controllers\ProfessorBlacklistController::class, 'getStudentsByProfessor'])->name('professor_blacklists.getStudentsByProfessor');
+            Route::get('', [ProfessorBlacklistController::class, 'index'])->name('professor_blacklists.index');
+            Route::get('/create', [ProfessorBlacklistController::class, 'create'])->name('professor_blacklists.create');
+            Route::post('', [ProfessorBlacklistController::class, 'store'])->name('professor_blacklists.store');
+            Route::delete('/{id}', [ProfessorBlacklistController::class, 'destroy'])->name('professor_blacklists.destroy');
+            Route::get('/get-students-by-professor/{professorId}', [ProfessorBlacklistController::class, 'getStudentsByProfessor'])->name('professor_blacklists.getStudentsByProfessor');
+        });
+
+        Route::prefix('student_blacklists')->group(function () {
+            Route::get('/create', [StudentBlacklistController::class, 'create'])->name('student_blacklists.create');
+            Route::post('/', [StudentBlacklistController::class, 'store'])->name('student_blacklists.store');
+            Route::get('/', [StudentBlacklistController::class, 'index'])->name('student_blacklists.index');
+            Route::delete('/{id}', [StudentBlacklistController::class, 'destroy'])->name('student_blacklists.destroy');
         });
 
         Route::prefix('sessions')->group(function () {

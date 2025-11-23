@@ -36,7 +36,7 @@ class StudentController extends Controller
     {
         $searchTerm = $request->input('search');
 
-        return Student::query()
+        return Student::query()->whereDoesntHave('centerBlacklists')
             ->when($searchTerm, function ($query) use ($searchTerm) {
                 $query->where('name', 'like', "%{$searchTerm}%")
                     ->orWhere('phone', 'like', "%{$searchTerm}%")
