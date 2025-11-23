@@ -106,7 +106,55 @@
                     </div>
                 </div>
             </div>
-            <!-- Student Special Cases -->
+            @if($student->isBlacklistedCenter)
+            <div class="alert alert-danger text-center fw-bold">
+                This student is <span class="badge bg-danger">Blacklisted in Center</span>.
+            </div>
+            @endif
+            <div class="card-body p-4">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
+                    <div class="bg-gradient-primary text-white px-4 py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">
+                            Professor Blacklists related to this Student
+                        </h5>
+                    </div>
+                    @if ($student->professorBlacklists->isNotEmpty())
+                        <div class="d-none d-md-block table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Professor Name</th>
+                                        <th>Reason</th>
+                                        <th>Created At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($student->professorBlacklists as $pbl)
+                                    <tr>
+                                        <td>{{ $pbl->professor->name ?? 'N/A' }}</td>
+                                        <td>{{ $pbl->reason }}</td>
+                                        <td>{{ $pbl->created_at->format('Y-m-d') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-block d-md-none">
+                            @foreach ($student->professorBlacklists as $pbl)
+                                <div class="card mb-3 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-2">{{ $pbl->professor->name ?? 'N/A' }}</h5>
+                                        <p class="card-text mb-1"><strong>Reason: </strong>{{ $pbl->reason }}</p>
+                                        <p class="card-text text-muted small">Created at: {{ $pbl->created_at->format('Y-m-d') }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">No professor blacklists related to this student.</p>
+                    @endif
+                </div>
+            </div>
             <div class="card-body p-4">
                 <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
                     <div class="bg-gradient-primary text-white px-4 py-3 d-flex justify-content-between align-items-center">
@@ -269,20 +317,20 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-3 py-3 px-4">
+            <div class="card-footer bg-transparent border-top-0 d-flex flex-wrap justify-content-end gap-3 py-3 px-4">
                 @can('students_update')
                     <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary rounded-pill px-4">
                         <i class="fas fa-edit me-2"></i>
                     </a>
                 @endcan
                 <a href="{{ route('professor_blacklists.create', ['student_id' => $student->id]) }}"
-                   class="btn btn-danger rounded-pill px-4">
-                    <i class="fas fa-ban me-2"></i> Add to Professor Blacklist
+                   class="btn btn-danger rounded-pill px-4 d-flex align-items-center gap-2">
+                    <i class="fas fa-ban"></i> Professor Blacklist
                 </a>
                 @if(!$student->centerBlacklists)
                     <a href="{{ route('student_blacklists.create', ['student_id' => $student->id]) }}"
-                    class="btn btn-warning rounded-pill px-4 ms-2">
-                        <i class="fas fa-user-slash me-2"></i> Add to Center Blacklist
+                    class="btn btn-warning rounded-pill px-4 ms-2 d-flex align-items-center gap-2">
+                        <i class="fas fa-user-slash"></i> Center Blacklist
                     </a>
                 @endif
                 @can('students_delete')

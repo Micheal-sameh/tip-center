@@ -25,7 +25,9 @@ class StudentService
     public function show($id)
     {
         $student = $this->studentRepository->show($id);
-        $student->load('specialCases');
+        $student->load('specialCases', 'professorBlacklists', 'centerBlacklists');
+
+        $student->isBlacklistedCenter = $student->centerBlacklists !== null;
 
         return $student;
     }
