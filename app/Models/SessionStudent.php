@@ -25,6 +25,12 @@ class SessionStudent extends Model
         'to_pay_materials',
     ];
 
+    public function settlements()
+    {
+        return $this->hasMany(StudentSettlement::class, 'student_id', 'student_id')
+            ->whereJsonContains('session_student_ids', $this->id);
+    }
+
     public function session()
     {
         return $this->belongsTo(Session::class, 'session_id');

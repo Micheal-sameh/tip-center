@@ -102,6 +102,18 @@
                                                 };
                                             }) ?? 0;
 
+                                    // Add settlement values to to_pay
+                                    $settlementForStudent = $report->settlements;
+                                    $settlementAmount = $settlementForStudent->sum(function ($settlement) use ($selected_type) {
+                                        return match ((int) $selected_type) {
+                                            App\Enums\ReportType::PROFESSOR => $settlement->professor_amount + $settlement->materials,
+                                            App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
+                                            default => $settlement->amount,
+                                        };
+                                    });
+
+                                    $toPayTotal += $settlementAmount;
+
                                 @endphp
                                 <tr class="{{ $rowClass }}">
                                     <td>{{ $loop->iteration }}</td>
@@ -117,7 +129,11 @@
                                     <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
                                     </td>
                                     <td class="text-end">
-                                        {{ number_format($report->professor_price + $report->center_price, 2) }}</td>
+                                        @php
+                                            $reportValue = $report->professor_price + $report->center_price;
+                                            $reportValue -= $settlementAmount;
+                                        @endphp
+                                        {{ number_format($reportValue, 2) }}</td>
                                     @if ($showMaterials)
                                         <td>{{ $report->materials }}</td>
                                     @endif
@@ -283,7 +299,7 @@
                         $summaryTotal += $session->onlines->sum(fn($o) => $o->materials + $o->professor + $o->center);
                     }
                     if ($settlements->isNotEmpty()) {
-                        $summaryTotal += $total_amount;
+                        $summaryTotal -= $total_amount;
                     }
                     $toCollect = $reports->sum(
                         fn($report) => $report->student
@@ -300,6 +316,37 @@
                                 },
                             ) ?? 0,
                     );
+                    // Add settlement values to toCollect
+                        $toCollect += $reports->sum(function ($report) use ($selected_type) {
+                            $settlementForStudent = $report->settlements;
+                            return $settlementForStudent->sum(function ($settlement) use ($selected_type) {
+                                return match ((int) $selected_type) {
+                                    App\Enums\ReportType::PROFESSOR => $settlement->professor_amount + $settlement->materials,
+                                    App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
+                                    default => $settlement->amount,
+                                };
+                            });
+                        });
+
+                    // Calculate total settlements from reports for professor fees
+                    $totalSettlementsForProfessor = $reports->sum(function ($report) use ($selected_type) {
+                        $settlementForStudent = $report->settlements;
+                        return $settlementForStudent->sum(function ($settlement) use ($selected_type) {
+                            return match ((int) $selected_type) {
+                                App\Enums\ReportType::PROFESSOR => $settlement->professor_amount + $settlement->materials,
+                                App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
+                                default => $settlement->amount,
+                            };
+                        });
+                    });
+
+                    // Calculate total settlements for center fees
+                    $totalSettlementsForCenter = $reports->sum(function ($report) use ($selected_type) {
+                        $settlementForStudent = $report->settlements;
+                        return $settlementForStudent->sum(function ($settlement) use ($selected_type) {
+                            return $settlement->center + $settlement->printables;
+                        });
+                    });
                 @endphp
 
                 <div class="row mt-4">
@@ -318,7 +365,7 @@
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Professor</h6>
                                     <p class="card-text fs-4 fw-bold">
-                                        {{ number_format($reports->sum('professor_price'), 2) }}</p>
+                                        {{ number_format($reports->sum('professor_price') - $totalSettlementsForProfessor, 2) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -329,7 +376,7 @@
                             <div class="card h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Center</h6>
-                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('center_price'), 2) }}
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('center_price') - $totalSettlementsForCenter, 2) }}
                                     </p>
                                 </div>
                             </div>
@@ -416,7 +463,7 @@
                             <div class="card-body text-center">
                                 <h6 class="card-subtitle mb-2 text-muted">Total Value</h6>
                                 <p class="card-text fs-4 fw-bold text-primary">
-                                    {{ number_format($summaryTotal, 2) }}</p>
+                                    {{ number_format($summaryTotal - $toPayTotal, 2) }}</p>
                             </div>
                         </div>
                     </div>
