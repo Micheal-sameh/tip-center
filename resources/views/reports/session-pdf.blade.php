@@ -406,9 +406,16 @@
                 <tr>
                     <th>Total online</th>
                     <td class="text-end">
-                        {{ $session->onlines->sum(function ($online) {
-                            return $online->materials + $online->professor + $online->center;
-                        }) }}
+                        @php
+                            $onlineTotal = $session->onlines->sum(function ($online) use ($selected_type) {
+                                return match ((int) $selected_type) {
+                                    App\Enums\ReportType::PROFESSOR => $online->materials + $online->professor,
+                                    App\Enums\ReportType::CENTER => $online->center ?? 0,
+                                    default => $online->materials + $online->professor + $online->center,
+                                };
+                            });
+                        @endphp
+                        {{ number_format($onlineTotal, 2) }}
                     </td>
                 </tr>
             @endif
@@ -428,7 +435,20 @@
                 @endphp
                 <tr>
                     <th>Professor Fees</th>
+                    <td class="text-end">
+                        @php
+                            $professorTotal = $reports->sum('professor_price');
+                            // Add online professor amounts
+                            if ($session->onlines->isNotEmpty()) {
+                                $professorTotal += $session->onlines->sum(fn($o) => $o->professor);
+                            }
+                            // Add settlement professor amounts
+                            if ($settlements->isNotEmpty()) {
+                                $professorTotal += $settlements->sum('professor_amount');
+                            }
+                        @endphp
                     <td class="text-end">{{ number_format($reports->sum('professor_price') - $totalSettlementsForProfessor, 2) }}</td>
+                    </td>
                 </tr>
             @endif
             @if ($session->professor->balance)
@@ -446,7 +466,20 @@
             @if ($session->materials)
                 <tr>
                     <th>Materials</th>
-                    <td class="text-end">{{ number_format($reports->sum('materials'), 2) }}</td>
+                    <td class="text-end">
+                        @php
+                            $materialsTotal = $reports->sum('materials');
+                            // Add online materials amounts
+                            if ($session->onlines->isNotEmpty()) {
+                                $materialsTotal += $session->onlines->sum('materials');
+                            }
+                            // Add settlement materials amounts
+                            if ($settlements->isNotEmpty()) {
+                                $materialsTotal += $settlements->sum('materials');
+                            }
+                        @endphp
+                        {{ number_format($materialsTotal, 2) }}
+                    </td>
                 </tr>
             @endif
             @if ($session->center_price)
@@ -461,7 +494,20 @@
                 @endphp
                 <tr>
                     <th>Center Fees</th>
+                    <td class="text-end">
+                        @php
+                            $centerTotal = $reports->sum('center_price');
+                            // Add online center amounts
+                            if ($session->onlines->isNotEmpty()) {
+                                $centerTotal += $session->onlines->sum(fn($o) => $o->center ?? 0);
+                            }
+                            // Add settlement center amounts
+                            if ($settlements->isNotEmpty()) {
+                                $centerTotal += $settlements->sum('center');
+                            }
+                        @endphp
                     <td class="text-end">{{ number_format($reports->sum('center_price') - $totalSettlementsForCenter, 2) }}</td>
+                    </td>
                 </tr>
             @endif
             <tr class="bg-light">
@@ -491,10 +537,12 @@
                             $total += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adjustment : $adjustment;
                         }
                         if (!$session->onlines->isEmpty()) {
-                            $onlines = $session->onlines;
-
-                            $onlineTotal = $onlines->sum(function ($online) {
-                                return $online->materials + $online->professor + $online->center;
+                            $onlineTotal = $session->onlines->sum(function ($online) use ($selected_type) {
+                                return match ((int) $selected_type) {
+                                    App\Enums\ReportType::PROFESSOR => $online->materials + $online->professor,
+                                    App\Enums\ReportType::CENTER => $online->center ?? 0,
+                                    default => $online->materials + $online->professor + $online->center,
+                                };
                             });
                             $total += $onlineTotal;
                         }

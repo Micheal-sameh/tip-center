@@ -295,8 +295,16 @@
                         ])->sum(fn($f) => $session->sessionExtra->$f ?? 0);
                         $summaryTotal += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adj : $adj;
                     }
+
                     if ($session->onlines->isNotEmpty()) {
-                        $summaryTotal += $session->onlines->sum(fn($o) => $o->materials + $o->professor + $o->center);
+                        $onlineTotal = $session->onlines->sum(function ($o) use ($selected_type) {
+                            return match ((int) $selected_type) {
+                                App\Enums\ReportType::PROFESSOR => $o->materials + $o->professor,
+                                App\Enums\ReportType::CENTER => $o->center ?? 0,
+                                default => $o->materials + $o->professor + $o->center,
+                            };
+                        });
+                        $summaryTotal += $onlineTotal;
                     }
                     if ($settlements->isNotEmpty()) {
                         $summaryTotal -= $total_amount;
@@ -360,6 +368,17 @@
                     </div>
 
                     @if ($session->professor_price)
+                        @php
+                            $professorTotal = $reports->sum('professor_price');
+                            // Add online professor amounts
+                            if ($session->onlines->isNotEmpty()) {
+                                $professorTotal += $session->onlines->sum(fn($o) => $o->professor);
+                            }
+                            // Add settlement professor amounts
+                            if ($settlements->isNotEmpty()) {
+                                $professorTotal += $settlements->sum('professor_amount');
+                            }
+                        @endphp
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
@@ -372,6 +391,17 @@
                     @endif
 
                     @if ($session->center_price)
+                        @php
+                            $centerTotal = $reports->sum('center_price');
+                            // Add online center amounts
+                            if ($session->onlines->isNotEmpty()) {
+                                $centerTotal += $session->onlines->sum(fn($o) => $o->center ?? 0);
+                            }
+                            // Add settlement center amounts
+                            if ($settlements->isNotEmpty()) {
+                                $centerTotal += $settlements->sum('center');
+                            }
+                        @endphp
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
@@ -422,11 +452,18 @@
                     @endif
 
                     @if ($showPrintables)
+                        @php
+                            $printablesTotal = $reports->sum('printables');
+                            // Add settlement printables amounts
+                            if ($settlements->isNotEmpty()) {
+                                $printablesTotal += $settlements->sum('printables');
+                            }
+                        @endphp
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Student Papers</h6>
-                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('printables'), 2) }}
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($printablesTotal, 2) }}
                                     </p>
                                 </div>
                             </div>
@@ -434,11 +471,22 @@
                     @endif
 
                     @if ($showMaterials)
+                        @php
+                            $materialsTotal = $reports->sum('materials');
+                            // Add online materials amounts
+                            if ($session->onlines->isNotEmpty()) {
+                                $materialsTotal += $session->onlines->sum('materials');
+                            }
+                            // Add settlement materials amounts
+                            if ($settlements->isNotEmpty()) {
+                                $materialsTotal += $settlements->sum('materials');
+                            }
+                        @endphp
                         <div class="col-md-2 col-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-body text-center">
                                     <h6 class="card-subtitle mb-2 text-muted">Materials</h6>
-                                    <p class="card-text fs-4 fw-bold">{{ number_format($reports->sum('materials'), 2) }}
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($materialsTotal, 2) }}
                                     </p>
                                 </div>
                             </div>
