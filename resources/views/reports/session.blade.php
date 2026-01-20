@@ -307,7 +307,7 @@
                         $summaryTotal += $onlineTotal;
                     }
                     if ($settlements->isNotEmpty()) {
-                        $summaryTotal -= $total_amount;
+                        $summaryTotal += $total_amount;
                     }
                     $toCollect = $reports->sum(
                         fn($report) => $report->student
