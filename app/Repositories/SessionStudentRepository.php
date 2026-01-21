@@ -266,13 +266,15 @@ class SessionStudentRepository extends BaseRepository
 
                     // eager-load toPay filtered by professor
                     $q->with(['toPay' => function ($sub) use ($session) {
-                        $sub->whereHas('session', function ($sq) use ($session) {
-                            $sq->where('professor_id', $session->professor_id);
-                        });
+                        $sub->select('id', 'to_pay', 'to_pay_materials', 'to_pay_center', 'to_pay_print', 'student_id', 'session_id')
+                            ->whereHas('session', function ($sq) use ($session) {
+                                $sq->where('professor_id', $session->professor_id);
+                            });
                     }]);
                 },
             ])
             ->where('session_id', $input['session_id']);
+
         if (isset($input['type'])) {
             $query = match ((int) $input['type']) {
                 ReportType::PROFESSOR => $query->select('id', 'created_at', 'professor_price', 'student_id', 'to_pay', 'materials', 'is_attend'),
@@ -281,7 +283,42 @@ class SessionStudentRepository extends BaseRepository
             };
         }
 
-        return $query->orderBy('is_attend', 'desc')->get();
+        $sessionStudents = $query->orderBy('is_attend', 'desc')->get();
+
+        // Eager load settlements for all session students to avoid N+1 queries
+        $sessionStudentIds = $sessionStudents->pluck('id')->toArray();
+        $studentIds = $sessionStudents->pluck('student_id')->unique()->toArray();
+
+        if (! empty($studentIds) && ! empty($sessionStudentIds)) {
+            $settlements = \App\Models\StudentSettlement::whereIn('student_id', $studentIds)
+                ->where(function ($query) use ($sessionStudentIds) {
+                    foreach ($sessionStudentIds as $id) {
+                        $query->orWhereJsonContains('session_student_ids', $id);
+                    }
+                })
+                ->get();
+
+            // Group settlements by session_student_id
+            $settlementsBySessionStudent = [];
+            foreach ($settlements as $settlement) {
+                $sessionStudentIdsInSettlement = $settlement->session_student_ids ?? [];
+                foreach ($sessionStudentIdsInSettlement as $ssId) {
+                    if (! isset($settlementsBySessionStudent[$ssId])) {
+                        $settlementsBySessionStudent[$ssId] = collect();
+                    }
+                    $settlementsBySessionStudent[$ssId]->push($settlement);
+                }
+            }
+
+            // Attach settlements to session students
+            foreach ($sessionStudents as $sessionStudent) {
+                $sessionStudent->setRelation('settlements',
+                    $settlementsBySessionStudent[$sessionStudent->id] ?? collect()
+                );
+            }
+        }
+
+        return $sessionStudents;
     }
 
     public function student($input)

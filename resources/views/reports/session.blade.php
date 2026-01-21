@@ -85,10 +85,10 @@
                                                 ? 'table-warning'
                                                 : '');
 
+                                    // Use eager-loaded toPay relationship instead of querying
                                     $toPayTotal =
                                         $report->student
-                                            ?->toPay($session->professor_id)
-                                            ->get(['to_pay_materials', 'to_pay_print', 'to_pay_center', 'to_pay', 'id'])
+                                            ?->toPay
                                             ->sum(function ($p) use ($selected_type) {
                                                 return match ((int) $selected_type) {
                                                     App\Enums\ReportType::PROFESSOR => $p->to_pay +
@@ -102,7 +102,7 @@
                                                 };
                                             }) ?? 0;
 
-                                    // Add settlement values to to_pay
+                                    // Use eager-loaded settlements instead of querying
                                     $settlementForStudent = $report->settlements;
                                     $settlementAmount = $settlementForStudent->sum(function ($settlement) use ($selected_type) {
                                         return match ((int) $selected_type) {
@@ -309,10 +309,10 @@
                     if ($settlements->isNotEmpty()) {
                         $summaryTotal += $total_amount;
                     }
+                    // Use eager-loaded toPay relationship instead of querying
                     $toCollect = $reports->sum(
                         fn($report) => $report->student
-                            ?->toPay($session->professor_id)
-                            ->get(['id', 'to_pay', 'to_pay_materials', 'to_pay_center', 'to_pay_print'])
+                            ?->toPay
                             ->sum(
                                 fn($pay) => match ((int) $selected_type) {
                                     App\Enums\ReportType::PROFESSOR => $pay->to_pay + $pay->to_pay_materials,
@@ -324,7 +324,7 @@
                                 },
                             ) ?? 0,
                     );
-                    // Add settlement values to toCollect
+                    // Use eager-loaded settlements instead of querying
                         $toCollect += $reports->sum(function ($report) use ($selected_type) {
                             $settlementForStudent = $report->settlements;
                             return $settlementForStudent->sum(function ($settlement) use ($selected_type) {

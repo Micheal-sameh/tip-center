@@ -42,6 +42,7 @@ class StudentSettlementRepository extends BaseRepository
     public function store($input)
     {
         $student = Student::find($input['student_id']);
+
         return $this->model->create([
             'student_id' => $input['student_id'],
             'session_id' => $input['session_id'],
@@ -63,21 +64,20 @@ class StudentSettlementRepository extends BaseRepository
     {
         $session = $input['session'];
         $timefilter = false;
-        $sessions = Session::where('professor_id',  $session->professor_id)
-            ->whereDate('created_at', today())
+        $sessions = Session::where('professor_id', $session->professor_id)
+            ->whereDate('created_at', $session->created_at)
             ->where('stage', $session->stage)
             ->count();
-        if($sessions > 1){
-           $timefilter = true;
-           $startDateTime = $session->created_at->clone()->setTimeFrom($session->start_at)->subMinutes(59);
-           $endDateTime = $session->created_at->clone()->setTimeFrom($session->end_at)->subMinutes(30);
+        if ($sessions > 1) {
+            $timefilter = true;
+            $startDateTime = $session->created_at->clone()->setTimeFrom($session->start_at)->subMinutes(59);
+            $endDateTime = $session->created_at->clone()->setTimeFrom($session->end_at)->subMinutes(30);
         }
-
 
         return $this->model
             ->where('professor_id', $session->professor_id)
-            ->when($timefilter, fn($q) => $q->whereBetween('created_at', [$startDateTime, $endDateTime]))
-            ->when(!$timefilter, fn($q) => $q->whereDate('created_at', today()))
+            ->when($timefilter, fn ($q) => $q->whereBetween('created_at', [$startDateTime, $endDateTime]))
+            ->when(! $timefilter, fn ($q) => $q->whereDate('created_at', $session->created_at))
             ->where('stage', $session->stage)
             ->when(isset($input['type']), function ($query) use ($input) {
                 $type = (int) $input['type'];
