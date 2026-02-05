@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ReportType;
 use App\Enums\StagesEnum;
 use App\Http\Requests\ChargeIndexRequest;
 use App\Http\Requests\incomeFilterRequest;
@@ -49,15 +48,9 @@ class ReportController extends Controller
 
     public function session(SessionReportRequest $request)
     {
-        $session = $this->sessionservice->report($request->validated());
-        $data = $this->reportService->session($request->validated());
-        $reports = $data['reports'];
-        $settlements = $data['settlements'];
-        $settlementTotals = $data['settlementTotals'];
-        $selected_type = $request->type ?? ReportType::ALL;
-        $attendedCount = $reports->where('is_attend', true)->count();
+        $reportData = $this->reportService->sessionWithCalculations($request->validated());
 
-        return view('reports.session', compact('reports', 'session', 'selected_type', 'attendedCount', 'settlements', 'settlementTotals'));
+        return view('reports.session', $reportData->toArray());
     }
 
     public function student(StudentReportRequest $request)
@@ -97,13 +90,8 @@ class ReportController extends Controller
 
     public function downloadSessionReport(SessionReportRequest $request)
     {
-        $session = $this->sessionservice->report($request->validated());
-        $data = $this->reportService->session($request->validated());
-        $reports = $data['reports'];
-        $settlements = $data['settlements'];
-        $settlementTotals = $data['settlementTotals'];
-        $selected_type = $request->type ?? ReportType::ALL;
-        $attendedCount = $reports->where('is_attend', true)->count();
+        $reportData = $this->reportService->sessionWithCalculations($request->validated());
+        $dataArray = $reportData->toArray();
 
         // إنشاء وتكوين mPDF
         $mpdf = new Mpdf([
@@ -120,21 +108,14 @@ class ReportController extends Controller
         ]);
 
         // تحميل وعرض view مع البيانات
-        $html = view('reports.session-pdf', [
-            'reports' => $reports,
-            'session' => $session,
-            'selected_type' => $selected_type,
-            'settlements' => $settlements,
-            'settlementTotals' => $settlementTotals,
-            'attendedCount' => $attendedCount,
-        ])->render();
+        $html = view('reports.session-pdf', $dataArray)->render();
 
         // إضافة المحتوى إلى PDF
         $mpdf->WriteHTML($html);
 
         // إنشاء اسم الملف
-        $filename = Str::slug($session->professor->name).' - '.
-                   StagesEnum::getStringValue($session->stage).'.pdf';
+        $filename = Str::slug($dataArray['session']->professor->name).' - '.
+                   StagesEnum::getStringValue($dataArray['session']->stage).'.pdf';
 
         // تحميل الملف
         return response()->streamDownload(function () use ($mpdf) {

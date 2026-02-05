@@ -114,12 +114,8 @@
 </head>
 
 <body>
-    @php
-        $logo = App\Models\Setting::where('name', 'logo')->first();
-        $faviconUrl = $logo?->getFirstMediaPath('app_logo');
-    @endphp
     <div class="header-container">
-        <img src="{{ $faviconUrl }}" class="logo" alt="Company Logo">
+        <img src="{{ App\Models\Setting::where('name', 'logo')->first()?->getFirstMediaPath('app_logo') }}" class="logo" alt="Company Logo">
         <div class="header-text">
             <h1>Session Report - {{ $session->created_at->format('d-m-Y') }}</h1>
         </div>
@@ -150,9 +146,12 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($reports as $report)
+            @foreach ($reports as $index => $report)
+                @php
+                    $computed = $computedReports[$index];
+                @endphp
                 <tr
-                    class="{{ $report->is_attend == App\Enums\AttendenceType::ABSENT ? 'table-danger' : ($report->to_pay + $report->to_pay_center + $report->to_pay_print + $report->to_pay_materials > 0 ? 'table-warning' : '') }}">
+                    class="{{ $computed['rowClass'] }}">
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $report->student?->name }}</td>
                     @if ($report->student?->phone)
@@ -163,47 +162,13 @@
                     @endif
                     <td>{{ $report->is_attend ? $report->created_at->format('h:i:A') : App\Enums\AttendenceType::getStringValue($report->is_attend) }}
                     </td>
-                    @php
-                        // Calculate settlement amount for this student
-                        $settlementForStudent = $report->settlements;
-                        $settlementAmount = $settlementForStudent->sum(function ($settlement) use ($selected_type) {
-                            return match ((int) $selected_type) {
-                                App\Enums\ReportType::PROFESSOR => $settlement->professor_amount + $settlement->materials,
-                                App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
-                                default => $settlement->amount,
-                            };
-                        });
-
-                        // Calculate payment value minus settlement
-                        $reportValue = $report->professor_price + $report->center_price;
-                        $reportValue -= $settlementAmount;
-                    @endphp
                     <td class="text-end">
-                        {{ number_format($reportValue, 2) }}
+                        {{ number_format($computed['reportValue'], 2) }}
                     </td>
                     <td>{{ $report->materials }}</td>
                     <td class="text-end">{{ $report->printables ?? 0 }}</td>
-                    @php
-                        // Use eager-loaded toPay relationship instead of querying
-                        $total =
-                            $report->student
-                                ?->toPay
-                                ->sum(function ($p) use ($selected_type) {
-                                    return match ((int) $selected_type) {
-                                        App\Enums\ReportType::PROFESSOR => $p->to_pay + $p->to_pay_materials,
-                                        App\Enums\ReportType::CENTER => $p->to_pay_center + $p->to_pay_print,
-                                        default => $p->to_pay +
-                                            $p->to_pay_center +
-                                            $p->to_pay_print +
-                                            $p->to_pay_materials,
-                                    };
-                                }) ?? 0;
-
-                        // Use eager-loaded settlements instead of querying
-                        $total += $settlementAmount;
-                    @endphp
-                    <td class="text-end fw-bold {{ $total > 0 ? 'text-danger' : '' }}">
-                        {{ number_format($total, 2) }}
+                    <td class="text-end fw-bold {{ $computed['toPayTotal'] > 0 ? 'text-danger' : '' }}">
+                        {{ number_format($computed['toPayTotal'], 2) }}
                     </td>
                 </tr>
             @endforeach
@@ -279,7 +244,7 @@
             <tbody>
                 @foreach ($settlements as $settlement)
                     @php
-                        $amount = match ((int) $selected_type) {
+                        $amount = match ((int) $selectedType) {
                             \App\Enums\ReportType::PROFESSOR => $settlement->professor_amount + $settlement->materials,
                             \App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
                             default => $settlement->amount,
@@ -304,18 +269,8 @@
             </tbody>
             <tfoot>
                 <tr class="table-info fw-bold">
-                    @php
-                        $total_amount = $settlements->sum(function ($settlement) use ($selected_type) {
-                            return match ((int) $selected_type) {
-                                \App\Enums\ReportType::PROFESSOR => $settlement->professor_amount +
-                                    $settlement->materials,
-                                \App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
-                                default => $settlement->amount,
-                            };
-                        });
-                    @endphp
                     <th colspan="2">Totals</th>
-                    <th class="text-end">{{ number_format($total_amount, 2) }}</th>
+                    <th class="text-end">{{ number_format($totalsData['totalSettlementAmount'] ?? 0, 2) }}</th>
                     @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
                         <th class="text-end">{{ number_format($settlementTotals['total_center'], 2) }}</th>
                         <th class="text-end">{{ number_format($settlementTotals['total_printables'], 2) }}
@@ -347,7 +302,7 @@
                 <tr>
                     <td>Markers</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->markers > 0 ? -number_format($extra->markers, 2) : 0) : number_format($extra->markers ?? 0, 2) }}
+                        {{ $selectedType == App\Enums\ReportType::PROFESSOR ? ($extra->markers > 0 ? -number_format($extra->markers, 2) : 0) : number_format($extra->markers ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
@@ -406,204 +361,64 @@
                 <tr>
                     <th>Total online</th>
                     <td class="text-end">
-                        @php
-                            $onlineTotal = $session->onlines->sum(function ($online) use ($selected_type) {
-                                return match ((int) $selected_type) {
-                                    App\Enums\ReportType::PROFESSOR => $online->materials + $online->professor,
-                                    App\Enums\ReportType::CENTER => $online->center ?? 0,
-                                    default => $online->materials + $online->professor + $online->center,
-                                };
-                            });
-                        @endphp
-                        {{ number_format($onlineTotal, 2) }}
+                        {{ number_format($totalsData['onlineTotal'] ?? 0, 2) }}
                     </td>
                 </tr>
             @endif
-            @if ($session->professor_price)
-                @php
-                    // Calculate total settlements for professor fees
-                    $totalSettlementsForProfessor = $reports->sum(function ($report) use ($selected_type) {
-                        $settlementForStudent = $report->settlements;
-                        return $settlementForStudent->sum(function ($settlement) use ($selected_type) {
-                            return match ((int) $selected_type) {
-                                App\Enums\ReportType::PROFESSOR => $settlement->professor_amount + $settlement->materials,
-                                App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
-                                default => $settlement->amount,
-                            };
-                        });
-                    });
-                @endphp
+            @if ($session->professor_price && isset($totalsData['professorTotal']))
                 <tr>
                     <th>Professor Fees</th>
                     <td class="text-end">
-                        @php
-                            $professorTotal = $reports->sum('professor_price');
-                            // Add online professor amounts
-                            if ($session->onlines->isNotEmpty()) {
-                                $professorTotal += $session->onlines->sum(fn($o) => $o->professor);
-                            }
-                            // Add settlement professor amounts
-                            if ($settlements->isNotEmpty()) {
-                                $professorTotal += $settlements->sum('professor_amount');
-                            }
-                        @endphp
-                        {{ number_format($professorTotal - $totalSettlementsForProfessor, 2) }}
+                        {{ number_format($totalsData['professorTotal'], 2) }}
                     </td>
                 </tr>
             @endif
-            @if ($session->professor->balance)
+            @if ($session->professor->balance && isset($totalsData['balanceValue']))
                 <tr>
                     <th>Balance</th>
-                    <td class="text-end">{{ number_format($selected_type == App\Enums\ReportType::PROFESSOR ? $session->professor->balance : -$session->professor->balance, 2) }}</td>
+                    <td class="text-end">{{ number_format($totalsData['balanceValue'], 2) }}</td>
                 </tr>
             @endif
-            @if ($session->professor->materials_balance > 0)
+            @if ($session->professor->materials_balance > 0 && isset($totalsData['materialsBalanceValue']))
                 <tr>
                     <th>Materials Balance (Prof)</th>
-                    <td class="text-end">{{ number_format($selected_type == App\Enums\ReportType::PROFESSOR ? $session->professor->materials_balance : -$session->professor->materials_balance, 2) }}</td>
+                    <td class="text-end">{{ number_format($totalsData['materialsBalanceValue'], 2) }}</td>
                 </tr>
             @endif
-            @if ($session->materials)
+            @if ($session->materials && isset($totalsData['materialsTotal']))
                 <tr>
                     <th>Materials</th>
                     <td class="text-end">
-                        @php
-                            $materialsTotal = $reports->sum('materials');
-                            // Add online materials amounts
-                            if ($session->onlines->isNotEmpty()) {
-                                $materialsTotal += $session->onlines->sum('materials');
-                            }
-                            // Add settlement materials amounts
-                            if ($settlements->isNotEmpty()) {
-                                $materialsTotal += $settlements->sum('materials');
-                            }
-                        @endphp
-                        {{ number_format($materialsTotal, 2) }}
+                        {{ number_format($totalsData['materialsTotal'], 2) }}
                     </td>
                 </tr>
             @endif
-            @if ($session->printables)
+            @if ($session->printables && isset($totalsData['printablesTotal']))
                 <tr>
                     <th>Student Papers</th>
                     <td class="text-end">
-                        @php
-                            $printablesTotal = $reports->sum('printables');
-                            // Add settlement printables amounts
-                            if ($settlements->isNotEmpty()) {
-                                $printablesTotal += $settlements->sum('printables');
-                            }
-                        @endphp
-                        {{ number_format($printablesTotal, 2) }}
+                        {{ number_format($totalsData['printablesTotal'], 2) }}
                     </td>
                 </tr>
             @endif
-            @if ($session->center_price)
-                @php
-                    // Calculate total settlements for center fees
-                    $totalSettlementsForCenter = $reports->sum(function ($report) use ($selected_type) {
-                        $settlementForStudent = $report->settlements;
-                        return $settlementForStudent->sum(function ($settlement) use ($selected_type) {
-                            return $settlement->center + $settlement->printables;
-                        });
-                    });
-                @endphp
+            @if ($session->center_price && isset($totalsData['centerTotal']))
                 <tr>
                     <th>Center Fees</th>
                     <td class="text-end">
-                        @php
-                            $centerTotal = $reports->sum('center_price');
-                            // Add online center amounts
-                            if ($session->onlines->isNotEmpty()) {
-                                $centerTotal += $session->onlines->sum(fn($o) => $o->center ?? 0);
-                            }
-                            // Add settlement center amounts
-                            if ($settlements->isNotEmpty()) {
-                                $centerTotal += $settlements->sum('center');
-                            }
-                        @endphp
-                        {{ number_format($centerTotal - $totalSettlementsForCenter, 2) }}
+                        {{ number_format($totalsData['centerTotal'], 2) }}
                     </td>
                 </tr>
             @endif
-            @php
-                // Calculate toCollect first (needed for Total Session Value calculation)
-                // Use eager-loaded toPay relationship instead of querying
-                $toCollect = $reports->sum(
-                    fn($report) => $report->student
-                        ?->toPay
-                        ->sum(
-                            fn($pay) => match ((int) $selected_type) {
-                                App\Enums\ReportType::PROFESSOR => $pay->to_pay + $pay->to_pay_materials,
-                                App\Enums\ReportType::CENTER => $pay->to_pay_center + $pay->to_pay_print,
-                                default => $pay->to_pay +
-                                    $pay->to_pay_center +
-                                    $pay->to_pay_print +
-                                    $pay->to_pay_materials,
-                            },
-                        ) ?? 0,
-                );
-
-                // Use eager-loaded settlements instead of querying
-                $toCollect += $reports->sum(function ($report) use ($selected_type) {
-                    $settlementForStudent = $report->settlements;
-                    return $settlementForStudent->sum(function ($settlement) use ($selected_type) {
-                        return match ((int) $selected_type) {
-                            App\Enums\ReportType::PROFESSOR => $settlement->professor_amount + $settlement->materials,
-                            App\Enums\ReportType::CENTER => $settlement->center + $settlement->printables,
-                            default => $settlement->amount,
-                        };
-                    });
-                });
-                $toPayTotal = $toCollect;
-            @endphp
             <tr class="bg-light">
                 <th>Total Session Value</th>
                 <td class="text-end text-primary total-value">
-                    @php
-                        $summaryTotal = $reports->sum(
-                            fn($r) => $r->professor_price + $r->center_price + $r->printables + $r->materials,
-                        );
-                        $summaryTotal +=
-                            $selected_type == App\Enums\ReportType::PROFESSOR
-                                ? $session->professor->balance
-                                : -$session->professor->balance;
-                        $summaryTotal +=
-                            $selected_type == App\Enums\ReportType::PROFESSOR
-                                ? $session->professor->materials_balance
-                                : -$session->professor->materials_balance;
-                        if ($session->sessionExtra) {
-                            $adjustment =
-                                $extra->markers +
-                                $extra->copies +
-                                $extra->other +
-                                $extra->cafeterea +
-                                $extra->other_print +
-                                $extra->to_professor +
-                                $extra->out_going;
-                            $summaryTotal += $selected_type == App\Enums\ReportType::PROFESSOR ? -$adjustment : $adjustment;
-                        }
-                        if (!$session->onlines->isEmpty()) {
-                            $onlineTotal = $session->onlines->sum(function ($online) use ($selected_type) {
-                                return match ((int) $selected_type) {
-                                    App\Enums\ReportType::PROFESSOR => $online->materials + $online->professor,
-                                    App\Enums\ReportType::CENTER => $online->center ?? 0,
-                                    default => $online->materials + $online->professor + $online->center,
-                                };
-                            });
-                            $summaryTotal += $onlineTotal;
-                        }
-
-                        if ($settlements->isNotEmpty()) {
-                            $summaryTotal += $total_amount;
-                        }
-                    @endphp
-                    {{ number_format($summaryTotal, 2) }}
+                    {{ number_format($summaryData['summaryTotal'], 2) }}
                 </td>
             </tr>
-            <tr class="{{ $toCollect > 0 ? 'bg-warning' : '' }}">
+            <tr class="{{ $summaryData['toCollect'] > 0 ? 'bg-warning' : '' }}">
                 <th> To Collect</th>
-                <td class="text-end {{ $toCollect > 0 ? 'text-danger' : '' }} total-value">
-                    {{ number_format($toCollect, 2) }}
+                <td class="text-end {{ $summaryData['toCollect'] > 0 ? 'text-danger' : '' }} total-value">
+                    {{ number_format($summaryData['toCollect'], 2) }}
                 </td>
             </tr>
 
