@@ -182,15 +182,15 @@
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    @if ($selected_type == \App\Enums\ReportType::ALL || $selected_type == \App\Enums\ReportType::STUDENT)
+                    @if ($selectedType == \App\Enums\ReportType::ALL || $selectedType == \App\Enums\ReportType::STUDENT)
                         <th class="text-end">Price</th>
                         <th class="text-end">Materials</th>
                     @endif
-                    @if ($selected_type == \App\Enums\ReportType::PROFESSOR)
+                    @if ($selectedType == \App\Enums\ReportType::PROFESSOR)
                         <th class="text-end">Materials</th>
                         <th class="text-end">Professor Price</th>
                     @endif
-                    @if ($selected_type == \App\Enums\ReportType::CENTER)
+                    @if ($selectedType == \App\Enums\ReportType::CENTER)
                         <th class="text-end">Center Price</th>
                     @endif
                     <th>Stage</th>
@@ -201,16 +201,16 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $online->name }}</td>
-                        @if ($selected_type == \App\Enums\ReportType::ALL || $selected_type == \App\Enums\ReportType::STUDENT)
+                        @if ($selectedType == \App\Enums\ReportType::ALL || $selectedType == \App\Enums\ReportType::STUDENT)
                             <td class="text-end">
                                 {{ number_format($online->professor + $online->center, 2) }}</td>
                             <td class="text-end">{{ number_format($online->materials, 2) }}</td>
                         @endif
-                        @if ($selected_type == \App\Enums\ReportType::PROFESSOR)
+                        @if ($selectedType == \App\Enums\ReportType::PROFESSOR)
                             <td class="text-end">{{ number_format($online->materials, 2) }}</td>
                             <td class="text-end">{{ number_format($online->professor, 2) }}</td>
                         @endif
-                        @if ($selected_type == \App\Enums\ReportType::CENTER)
+                        @if ($selectedType == \App\Enums\ReportType::CENTER)
                             <td class="text-end">{{ number_format($online->center, 2) }}</td>
                         @endif
                         <td>{{ App\Enums\StagesEnum::getStringValue($online->stage) }}</td>
@@ -229,11 +229,11 @@
                     <th>#</th>
                     <th>Student</th>
                     <th class="text-end">Amount</th>
-                    @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
+                    @if ($selectedType != \App\Enums\ReportType::PROFESSOR)
                         <th class="text-end">Center</th>
                         <th class="text-end">Printables</th>
                     @endif
-                    @if ($selected_type != \App\Enums\ReportType::CENTER)
+                    @if ($selectedType != \App\Enums\ReportType::CENTER)
                         <th class="text-end">Professor</th>
                         <th class="text-end">Materials</th>
                     @endif
@@ -254,11 +254,11 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $settlement->student->name ?? 'N/A' }}</td>
                         <td class="text-end">{{ number_format($amount, 2) }}</td>
-                        @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
+                        @if ($selectedType != \App\Enums\ReportType::PROFESSOR)
                             <td class="text-end">{{ number_format($settlement->center, 2) }}</td>
                             <td class="text-end">{{ number_format($settlement->printables, 2) }}</td>
                         @endif
-                        @if ($selected_type != \App\Enums\ReportType::CENTER)
+                        @if ($selectedType != \App\Enums\ReportType::CENTER)
                             <td class="text-end">{{ number_format($settlement->professor_amount, 2) }}</td>
                             <td class="text-end">{{ number_format($settlement->materials, 2) }}</td>
                         @endif
@@ -271,12 +271,12 @@
                 <tr class="table-info fw-bold">
                     <th colspan="2">Totals</th>
                     <th class="text-end">{{ number_format($totalsData['totalSettlementAmount'] ?? 0, 2) }}</th>
-                    @if ($selected_type != \App\Enums\ReportType::PROFESSOR)
+                    @if ($selectedType != \App\Enums\ReportType::PROFESSOR)
                         <th class="text-end">{{ number_format($settlementTotals['total_center'], 2) }}</th>
                         <th class="text-end">{{ number_format($settlementTotals['total_printables'], 2) }}
                         </th>
                     @endif
-                    @if ($selected_type != \App\Enums\ReportType::CENTER)
+                    @if ($selectedType != \App\Enums\ReportType::CENTER)
                         <th class="text-end">{{ number_format($settlementTotals['total_professor'], 2) }}
                         </th>
                         <th class="text-end">{{ number_format($settlementTotals['total_materials'], 2) }}
@@ -308,37 +308,37 @@
                 <tr>
                     <td>Cafeterea</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->cafeterea > 0 ? -number_format($extra->cafeterea, 2) : 0) : number_format($extra->cafeterea ?? 0, 2) }}
+                        {{ $selectedType == App\Enums\ReportType::PROFESSOR ? ($extra->cafeterea > 0 ? -number_format($extra->cafeterea, 2) : 0) : number_format($extra->cafeterea ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>Prof papper</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->copies > 0 ? -number_format($extra->copies, 2) : 0) : number_format($extra->copies ?? 0, 2) }}
+                        {{ $selectedType == App\Enums\ReportType::PROFESSOR ? ($extra->copies > 0 ? -number_format($extra->copies, 2) : 0) : number_format($extra->copies ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>Other Center </td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->other > 0 ? -number_format($extra->other, 2) : 0) : number_format($extra->other ?? 0, 2) }}
+                        {{ $selectedType == App\Enums\ReportType::PROFESSOR ? ($extra->other > 0 ? -number_format($extra->other, 2) : 0) : number_format($extra->other ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>Other Print</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? ($extra->other_print > 0 ? -number_format($extra->other_print, 2) : 0) : number_format($extra->other_print ?? 0, 2) }}
+                        {{ $selectedType == App\Enums\ReportType::PROFESSOR ? ($extra->other_print > 0 ? -number_format($extra->other_print, 2) : 0) : number_format($extra->other_print ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>Out Going</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? -number_format($extra->out_going, 2) : number_format($extra->out_going ?? 0, 2) }}
+                        {{ $selectedType == App\Enums\ReportType::PROFESSOR ? -number_format($extra->out_going, 2) : number_format($extra->out_going ?? 0, 2) }}
                     </td>
                 </tr>
                 <tr>
                     <td>To Prof</td>
                     <td class="text-end">
-                        {{ $selected_type == App\Enums\ReportType::PROFESSOR ? -number_format($extra->to_professor, 2) : number_format($extra->to_professor ?? 0, 2) }}
+                        {{ $selectedType == App\Enums\ReportType::PROFESSOR ? -number_format($extra->to_professor, 2) : number_format($extra->to_professor ?? 0, 2) }}
                     </td>
                 </tr>
                 @if ($extra->notes)
