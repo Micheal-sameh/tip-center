@@ -75,5 +75,7 @@ class Kernel extends HttpKernel
         'permission' => PermissionMiddleware::class,
         'role_or_permission' => RoleOrPermissionMiddleware::class,
         'check.status' => \App\Http\Middleware\CheckUserStatus::class,
+        'demo' => \App\Http\Middleware\DemoMode::class,
+        'super_admin' => \App\Http\Middleware\SuperAdminAuth::class,
     ];
 }

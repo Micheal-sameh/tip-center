@@ -33,8 +33,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
+            // Central routes (marketing / SaaS onboarding)
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+
+            // Tenant routes are registered by TenancyServiceProvider
         });
     }
 }

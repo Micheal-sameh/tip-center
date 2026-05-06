@@ -1,4 +1,19 @@
 services:
+  nginx:
+    image: nginx:alpine
+    container_name: tip-test-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/tip-test
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - tip-test
+    depends_on:
+      - app
+
   app:
     build:
       context: ./docker/php
@@ -15,8 +30,8 @@ services:
     networks:
       - tip-test
       - external_db_network
-    ports:
-      - "1200:9000"
+    expose:
+      - "9000"
     depends_on:
       - db
 
