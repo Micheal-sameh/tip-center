@@ -1,42 +1,64 @@
+# ─────────────────────────────────────────────────────────────
+#  Tip-Center · PHP 8.2-FPM + Supervisor
+# ─────────────────────────────────────────────────────────────
 FROM php:8.2-fpm
 
-# Arguments defined in docker-compose.yml
-ARG user
-ARG uid
+ARG user=www-app
+ARG uid=1000
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# ── System dependencies ────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
+    unzip \
+    zip \
+    default-mysql-client \
     libpng-dev \
     libgd-dev \
     libmagickwand-dev \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
-    zip \
-    unzip
+    libicu-dev \
+    supervisor \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# ── PHP extensions ─────────────────────────────────────────────────────
+RUN pecl install imagick \
+    && docker-php-ext-enable imagick
 
-# Install PHP extensions
-RUN pecl install imagick
-RUN docker-php-ext-enable imagick
-RUN docker-php-ext-configure gd --with-jpeg
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype \
+    && docker-php-ext-install -j"$(nproc)" \
+       pdo_mysql \
+       mbstring \
+       exif \
+       pcntl \
+       bcmath \
+       gd \
+       zip \
+       opcache \
+       intl
 
+# ── Composer ───────────────────────────────────────────────────────────
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# ── Supervisor config ──────────────────────────────────────────────────
+COPY docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+COPY docker/supervisor/conf.d/          /etc/supervisor/conf.d/
 RUN mkdir -p /var/log/supervisor
 
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# ── Create non-root user ───────────────────────────────────────────────
+RUN useradd -G www-data,root -u ${uid} -d /home/${user} ${user} \
+    && mkdir -p /home/${user}/.composer \
+    && chown -R ${user}:${user} /home/${user}
 
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
+# ── Entrypoint ─────────────────────────────────────────────────────────
+COPY docker/php/entry.sh /usr/local/bin/entry.sh
+RUN chmod +x /usr/local/bin/entry.sh
 
-# Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
-USER $user
+# Entrypoint handles setup; CMD is passed to it and executed after
+ENTRYPOINT ["/usr/local/bin/entry.sh"]
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]

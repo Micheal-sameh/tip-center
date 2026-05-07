@@ -1,65 +1,100 @@
+# ─────────────────────────────────────────────────────────────
+#  Tip-Center · Docker Compose
+#  Services: app (PHP-FPM + Supervisor) · db (MariaDB)
+#  Optional:  phpmyadmin  (--profile tools)
+# ─────────────────────────────────────────────────────────────
+
 services:
+
+  # ── PHP-FPM + Queue Worker ──────────────────────────────────
   app:
     build:
-      context: ./docker/php
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/php/Dockerfile
       args:
-        user: tip-test
-        uid: 1500
-    container_name: tip-test
+        user: www-app
+        uid: 1000
+    image: tip-center-app
+    container_name: tip-app
     restart: unless-stopped
-    working_dir: /var/www/tip-test
+    working_dir: /var/www/html
+    entrypoint: ["/var/www/html/docker/php/entry.sh"]
+    command: ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+    env_file:
+      - .env
     volumes:
-      - ./:/var/www/tip-test
-      - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - .:/var/www/html
+      - tip-storage:/var/www/html/storage/app
+      - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/zzz-custom.ini:ro
     networks:
-      - tip-test
-      - external_db_network
+      - tip-internal
     ports:
-      - "1200:9000"
+      - "${APP_PORT:-1700}:9000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php-fpm", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
-
-
+  # ── MariaDB ──────────────────────────────────────────────────
   db:
-    image: mariadb:10.5
-    container_name: tip-test-db
+    image: mariadb:11.4
+    container_name: tip-db
     restart: unless-stopped
-    command: --max_allowed_packet=67108864
+    command:
+      - --max_allowed_packet=64M
+      - --innodb_buffer_pool_size=256M
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-secret}
     volumes:
-      - mysql-data:/var/lib/mysql
+      - db-data:/var/lib/mysql
     ports:
-      - "1201:3306"
+      - "${DB_EXPOSE_PORT:-3306}:3306"
     networks:
-      - tip-test
-      - external_db_network
+      - tip-internal
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
+  # ── phpMyAdmin (optional: docker compose --profile tools up) ─
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: tip-test-phpmyadmin
+    image: phpmyadmin:latest
+    container_name: tip-phpmyadmin
     restart: unless-stopped
+    profiles: ["tools"]
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-secret}
       UPLOAD_LIMIT: 256M
+      MAX_EXECUTION_TIME: 600
     ports:
-      - "1202:80"
+      - "${PMA_PORT:-8080}:80"
     networks:
-      - tip-test
+      - tip-internal
+    depends_on:
+      db:
+        condition: service_healthy
 
+# ─────────────────────────────────────────────────────────────
 networks:
-  tip-test:
-    driver: bridge
-  external_db_network:
+  tip-internal:
     driver: bridge
 
 volumes:
-  mysql-data:
+  db-data:
+    driver: local
+  tip-storage:
     driver: local
