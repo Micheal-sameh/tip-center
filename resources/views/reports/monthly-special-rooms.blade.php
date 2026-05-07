@@ -32,7 +32,7 @@
                 <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-line me-2"></i> Detailed Income & Expenses</h5>
             </div>
             <div class="card-body table-responsive p-0">
-                <table class="table table-bordered table-hover align-middle text-center mb-0">
+                <table class="table align-middle mb-0 align-middle text-center mb-0">
                     <thead class="table-dark sticky-top">
                         <tr>
                             <th>Day</th>

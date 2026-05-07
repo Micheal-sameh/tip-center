@@ -1,21 +1,14 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <div class="container py-4" style="width:93%">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container-fluid py-2" style="max-width:1400px">
+        <div class="tc-page-header">
             <div>
-                <h4 class="fw-bold text-dark mb-1 me-1">{{ __('Students') }}</h4>
+                <h1 class="tc-page-title"><i class="fas fa-user-graduate me-2 text-brand"></i>{{ __('Students') }}</h1>
             </div>
-            <div class="d-flex gap-2">
+            <div class="tc-page-actions">
                 <a href="{{ route('students.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>{{ __('Add Student') }}
+                    <i class="fas fa-plus"></i>{{ __('Add Student') }}
                 </a>
                 <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">
                     <i class="fas fa-filter me-2"></i>{{ __('Filter') }}
@@ -171,72 +164,6 @@
             <input type="password" name="password" id="deletePassword" style="display: none;">
         </form>
 
-        <style>
-            .avatar {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .avatar-text {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 600;
-            }
-
-            .avatar-sm .avatar-text {
-                width: 32px;
-                height: 32px;
-                font-size: 0.875rem;
-            }
-
-            .avatar-lg .avatar-text {
-                width: 48px;
-                height: 48px;
-                font-size: 1.25rem;
-            }
-
-            .table-hover tbody tr {
-                transition: all 0.2s ease;
-            }
-
-            .table-hover tbody tr:hover {
-                background-color: rgba(0, 0, 0, 0.02);
-                transform: translateY(-1px);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            }
-
-            @keyframes spin {
-                0% {
-                    transform: rotate(0deg);
-                }
-
-                100% {
-                    transform: rotate(360deg);
-                }
-            }
-
-            .fa-spinner {
-                animation: spin 1s linear infinite;
-            }
-
-            .loading-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-color: rgba(255, 255, 255, 0.8);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-            }
-        </style>
-
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             // Function to update the URL with current filters
             function updateUrlParams(params) {

@@ -50,6 +50,16 @@
                             <div class="mt-auto w-100">
                                 <h3 class="text-dark fw-bold pt-3 mb-1">{{ $student->name }}</h3>
                                 <h5 class="text-primary fw-bold">{{ $student->code }}</h5>
+                                {{-- QR Code --}}
+                                <div class="mt-3 d-flex flex-column align-items-center">
+                                    <div style="background:#fff;padding:8px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.10);display:inline-block;">
+                                        <canvas id="student-qr-canvas"></canvas>
+                                    </div>
+                                    <small class="text-muted mt-2">{{ __('trans.qr_code') }}</small>
+                                    <button class="btn btn-sm btn-outline-secondary mt-2" onclick="downloadQR()">
+                                        <i class="fas fa-download me-1"></i>Download
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -630,8 +640,6 @@
         </script>
     @endpush
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
             // Delete Special Case
@@ -702,5 +710,31 @@
                 });
             });
         });
+    </script>
+
+    {{-- QR Code generation --}}
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script>
+        const studentCode = @json($student->code);
+        const qrCanvas = document.getElementById('student-qr-canvas');
+        if (qrCanvas && studentCode) {
+            new QRious({
+                element: qrCanvas,
+                value: String(studentCode),
+                size: 160,
+                foreground: '#0F172A',
+                background: '#ffffff',
+                level: 'H',
+            });
+        }
+
+        function downloadQR() {
+            const canvas = document.getElementById('student-qr-canvas');
+            if (!canvas) return;
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = (studentCode || 'student') + '_qr.png';
+            link.click();
+        }
     </script>
 @endsection

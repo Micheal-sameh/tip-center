@@ -86,11 +86,17 @@
 
         {{-- Desktop Table --}}
         <div class="d-none d-md-block">
-            <div class="table-responsive">
-                <table class="table table-striped align-middle mb-0">
-                    <thead class="table-light">
+            <div class="tc-table-wrap">
+                <div class="tc-data-bar">
+                    <span><i class="fas fa-history me-2"></i>{{ $audits->total() }} records</span>
+                    <span>Page {{ $audits->currentPage() }} of {{ $audits->lastPage() }}</span>
+                </div>
+                <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
                         <tr>
                             <th>#</th>
+                            <th>Event</th>
                             <th>Table</th>
                             <th>Record ID</th>
                             <th>User</th>
@@ -98,53 +104,57 @@
                                 <th>Old Data</th>
                                 <th>New Data</th>
                             @endif
-                            <th>Updated At</th>
-                            <th>Actions</th>
+                            <th>Date &amp; Time</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($audits as $index => $audit)
-                            <tr>
+                            @php
+                                $ev = $audit->event ?? 'update';
+                                $rowClass = match($ev) { 'created' => 'audit-row-create', 'deleted' => 'audit-row-delete', default => 'audit-row-update' };
+                                $evBadge  = match($ev) { 'created' => 'tc-badge-success', 'deleted' => 'tc-badge-danger', default => 'tc-badge-warning' };
+                            @endphp
+                            <tr class="{{ $rowClass }}">
                                 <td>{{ $audits->firstItem() + $index }}</td>
-                                <td>{{ ucfirst($audit->table_name) }}</td>
-                                <td>{{ $audit->record_id }}</td>
-                                <td>{{ $audit->user ? $audit->user->name : 'System' }}</td>
+                                <td><span class="tc-badge {{ $evBadge }}">{{ ucfirst($ev) }}</span></td>
+                                <td><span class="fw-600">{{ ucfirst($audit->table_name) }}</span></td>
+                                <td><code>#{{ $audit->record_id }}</code></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="tc-row-avatar">{{ strtoupper(substr($audit->user?->name ?? 'S', 0, 2)) }}</div>
+                                        {{ $audit->user?->name ?? 'System' }}
+                                    </div>
+                                </td>
                                 @if (request('with_data'))
                                     <td>
                                         @if ($audit->old_data)
-                                            <details>
-                                                <summary>View Old Data</summary>
-                                                <pre>{{ json_encode($audit->old_data, JSON_PRETTY_PRINT) }}</pre>
+                                            <details><summary class="text-muted" style="cursor:pointer;font-size:.8rem;">View</summary>
+                                                <pre style="font-size:.7rem;max-width:200px;overflow:auto;">{{ json_encode($audit->old_data, JSON_PRETTY_PRINT) }}</pre>
                                             </details>
-                                        @else
-                                            N/A
-                                        @endif
+                                        @else <span class="text-muted">—</span> @endif
                                     </td>
                                     <td>
                                         @if ($audit->new_data)
-                                            <details>
-                                                <summary>View New Data</summary>
-                                                <pre>{{ json_encode($audit->new_data, JSON_PRETTY_PRINT) }}</pre>
+                                            <details><summary class="text-muted" style="cursor:pointer;font-size:.8rem;">View</summary>
+                                                <pre style="font-size:.7rem;max-width:200px;overflow:auto;">{{ json_encode($audit->new_data, JSON_PRETTY_PRINT) }}</pre>
                                             </details>
-                                        @else
-                                            N/A
-                                        @endif
+                                        @else <span class="text-muted">—</span> @endif
                                     </td>
                                 @endif
-                                <td>{{ $audit->created_at->format('M d, Y H:i') }}</td>
+                                <td style="white-space:nowrap;">{{ $audit->created_at->format('d M Y · H:i') }}</td>
                                 <td>
-                                    <a href="{{ route('audits.show', $audit->id) }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('audits.show', $audit->id) }}" class="tc-action-btn" title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="8" class="text-center py-4 text-muted">No audit logs available.</td>
-                            </tr>
+                            <tr><td colspan="9" class="text-center py-5 text-muted"><i class="fas fa-history fa-2x mb-3 d-block opacity-50"></i>No audit logs available.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
 

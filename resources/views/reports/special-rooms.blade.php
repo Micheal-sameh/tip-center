@@ -62,11 +62,9 @@
 
 
         <!-- Sessions Table -->
-        <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-4">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle mb-0">
-                        <thead class="table-light">
+        <div class="tc-table-wrap"><div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Professor</th>

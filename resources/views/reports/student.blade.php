@@ -58,8 +58,8 @@
             <!-- Students Table -->
             @if (isset($students))
                 <div class="table-responsive mb-4 border rounded">
-                    <table class="table table-hover align-middle mb-0" id="studentsTable">
-                        <thead class="table-light">
+                    <table class="table align-middle mb-0 mb-0" id="studentsTable">
+                        <thead>
                             <tr>
                                 <th class="ps-3">Code</th>
                                 <th>Name</th>
@@ -205,9 +205,9 @@
 
             <div class="card-body">
                 @if (count($reports))
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="reportsTable">
-                            <thead class="table-light">
+                    <div class="tc-table-wrap"><div class="table-responsive">
+                        <table class="table align-middle mb-0 mb-0" id="reportsTable">
+                            <thead>
                                 <tr>
                                     <th class="ps-3">#</th>
                                     <th>Session Date</th>

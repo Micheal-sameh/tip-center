@@ -1,50 +1,56 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <div class="container py-4">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Session Report - {{ $session->created_at->format('d-m-Y') }}</h5>
-                <form method="GET" action="{{ route('reports.session.pdf') }}" target="_blank" class="form-inline">
-                    <input type="hidden" name="session_id" value="{{ $session->id }}">
-                    <div class="input-group input-group-sm">
-                        <label class="form-check-label me-2" for="withPhones">With Phones</label>
-                        <input class="form-check-input me-3" type="checkbox" name="with_phones" id="withPhones"
-                            value="1">
-                        <select name="type" class="form-select me-2">
-                            <option value="" disabled {{ empty($selectedType) ? 'selected' : '' }}>Export Format
-                            </option>
-                            @foreach (App\Enums\ReportType::all() as $type)
-                                <option value="{{ $type['value'] }}"
-                                    {{ (int) $selectedType === (int) $type['value'] ? 'selected' : '' }}>
-                                    {{ $type['name'] }}
-                                </option>
-                            @endforeach
-                        </select>
+    <div class="container-fluid py-3" style="max-width:1300px">
 
-                        <button type="submit" formaction="{{ route('reports.session') }}" formtarget="_self"
-                            class="btn btn-info btn-sm me-2">
-                            <i class="fas fa-eye me-1"></i> Show
-                        </button>
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="fas fa-file-pdf me-1"></i> Export
-                        </button>
-                    </div>
+        {{-- Page Header --}}
+        <div class="tc-page-header mb-3">
+            <div>
+                <h1 class="tc-page-title"><i class="fas fa-file-alt me-2 text-brand"></i>Session Report</h1>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">{{ $session->created_at->format('d M Y') }} &middot; {{ $session->professor->name }}</p>
+            </div>
+            <div class="tc-page-actions">
+                <form method="GET" action="{{ route('reports.session.pdf') }}" target="_blank" class="d-flex align-items-center gap-2">
+                    <input type="hidden" name="session_id" value="{{ $session->id }}">
+                    <label class="d-flex align-items-center gap-1 text-muted" style="font-size:.85rem;white-space:nowrap;">
+                        <input type="checkbox" name="with_phones" value="1"> Phones
+                    </label>
+                    <select name="type" class="form-select form-select-sm" style="width:auto;">
+                        <option value="" disabled {{ empty($selectedType) ? 'selected' : '' }}>Format</option>
+                        @foreach (App\Enums\ReportType::all() as $type)
+                            <option value="{{ $type['value'] }}" {{ (int) $selectedType === (int) $type['value'] ? 'selected' : '' }}>{{ $type['name'] }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" formaction="{{ route('reports.session') }}" formtarget="_self" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-eye me-1"></i>View
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="fas fa-file-pdf me-1"></i>Export PDF
+                    </button>
                 </form>
             </div>
+        </div>
 
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-3"><strong>Professor:</strong> {{ $session->professor->name }}</div>
-                    <div class="col-md-3"><strong>Stage:</strong>
-                        {{ App\Enums\StagesEnum::getStringValue($session->stage) }}</div>
-                </div>
+        {{-- Session KPI bar --}}
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="tc-stat"><div class="tc-stat-icon" style="--icon-color:#2563EB"><i class="fas fa-users"></i></div><div class="tc-stat-label">Students</div><div class="tc-stat-value">{{ $reports->count() }}</div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="tc-stat"><div class="tc-stat-icon" style="--icon-color:#10B981"><i class="fas fa-money-bill"></i></div><div class="tc-stat-label">Total Collected</div><div class="tc-stat-value">{{ number_format($totalsData['totalCollected'] ?? 0, 0) }}</div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="tc-stat"><div class="tc-stat-icon" style="--icon-color:#F59E0B"><i class="fas fa-exclamation-circle"></i></div><div class="tc-stat-label">To Pay</div><div class="tc-stat-value">{{ number_format($totalsData['totalToPay'] ?? 0, 0) }}</div></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="tc-stat"><div class="tc-stat-icon" style="--icon-color:#6D28D9"><i class="fas fa-chalkboard-teacher"></i></div><div class="tc-stat-label">Stage</div><div class="tc-stat-value" style="font-size:.95rem;">{{ App\Enums\StagesEnum::getStringValue($session->stage) }}</div></div>
+            </div>
+        </div>
 
-                <h5 class="mt-4 mb-3">Students Attendance</h5>
-
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
+                <h6 class="fw-700 mb-2" style="color:var(--tc-text)"><i class="fas fa-users me-2 text-brand"></i>Students Attendance</h6>
+                <div class="tc-table-wrap"><div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Student Name</th>
@@ -101,9 +107,9 @@
                 {{-- Settlements --}}
                 @if ($settlements->isNotEmpty())
                     <h5 class="mt-5 mb-3">Settlements</h5>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead class="table-success">
+                    <div class="tc-table-wrap"><div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Student</th>
@@ -173,9 +179,9 @@
                 {{-- Online Payments --}}
                 @if ($session->onlines && $session->onlines->isNotEmpty())
                     <h5 class="mt-5 mb-3">Online Payments</h5>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead class="table-primary">
+                    <div class="tc-table-wrap"><div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
@@ -374,3 +380,4 @@
         </div>
     </div>
 @endsection
+

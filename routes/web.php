@@ -164,6 +164,11 @@ Route::group(['middleware' => ['setlocale']], function () {
         });
 
         Route::prefix('audits')->group(function () {
+            Route::get('/auth', [AuditController::class, 'showAuth'])->name('audits.auth');
+            Route::post('/auth', [AuditController::class, 'postAuth'])->name('audits.auth.post');
+        });
+
+        Route::prefix('audits')->middleware('audit.password')->group(function () {
             Route::get('/', [AuditController::class, 'index'])->name('audits.index');
             Route::get('/{id}/show', [AuditController::class, 'show'])->name('audits.show');
         });

@@ -19,9 +19,13 @@
 
         {{-- Desktop Table --}}
         <div class="d-none d-md-block">
-            <div class="table-responsive shadow-sm rounded">
-                <table class="table table-bordered table-hover align-middle text-center mb-0">
-                    <thead class="table-light">
+            <div class="tc-table-wrap">
+                <div class="tc-data-bar">
+                    <span><i class="fas fa-users me-2"></i>{{ $users->count() }} {{ __('trans.users') }}</span>
+                </div>
+                <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>{{ __('trans.name') }}</th>
@@ -36,62 +40,55 @@
                         @forelse ($users as $index => $user)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td><a href="{{ route('users.show', $user) }}" class="text-decoration-none bold"
-                                        title="{{ __('trans.view') }}">{{ $user->name }}</a></td>
-                                <td>{{ $user->phone }}</td>
-                                <td><span class="badge bg-info text-dark">{{ $user->roles->first()?->name ?? '-' }}</span>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="tc-row-avatar">{{ strtoupper(substr($user->name,0,2)) }}</div>
+                                        <a href="{{ route('users.show', $user) }}" class="fw-600 text-decoration-none" style="color:var(--tc-text)">{{ $user->name }}</a>
+                                    </div>
                                 </td>
-                                <td>{{ $user->birth_date?->format('d-m-Y') }}</td>
+                                <td>{{ $user->phone ?? '-' }}</td>
+                                <td><span class="tc-badge tc-badge-info">{{ $user->roles->first()?->name ?? '-' }}</span></td>
+                                <td>{{ $user->birth_date?->format('d-m-Y') ?? '-' }}</td>
                                 <td>
                                     <button onclick="toggleStatus({{ $user->id }})"
-                                        class="status-btn badge border-0 px-3 py-2 rounded-pill {{ $user->status == 1 ? 'bg-success' : 'bg-secondary' }}"
+                                        class="status-btn tc-badge border-0 {{ $user->status == 1 ? 'tc-badge-success' : 'tc-badge-neutral' }}"
                                         data-user-id="{{ $user->id }}">
                                         {{ $user->status == 1 ? __('trans.active') : __('trans.inactive') }}
                                     </button>
                                 </td>
                                 <td>
-                                    <div class="d-flex justify-content-center gap-1">
-                                        {{-- @can('users_view')
-                                            <a href="{{ route('users.show', $user) }}" class="btn btn-sm btn-outline-info"
-                                                title="{{ __('trans.view') }}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        @endcan --}}
+                                    <div class="d-flex align-items-center gap-1">
                                         @can('users_update')
                                             <form action="{{ route('users.resetPassword', $user->id) }}" method="POST"
                                                 class="d-inline reset-password-form">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="button" class="btn btn-link p-0 m-0 align-baseline me-3 reset-password-btn"
-                                                    title="{{ __('trans.reset_password') }}">
-                                                    <i class="fas fa-key text-primary"></i>
+                                                <button type="button" class="tc-action-btn reset-password-btn" title="{{ __('trans.reset_password') }}">
+                                                    <i class="fas fa-key"></i>
                                                 </button>
                                             </form>
-                                            <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-warning"
-                                                title="{{ __('trans.edit') }}">
+                                            <a href="{{ route('users.edit', $user) }}" class="tc-action-btn" title="{{ __('trans.edit') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         @endcan
                                         @if (auth()->user()->can('users_delete') && !$user->hasRole('admin'))
-                                                <button type="button" class="btn btn-sm btn-outline-danger delete-user-btn"
-                                                    data-user-id="{{ $user->id }}"
-                                                    title="{{ __('trans.delete') }}">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                        @endcan
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">{{ __('trans.no_users_found') }}
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                            <button type="button" class="tc-action-btn danger delete-user-btn"
+                                                data-user-id="{{ $user->id }}"
+                                                title="{{ __('trans.delete') }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-users fa-2x mb-3 d-block opacity-50"></i>{{ __('trans.no_users_found') }}</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                </div>
+            </div>
         </div>
-    </div>
 
     {{-- Mobile Cards --}}
     <div class="d-md-none">
@@ -177,8 +174,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- Status Toggle Script --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function toggleStatus(userId) {
             const buttons = document.querySelectorAll(`.status-btn[data-user-id="${userId}"]`);

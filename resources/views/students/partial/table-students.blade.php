@@ -1,9 +1,9 @@
 {{-- Desktop Table --}}
 <div class="d-none d-md-block">
-    <div class="card shadow-sm">
+    <div class="tc-table-wrap">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+            <table class="table align-middle mb-0">
+                <thead>
                     <tr>
                         <th class="ps-4">{{ __('Name') }}</th>
                         <th>{{ __('Stage') }}</th>
@@ -36,7 +36,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-primary bg-opacity-10 text-primary">
+                                <span class="tc-badge tc-badge-info">
                                     {{ App\Enums\StagesEnum::getStringValue($student->stage) }}
                                 </span>
                             </td>
@@ -72,15 +72,15 @@
                             <td>
                                 <div class="d-flex justify-content-center gap-1">
                                     <a href="{{ route('students.show', $student) }}"
-                                        class="btn btn-sm btn-outline-info" title="{{ __('trans.view') }}">
+                                        class="tc-action-btn" title="{{ __('trans.view') }}">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('students.edit', $student) }}" class="btn btn-sm btn-secondary"
+                                    <a href="{{ route('students.edit', $student) }}" class="tc-action-btn"
                                         title="{{ __('trans.Edit') }}">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     @can('students_delete')
-                                        <button class="btn btn-sm btn-danger delete-student-btn"
+                                        <button class="tc-action-btn danger delete-student-btn"
                                                 data-student-id="{{ $student->id }}"
                                                 data-student-name="{{ $student->name }}"
                                                 title="{{ __('Delete') }}">
@@ -107,8 +107,6 @@
         </div>
     </div>
 </div>
-
-{{-- Mobile Cards --}}
 <div class="d-md-none">
     @forelse($students as $student)
         <div class="card shadow-sm mb-3">

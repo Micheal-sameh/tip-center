@@ -1,73 +1,49 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <div class="container py-4">
-        {{-- Flash Messages --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+    <div class="container-fluid py-3" style="max-width:960px">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4><i class="fas fa-eye me-2"></i>Audit Details</h4>
-            <a href="{{ route('audits.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Back to Audits
+        <div class="tc-page-header mb-4">
+            <div>
+                <h1 class="tc-page-title"><i class="fas fa-eye me-2 text-brand"></i>Audit Details</h1>
+                <p class="text-muted" style="font-size:.85rem;margin:0;">
+                    {{ ucfirst($audit->table_name) }} &middot; #{{ $audit->record_id }} &middot; {{ $audit->created_at->format('d M Y H:i') }}
+                </p>
+            </div>
+            <a href="{{ route('audits.index') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back
             </a>
         </div>
 
-        {{-- Audit Info --}}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Audit Information</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <strong>Table:</strong> {{ ucfirst($audit->table_name) }}
-                    </div>
-                    <div class="col-md-3">
-                        <strong>Record ID:</strong> {{ $audit->record_id }}
-                    </div>
-                    <div class="col-md-3">
-                        <strong>User:</strong> {{ $audit->user ? $audit->user->name : 'System' }}
-                    </div>
-                    <div class="col-md-3">
-                        <strong>Updated At:</strong> {{ $audit->created_at->format('M d, Y H:i') }}
-                    </div>
+        {{-- Audit Info Card --}}
+        <div class="tc-table-wrap mb-4" style="padding:1.25rem;">
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="tc-stat-label">Table</div>
+                    <div class="fw-600">{{ ucfirst($audit->table_name) }}</div>
                 </div>
-            </div>
-        </div>
-
+                <div class="col-6 col-md-3">
+                    <div class="tc-stat-label">Record ID</div>
+                    <div class="fw-600"><code>#{{ $audit->record_id }}</code></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="tc-stat-label">User</div>
+                    <div class="fw-600">{{ $audit->user?->name ?? 'System' }}</div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="tc-stat-label">Event</div>
+                    @php $ev = $audit->event ?? 'update'; $evBadge = match($ev){ 'created'=>'tc-badge-success','deleted'=>'tc-badge-danger',default=>'tc-badge-warning' }; @endphp
+                    <span class="tc-badge {{ $evBadge }}">{{ ucfirst($ev) }}</span>
+                </div>
         {{-- Data Comparison --}}
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Data Changes</h5>
-            </div>
-            <div class="card-body">
+        <div class="tc-table-wrap">
+            <div class="tc-data-bar"><span><i class="fas fa-exchange-alt me-2"></i>Data Changes</span></div>
                 @php
                     $allKeys = array_unique(array_merge(array_keys($audit->old_data ?? []), array_keys($audit->new_data ?? [])));
                 @endphp
                 @if(count($allKeys) > 0)
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>Field</th>
@@ -122,12 +98,12 @@
                                         if (is_array($newDisplay)) $newDisplay = 0;
                                         // if (is_array($newDisplay)) $newDisplay = json_encode($newDisplay);
                                     @endphp
-                                    <tr class="{{ $changed ? 'table-warning' : '' }}">
-                                        <td>{{ $key }}</td>
-                                        <td>{{ $oldDisplay }}</td>
-                                        <td>{{ $newDisplay }}</td>
+                                    <tr class="{{ $changed ? 'audit-row-update' : '' }}">
+                                        <td><code>{{ $key }}</code></td>
+                                        <td class="text-muted">{{ $oldDisplay }}</td>
+                                        <td class="fw-600">{{ $newDisplay }}</td>
                                         <td>
-                                            <span class="badge {{ $status == 'Changed' ? 'bg-warning' : ($status == 'Added' ? 'bg-success' : ($status == 'Removed' ? 'bg-danger' : 'bg-secondary')) }}">
+                                            <span class="tc-badge {{ $status == 'Changed' ? 'tc-badge-warning' : ($status == 'Added' ? 'tc-badge-success' : ($status == 'Removed' ? 'tc-badge-danger' : 'tc-badge-neutral')) }}">
                                                 {{ $status }}
                                             </span>
                                         </td>
@@ -137,7 +113,7 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-muted">No data changes recorded.</p>
+                    <p class="text-muted p-3">No data changes recorded.</p>
                 @endif
             </div>
         </div>

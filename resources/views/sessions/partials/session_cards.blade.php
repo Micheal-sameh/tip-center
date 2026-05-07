@@ -1,168 +1,126 @@
 @if ($sessions->isEmpty())
-    <div class="card">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-            <h4>No sessions found</h4>
-            <p class="text-muted">Create your first session by clicking the button above</p>
-        </div>
+    <div class="tc-empty">
+        <div class="tc-empty-icon"><i class="fas fa-calendar-times"></i></div>
+        <div class="tc-empty-title">No sessions found</div>
+        <div class="tc-empty-desc">Create your first session by clicking the "New Session" button above.</div>
     </div>
 @else
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
         @foreach ($sessions as $key => $session)
             <div class="col">
                 @php
-                    switch ($session->status) {
-                        case \App\Enums\SessionStatus::WARNING:
-                            $btnClass = 'danger';
-                            break;
-                        case \App\Enums\SessionStatus::PENDING:
-                            $btnClass = 'secondary';
-                            break;
-                        case \App\Enums\SessionStatus::ACTIVE:
-                            $btnClass = 'success';
-                            break;
-                        case \App\Enums\SessionStatus::FINISHED:
-                            $btnClass = 'primary';
-                            break;
-                        default:
-                            $btnClass = 'light';
-                    }
+                    $statusColors = [
+                        \App\Enums\SessionStatus::WARNING  => ['border'=>'#EF4444','bg'=>'#FEE2E2','text'=>'#991B1B'],
+                        \App\Enums\SessionStatus::PENDING  => ['border'=>'#94A3B8','bg'=>'#F1F5F9','text'=>'#475569'],
+                        \App\Enums\SessionStatus::ACTIVE   => ['border'=>'#10B981','bg'=>'#D1FAE5','text'=>'#065F46'],
+                        \App\Enums\SessionStatus::FINISHED => ['border'=>'#2563EB','bg'=>'#DBEAFE','text'=>'#1E40AF'],
+                    ];
+                    $sc = $statusColors[$session->status] ?? ['border'=>'#E2E8F0','bg'=>'#F8FAFC','text'=>'#64748B'];
                 @endphp
 
-                <div class="card h-100 shadow-sm">
-                    <div class="card-header bg-{{ $btnClass }} text-white py-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="fw-bold">#{{ $key + 1 }}</small>
-                            <span class="badge bg-white text-dark status-badge">
-                                {{ App\Enums\SessionStatus::getStringValue($session->status) }}
-                            </span>
+                <div class="session-card" style="border-left: 3px solid {{ $sc['border'] }}">
+                    <div class="session-card-header">
+                        <div>
+                            <div style="font-weight:700;font-size:.9rem;color:#1E293B;">{{ $session->professor->name }}</div>
+                            <div style="font-size:.78rem;color:#64748B;margin-top:2px;">{{ App\Enums\StagesEnum::getStringValue($session->stage) }}</div>
                         </div>
+                        <span class="badge" style="background:{{ $sc['bg'] }};color:{{ $sc['text'] }};border-radius:20px;font-size:.72rem;font-weight:700;padding:4px 10px;">
+                            {{ App\Enums\SessionStatus::getStringValue($session->status) }}
+                        </span>
                     </div>
 
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $session->professor->name }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">
-                            {{ App\Enums\StagesEnum::getStringValue($session->stage) }}
-                        </h6>
-
-                        <div class="my-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Professor Price:</span>
-                                <span class="fw-bold">{{ number_format($session->professor_price, 2) }}
-                                    {{ config('app.currency', 'EGP') }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Center Price:</span>
-                                <span class="fw-bold">{{ number_format($session->center_price, 2) }}
-                                    {{ config('app.currency', 'EGP') }}</span>
-                            </div>
-                            @if ($session->printables)
-                                <div class="d-flex justify-content-between">
-                                    <span>Student Papers:</span>
-                                    <span class="fw-bold">{{ number_format($session->printables, 2) }}
-                                        {{ config('app.currency', 'EGP') }}</span>
-                                </div>
-                            @endif
-                            @if ($session->materials)
-                                <div class="d-flex justify-content-between">
-                                    <span>Materials:</span>
-                                    <span class="fw-bold">{{ number_format($session->materials, 2) }}
-                                        {{ config('app.currency', 'EGP') }}</span>
-                                </div>
-                            @endif
-                            <div class="d-flex justify-content-between">
-                                <a class="fw-bold" href="{{ route('sessions.students', $session->id) }}">Students:</a>
-                                <span class="fw-bold">{{ $session->attended_count }}</span>
-                            </div>
-                            @if ($session->room)
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-bold">Room:</span>
-                                    <span class="fw-bold">{{ $session->room }}</span>
-                                </div>
-                            @endif
-                            @if ($session->type)
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-bold">Session Type:</span>
-                                    <span
-                                        class="fw-bold">{{ App\Enums\SessionType::getStringValue($session->type) }}</span>
-                                </div>
-                            @endif
+                    <div class="session-card-body">
+                        <div class="session-card-row">
+                            <span class="session-card-label">Professor Price</span>
+                            <span class="session-card-value">{{ number_format($session->professor_price, 2) }} {{ config('app.currency', 'EGP') }}</span>
                         </div>
-
+                        <div class="session-card-row">
+                            <span class="session-card-label">Center Price</span>
+                            <span class="session-card-value">{{ number_format($session->center_price, 2) }} {{ config('app.currency', 'EGP') }}</span>
+                        </div>
+                        @if ($session->printables)
+                        <div class="session-card-row">
+                            <span class="session-card-label">Student Papers</span>
+                            <span class="session-card-value">{{ number_format($session->printables, 2) }} {{ config('app.currency', 'EGP') }}</span>
+                        </div>
+                        @endif
+                        @if ($session->materials)
+                        <div class="session-card-row">
+                            <span class="session-card-label">Materials</span>
+                            <span class="session-card-value">{{ number_format($session->materials, 2) }} {{ config('app.currency', 'EGP') }}</span>
+                        </div>
+                        @endif
+                        <div class="session-card-row">
+                            <a href="{{ route('sessions.students', $session->id) }}" class="session-card-label text-brand">Students</a>
+                            <span class="session-card-value">{{ $session->attended_count }}</span>
+                        </div>
+                        @if ($session->room)
+                        <div class="session-card-row">
+                            <span class="session-card-label">Room</span>
+                            <span class="session-card-value">{{ $session->room }}</span>
+                        </div>
+                        @endif
+                        @if ($session->type)
+                        <div class="session-card-row">
+                            <span class="session-card-label">Session Type</span>
+                            <span class="session-card-value">{{ App\Enums\SessionType::getStringValue($session->type) }}</span>
+                        </div>
+                        @endif
                         @if ($session->start_at && $session->end_at)
-                            <div class="d-flex align-items-center text-muted mt-3">
-                                <i class="fas fa-clock me-2"></i>
-                                <small>
-                                    {{ \Carbon\Carbon::parse($session->start_at)->format('h:i A') }} -
-                                    {{ \Carbon\Carbon::parse($session->end_at)->format('h:i A') }}
-                                </small>
-                            </div>
+                        <div class="session-card-row">
+                            <span class="session-card-label"><i class="fas fa-clock me-1"></i>Time</span>
+                            <span class="session-card-value">{{ \Carbon\Carbon::parse($session->start_at)->format('h:i A') }} – {{ \Carbon\Carbon::parse($session->end_at)->format('h:i A') }}</span>
+                        </div>
+                        @endif
+                    </div>
+                    <div style="padding:10px 16px;display:flex;gap:8px;border-top:1px solid var(--tc-border);">
+                        <a href="{{ route('sessions.extras-form', $session->id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-plus-circle me-1"></i>Extras
+                        </a>
+                        <a href="{{ route('sessions.online-form', $session->id) }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-video me-1"></i>Online
+                        </a>
+                    </div>
+
+                    <div style="padding:10px 16px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--tc-border);">
+                        @if ($session->status != App\Enums\SessionStatus::FINISHED)
+                            <form action="{{ route('sessions.close', $session->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('PUT')
+                                <button type="submit" class="btn btn-sm btn-primary close-session-btn">
+                                    <i class="fas fa-lock me-1"></i>Close
+                                </button>
+                            </form>
                         @endif
 
-                        {{-- Extras Button (data-* always present/safe) --}}
-                        <a href="{{route('sessions.extras-form', $session->id)}}" type="button" class="btn btn-sm btn-primary mt-2" >
-                            Extras
-                        </a>
+                        @if ($session->status == App\Enums\SessionStatus::PENDING || auth()->user()->hasAnyRole(['admin', 'manager']))
+                            <form action="{{ route('sessions.active', $session->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-play me-1"></i>Activate</button>
+                            </form>
+                        @endif
 
-                        <a href="{{route('sessions.online-form', $session->id)}}" type="button" class="btn btn-sm btn-primary mt-2" >
-                            Online
-                        </a>
-
-                    </div>
-
-                    <div class="card-footer bg-white border-top-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            @if ($session->status != App\Enums\SessionStatus::FINISHED)
-                                <form action="{{ route('sessions.close', $session->id) }}" method="POST"
-                                    class="d-inline">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-sm btn-primary close-session-btn">
-                                        Close
+                        <div style="margin-left:auto;display:flex;gap:6px;">
+                            <a href="{{ route('sessions.show', $session->id) }}" class="btn btn-sm btn-outline-secondary" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            @can('sessions_update')
+                                @if (auth()->user()->hasAnyRole(['admin', 'manager']))
+                                    <a href="{{ route('sessions.edit', $session->id) }}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                @endif
+                            @endcan
+                            @can('sessions_delete')
+                                @if ($session->attended_count == 0 && $session->onlines_count == 0)
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-session-btn" title="Delete"
+                                        data-session-id="{{ $session->id }}" data-professor-name="{{ $session->professor->name }}"
+                                        data-stage="{{ App\Enums\StagesEnum::getStringValue($session->stage) }}">
+                                        <i class="fas fa-trash"></i>
                                     </button>
-                                </form>
-                            @else
-                                <span
-                                    class="badge bg-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'warning' : 'secondary' }} me-1">
-                                    <i
-                                        class="fas fa-{{ $session->status === App\Enums\SessionStatus::WARNING ? 'clock' : 'times-circle' }} me-1"></i>
-                                    {{ App\Enums\SessionStatus::getStringValue($session->status) }}
-                                </span>
-                            @endif
-
-                            @if (
-                                $session->status == App\Enums\SessionStatus::PENDING ||
-                                    auth()->user()->hasAnyRole(['admin', 'manager']))
-                                <form action="{{ route('sessions.active', $session->id) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-sm btn-success me-1">Activate</button>
-                                </form>
-                            @endif
-
-                            <div class="btn-group">
-                                <a href="{{ route('sessions.show', $session->id) }}"
-                                    class="btn btn-sm btn-outline-info me-1" title="View">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                @can('sessions_update')
-                                    @if (auth()->user()->hasAnyRole(['admin', 'manager']))
-                                        <a href="{{ route('sessions.edit', $session->id) }}"
-                                            class="btn btn-sm btn-outline-primary" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                    @endif
-                                @endcan
-                                @can('sessions_delete')
-                                    @if ($session->attended_count == 0 && $session->onlines_count == 0)
-                                        <button type="button" class="btn btn-sm btn-outline-danger delete-session-btn" title="Delete"
-                                            data-session-id="{{ $session->id }}" data-professor-name="{{ $session->professor->name }}"
-                                            data-stage="{{ App\Enums\StagesEnum::getStringValue($session->stage) }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    @endif
-                                @endcan
-                            </div>
+                                @endif
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -252,8 +210,6 @@
         });
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
             $(document).off('click', '.close-session-btn').on('click', '.close-session-btn', function(e) {

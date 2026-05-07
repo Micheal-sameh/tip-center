@@ -72,9 +72,9 @@
         <!-- Settlements Table -->
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body">
-                <div class="table-responsive">
+                <div class="tc-table-wrap"><div class="table-responsive">
                     <table class="table align-middle table-hover">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Student</th>

@@ -70,12 +70,11 @@
             @method('DELETE')
         </form>
 
-        <div class="card shadow border-0 rounded-4">
-            <div class="card-body">
+        <div class="tc-table-wrap">
                 <!-- Desktop Table -->
                 <div class="table-responsive d-none d-md-block">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
+                    <table class="table align-middle mb-0">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Description</th>
@@ -100,7 +99,7 @@
                                     @can('charges_delete')
                                         @if (!$charge->created_at->lt(today()))
                                             <td>
-                                                <button type="button" class="btn btn-sm btn-danger delete-charge-btn"
+                                                <button type="button" class="tc-action-btn danger delete-charge-btn"
                                                     data-charge-id="{{ $charge->id }}"
                                                     data-title="{{ $charge->title }}"
                                                     data-type="{{ App\Enums\ChargeType::getStringValue($charge->type) }}"
@@ -139,7 +138,7 @@
                                 <p class="mb-2"><strong>Date:</strong> {{ $charge->created_at->format('d-m-Y') }}</p>
                                 @can('charges_delete')
                                     <div class="d-flex justify-content-end">
-                                        <button type="button" class="btn btn-sm btn-danger delete-charge-btn"
+                                        <button type="button" class="tc-action-btn danger delete-charge-btn"
                                             data-charge-id="{{ $charge->id }}"
                                             data-title="{{ $charge->title }}"
                                             data-type="{{ App\Enums\ChargeType::getStringValue($charge->type) }}"
@@ -237,8 +236,6 @@
         });
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
             // Delete charge handler

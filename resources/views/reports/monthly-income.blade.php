@@ -1,39 +1,28 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <div class="container-fluid px-4 mt-4">
+    <div class="container-fluid py-3" style="max-width:1400px">
 
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold text-gradient m-0 d-flex align-items-center">
-                <i class="fas fa-calendar-alt me-2 text-primary"></i>
-                Monthly Report -
-                <span class="ms-1 text-primary">
-                    {{ \Carbon\Carbon::parse($month)->format('F Y') }}
-                </span>
-            </h4>
-
-            <!-- Month Search -->
-            <form action="{{ route('reports.monthly-income') }}" method="GET" class="d-flex align-items-center">
-                <input type="month" name="month" class="form-control me-2 shadow-sm rounded-pill px-3"
+        {{-- Page Header --}}
+        <div class="tc-page-header mb-4">
+            <div>
+                <h1 class="tc-page-title"><i class="fas fa-calendar-alt me-2 text-brand"></i>Monthly Income Report
+                    &mdash; {{ \Carbon\Carbon::parse($month)->format('F Y') }}</h1>
+            </div>
+            <form action="{{ route('reports.monthly-income') }}" method="GET" class="d-flex align-items-center gap-2">
+                <input type="month" name="month" class="form-control form-control-sm"
                     value="{{ request('month', now()->format('Y-m')) }}" onchange="this.form.submit()">
-                <noscript>
-                    <button type="submit" class="btn btn-primary rounded-pill px-3">
-                        <i class="fas fa-search me-1"></i> Search
-                    </button>
-                </noscript>
             </form>
         </div>
 
         <!-- Table Card -->
-        <div class="card shadow-lg border-0 rounded-4">
-            <div class="card-header bg-gradient text-white rounded-top-4"
-                style="background: linear-gradient(45deg, #007bff, #6610f2);">
-                <h5 class="mb-0 fw-semibold"><i class="fas fa-chart-line me-2"></i> Detailed Income & Expenses</h5>
+        <div class="tc-table-wrap mb-4">
+            <div class="tc-data-bar">
+                <span><i class="fas fa-chart-line me-2"></i>Detailed Income &amp; Expenses</span>
             </div>
-            <div class="card-body table-responsive p-0">
-                <table class="table table-bordered table-hover align-middle text-center mb-0">
-                    <thead class="table-dark sticky-top">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0 text-center">
+                    <thead>
                         <tr>
                             <th>Day</th>
                             <th>Center</th>

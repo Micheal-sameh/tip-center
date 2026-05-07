@@ -65,14 +65,13 @@
                // fn($professor) => $professor->stageBalances->sum('balance') + $professor->stageBalances->sum('materials_balance') > 0,
             //);
         @endphp
-        <!-- Main Content Card -->
-        <div class="card shadow-sm">
-            <div class="card-body p-0">
+        <!-- Main Content -->
+        <div>
                 <!-- Desktop Table -->
                 <div class="d-none d-md-block">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                    <div class="tc-table-wrap"><div class="table-responsive">
+                        <table class="table align-middle mb-0 mb-0">
+                            <thead>
                                 <tr>
                                     <th width="40" class="text-center">#</th>
                                     <th>{{ __('trans.image') }}</th>
@@ -135,8 +134,7 @@
                                         <td>
                                             <div class="d-flex flex-wrap gap-1">
                                                 @foreach ($professor->stages as $stage)
-                                                    <span
-                                                        class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 py-1 px-2 small">
+                                                    <span class="tc-badge tc-badge-info">
                                                         {{ \App\Enums\StagesEnum::getStringValue($stage->stage) }}
                                                     </span>
                                                 @endforeach
@@ -152,16 +150,16 @@
                                             <div class="d-flex gap-1">
                                                 @can('professors_update')
                                                     <a href="{{ route('professors.edit', $professor) }}"
-                                                        class="btn btn-sm btn-outline-warning" title="{{ __('trans.edit') }}">
+                                                        class="tc-action-btn" title="{{ __('trans.edit') }}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 @endcan
                                                 @can('sessions_create')
                                                     <form action="{{ route('sessions.create', $professor->id) }}"
                                                         method="GET" class="d-inline">
-                                                        <button type="submit" class="btn btn-sm btn-outline-success"
+                                                        <button type="submit" class="tc-action-btn success"
                                                             title="{{ __('trans.create_session') }}">
-                                                            <i class="fas fa-calendar-plus me-1"></i> + Session
+                                                            <i class="fas fa-calendar-plus"></i>
                                                         </button>
                                                     </form>
                                                 @endcan
@@ -170,9 +168,9 @@
                                                         method="post" class="d-inline">
                                                         @csrf
                                                         @method('PUT')
-                                                        <button type="submit" class="btn btn-sm btn-outline-success"
+                                                        <button type="submit" class="tc-action-btn success"
                                                             title="{{ __('trans.settle') }}">
-                                                            <i class="fas fa-money-bill-wave me-1"></i>
+                                                            <i class="fas fa-money-bill-wave"></i>
                                                         </button>
                                                     </form>
                                                 @endif
@@ -251,7 +249,7 @@
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach ($professor->stages as $stage)
                                             <span
-                                                class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 py-1 px-2 small">
+                                                class="tc-badge tc-badge-info">
                                                 {{ \App\Enums\StagesEnum::getStringValue($stage->stage) }}
                                             </span>
                                         @endforeach
@@ -261,13 +259,13 @@
                                 <div class="d-flex justify-content-end gap-2">
                                     @can('professors_view')
                                         <a href="{{ route('professors.show', $professor) }}"
-                                            class="btn btn-sm btn-outline-info" title="{{ __('trans.view') }}">
+                                            class="tc-action-btn" title="{{ __('trans.view') }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     @endcan
                                     @can('professors_update')
                                         <a href="{{ route('professors.edit', $professor) }}"
-                                            class="btn btn-sm btn-outline-warning" title="{{ __('trans.edit') }}">
+                                            class="tc-action-btn" title="{{ __('trans.edit') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     @endcan
@@ -380,8 +378,6 @@
     </script>
 
     <!-- Status Toggle Script -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function toggleStatus(professorId) {
             const buttons = document.querySelectorAll(`#status-btn-${professorId}`);

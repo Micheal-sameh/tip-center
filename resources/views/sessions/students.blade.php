@@ -14,9 +14,9 @@
 
                 {{-- Students Table --}}
                 <h5 class="mt-4 mb-3">Students Attendance</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle">
-                        <thead class="table-dark">
+                <div class="tc-table-wrap"><div class="table-responsive">
+                    <table class="table align-middle mb-0 align-middle">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
@@ -101,9 +101,9 @@
                 {{-- Onlines Table --}}
                 @if (!$session->onlines->isEmpty())
                     <h5 class="mt-5 mb-3">Online Payments</h5>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle">
-                            <thead class="table-dark">
+                    <div class="tc-table-wrap"><div class="table-responsive">
+                        <table class="table align-middle mb-0 align-middle">
+                            <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
@@ -217,8 +217,6 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.querySelectorAll('.student-row').forEach(row => {
             row.addEventListener('click', function(e) {

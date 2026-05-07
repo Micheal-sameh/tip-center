@@ -1,70 +1,15 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <div class="container" style="width:93%">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="mb-0">Sessions</h1>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#professorSelectionModal">
-                <i class="fas fa-plus me-1"></i> New Session
-            </button>
+    <div class="container-fluid" style="max-width:1400px">
+        <div class="tc-page-header">
+            <h1 class="tc-page-title"><i class="fas fa-chalkboard me-2 text-brand"></i>{{ __('trans.sessions') ?? 'Sessions' }}</h1>
+            <div class="tc-page-actions">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#professorSelectionModal">
+                    <i class="fas fa-plus"></i> New Session
+                </button>
+            </div>
         </div>
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show mb-4">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        {{-- Error Popup --}}
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show position-fixed top-50 start-50 translate-middle"
-                style="z-index: 9999; min-width: 300px; max-width: 500px; text-align: center;" role="alert"
-                id="popup-message">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{!! nl2br(e($error)) !!}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        {{-- Success Popup --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show position-fixed top-50 start-50 translate-middle"
-                style="z-index: 9999; min-width: 300px; max-width: 500px; text-align: center;" role="alert"
-                id="popup-message">
-                {!! nl2br(e(session('success'))) !!}
-            </div>
-        @endif
-
-        {{-- Auto-hide script --}}
-        @if ($errors->any() || session('success'))
-            <script>
-                setTimeout(function() {
-                    let popup = document.getElementById('popup-message');
-                    if (popup) {
-                        popup.classList.remove('show'); // Bootstrap fade-out
-                        setTimeout(() => popup.remove(), 500); // Remove after fade
-                    }
-                }, 1000);
-            </script>
-        @endif
 
 
         <!-- Search and Filter Bar -->
@@ -195,8 +140,6 @@
 @endsection
 
 @push('scripts')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
             let refreshInterval;

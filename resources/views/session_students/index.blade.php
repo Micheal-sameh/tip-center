@@ -21,7 +21,7 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <div class="row g-3">
-                    <div class="col-md-8">
+                    <div class="col-md-7">
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0">
                                 <i class="fas fa-search text-muted"></i>
@@ -30,9 +30,29 @@
                                 placeholder="@lang('trans.Search by name, code, phone or parent phone...')" autocomplete="off" autofocus>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <button type="button" id="clearSearch" class="btn btn-outline-secondary w-100 shadow-sm">
+                    <div class="col-md-2">
+                        <button type="button" id="clearSearch" class="btn btn-outline-secondary w-100">
                             <i class="fas fa-times me-1"></i> @lang('trans.clear')
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" id="startQrScan" class="btn btn-success w-100">
+                            <i class="fas fa-qrcode me-1"></i> @lang('trans.scan_qr_code')
+                        </button>
+                    </div>
+                </div>
+
+                {{-- QR Scanner --}}
+                <div id="qrScannerWrapper" style="display:none;margin-top:16px;">
+                    <div style="position:relative;border-radius:12px;overflow:hidden;background:#000;max-width:400px;margin:0 auto;">
+                        <div id="qr-reader" style="width:100%;"></div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>@lang('trans.qr_hint')</small>
+                    </div>
+                    <div class="text-center mt-2">
+                        <button type="button" id="stopQrScan" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-stop me-1"></i> @lang('trans.stop_scan')
                         </button>
                     </div>
                 </div>
@@ -212,6 +232,48 @@
                 searchInput.focus();
             });
         });
+    </script>
+
+    {{-- QR Scanner --}}
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script>
+        let html5QrCode = null;
+
+        document.getElementById('startQrScan').addEventListener('click', function () {
+            document.getElementById('qrScannerWrapper').style.display = 'block';
+            this.disabled = true;
+
+            html5QrCode = new Html5Qrcode('qr-reader');
+            html5QrCode.start(
+                { facingMode: 'environment' },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText) => {
+                    // QR scanned — fill search with student code
+                    const input = document.getElementById('studentSearch');
+                    input.value = decodedText;
+                    input.dispatchEvent(new Event('input'));
+                    stopScanner();
+                },
+                () => {}
+            ).catch(() => {
+                document.getElementById('qrScannerWrapper').style.display = 'none';
+                document.getElementById('startQrScan').disabled = false;
+                Swal.fire('Camera Error', 'Could not access the camera. Please allow camera permission.', 'error');
+            });
+        });
+
+        document.getElementById('stopQrScan').addEventListener('click', stopScanner);
+
+        function stopScanner() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode.clear();
+                    html5QrCode = null;
+                }).catch(() => {});
+            }
+            document.getElementById('qrScannerWrapper').style.display = 'none';
+            document.getElementById('startQrScan').disabled = false;
+        }
     </script>
 @endpush
 

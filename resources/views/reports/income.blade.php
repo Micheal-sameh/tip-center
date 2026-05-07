@@ -1,31 +1,38 @@
 @extends('layouts.sideBar')
 
 @section('content')
-    <div class="container py-4" style="max-width: 1200px;">
+    <div class="container-fluid py-3" style="max-width:1300px">
 
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-start mb-4">
-            <h4 class="mb-0">Sessions Income Report</h4>
-            <div class="d-flex flex-column">
-                <form action="{{ route('charges.store') }}" method="POST" class="d-flex align-items-center mb-2">
+        {{-- Page Header --}}
+        <div class="tc-page-header mb-3">
+            <div>
+                <h1 class="tc-page-title"><i class="fas fa-chart-line me-2 text-brand"></i>Sessions Income Report</h1>
+            </div>
+            <div class="tc-page-actions">
+                <a href="{{ route('reports.incomePdf', request()->all()) }}" class="btn btn-sm btn-danger">
+                    <i class="fas fa-file-pdf me-1"></i>Export PDF
+                </a>
+            </div>
+        </div>
+
+        {{-- Quick Charge Forms --}}
+        <div class="row g-2 mb-3">
+            <div class="col-md-4">
+                <form action="{{ route('charges.store') }}" method="POST" class="d-flex gap-2">
                     @csrf
                     <input type="hidden" value="{{ auth()->user()->name }}" name="title">
                     <input type="hidden" value="{{ App\Enums\chargeType::GAP }}" name="type">
-                    <input type="number" step="1" name="amount" class="form-control form-control-sm me-2"
-                        placeholder="Enter Gap" required>
-                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                        Save
-                    </button>
+                    <input type="number" step="1" name="amount" class="form-control form-control-sm" placeholder="Enter Gap" required>
+                    <button type="submit" class="btn btn-sm btn-outline-danger text-nowrap">Save Gap</button>
                 </form>
-                <form action="{{ route('charges.store') }}" method="POST" class="d-flex align-items-center">
+            </div>
+            <div class="col-md-4">
+                <form action="{{ route('charges.store') }}" method="POST" class="d-flex gap-2">
                     @csrf
                     <input type="hidden" value="{{ auth()->user()->name }}" name="title">
                     <input type="hidden" value="{{ App\Enums\chargeType::STUDENT_PRINT }}" name="type">
-                    <input type="number" step="1" name="amount" class="form-control form-control-sm me-2"
-                        placeholder="Enter Student Print" required>
-                    <button type="submit" class="btn btn-sm btn-outline-primary">
-                        Save
-                    </button>
+                    <input type="number" step="1" name="amount" class="form-control form-control-sm" placeholder="Enter Student Print" required>
+                    <button type="submit" class="btn btn-sm btn-outline-primary text-nowrap">Save Print</button>
                 </form>
             </div>
         </div>
@@ -83,11 +90,9 @@
 
 
         <!-- Sessions Table -->
-        <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-4">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle mb-0">
-                        <thead class="table-light">
+        <div class="tc-table-wrap"><div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Professor</th>

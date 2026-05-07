@@ -44,9 +44,9 @@
                     </div>
                 </form>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
+                <div class="tc-table-wrap"><div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Student Name</th>
