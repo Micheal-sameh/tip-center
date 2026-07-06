@@ -34,7 +34,7 @@ class ReportController extends Controller
         $this->middleware('permission:students_report')->only(['student', 'downloadStudentReport']);
         $this->middleware('permission:sessions_report')->only(['session', 'index', 'downloadSessionReport']);
         $this->middleware('permission:income_report')->only(['income', 'incomePdf']);
-        $this->middleware('permission:monthly_income')->only(['monthlyIncome', 'charges', 'chargesPdf']);
+        // $this->middleware('permission:monthly_income')->only(['monthlyIncome']);
         $this->middleware('permission:special_room_report')->only('specialRooms', 'downloadSpecialRooms');
         $this->middleware('permission:monthly_special_rooms')->only('monthlyTenAndEleven');
     }

@@ -163,7 +163,7 @@
                         <div class="col-md-4">
                             <label>Student Papers (Center)</label>
                             <input type="number" name="printables" id="printables" step="1" min="0"
-                                class="form-control" value="{{ $session->printables ?? 0 }}">
+                                class="form-control" value="{{ 0 }}">
                         </div>
                         <div class="col-md-4">
                             <label>Materials (Prof)</label>

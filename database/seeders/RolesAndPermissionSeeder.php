@@ -157,6 +157,8 @@ class RolesAndPermissionSeeder extends Seeder
             $students_report,
             $sessions_report,
             $special_room_report,
+
+            $monthly_special_rooms,
         ]);
 
         $manager = Role::firstOrCreate(['name' => 'manager']);

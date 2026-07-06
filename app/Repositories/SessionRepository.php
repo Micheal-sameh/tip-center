@@ -219,8 +219,8 @@ class SessionRepository extends BaseRepository
         $session = $this->findById($id);
 
         // Prevent activation if session starts more than 30 minutes from now
-        if ($status == SessionStatus::ACTIVE && $session->start_at > now()->addMinutes(30)) {
-            return ['error' => 'Cannot activate session that starts more than 30 minutes from now, please try at : '.Carbon::parse($session->start_at)->subMinutes(30)->format('h:i')];
+        if ($status == SessionStatus::ACTIVE && $session->start_at > now()->addMinutes(59)) {
+            return ['error' => 'Cannot activate session that starts more than 59 minutes from now, please try at : '.Carbon::parse($session->start_at)->subMinutes(59)->format('h:i')];
         }
 
         $session->update([

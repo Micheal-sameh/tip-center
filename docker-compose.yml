@@ -4,27 +4,45 @@ services:
       context: ./docker/php
       dockerfile: Dockerfile
       args:
-        user: tip-test
+        user: tip
         uid: 1500
-    container_name: tip-test
+    container_name: tip
     restart: unless-stopped
-    working_dir: /var/www/tip-test
+    working_dir: /var/www/tip
     volumes:
-      - ./:/var/www/tip-test
+      - ./:/var/www/tip
       - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     networks:
-      - tip-test
+      - tip
       - external_db_network
     ports:
       - "1200:9000"
     depends_on:
       - db
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep php-fpm | grep -v grep || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
-
+  nginx:
+    image: nginx:tip-nginx
+    container_name: tip-nginx
+    restart: unless-stopped
+    ports:
+      - "1100:80"
+    volumes:
+      - ./:/var/www/tip
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - tip
 
   db:
     image: mariadb:10.5
-    container_name: tip-test-db
+    container_name: tip-db
     restart: unless-stopped
     command: --max_allowed_packet=67108864
     environment:
@@ -37,12 +55,12 @@ services:
     ports:
       - "1201:3306"
     networks:
-      - tip-test
+      - tip
       - external_db_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: tip-test-phpmyadmin
+    container_name: tip-phpmyadmin
     restart: unless-stopped
     environment:
       PMA_HOST: db
@@ -52,10 +70,10 @@ services:
     ports:
       - "1202:80"
     networks:
-      - tip-test
+      - tip
 
 networks:
-  tip-test:
+  tip:
     driver: bridge
   external_db_network:
     driver: bridge

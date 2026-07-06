@@ -360,15 +360,19 @@
                                         <a href="{{ route('reports.charges') }}"
                                             class="dropdown-item {{ request()->routeIs('reports.charges') ? 'active' : '' }}">
                                             <i class="fas fa-chart-bar me-2 text-success"></i> Charges Report
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                {{-- @can('monthly_special_rooms') --}}
                                     <li>
                                         <a href="{{ route('reports.student-settlements') }}"
                                             class="dropdown-item {{ request()->routeIs('reports.student-settlements') ? 'active' : '' }}">
                                             <i class="fas fa-hand-holding-usd me-2 text-primary"></i> Student Settlements
                                         </a>
                                     </li>
-                                    </a>
+                                {{-- @endcan --}}
                             </li>
-                        @endcan
                         @can('monthly_income')
                             <li>
                                 <a class="dropdown-item {{ request()->routeIs('audits.index') ? 'active' : '' }}"
@@ -395,14 +399,23 @@
                             </li>
                         @endcan
 
-                        @can('monthly_income')
+                        {{-- @can('monthly_income')
                             <li>
                                 <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
                                     href="{{ route('reports.monthly-income') }}">
                                     <i class="fas fa-calendar-alt me-2 text-success"></i> {{ __('trans.monthly_income') }}
                                 </a>
                             </li>
-                        @endcan
+                        @endcan --}}
+
+                        @if(auth()->user()->can('monthly_income') || auth()->id() == 2)
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('reports.monthly-income') ? 'active' : '' }}"
+                                    href="{{ route('reports.monthly-income') }}">
+                                    <i class="fas fa-calendar-alt me-2 text-success"></i> {{ __('trans.monthly_income') }}
+                                </a>
+                            </li>
+                        @endif
 
                         @can('monthly_special_rooms')
                             <li>
